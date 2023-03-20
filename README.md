@@ -18,3 +18,9 @@ This work is an attempt to standardize the analyses of large viral genomic datas
 - Provide a graphical interface for workflow construction. Should be able to inform the user about compatible modules which can be connected together graphically. Export to workflow file which can be checked into version control.
 - Provide documentation on best practices in the field of phylogenetic analysis as well as subsequent geospatial analyses.
 - Allows the user to monitor the workflows, ideally with a graphical interface.
+
+### Architecture
+
+Client-server architecture:
+- [nodemapper](nodemapper): Graphical front-end written in Typescript/React, uses Redux
+- [backend](backend): Flask server and workflow routines written in Python
