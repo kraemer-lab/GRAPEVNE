@@ -1,0 +1,45 @@
+{
+  "name": "nodemapper",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "proxy": "http://localhost:5000",
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
+    "start": "./node_modules/.bin/webpack serve --open",
+    "build": "./node_modules/.bin/webpack"
+  },
+  "homepage": "https://jsbrittain.github.io/scratch",
+  "dependencies": {
+    "@babel/core": "^7.21.0",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/preset-react": "^7.18.6",
+    "@projectstorm/react-diagrams": "^7.0.1",
+    "@reduxjs/toolkit": "^1.9.3",
+    "@storybook/addon-actions": "^6.5.16",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "axios": "^1.3.4",
+    "babel-core": "^4.7.16",
+    "babel-loader": "^9.1.2",
+    "css-loader": "^6.7.3",
+    "gh-pages": "^5.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
+    "react-sliding-pane": "^7.3.0",
+    "redux-devtools-extension": "^2.13.9",
+    "source-map-loader": "^4.0.1",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.5",
+    "webpack": "^5.75.0",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1"
+  }
+}

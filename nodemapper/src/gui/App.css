@@ -1,0 +1,12 @@
+*{
+	margin: auto;
+	padding: 0;
+}
+
+html, body, #app, #app>div {
+	height: 100%;
+	overflow: hidden;
+}
+
+/*@import "NodeManager.css"*/
+
