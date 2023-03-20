@@ -15,6 +15,7 @@ def test_Snakefile_SplitByRules():
         assert 'name' in block
         assert 'content' in block
 
+
 def test_Snakefile_Build():
     rules = {
         'block': [

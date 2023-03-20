@@ -1,0 +1,9 @@
+[flake8]
+ignore =
+	# Line too long
+	E501  
+	# binary operator after break
+	W503
+exclude =
+	venv
+	.venv
