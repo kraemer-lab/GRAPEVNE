@@ -26,7 +26,7 @@ class NodeScene {
     return this.addNode(name, color, pos, config);
   }
 
-  addLink(port_from: any, port_to: any) {
+  addLink(port_from: any, port_to: any) {  // eslint-disable-line @typescript-eslint/no-explicit-any
     const link = new DefaultLinkModel();
     link.setSourcePort(port_from);
     link.setTargetPort(port_to);
@@ -39,23 +39,23 @@ class NodeScene {
     const model = new DiagramModel();
     this.engine.setModel(model);
     
-    var node1 = this.addNode('Input', 'rgb(192,255,0)', [400, 118]);
+    const node1 = this.addNode('Input', 'rgb(192,255,0)', [400, 118]);
     node1.addOutPort('out-1');
     node1.addOutPort('out-2');
     node1.addOutPort('out-3');
     node1.addOutPort('out-4');
 
-    var node2 = this.addNode('Process 1', 'rgb(0,192,255)', [525, 100]);
+    const node2 = this.addNode('Process 1', 'rgb(0,192,255)', [525, 100]);
     node2.addInPort('in-1');
     node2.addInPort('in-2');
     node2.addOutPort('out-1');
     node2.addOutPort('out-2');
 
-    var node3 = this.addNode('Process 2', 'rgb(0,192,255)', [700, 80]);
+    const node3 = this.addNode('Process 2', 'rgb(0,192,255)', [700, 80]);
     node3.addInPort('in-1');
     node3.addInPort('in-2');
     
-	var node4 = this.addNode('Logging', 'rgb(192,0,255)', [700, 150]);
+    const node4 = this.addNode('Logging', 'rgb(192,0,255)', [700, 150]);
     node4.addInPort('in-1');
     node4.addInPort('in-2');
     node4.addInPort('in-3');
@@ -68,7 +68,7 @@ class NodeScene {
   }
   
   loadModel(str) {
-    var model = new DiagramModel();
+    const model = new DiagramModel();
     model.deserializeModel(JSON.parse(str), this.engine);
     this.engine.setModel(model);
   }
@@ -78,21 +78,21 @@ class NodeScene {
   }
   
   buildMapWithSnippets(data: JSON) {
-    var model = new DiagramModel();
+    const model = new DiagramModel();
     this.engine.setModel(model);
     const pos = [50, 50]
     data['block'].forEach((block) => {
-      var colstr = 'rgb(0,192,255)'
+      let colstr = 'rgb(0,192,255)'
       if (block['type'] == 'config') {
         colstr = 'rgb(192,0,255)'
       }
-      var node = this.addNode(block['name'], colstr, pos, block);
+      const node = this.addNode(block['name'], colstr, pos, block);
       console.log(node)
       pos[0] += 150
       // add ports
       if (block['type'] == 'rule') {
-	    node.addInPort('in-1')
-	    node.addOutPort('out-1')
+        node.addInPort('in-1')
+        node.addOutPort('out-1')
       }
     });
   }

@@ -39,6 +39,6 @@ function SidePane() {
     <SidePaneContent />
     </ReactSlidingPane>
   )
-};
+}
 
 export default SidePane

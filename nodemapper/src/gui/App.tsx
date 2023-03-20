@@ -13,16 +13,16 @@ export default function App() {
   <StrictMode>
 
     <div id="header-panel" style={{height: "30px"}}>
-	<Header />
+    <Header />
     </div>
 
     <div id="main-panel">
     <MainPanel />
     </div>
     
-	<div id="side-pane">
+    <div id="side-pane">
     <SidePane />
     </div>
 
   </StrictMode>
-)};
+)}

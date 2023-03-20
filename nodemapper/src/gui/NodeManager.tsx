@@ -67,15 +67,16 @@ function NodeManager() {
   function processResponse(content: JSON) {
     console.log("Process response: ", content)
     switch (content['query']) {
-      case 'tokenize':
+      case 'tokenize': {
         // Rebuild map from returned (segmented) representation
         nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content['body']))
         dispatch(nodemapStoreMap(content['body']))
         break;
-      case 'build':
+      }
+      case 'build': {
         // Download returned content as file
         const filename = 'Snakefile'
-        var element = document.createElement('a');
+        const element = document.createElement('a');
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' +
           encodeURIComponent(content['body']));
         element.setAttribute('download', filename);
@@ -84,6 +85,7 @@ function NodeManager() {
         element.click();
         document.body.removeChild(element);
         break;
+      }
       default:
         console.error("Error interpreting server response (query: ",
                       content['query'], ")");

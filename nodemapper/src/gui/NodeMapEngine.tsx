@@ -24,14 +24,14 @@ export default class NodeMapEngine {
     });
   }
   
-  public QueryAndLoadTextFile(onLoad: Function) {
+  public QueryAndLoadTextFile(onLoad: Function) {  // eslint-disable-line @typescript-eslint/ban-types
     // Opens a file dialog, then executes readerEvent
-    var input = document.createElement('input');
+    const input = document.createElement('input');
     input.type = 'file';
     input.onchange = e => {
       console.log(e);
-      var file = (e.target as HTMLInputElement).files[0];
-      var reader = new FileReader();
+      const file = (e.target as HTMLInputElement).files[0];
+      const reader = new FileReader();
       reader.readAsText(file,'UTF-8');
       reader.onload = (readerEvent) => onLoad(readerEvent.target.result)
     }
@@ -40,18 +40,18 @@ export default class NodeMapEngine {
 
   public LoadScene() { 
     const onLoad = (content) => {
-	    this.nodeScene.loadModel(content);
+        this.nodeScene.loadModel(content);
     }
     this.QueryAndLoadTextFile(onLoad)
   }
   
   public SaveScene() {
-    var str = this.nodeScene.serializeModel();
+    const str = this.nodeScene.serializeModel();
     this.Download('model.json', str);
   }
   
   public Download(filename, text) {  
-    var element = document.createElement('a');
+    const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
     element.style.display = 'none';
@@ -64,8 +64,8 @@ export default class NodeMapEngine {
     alert("Running the scene isn't supported just yet!");
   }
 
-  public getNodeById(id: string): any {
-    var returnNode = null
+  public getNodeById(id: string): any {  // eslint-disable-line @typescript-eslint/no-explicit-any
+    let returnNode = null
     this.engine.getModel().getNodes().forEach(item => {
       if (item.options.id === id)
         returnNode = item;
@@ -73,15 +73,15 @@ export default class NodeMapEngine {
     return returnNode
   }
 
-  public getNodePropertiesAsJSON(node: any): Record<string, any> {
+  public getNodePropertiesAsJSON(node: any): Record<string, any> {  // eslint-disable-line @typescript-eslint/no-explicit-any
     return JSON.parse(node.options.extra)
   }
   
-  public getNodePropertiesAsStr(node: any): string {
+  public getNodePropertiesAsStr(node: any): string {  // eslint-disable-line @typescript-eslint/no-explicit-any
     return node.options.extra
   }
   
-  public getProperty(node: any, prop: string): string {
+  public getProperty(node: any, prop: string): string {  // eslint-disable-line @typescript-eslint/no-explicit-any
     const json = this.getNodePropertiesAsJSON(node)
     return json[prop]
   }

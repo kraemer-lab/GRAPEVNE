@@ -8,7 +8,8 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "start": "./node_modules/.bin/webpack serve --open",
-    "build": "./node_modules/.bin/webpack"
+    "build": "./node_modules/.bin/webpack",
+	"lint": "./node_modules/.bin/eslint src/"
   },
   "homepage": "https://jsbrittain.github.io/scratch",
   "dependencies": {
@@ -39,7 +40,17 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint": "^8.36.0",
+    "eslint-plugin-react": "^7.32.2",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1"
+  },
+  "eslintConfig": {
+	  "extends": "react-app",
+	  "rules": {
+		  "@typescript-eslint/no-unused-vars": "off"
+	  }
   }
 }

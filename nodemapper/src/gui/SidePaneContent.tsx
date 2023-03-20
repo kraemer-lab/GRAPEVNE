@@ -12,9 +12,9 @@ function SidePaneContentComponent() {
   const dispatch = useAppDispatch();
 
   const updateCodeSnippet = () => {
-	// TODO: sort out payload
-	const payload = ""
-	dispatch(displayUpdateNodeInfo(payload))
+    // TODO: sort out payload
+    const payload = ""
+    dispatch(displayUpdateNodeInfo(payload))
   }
 
   const [title, setTitle] = useState("")
@@ -39,7 +39,7 @@ function SidePaneContentComponent() {
       id="codesnippet" {...{rows: 10}}
       style={{width: "100%"}}
       value={codesnippet}
-      onChange={()=>{}}
+      onChange={()=>{}}  // eslint-disable-line @typescript-eslint/no-empty-function
     />
     </p>
     <button
