@@ -1,14 +1,18 @@
 # Phyloflow
 
-Interactive environment for building and validating phylogenetic data workflows built around [Snakemake](https://snakemake.github.io/).
+Interactive environment for building and validating phylogenetic data processing workflows built around [Snakemake](https://snakemake.github.io/).
 
-Status: **concept / prototyping**
+Status:
 
-### Build status
+- **concept / prototyping**
 
-Nodemapper: [![ESLint](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml)
+Client-server architecture:
 
-Backend: [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml)
+- [nodemapper](nodemapper): Graphical front-end written in Typescript/React, uses Redux
+[![ESLint](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml)
+
+- [backend](backend): Flask server and workflow routines written in Python
+[![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml)
 
 ### Background
 
@@ -24,9 +28,3 @@ This work is an attempt to standardize the analyses of large viral genomic datas
 - Provide a graphical interface for workflow construction. Should be able to inform the user about compatible modules which can be connected together graphically. Export to workflow file which can be checked into version control.
 - Provide documentation on best practices in the field of phylogenetic analysis as well as subsequent geospatial analyses.
 - Allows the user to monitor the workflows, ideally with a graphical interface.
-
-### Architecture
-
-Client-server architecture:
-- [nodemapper](nodemapper): Graphical front-end written in Typescript/React, uses Redux
-- [backend](backend): Flask server and workflow routines written in Python
