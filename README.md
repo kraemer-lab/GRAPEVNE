@@ -4,6 +4,12 @@ Interactive environment for building and validating phylogenetic data workflows 
 
 Status: **concept / prototyping**
 
+### Build status
+
+Nodemapper: [![ESLint](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml)
+
+Backend: [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml)
+
 ### Background
 
 Phylogenetic analysis is a standard method in bioinformatics to track the origin and evolution of mutations in genome sequences. Within the context of an evolving epidemic or a pandemic, construction of phylogenetic trees is essential to understand the trajectory of an epidemic as well as their geographic spread. With such analyses virus movements can be tracked between different locations at different time points. Such work has been used to show the effectiveness, or lack thereof, of non-pharmaceutical interventions, in particular, the effect of travel restrictions on pandemic spread.
