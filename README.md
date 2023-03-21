@@ -8,10 +8,10 @@ Status:
 
 Client-server architecture:
 
-- [nodemapper](nodemapper): Graphical front-end written in Typescript/React, uses Redux
+- [nodemapper](nodemapper): Graphical front-end; Typescript/React/Redux
 [![ESLint](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml) [![Jest](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml)
 
-- [backend](backend): Flask server and workflow routines written in Python
+- [backend](backend): Flask server and workflow routines; Python
 [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml)
 
 ### Background

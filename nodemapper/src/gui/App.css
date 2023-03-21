@@ -1,11 +1,18 @@
 *{
-	margin: auto;
-	padding: 0;
+  margin: auto;
+  padding: 0;
 }
 
 html, body, #app, #app>div {
-	height: 100%;
-	overflow: hidden;
+  height: 100%;
+  overflow: hidden;
+}
+
+.header {
+  max-height: 35px;
+}
+
+.main {
 }
 
 /*@import "NodeManager.css"*/

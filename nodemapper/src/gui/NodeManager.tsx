@@ -71,6 +71,7 @@ function NodeManager() {
         // Rebuild map from returned (segmented) representation
         nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content['body']))
         dispatch(nodemapStoreMap(content['body']))
+        setupNodeSelectionListeners();
         break;
       }
       case 'build': {
@@ -90,7 +91,6 @@ function NodeManager() {
         console.error("Error interpreting server response (query: ",
                       content['query'], ")");
     }
-    setupNodeSelectionListeners();
   }
 
   // Received query request (POST to backend server)...

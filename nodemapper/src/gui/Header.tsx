@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import { useAppSelector } from '../redux/store/hooks'
 import { useAppDispatch } from '../redux/store/hooks'
-import { displayToggleGraphMoveable } from '../redux/actions'
+import { displayZoomToFit } from '../redux/actions'
 import { nodemapImportSnakefile } from '../redux/actions'
 import { nodemapBuildSnakefile } from '../redux/actions'
 import NodeMapEngine from './NodeMapEngine'
@@ -33,29 +33,22 @@ function Header() {
   const btnBuildSnakefile = () => {
     dispatch(nodemapBuildSnakefile())
   }
-
-  // Dispatch action to toggle graph moveability state...
-  const btnToggleLock = () => {
-    dispatch(displayToggleGraphMoveable())
+  
+  // Zoom to fit
+  const btnZoomToFit = () => {
+    dispatch(displayZoomToFit())
   }
-  // ... then react to state change (once it is made) by updating button text
-  useEffect(() => {
-    if (graph_is_moveable)
-      setTextEditGraph("EDIT GRAPH: ON")
-    else
-      setTextEditGraph("EDIT GRAPH: OFF")
-  }, [graph_is_moveable])
 
   // render
   return (
     <>
     <link href="http://fonts.googleapis.com/css?family=Oswald" rel="stylesheet" type="text/css"/>
-    <div style={{fontSize: 16, marginLeft: 0}}>PhyloFlow
+    <div style={{fontSize: 18, marginLeft: 0}}>PhyloFlow
       <button className="btn" onClick={btnLoadScene}>LOAD</button>
       <button className="btn" onClick={btnSaveScene}>SAVE</button>
       <button className="btn" onClick={btnImportSnakefile}>IMPORT SNAKEFILE</button>
       <button className="btn" onClick={btnBuildSnakefile}>BUILD SNAKEFILE</button>
-      <button className="btn" onClick={btnToggleLock}>{textEditGraph}</button>
+      <button className="btn" onClick={btnZoomToFit}>RESET VIEW</button>
     </div>
     </>
   )

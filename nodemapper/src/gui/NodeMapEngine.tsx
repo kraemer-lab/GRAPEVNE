@@ -89,4 +89,8 @@ export default class NodeMapEngine {
   public ConstructMapFromBlocks(data: JSON) {
     this.nodeScene.buildMapWithSnippets(data);
   }
+
+  public ZoomToFit() {
+    this.engine.zoomToFit();
+  }
 }

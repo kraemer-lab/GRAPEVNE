@@ -1,5 +1,28 @@
+from parser.parser import FindTokenSequence
 from parser.parser import Snakefile_SplitByRules
 from parser.parser import Snakefile_Build
+
+
+def test_FindTokenSequence():
+    # Find a specified sequence in a longer token sequence
+    tokens = [
+        (1, 'a'),
+        (2, 'b'),
+        (3, 'c'),
+        (4, 'a'),
+        (2, 'b'),
+        (3, 'a'),
+    ]
+    # Not in sequence
+    assert not FindTokenSequence([], [])
+    assert not FindTokenSequence(tokens, [])
+    assert not FindTokenSequence(tokens, [(2, 'b'), (2, 'b')])
+    assert not FindTokenSequence(tokens, [(3, 'c'), (2, 'b')])
+    assert not FindTokenSequence(tokens, [(2, 'b'), (2, 'b')])
+    # Return all matches sequence
+    assert FindTokenSequence(tokens, [(1, 'a')]) == [0]
+    assert FindTokenSequence(tokens, [(4, 'a'), (2, 'b')]) == [3]
+    assert FindTokenSequence(tokens, [(2, 'b')]) == [1, 4]
 
 
 def test_Snakefile_SplitByRules():

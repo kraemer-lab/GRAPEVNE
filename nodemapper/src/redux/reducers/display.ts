@@ -32,12 +32,6 @@ const displayReducer = createReducer(
         // TODO: Update codesnippet in node
         console.info("[Reducer] (display)UpdateCodeSnippet", state, action);
       })
-      .addCase(action.displayToggleGraphMoveable, (state, action) => {
-        console.log("Pre change: ", state.graph_is_moveable)
-        state.graph_is_moveable = !state.graph_is_moveable;
-        console.log("Post change: ", state.graph_is_moveable)
-        console.info("[Reducer] (display)ToggleGraphMoveable", state, action);
-      })
   }
 );
 
