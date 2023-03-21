@@ -1,36 +1,7 @@
-import tokenize
 import io
+import tokenize
 from typing import List, Dict, Tuple
-
-
-def FindTokenSequence(tokens, search_seq) -> List[int]:
-    '''Find token sequence in longer sequence and return indices'''
-    if not len(search_seq) or not len(tokens):
-        return []
-    searchpos = 0
-    foundlist = []
-    for ix, token in enumerate(tokens):
-        if token == search_seq[searchpos]:
-            searchpos += 1  # Increment search term
-        else:
-            searchpos = 0  # Reset search term
-        # Search term found
-        if searchpos == len(search_seq):
-            foundlist.append(ix - searchpos + 1)
-            searchpos = 0
-    return foundlist
-
-
-def GetSection(r, search_seq, ignore_tokens):
-    pos = FindTokenSequence(r, search_seq)
-    section = []
-    if len(pos) > 1:
-        # Too many input sections found (malformed Snakefile?)
-        pass
-    if len(pos) == 1:
-        # Start of input section found, now find end of section
-        pass
-    return section
+from parser.TokenizeFile import TokenizeFile
 
 
 def Snakefile_SplitByRules(content: str) -> dict:
@@ -63,12 +34,14 @@ def Snakefile_SplitByRules(content: str) -> dict:
             blocktype = 'config'
             name = "Configuration"
         # Find and parse input block
-        ignore_tokens: List[Tuple[int, str]] = []
+        ignore_tokens: List[Tuple] = []
         search_seq = [(1, "input"), (54, ":")]
-        input_sections = GetSection(r, search_seq, ignore_tokens)
+        tf = TokenizeFile(content)
+        tf.GetBlock(search_seq, ignore_tokens)
+        input_sections: List[Tuple] = []
         # Find and parse output block
         search_seq = [(1, "output"), (54, ":")]
-        output_sections = GetSection(r, search_seq, ignore_tokens)
+        output_sections: List[Tuple] = []
         # construct dictionary for block and add to list
         block = {
             'name': name,
