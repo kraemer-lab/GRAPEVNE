@@ -1,7 +1,7 @@
 import io
 import tokenize
 from typing import List, Dict, Tuple
-# ## from parser.TokenizeFile import TokenizeFile
+from parser.TokenizeFile import TokenizeFile
 
 
 def Snakefile_SplitByRules(content: str) -> dict:
@@ -34,14 +34,13 @@ def Snakefile_SplitByRules(content: str) -> dict:
             blocktype = 'config'
             name = "Configuration"
         # Find and parse input block
-        # ## ignore_tokens: List[Tuple] = []
-        # ## search_seq = [(1, "input"), (54, ":")]
-        # ### tf = TokenizeFile(content)
-        # ### tf.GetBlock(search_seq, ignore_tokens)
-        input_sections: List[Tuple] = []
+        ignore_tokens: List[Tuple] = []
+        search_seq = [(1, "input"), (54, ":")]
+        tf = TokenizeFile(content)
+        input_sections = tf.GetBlock(search_seq, ignore_tokens)
         # Find and parse output block
-        # ## search_seq = [(1, "output"), (54, ":")]
-        output_sections: List[Tuple] = []
+        search_seq = [(1, "output"), (54, ":")]
+        output_sections = tf.GetBlock(search_seq, ignore_tokens)
         # construct dictionary for block and add to list
         block = {
             'name': name,
