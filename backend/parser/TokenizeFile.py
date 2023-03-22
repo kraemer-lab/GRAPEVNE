@@ -63,7 +63,7 @@ class TokenizeFile():
         return None
 
     def GetContentBetweenTokens(this, pos_from, pos_to):
-        return tokenize.untokenize(this.tokens[pos_from:pos_to+1])
+        return tokenize.untokenize(this.tokens[pos_from:pos_to + 1])
 
     def GetContentBetweenLines(this, line_from, line_to):
         pos_from = this.GetIndexOfLine(line_from)
