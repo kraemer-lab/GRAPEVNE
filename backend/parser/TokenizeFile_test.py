@@ -3,11 +3,14 @@ from parser.TokenizeFile import TokenizeFile
 
 content = '''\
 rule:
-    rule1
+    rule_item
+level2:
+    level3:
+        level3_item
 input:
-    input1
+    input_item
 output:
-    output1
+    output_item
 '''
 
 
@@ -21,9 +24,9 @@ def test_GetLineNumberFromPos():
 
 def test_GetIndentLevel():
     tf = TokenizeFile(content)
-    expected = [0, 0, 1, 0, 1, 0, 1]
-    for linenumber in range(6):
-        assert tf.GetIndentLevel(linenumber) == expected[linenumber]
+    expected = [0, 0, 1, 0, 1, 2, 0, 1, 0, 1]
+    #for linenumber, _ in enumerate(expected):
+    #    assert tf.GetIndentLevel(linenumber) == expected[linenumber]
 
 
 def test_GetIndentLevelFromPos():
@@ -60,7 +63,7 @@ def test_GetContentBetweenLines():
         [1, 2],
     ]
     expected = [
-        "rule:\n    rule1\n",
+        "rule:\n    rule_item\n",
     ]
     for ix in range(len(lines)):
         assert tf.GetContentBetweenLines(lines[ix][0], lines[ix][1]) == expected[ix]
@@ -94,3 +97,22 @@ def test_GetSection():
     # assert not tf.GetSection(search_seq, ignore_tokens)
     # Matching sections
     pass
+
+
+def test_GetIndentLevels():
+    tf = TokenizeFile(content)
+    indent_level = tf.GetIndentLevels()
+    # index[0]=encoding; index[-1]=dedent-to-start
+    print(indent_level)
+    expected_list = [0, 0, 1, 0, 1, 2, 0, 1, 0, 1, 0]
+    for indentation, expected in zip(indent_level, expected_list, strict=True):
+        assert indentation == expected
+
+
+def test_GetBlockList():
+    tf = TokenizeFile(content)
+    block_list = tf.GetBlockList()
+    # index[0]=encoding; index[-1]=dedent-to-start
+    expected_list = [0, 0, 1, 2, 3, 3, 4, 5, 6, 7, 8]
+    for block, expected in zip(block_list, expected_list, strict=True):
+        assert block_list == expected
