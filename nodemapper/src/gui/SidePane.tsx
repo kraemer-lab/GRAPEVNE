@@ -13,7 +13,7 @@ function SidePane() {
   const nodeinfo = useAppSelector(state => state.display.nodeinfo);
   const [title, setTitle] = useState("Component")
   const [blocktype, setBlocktype] = useState("Type")
-  
+
   useEffect(() => {
     if (nodeinfo !== "") {
       const json = JSON.parse(nodeinfo)

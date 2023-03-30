@@ -1,7 +1,7 @@
 from parser.TokenizeFile import TokenizeFile
 
 
-content = '''\
+content = """\
 rule:
     rule_item
 level2:
@@ -11,14 +11,14 @@ input:
     input_item
 output:
     output_item
-'''
+"""
 
 
 def test_FindTokenSequence():
     tf = TokenizeFile(content)
-    search_seq = [(1, 'rule'), (54, ':')]
+    search_seq = [(1, "rule"), (54, ":")]
     assert tf.FindTokenSequence(search_seq) == [1]
-    search_seq = [(5, '    ')]  # only finds single indents
+    search_seq = [(5, "    ")]  # only finds single indents
     assert tf.FindTokenSequence(search_seq) == [4, 11, 23, 30]
 
 
@@ -61,8 +61,10 @@ def test_GetContentBetweenTokensIndices():
         "rule:",
     ]
     for ix in range(len(indices)):
-        assert tf.GetContentBetweenTokenIndices(
-            indices[ix][0], indices[ix][1]) == expected[ix]
+        assert (
+            tf.GetContentBetweenTokenIndices(indices[ix][0], indices[ix][1])
+            == expected[ix]
+        )
 
 
 def test_GetContentBetweenLines():
@@ -81,18 +83,17 @@ def test_GetContentOfIndentBlock():
     tf = TokenizeFile(content)
     linenumber = [4]
     indent = [1]
-    expected_list = ['    level3:\n        level3_item\n']
-    for line, indent, expected in zip(linenumber, indent,
-                                      expected_list, strict=True):
+    expected_list = ["    level3:\n        level3_item\n"]
+    for line, indent, expected in zip(linenumber, indent, expected_list, strict=True):
         assert tf.GetContentOfIndentBlock(line, indent) == expected
 
 
 def test_GetBlock():
     tf = TokenizeFile(content)
-    search_seq = [(1, 'level2'), (54, ':')]
+    search_seq = [(1, "level2"), (54, ":")]
     ignore_tokens = []
     block = tf.GetBlock(search_seq, ignore_tokens)
-    expected = '    level3:\n        level3_item\n'
+    expected = "    level3:\n        level3_item\n"
     assert block == expected
 
 

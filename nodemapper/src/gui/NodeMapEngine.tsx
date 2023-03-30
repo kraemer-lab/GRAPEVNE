@@ -8,22 +8,22 @@ export default class NodeMapEngine {
   private static _Instance: NodeMapEngine;
   nodeScene = null;
   engine = null;
-  
+
   constructor() {
     this.nodeScene = new NodeMapScene();
     this.engine = this.nodeScene.engine;
   }
-  
+
   public static get Instance(): NodeMapEngine {
     return NodeMapEngine._Instance || (this._Instance = new this());
-  } 
+  }
 
   public NodesSelectNone() {
     this.engine.getModel().getNodes().forEach(item => {
       item.setSelected(false);
     });
   }
-  
+
   public QueryAndLoadTextFile(onLoad: Function) {  // eslint-disable-line @typescript-eslint/ban-types
     // Opens a file dialog, then executes readerEvent
     const input = document.createElement('input');
@@ -38,19 +38,19 @@ export default class NodeMapEngine {
     input.click();
   }
 
-  public LoadScene() { 
+  public LoadScene() {
     const onLoad = (content) => {
         this.nodeScene.loadModel(content);
     }
     this.QueryAndLoadTextFile(onLoad)
   }
-  
+
   public SaveScene() {
     const str = this.nodeScene.serializeModel();
     this.Download('model.json', str);
   }
-  
-  public Download(filename, text) {  
+
+  public Download(filename, text) {
     const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     element.setAttribute('download', filename);
@@ -76,16 +76,16 @@ export default class NodeMapEngine {
   public getNodePropertiesAsJSON(node: any): Record<string, any> {  // eslint-disable-line @typescript-eslint/no-explicit-any
     return JSON.parse(node.options.extra)
   }
-  
+
   public getNodePropertiesAsStr(node: any): string {  // eslint-disable-line @typescript-eslint/no-explicit-any
     return node.options.extra
   }
-  
+
   public getProperty(node: any, prop: string): string {  // eslint-disable-line @typescript-eslint/no-explicit-any
     const json = this.getNodePropertiesAsJSON(node)
     return json[prop]
   }
-  
+
   public ConstructMapFromBlocks(data: JSON) {
     this.nodeScene.buildMapWithSnippets(data);
   }

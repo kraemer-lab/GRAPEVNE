@@ -1,10 +1,10 @@
 import { nodemapSelectNone } from '../actions'
-import NodeMapEngine from '../../gui/NodeMapEngine' 
+import NodeMapEngine from '../../gui/NodeMapEngine'
 
 export function displayMiddleware({ getState, dispatch }) {
   return function(next) {
     return function(action) {
-      
+
       console.debug(action);
       switch (action.type) {
           case "display/close-settings": {
@@ -19,9 +19,8 @@ export function displayMiddleware({ getState, dispatch }) {
           default:
             break;
       }
-      
+
       return next(action)
     }
   }
 }
-

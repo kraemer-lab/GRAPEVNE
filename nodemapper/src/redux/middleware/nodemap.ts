@@ -2,7 +2,7 @@ import { nodemapSubmitQuery } from '../actions'
 import { displayOpenSettings } from '../actions'
 import { displayCloseSettings } from '../actions'
 import { displayUpdateNodeInfo } from '../actions'
-import NodeMapEngine from '../../gui/NodeMapEngine' 
+import NodeMapEngine from '../../gui/NodeMapEngine'
 
 export function nodemapMiddleware({ getState, dispatch }) {
   return function(next) {
@@ -82,7 +82,7 @@ export function nodemapMiddleware({ getState, dispatch }) {
           default:
             break;
       }
-      
+
       return next(action)
     }
   }

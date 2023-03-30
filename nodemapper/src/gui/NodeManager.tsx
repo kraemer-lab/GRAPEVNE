@@ -18,7 +18,7 @@ function NodeManager() {
   // Link to singleton instance of nodemap graph engine
   const nodeMapEngine = NodeMapEngine.Instance;
   const engine = nodeMapEngine.engine;
-  
+
   // Add listeners, noting the following useful resource:
   // https://github.com/projectstorm/react-diagrams/issues/164
   const dispatch = useAppDispatch();
@@ -38,7 +38,7 @@ function NodeManager() {
     );
   }
   setupNodeSelectionListeners();
-  
+
   // POST request handler [refactor out of this function later]
   const query = useAppSelector(state => state.nodemap.query);
   const [responseData, setResponseData] = React.useState(null)
@@ -58,7 +58,7 @@ function NodeManager() {
       })
       .then(data => {
         setResponseData(data);
-        console.info("Got response: ", data); 
+        console.info("Got response: ", data);
       })
       .catch(error => {
         console.error("Error during query: ", error);

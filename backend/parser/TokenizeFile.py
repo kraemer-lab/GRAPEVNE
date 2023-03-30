@@ -3,8 +3,7 @@ import tokenize
 from typing import List, Tuple
 
 
-class TokenizeFile():
-
+class TokenizeFile:
     def __init__(self, content: str):
         self.content: str = ""
         self.tokens: List[Tuple] = []
@@ -12,13 +11,13 @@ class TokenizeFile():
         self.blocks: List[int] = []
 
         self.content = content
-        file = io.BytesIO(bytes(content, 'utf-8'))
+        file = io.BytesIO(bytes(content, "utf-8"))
         self.tokens = list(tokenize.tokenize(file.readline))
         self.CalcIndentLevels()
         self.CalcBlocks()
 
     def PrintTokens(self, log_fn=print, filter_token=None):
-        '''Pretty print tokens, with optional filter (token number or string)'''
+        """Pretty print tokens, with optional filter (token number or string)"""
         for ix, token in enumerate(self.tokens):
             toknum, tokval, start, end, line = token
             match = False
@@ -32,14 +31,16 @@ class TokenizeFile():
                 log_fn(ix, token)
 
     def FindTokenSequence(self, search_seq) -> List[int]:
-        '''Find token sequence in longer sequence and return indices'''
+        """Find token sequence in longer sequence and return indices"""
         if not len(search_seq) or not len(self.tokens):
             return []
         searchpos = 0
         foundlist = []
         for ix, token in enumerate(self.tokens):
             toknum, tokval, _, _, _ = token
-            searchpos = searchpos + 1 if (toknum, tokval) == search_seq[searchpos] else 0
+            searchpos = (
+                searchpos + 1 if (toknum, tokval) == search_seq[searchpos] else 0
+            )
             # Search term found
             if searchpos == len(search_seq):
                 foundlist.append(ix - searchpos + 1)
@@ -56,7 +57,7 @@ class TokenizeFile():
 
     def GetIndentLevelFromTokenIndex(self, pos):
         indent = 0
-        for token in self.tokens[:pos - 1]:
+        for token in self.tokens[: pos - 1]:
             toknum, _, _, _, _ = token
             if toknum == 5:  # 5 = indent
                 indent += 1
@@ -76,18 +77,21 @@ class TokenizeFile():
         tokens = []
         startrow = self.tokens[pos_from][2][0] - 1
         endrow = self.tokens[pos_from][3][0] - 1
-        for token in self.tokens[pos_from:pos_to + 1]:
+        for token in self.tokens[pos_from : pos_to + 1]:
             toknum, tokval, start, end, line = token
-            tokens.append(tokenize.TokenInfo(
-                toknum,
-                tokval,
-                (start[0] - startrow, start[1]),
-                (end[0] - endrow, end[1]),
-                line))
+            tokens.append(
+                tokenize.TokenInfo(
+                    toknum,
+                    tokval,
+                    (start[0] - startrow, start[1]),
+                    (end[0] - endrow, end[1]),
+                    line,
+                )
+            )
         return tokenize.untokenize(tokens)
 
     def GetContentBetweenLines(self, line_from, line_to):
-        content = ''
+        content = ""
         for line in range(line_from, line_to + 1):
             token = self.tokens[self.GetFirstTokenIndexOfLine(line)]
             toknum, tokval, start, end, line = token
@@ -110,7 +114,7 @@ class TokenizeFile():
         return self.GetContentOfIndentBlock(linenumber, indentlevel)
 
     def CalcIndentLevels(self):
-        '''Return indentation levels for each line in the file'''
+        """Return indentation levels for each line in the file"""
         lastlinenumber = self.tokens[-1][2][0]
         indent_list = [None] * (lastlinenumber + 1)
         indent = 0
@@ -132,16 +136,17 @@ class TokenizeFile():
         self.blocks = self.GetMembershipFromList(self.indent_levels)
 
     def GetBlockList(self, level=1):
-        '''Return block membership by number, separated at the specified level'''
+        """Return block membership by number, separated at the specified level"""
         if level:
-            blocks = [block if block <= level else level for block in
-                      self.indent_levels]
+            blocks = [
+                block if block <= level else level for block in self.indent_levels
+            ]
         else:
             blocks = self.blocks
         return self.GetMembershipFromList(blocks)
 
     def GetMembershipFromList(self, blocks):
-        '''Return membership indices indicating which block each line belongs to'''
+        """Return membership indices indicating which block each line belongs to"""
         index = 0
         lastblock = 0
         block_membership = [None] * len(blocks)

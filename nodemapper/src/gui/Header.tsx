@@ -18,22 +18,22 @@ function Header() {
   const btnLoadScene = () => {
     NodeMapEngine.Instance.LoadScene()
   }
-  
+
   // Save Scene
   const btnSaveScene = () => {
     NodeMapEngine.Instance.SaveScene()
   }
-  
+
   // Import Snakefile
   const btnImportSnakefile = () => {
     dispatch(nodemapImportSnakefile())
   }
-  
+
   // Build Snakefile
   const btnBuildSnakefile = () => {
     dispatch(nodemapBuildSnakefile())
   }
-  
+
   // Zoom to fit
   const btnZoomToFit = () => {
     dispatch(displayZoomToFit())

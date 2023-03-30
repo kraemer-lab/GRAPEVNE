@@ -20,7 +20,7 @@ function SidePaneContentComponent() {
   const [title, setTitle] = useState("")
   const [name, setName] = useState("")
   const [codesnippet, setCodesnippet] = useState("")
-  
+
   useEffect(() => {
     if (nodeinfo !== "") {
       const json = JSON.parse(nodeinfo)
