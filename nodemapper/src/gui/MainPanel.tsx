@@ -1,5 +1,5 @@
 import React from 'react'
-import NodeManager from './NodeManager'
+import MainBody from './MainBody'
 import SidePane from './SidePane'
 
 import "./MainPanel.css"
@@ -12,7 +12,7 @@ function MainPanel() {
     </div>
 
     <div className="split right">
-      <NodeManager />
+      <MainBody />
     </div>
     </>
   )

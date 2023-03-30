@@ -28,13 +28,17 @@ def post():
                 }
             case "lint":
                 data = {
-                    "query": request.json["lint"],
-                    "body": events.Lint(request.json["data"]),
+                    "query": request.json["query"],
+                    "body": json.dumps(events.Lint(request.json["data"])),
                 }
             case _:
                 return Response(
                     f"Query not supported: {request.json['query']}", status=400
                 )
+    except ValueError as err:
+        # can be raised by events module (provided with invalid file format)
+        app.logger.error(err)
+        return Response(err, status=400)
     except TypeError as err:
         app.logger.error(err)
         return Response("Server error", status=500)

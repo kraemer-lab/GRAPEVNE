@@ -7,5 +7,7 @@ export const nodemapNodeDeselected = createAction("nodemap/node-deselected");
 export const nodemapSelectNone = createAction("nodemap/select-none");
 export const nodemapImportSnakefile = createAction("nodemap/import-snakefile")
 export const nodemapBuildSnakefile = createAction("nodemap/build-snakefile")
+export const nodemapLintSnakefile = createAction("nodemap/lint-snakefile")
 export const nodemapSubmitQuery = createAction<Record<string, any>>("nodemap/submit-query")  // eslint-disable-line @typescript-eslint/no-explicit-any
+export const nodemapStoreLint = createAction("nodemap/store-lint")
 export const nodemapStoreMap = createAction("nodemap/store-map")

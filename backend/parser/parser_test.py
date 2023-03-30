@@ -23,8 +23,11 @@ def test_Snakefile_Lint():
         contents = file.read()
     lint_return = Snakefile_Lint(contents)
     with open("parser/Snakefile_lint", "r") as file:
-        expected = file.read()[:-1]  # discard newline at end of file
-    assert json.dumps(lint_return) == expected
+        expected = json.load(file)
+    # Linters will differ by their Snakefile filenames:
+    for rule in lint_return["rules"]:
+        rule["for"]["snakefile"] = "parser/Snakefile"
+    assert lint_return == expected
 
 
 def test_Snakefile_SplitByRules():

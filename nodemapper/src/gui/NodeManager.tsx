@@ -3,6 +3,8 @@ import NodeMapEngine from './NodeMapEngine'
 import { BodyWidget } from './BodyWidget'
 import { nodemapNodeSelected } from '../redux/actions'
 import { nodemapNodeDeselected } from '../redux/actions'
+import { nodemapLintSnakefile } from '../redux/actions'
+import { nodemapStoreLint } from '../redux/actions'
 import { nodemapStoreMap } from '../redux/actions'
 import { useAppSelector } from '../redux/store/hooks'
 import { useAppDispatch } from '../redux/store/hooks'
@@ -67,13 +69,6 @@ function NodeManager() {
   function processResponse(content: JSON) {
     console.log("Process response: ", content)
     switch (content['query']) {
-      case 'tokenize': {
-        // Rebuild map from returned (segmented) representation
-        nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content['body']))
-        dispatch(nodemapStoreMap(content['body']))
-        setupNodeSelectionListeners();
-        break;
-      }
       case 'build': {
         // Download returned content as file
         const filename = 'Snakefile'
@@ -85,6 +80,20 @@ function NodeManager() {
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
+        break;
+      }
+      case 'lint': {
+        // Update the held linter message
+        dispatch(nodemapStoreLint(content['body']))
+        break;
+      }
+      case 'tokenize': {
+        // Rebuild map from returned (segmented) representation
+        nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content['body']))
+        dispatch(nodemapStoreMap(content['body']))
+        setupNodeSelectionListeners();
+        // Submit query to automatically lint file
+        dispatch(nodemapLintSnakefile())
         break;
       }
       default:

@@ -1,7 +1,8 @@
-import { nodemapSubmitQuery } from '../actions'
-import { displayOpenSettings } from '../actions'
 import { displayCloseSettings } from '../actions'
+import { displayOpenSettings } from '../actions'
 import { displayUpdateNodeInfo } from '../actions'
+import { nodemapSubmitQuery } from '../actions'
+
 import NodeMapEngine from '../../gui/NodeMapEngine'
 
 export function nodemapMiddleware({ getState, dispatch }) {
@@ -70,6 +71,18 @@ export function nodemapMiddleware({ getState, dispatch }) {
           case "nodemap/build-snakefile": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
                   'query': 'build',
+                  'data': {
+                      'format': 'Snakefile',
+                      'content': getState().nodemap.serialize
+                  }
+              }
+              dispatch(nodemapSubmitQuery(query))
+              break;
+          }
+
+          case "nodemap/lint-snakefile": {
+              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+                  'query': 'lint',
                   'data': {
                       'format': 'Snakefile',
                       'content': getState().nodemap.serialize

@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { useAppSelector } from '../redux/store/hooks'
 import { useAppDispatch } from '../redux/store/hooks'
 import { displayUpdateNodeInfo } from '../redux/actions/display'
-import { useSelector } from 'react-redux'
 
 import "./SidePaneContent.css"
 

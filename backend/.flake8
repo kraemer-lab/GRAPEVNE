@@ -4,6 +4,8 @@ ignore =
 	E501
 	# binary operator after break
 	W503
+    # whitespace before ':' (for black compatibility)
+    E203
 exclude =
 	venv
 	.venv

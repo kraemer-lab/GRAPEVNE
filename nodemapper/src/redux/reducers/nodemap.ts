@@ -4,7 +4,8 @@ import * as action from "../actions"
 // State
 const nodemapStateInit = {
   serialize: '',
-  query: {}  // temp location
+  linter: '',
+  query: {},  // temp location
 };
 
 // Nodemap
@@ -37,6 +38,13 @@ const nodemapReducer = createReducer(
       })
       .addCase(action.nodemapBuildSnakefile, (state, action) => {
         console.info("[Reducer] (nodemap)BuildSnakefile");
+      })
+      .addCase(action.nodemapLintSnakefile, (state, action) => {
+        console.info("[Reducer] (nodemap)LintSnakefile");
+      })
+      .addCase(action.nodemapStoreLint, (state, action) => {
+        state.linter = action.payload
+        console.info("[Reducer] (nodemap)StoreLint");
       })
       .addCase(action.nodemapStoreMap, (state, action) => {
         state.serialize = action.payload

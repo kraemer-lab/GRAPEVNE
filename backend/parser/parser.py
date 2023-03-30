@@ -6,6 +6,7 @@ import tokenize
 from contextlib import redirect_stdout
 from typing import List, Dict, Tuple
 from snakemake import snakemake
+from snakemake.exceptions import RuleException
 from parser.TokenizeFile import TokenizeFile
 
 
@@ -17,21 +18,23 @@ def Snakefile_Build(data: dict) -> str:
     return contents
 
 
-def Snakefile_Lint(content: str) -> dict:
+def Snakefile_Lint(content: str, tempdir: str = "/tmp") -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
     snakefile_file = tempfile.NamedTemporaryFile(
-        mode="w", encoding="utf-8", delete=False
+        dir=tempdir, mode="w", encoding="utf-8", delete=False
     )
     snakefile: str = snakefile_file.name
     snakefile_file.write(content)
+    snakefile_file.seek(0)
     snakefile_file.close
     # Lint using snakemake library (returns on stdout with extra elements)
     f = io.StringIO()
     with redirect_stdout(f):
-        success: bool = snakemake(snakefile, lint="json")
+        try:
+            snakemake(snakefile, lint="json")
+        except RuleException as e:
+            return {"error": str(e)}
     os.remove(snakefile)
-    if not success:
-        return {}
     # strip first and last lines as needed (snakemake returns)
     sl = f.getvalue().split("\n")
     if sl[0] in {"True", "False"}:

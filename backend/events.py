@@ -1,36 +1,33 @@
-from flask import Response
 from parser.parser import Snakefile_Build
 from parser.parser import Snakefile_Lint
 from parser.parser import Snakefile_SplitByRules
 import json
 
 
-def Tokenize(data):
+def Tokenize(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
-            tokenized_data = Snakefile_SplitByRules(data["content"])
+            tokenized_data: dict = Snakefile_SplitByRules(data["content"])
         case _:
-            return Response(
-                f"Tokenize format not supported: {data['format']}", status=400
-            )
+            return {}
+            raise ValueError("Format not supported: {data['format']}")
     return tokenized_data
 
 
-def Build(data):
+def Build(data: dict) -> str:
     match data["format"]:
         case "Snakefile":
-            build_data = Snakefile_Build(json.loads(data["content"]))
+            build_data: str = Snakefile_Build(json.loads(data["content"]))
         case _:
-            return Response(f"Build format not supported: {data['format']}", status=400)
+            raise ValueError("Format not supported: {data['format']}")
     return build_data
 
 
-def Lint(data):
+def Lint(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
-            lint_response = Snakefile_Lint(data["content"])
+            build_data: str = Snakefile_Build(json.loads(data["content"]))
+            lint_response: dict = Snakefile_Lint(build_data)
         case _:
-            return Response(
-                f"Linting format not supported: {data['format']}", status=400
-            )
+            raise ValueError("Format not supported: {data['format']}")
     return lint_response
