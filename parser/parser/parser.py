@@ -1,8 +1,8 @@
 import json
 
-from parser.snakemake.snakefile import Build as Snakefile_Build
-from parser.snakemake.snakefile import Lint as Snakefile_Lint
-from parser.snakemake.snakefile import SplitByRules as Snakefile_SplitByRules
+from .snakemake.snakefile import Build as Snakefile_Build
+from .snakemake.snakefile import Lint as Snakefile_Lint
+from .snakemake.snakefile import SplitByRules as Snakefile_SplitByRules
 
 
 def Build(data: dict) -> str:

@@ -1,19 +1,19 @@
-name: Pytest
+name: Pytest-parser
 
 on:
   push:
     branches: [main]
     paths:
     - '.github/workflows/pytest.yml'
-    - 'backend/**'
-    - '!backend/README.md'
+    - 'parser/**'
+    - '!parser/README.md'
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend
+        working-directory: parser
     strategy:
       matrix:
         python-version: ["3.10", "3.11"]

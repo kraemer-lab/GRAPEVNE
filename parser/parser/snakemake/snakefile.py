@@ -8,9 +8,10 @@ from typing import Dict
 from typing import List
 from typing import Tuple
 
-from parser.TokenizeFile import TokenizeFile
 from snakemake import snakemake
 from snakemake.exceptions import RuleException
+
+from parser.TokenizeFile import TokenizeFile
 
 
 # ##############################################################################
@@ -48,7 +49,8 @@ def SplitByRules(content: str) -> dict:
         result[chunk].append((toknum, tokval))
 
     # Query snakemake for DAG of graph (used for connections)
-    dag = DAG(content)
+    # dag = DAG(content)
+    dag = {"nodes": [], "links": []}
     dag_to_block: List[int] = []
 
     # Build JSON representation (consisting of a list of rules text)

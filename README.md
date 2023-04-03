@@ -11,8 +11,11 @@ Client-server architecture:
 - [nodemapper](nodemapper): Graphical front-end; Typescript/React/Redux
 [![ESLint](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml) [![Jest](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml)
 
-- [backend](backend): Flask server and workflow routines; Python
-[![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest.yml)
+- [parser](parser): Workflow iterface library; Python
+[![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-parser.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-parser.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-parser.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-parser.yml)
+
+- [backend](backend): Flask server; Python
+[![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-backend.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-backend.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-backend.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-backend.yml)
 
 ### Background
 

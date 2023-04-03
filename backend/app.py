@@ -1,11 +1,12 @@
 import json
 
-import events
 from flask import Flask
 from flask import request
 from flask import Response
 from flask_cors import CORS
 from flask_cors import cross_origin
+
+import parser
 
 app = Flask(__name__)
 CORS(app)
@@ -20,24 +21,24 @@ def post():
             case "build":
                 data = {
                     "query": request.json["query"],
-                    "body": events.Build(request.json["data"]),
+                    "body": parser.Build(request.json["data"]),
                 }
             case "lint":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(events.Lint(request.json["data"])),
+                    "body": json.dumps(parser.Lint(request.json["data"])),
                 }
             case "tokenize":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(events.Tokenize(request.json["data"])),
+                    "body": json.dumps(parser.Tokenize(request.json["data"])),
                 }
             case _:
                 return Response(
                     f"Query not supported: {request.json['query']}", status=400
                 )
     except ValueError as err:
-        # can be raised by events module (provided with invalid file format)
+        # can be raised by parser module (provided with invalid file format)
         app.logger.error(err)
         return Response(err, status=400)
     except TypeError as err:
