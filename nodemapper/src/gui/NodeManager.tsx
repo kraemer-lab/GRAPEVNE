@@ -29,11 +29,14 @@ function NodeManager() {
     model.getNodes().forEach(node =>
       node.registerListener({
         selectionChanged: (e) => {
+          const payload = {
+            id: node.options.id,
+          }
           if (e.isSelected) {
-            const payload = {
-              id: node.options.id,
-            }
             dispatch(nodemapNodeSelected(payload))
+          }
+          else {
+            dispatch(nodemapNodeDeselected(payload))
           }
         }
       })

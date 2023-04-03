@@ -16,11 +16,6 @@ def post():
     try:
         app.logger.debug(f"POST request: {request.json}")
         match request.json["query"]:
-            case "tokenize":
-                data = {
-                    "query": request.json["query"],
-                    "body": json.dumps(events.Tokenize(request.json["data"])),
-                }
             case "build":
                 data = {
                     "query": request.json["query"],
@@ -30,6 +25,11 @@ def post():
                 data = {
                     "query": request.json["query"],
                     "body": json.dumps(events.Lint(request.json["data"])),
+                }
+            case "tokenize":
+                data = {
+                    "query": request.json["query"],
+                    "body": json.dumps(events.Tokenize(request.json["data"])),
                 }
             case _:
                 return Response(

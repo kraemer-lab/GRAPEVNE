@@ -43,6 +43,7 @@ export function nodemapMiddleware({ getState, dispatch }) {
           }
 
           case "nodemap/node-deselected": {
+            dispatch(displayUpdateNodeInfo(""));
             dispatch(displayCloseSettings());
             break;
           }
@@ -63,7 +64,8 @@ export function nodemapMiddleware({ getState, dispatch }) {
                           'content': content
                       }
                   }
-                  dispatch(nodemapSubmitQuery(query))
+                  dispatch(nodemapSubmitQuery(query));
+                  dispatch(displayUpdateNodeInfo(""));
               });
               break;
           }

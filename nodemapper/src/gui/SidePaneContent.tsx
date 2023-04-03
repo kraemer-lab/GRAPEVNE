@@ -16,24 +16,20 @@ function SidePaneContentComponent() {
     dispatch(displayUpdateNodeInfo(payload))
   }
 
-  const [title, setTitle] = useState("")
-  const [name, setName] = useState("")
   const [codesnippet, setCodesnippet] = useState("")
 
   useEffect(() => {
-    if (nodeinfo !== "") {
+    if (nodeinfo === "") {
+      setCodesnippet("")
+    } else {
       const json = JSON.parse(nodeinfo)
-      setTitle(json.name)
-      setName(json.name)
       setCodesnippet(json.code)
     }
   }, [nodeinfo])
 
   return (
     <div>
-    <p>Description, configuration, environment, etc.</p>
-    <br/>
-    <p>Code snippet<br/>
+    <p>Content<br/>
     <textarea
       id="codesnippet" {...{rows: 25}}
       style={{width: "100%"}}

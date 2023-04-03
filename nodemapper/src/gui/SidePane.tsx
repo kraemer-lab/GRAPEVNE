@@ -11,11 +11,14 @@ import './SidePane.css'
 function SidePane() {
   const showpane = useAppSelector(state => state.display.show_settings_panel);
   const nodeinfo = useAppSelector(state => state.display.nodeinfo);
-  const [title, setTitle] = useState("Component")
-  const [blocktype, setBlocktype] = useState("Type")
+  const [title, setTitle] = useState("Info pane")
+  const [blocktype, setBlocktype] = useState("")
 
   useEffect(() => {
-    if (nodeinfo !== "") {
+    if (nodeinfo === "") {
+      setTitle("Info pane")
+      setBlocktype("")
+    } else {
       const json = JSON.parse(nodeinfo)
       setTitle(json.name)
       setBlocktype(json.type)
