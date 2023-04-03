@@ -20,3 +20,7 @@ repos:
         # W503 = line break before binary operator
         # E203 = whitespace before ':' (conflicts with black)
         args: ["--ignore=E501,W503,E203"]
+-   repo: https://github.com/asottile/reorder_python_imports
+    rev: v3.9.0
+    hooks:
+    -   id: reorder-python-imports

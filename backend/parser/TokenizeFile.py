@@ -1,6 +1,7 @@
 import io
 import tokenize
-from typing import List, Tuple
+from typing import List
+from typing import Tuple
 
 
 class TokenizeFile:

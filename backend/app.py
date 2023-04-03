@@ -1,10 +1,11 @@
+import json
+
+import events
 from flask import Flask
 from flask import request
 from flask import Response
 from flask_cors import CORS
 from flask_cors import cross_origin
-import json
-import events
 
 app = Flask(__name__)
 CORS(app)

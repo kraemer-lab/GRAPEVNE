@@ -4,10 +4,13 @@ import os
 import tempfile
 import tokenize
 from contextlib import redirect_stdout
-from typing import List, Dict, Tuple
+from typing import Dict
+from typing import List
+from typing import Tuple
+
+from parser.TokenizeFile import TokenizeFile
 from snakemake import snakemake
 from snakemake.exceptions import RuleException
-from parser.TokenizeFile import TokenizeFile
 
 
 # ##############################################################################
