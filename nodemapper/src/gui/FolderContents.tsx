@@ -36,7 +36,7 @@ function FolderContents() {
     }
   }
   const listitems = items.map(item =>
-    <li><button
+    <li key={item.name}><button
         className="button"
         onClick={() => selectFile(item)}
       >{item.name}</button>

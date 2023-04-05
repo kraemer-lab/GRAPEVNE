@@ -6,10 +6,6 @@ import store from './redux/store'
 
 import App from "./gui/App"
 
-test('adds 1 + 2 to equal 3', () => {
-  expect(1 + 2).toBe(3);
-});
-
 test('code quality', () => {
   render(
     <Provider store={store}>

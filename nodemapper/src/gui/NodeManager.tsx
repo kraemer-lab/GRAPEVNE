@@ -1,4 +1,5 @@
 import React from 'react'
+import 'isomorphic-fetch'
 import NodeMapEngine from './NodeMapEngine'
 import { BodyWidget } from './BodyWidget'
 import { nodemapNodeSelected } from '../redux/actions'

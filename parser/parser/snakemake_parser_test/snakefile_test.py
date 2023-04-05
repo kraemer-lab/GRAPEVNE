@@ -2,7 +2,7 @@ import json
 from unittest import mock
 
 from parser.snakemake_parser.snakefile import Build
-from parser.snakemake_parser.snakefile import Lint
+from parser.snakemake_parser.snakefile import LintContents
 from parser.snakemake_parser.snakefile import SplitByRulesFileContent
 
 
@@ -23,7 +23,7 @@ def test_Snakefile_Lint():
     # Load test case
     with open("parser/snakemake_parser_test/Snakefile", "r") as file:
         contents = file.read()
-    lint_return = Lint(contents)
+    lint_return = LintContents(contents)
     with open("parser/snakemake_parser_test/Snakefile_lint", "r") as file:
         expected = json.load(file)
     # Linters will differ by their Snakefile filenames:

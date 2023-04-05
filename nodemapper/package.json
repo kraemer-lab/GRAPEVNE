@@ -34,6 +34,7 @@
     "css-loader": "^6.7.3",
     "gh-pages": "^5.0.0",
     "html-webpack-plugin": "^5.5.0",
+    "isomorphic-fetch": "^3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
