@@ -81,19 +81,23 @@ class NodeScene {
     const model = new DiagramModel();
     this.engine.setModel(model);
     const pos = [50, 50]
+    const nodelist = []
     data['block'].forEach((block) => {
       let colstr = 'rgb(0,192,255)'
       if (block['type'] == 'config') {
         colstr = 'rgb(192,0,255)'
       }
       const node = this.addNode(block['name'], colstr, pos, block);
-      console.log(node)
+      nodelist.push(node)
       pos[0] += 150
       // add ports
       if (block['type'] == 'rule') {
         node.addInPort('in-1')
         node.addOutPort('out-1')
       }
+    });
+    data['links']['content'].forEach((link) => {
+      this.addLink(nodelist[link[0]].getPort('out-1'), nodelist[link[1]].getPort('in-1'))
     });
   }
 }

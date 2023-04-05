@@ -58,6 +58,6 @@ windows:
       panes:
         - ./run.sh
   - nodemapper-src:
-      root: ~/repos/jsbrittain/phyloflow/nodemapper/src/
+      root: ~/repos/jsbrittain/phyloflow/nodemapper/src/gui/
       panes:
         - vim .

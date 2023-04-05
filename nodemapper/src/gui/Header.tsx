@@ -5,6 +5,7 @@ import { useAppSelector } from '../redux/store/hooks'
 import { useAppDispatch } from '../redux/store/hooks'
 import { displayZoomToFit } from '../redux/actions'
 import { nodemapImportSnakefile } from '../redux/actions'
+import { nodemapLoadSnakefile } from '../redux/actions'
 import { nodemapBuildSnakefile } from '../redux/actions'
 import NodeMapEngine from './NodeMapEngine'
 import "./Header.css"
@@ -24,8 +25,8 @@ function Header() {
     NodeMapEngine.Instance.SaveScene()
   }
 
-  // Import Snakefile
-  const btnImportSnakefile = () => {
+  // Check (import) Snakefile
+  const btnCheckSnakefile = () => {
     dispatch(nodemapImportSnakefile())
   }
 
@@ -46,7 +47,7 @@ function Header() {
     <div style={{fontSize: 18, marginLeft: 0}}>PhyloFlow
       <button className="btn" onClick={btnLoadScene}>LOAD</button>
       <button className="btn" onClick={btnSaveScene}>SAVE</button>
-      <button className="btn" onClick={btnImportSnakefile}>IMPORT SNAKEFILE</button>
+      <button className="btn" onClick={btnCheckSnakefile}>CHECK SNAKEFILE</button>
       <button className="btn" onClick={btnBuildSnakefile}>BUILD SNAKEFILE</button>
       <button className="btn" onClick={btnZoomToFit}>RESET VIEW</button>
     </div>

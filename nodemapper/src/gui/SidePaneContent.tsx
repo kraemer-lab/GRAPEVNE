@@ -31,18 +31,18 @@ function SidePaneContentComponent() {
     <div>
     <p>Content<br/>
     <textarea
-      id="codesnippet" {...{rows: 25}}
+      id="codesnippet" {...{rows: 15}}
       style={{width: "100%"}}
       value={codesnippet}
       onChange={()=>{}}  // eslint-disable-line @typescript-eslint/no-empty-function
     />
     </p>
-    <button
+    {/*<button
       className="btn"
       style={{padding: "10px", float: "right"}}
       onClick={updateCodeSnippet}
       disabled={true}
-    >SAVE</button>
+    >SAVE</button>*/}
     </div>
   );
 }

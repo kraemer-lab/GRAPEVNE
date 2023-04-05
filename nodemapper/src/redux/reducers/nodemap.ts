@@ -36,6 +36,9 @@ const nodemapReducer = createReducer(
       .addCase(action.nodemapImportSnakefile, (state, action) => {
         console.info("[Reducer] (nodemap)ImportSnakefile");
       })
+      .addCase(action.nodemapLoadSnakefile, (state, action) => {
+        console.info("[Reducer] (nodemap)LoadSnakefile");
+      })
       .addCase(action.nodemapBuildSnakefile, (state, action) => {
         console.info("[Reducer] (nodemap)BuildSnakefile");
       })

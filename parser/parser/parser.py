@@ -1,14 +1,12 @@
 import json
 
-from .snakemake.snakefile import Build as Snakefile_Build
-from .snakemake.snakefile import Lint as Snakefile_Lint
-from .snakemake.snakefile import SplitByRules as Snakefile_SplitByRules
+from .snakemake_parser import snakefile
 
 
 def Build(data: dict) -> str:
     match data["format"]:
         case "Snakefile":
-            build_data: str = Snakefile_Build(json.loads(data["content"]))
+            build_data: str = snakefile.Build(json.loads(data["content"]))
         case _:
             raise ValueError("Format not supported: {data['format']}")
     return build_data
@@ -17,8 +15,7 @@ def Build(data: dict) -> str:
 def Lint(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
-            build_data: str = Snakefile_Build(json.loads(data["content"]))
-            lint_response: dict = Snakefile_Lint(build_data)
+            lint_response: dict = snakefile.Lint(data["content"])
         case _:
             raise ValueError("Format not supported: {data['format']}")
     return lint_response
@@ -27,7 +24,16 @@ def Lint(data: dict) -> dict:
 def Tokenize(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
-            tokenized_data: dict = Snakefile_SplitByRules(data["content"])
+            tokenized_data: dict = snakefile.SplitByRules(data["content"])
+        case _:
+            raise ValueError("Format not supported: {data['format']}")
+    return tokenized_data
+
+
+def TokenizeLoad(data: dict) -> dict:
+    match data["format"]:
+        case "Snakefile":
+            tokenized_data: dict = snakefile.SplitByRulesLocal(data["content"])
         case _:
             raise ValueError("Format not supported: {data['format']}")
     return tokenized_data

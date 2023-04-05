@@ -1,5 +1,6 @@
 import json
 
+import filesystem
 from flask import Flask
 from flask import request
 from flask import Response
@@ -23,6 +24,11 @@ def post():
                     "query": request.json["query"],
                     "body": parser.Build(request.json["data"]),
                 }
+            case "folderinfo":
+                data = {
+                    "query": request.json["query"],
+                    "body": json.dumps(filesystem.GetFolderItems(request.json["data"])),
+                }
             case "lint":
                 data = {
                     "query": request.json["query"],
@@ -32,6 +38,12 @@ def post():
                 data = {
                     "query": request.json["query"],
                     "body": json.dumps(parser.Tokenize(request.json["data"])),
+                }
+            case "tokenize_load":
+                app.logger.debug(f"Data: {request.json['data']}")
+                data = {
+                    "query": request.json["query"],
+                    "body": json.dumps(parser.TokenizeLoad(request.json["data"])),
                 }
             case _:
                 return Response(

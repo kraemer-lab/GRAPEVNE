@@ -56,7 +56,7 @@ export function nodemapMiddleware({ getState, dispatch }) {
           }
 
           case "nodemap/import-snakefile": {
-              QueryAndLoadTextFile((content) => {
+              QueryAndLoadTextFile((content, filename) => {
                   const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
                       'query': 'tokenize',
                       'data': {
@@ -67,6 +67,19 @@ export function nodemapMiddleware({ getState, dispatch }) {
                   dispatch(nodemapSubmitQuery(query));
                   dispatch(displayUpdateNodeInfo(""));
               });
+              break;
+          }
+
+          case "nodemap/load-snakefile": {
+              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+                  'query': 'tokenize_load',
+                  'data': {
+                      'format': 'Snakefile',
+                      'content': action.payload
+                  }
+              }
+              dispatch(nodemapSubmitQuery(query));
+              dispatch(displayUpdateNodeInfo(""));
               break;
           }
 
@@ -87,7 +100,7 @@ export function nodemapMiddleware({ getState, dispatch }) {
                   'query': 'lint',
                   'data': {
                       'format': 'Snakefile',
-                      'content': getState().nodemap.serialize
+                      'content': getState().display.filename
                   }
               }
               dispatch(nodemapSubmitQuery(query))
@@ -112,7 +125,7 @@ function QueryAndLoadTextFile(onLoad: Function) {  // eslint-disable-line @types
     const file = (e.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.readAsText(file,'UTF-8');
-    reader.onload = (readerEvent) => onLoad(readerEvent.target.result)
+    reader.onload = (readerEvent) => onLoad(readerEvent.target.result, file.name)
   }
   input.click();
 }

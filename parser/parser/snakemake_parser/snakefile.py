@@ -1,4 +1,5 @@
 import io
+import itertools
 import json
 import os
 import tempfile
@@ -27,7 +28,12 @@ def Build(data: dict) -> str:
     return contents
 
 
-def Lint(content: str, tempdir: str | None = None) -> dict:
+def Lint(filename: str) -> dict:
+    """Lint the Snakefile using the snakemake library, returns JSON"""
+    return Snakemake_Lint(filename)
+
+
+def LintContents(content: str, tempdir: str | None = None) -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
     snakefile = ToTempFile(content)
     lint_return = Snakemake_Lint(snakefile)
@@ -35,12 +41,31 @@ def Lint(content: str, tempdir: str | None = None) -> dict:
     return lint_return
 
 
-def SplitByRules(content: str) -> dict:
+def SplitByRulesLocal(filename: str) -> dict:
+    """
+    Tokenize snakefile, split by 'rule' segments
+
+    This function is conceptually similar to SplitByRulesFile, but takes the
+    full filename of the Snakefile, which requires the file to be accessible by
+    the local filesystem, allowing the parser to interrogate the originating
+    folder for data files. This permits construction of directed acyclic graphs
+    (DAGs)
+    """
+    fullfilename = os.path.abspath(filename)
+    file = open(fullfilename, "rb")
+    return SplitByRules(file, get_dag=True)
+
+
+def SplitByRulesFileContent(content: str) -> dict:
     """Tokenize Snakefile, split into 'rules', return as dict list of rules"""
+    file = io.BytesIO(bytes(content, "utf-8"))
+    return SplitByRules(file, get_dag=False)
+
+
+def SplitByRules(file, get_dag: bool = False):
     # Tokenize input, splitting chunks by 'rule' statement
     result: List = [[]]
     chunk = 0
-    file = io.BytesIO(bytes(content, "utf-8"))
     tokens = tokenize.tokenize(file.readline)
     for toknum, tokval, _, _, _ in tokens:
         if toknum == tokenize.NAME and tokval == "rule":
@@ -49,9 +74,11 @@ def SplitByRules(content: str) -> dict:
         result[chunk].append((toknum, tokval))
 
     # Query snakemake for DAG of graph (used for connections)
-    # dag = DAG(content)
-    dag = {"nodes": [], "links": []}
-    dag_to_block: List[int] = []
+    if get_dag:
+        dag = DagLocal(os.path.abspath(file.name))
+    else:
+        dag = {"nodes": [], "links": []}
+    dag_to_block = {}
 
     # Build JSON representation (consisting of a list of rules text)
     rules: Dict = {"block": []}
@@ -81,9 +108,10 @@ def SplitByRules(content: str) -> dict:
         dag_index = [
             ix for ix, node in enumerate(dag["nodes"]) if node["value"]["label"] == name
         ]
-        if dag_index:
-            # Rule names should be unique
-            dag_to_block[dag_index[0]] = block_index
+        # dag from snakemake can contain the same rules multiple times for
+        # multiple input files, associate all with the same rule block
+        for ix in dag_index:
+            dag_to_block[ix] = block_index
         # construct dictionary for block and add to list
         block = {
             "id": block_index,
@@ -99,15 +127,16 @@ def SplitByRules(content: str) -> dict:
     links = []
     for link in dag["links"]:
         links.append([dag_to_block[link["u"]], dag_to_block[link["v"]]])
+    # Remove duplicates (from multiple input files in DAG)
+    links.sort()
+    links = list(k for k, _ in itertools.groupby(links))
 
-    rules["block"].append(
-        {
-            "id": -1,
-            "name": "_links",
-            "type": "_links",
-            "content": links,
-        }
-    )
+    rules["links"] = {
+        "id": -1,
+        "name": "links",
+        "type": "links",
+        "content": links,
+    }
 
     return rules
 
@@ -117,19 +146,25 @@ def SplitByRules(content: str) -> dict:
 # ##############################################################################
 
 
-def DAG(content: str) -> dict:
+def DagFileContent(content: str) -> dict:
     snakefile = ToTempFile(content)
-    dag = Snakemake_DAG(snakefile)
+    dag = DagLocal(snakefile)
     DeleteTempFile(snakefile)
     return dag
 
 
-def Snakemake_DAG(snakefile: str) -> dict:
-    # Lint using snakemake library (returns on stdout with extra elements)
+def DagLocal(filename: str) -> dict:
+    """Lint using snakemake library (returns on stdout with extra elements)"""
+    # Change to originating direcotry so that snakemake can parse folder structure
+    snakefile = os.path.abspath(filename)
+    original_folder = os.getcwd()
+    os.chdir(os.path.dirname(snakefile))
+    # Capture snakemake stdout
     f = io.StringIO()
     with redirect_stdout(f):
         snakemake(snakefile, printd3dag=True)
-    # strip first and last lines as needed (snakemake returns)
+    os.chdir(original_folder)
+    # strip first and last lines as needed (snakemake returns True/False)
     sl = f.getvalue().split("\n")
     if sl[0] in {"True", "False"}:
         sl = sl[1:]
