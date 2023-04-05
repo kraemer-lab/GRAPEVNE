@@ -32,7 +32,7 @@ def post():
             case "lint":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(parser.Lint(request.json["data"])),
+                    "body": json.dumps(parser.LintContents(request.json["data"])),
                 }
             case "tokenize":
                 data = {

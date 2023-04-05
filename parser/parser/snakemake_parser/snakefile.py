@@ -58,8 +58,10 @@ def SplitByRulesLocal(filename: str) -> dict:
 
 def SplitByRulesFileContent(content: str) -> dict:
     """Tokenize Snakefile, split into 'rules', return as dict list of rules"""
-    file = io.BytesIO(bytes(content, "utf-8"))
-    return SplitByRules(file, get_dag=False)
+    snakefile = ToTempFile(content)
+    rules = SplitByRulesLocal(snakefile)
+    DeleteTempFile(snakefile)
+    return rules
 
 
 def SplitByRules(file, get_dag: bool = False):

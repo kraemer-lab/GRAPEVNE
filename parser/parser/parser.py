@@ -15,7 +15,17 @@ def Build(data: dict) -> str:
 def Lint(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
-            lint_response: dict = snakefile.Lint(data["content"])
+            lint_response: dict = snakefile.LintContents(data["content"])
+        case _:
+            raise ValueError("Format not supported: {data['format']}")
+    return lint_response
+
+
+def LintContents(data: dict) -> dict:
+    match data["format"]:
+        case "Snakefile":
+            build_data: str = snakefile.Build(json.loads(data["content"]))
+            lint_response: dict = snakefile.LintContents(build_data)
         case _:
             raise ValueError("Format not supported: {data['format']}")
     return lint_response
@@ -24,7 +34,7 @@ def Lint(data: dict) -> dict:
 def Tokenize(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
-            tokenized_data: dict = snakefile.SplitByRules(data["content"])
+            tokenized_data: dict = snakefile.SplitByRulesFileContent(data["content"])
         case _:
             raise ValueError("Format not supported: {data['format']}")
     return tokenized_data

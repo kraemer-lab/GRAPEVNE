@@ -49,3 +49,10 @@ rule plot_quals:
         "envs/stats.yaml"
     notebook:
         "notebooks/plot-quals.py.ipynb"
+
+rule dummy_inputs:
+    output:
+        "data/samples/A.fastq",
+        "data/samples/B.fastq",
+        "data/samples/C.fastq",
+        "data/genome.fa"

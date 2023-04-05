@@ -100,7 +100,7 @@ export function nodemapMiddleware({ getState, dispatch }) {
                   'query': 'lint',
                   'data': {
                       'format': 'Snakefile',
-                      'content': getState().display.filename
+                      'content': getState().nodemap.serialize
                   }
               }
               dispatch(nodemapSubmitQuery(query))
