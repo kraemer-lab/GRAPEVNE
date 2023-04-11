@@ -19,6 +19,14 @@ def post():
     try:
         app.logger.debug(f"POST request: {request.json}")
         match request.json["query"]:
+            # File system queries
+            case "folderinfo":
+                data = {
+                    "query": request.json["query"],
+                    "body": json.dumps(filesystem.GetFolderItems(request.json["data"])),
+                }
+
+            # Parser queries
             case "build":
                 data = {
                     "query": request.json["query"],
@@ -27,12 +35,7 @@ def post():
             case "deleteresults":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(filesystem.DeleteResults(request.json["data"])),
-                }
-            case "folderinfo":
-                data = {
-                    "query": request.json["query"],
-                    "body": json.dumps(filesystem.GetFolderItems(request.json["data"])),
+                    "body": json.dumps(parser.DeleteAllOutput(request.json["data"])),
                 }
             case "lint":
                 data = {
@@ -44,11 +47,17 @@ def post():
                     "query": request.json["query"],
                     "body": json.dumps(parser.Tokenize(request.json["data"])),
                 }
-            case "tokenize_load" | "jobstatus":
-                app.logger.debug(f"Data: {request.json['data']}")
+            case "tokenize_load":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(parser.TokenizeLoad(request.json["data"])),
+                    "body": json.dumps(
+                        parser.FullTokenizeFromFile(request.json["data"])
+                    ),
+                }
+            case "jobstatus":
+                data = {
+                    "query": request.json["query"],
+                    "body": json.dumps(parser.TokenizeFromFile(request.json["data"])),
                 }
             case "launch":
                 app.logger.debug(f"Data: {request.json['data']}")

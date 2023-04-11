@@ -12,6 +12,15 @@ def Build(data: dict) -> str:
     return build_data
 
 
+def DeleteAllOutput(data: dict) -> dict:
+    match data["format"]:
+        case "Snakefile":
+            del_data: dict = snakefile.DeleteAllOutput(data["content"])
+        case _:
+            raise ValueError("Format not supported: {data['format']}")
+    return del_data
+
+
 def Lint(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
@@ -49,10 +58,19 @@ def Tokenize(data: dict) -> dict:
     return tokenized_data
 
 
-def TokenizeLoad(data: dict) -> dict:
+def TokenizeFromFile(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
-            tokenized_data: dict = snakefile.SplitByRulesLocal(data["content"])
+            tokenized_data: dict = snakefile.SplitByRulesFromFile(data["content"])
+        case _:
+            raise ValueError("Format not supported: {data['format']}")
+    return tokenized_data
+
+
+def FullTokenizeFromFile(data: dict) -> dict:
+    match data["format"]:
+        case "Snakefile":
+            tokenized_data: dict = snakefile.FullTokenizeFromFile(data["content"])
         case _:
             raise ValueError("Format not supported: {data['format']}")
     return tokenized_data

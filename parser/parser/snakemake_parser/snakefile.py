@@ -26,9 +26,22 @@ def Build(data: dict) -> str:
     return contents
 
 
+def DeleteAllOutput(filename: str) -> dict:
+    """Ask snakemake to remove all output files"""
+    stdout, stderr = snakemake(filename, "--delete-all-output")
+    return {
+        "status": "ok" if not stderr else "error",
+        "content": {"stdout": stdout, "stderr": stderr},
+    }
+
+
 def Launch(filename: str) -> dict:
+    """Launch snakemake workflow based upon provided [locally accessible] Snakefile"""
     stdout, stderr = snakemake(filename, "--nolock")
-    return {"status": "ok"}
+    return {
+        "status": "ok" if not stderr else "error",
+        "content": {"stdout": stdout, "stderr": stderr},
+    }
 
 
 def Lint(filename: str) -> dict:
@@ -43,7 +56,14 @@ def LintContents(content: str, tempdir: str | None = None) -> dict:
     return lint_return
 
 
-def SplitByRulesLocal(filename: str) -> dict:
+def FullTokenizeFromFile(filename: str) -> dict:
+    """Copy Snakefile contents to a new temporary file and analyze in isolation"""
+    with open(filename, "r") as infile:
+        with IsolatedTempFile(infile.read()) as tempfile:
+            return SplitByRulesFromFile(tempfile)
+
+
+def SplitByRulesFromFile(filename: str) -> dict:
     """
     Tokenize snakefile, split by 'rule' segments
 
@@ -61,7 +81,7 @@ def SplitByRulesLocal(filename: str) -> dict:
 def SplitByRulesFileContent(content: str) -> dict:
     """Tokenize Snakefile, split into 'rules', return as dict list of rules"""
     with IsolatedTempFile(content) as snakefile:
-        rules = SplitByRulesLocal(snakefile)
+        rules = SplitByRulesFromFile(snakefile)
     return rules
 
 

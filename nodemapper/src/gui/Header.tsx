@@ -44,6 +44,11 @@ function Header() {
   }
 
   // Query job status
+  const btnQueryJobStatus = () => {
+    dispatch(nodemapQueryJobStatus())
+  }
+
+  // Delete results
   const btnDeleteResults = () => {
     dispatch(displayDeleteResults())
   }
@@ -63,6 +68,7 @@ function Header() {
       <button className="btn" onClick={btnCheckSnakefile}>CHECK SNAKEFILE</button>
       <button className="btn" onClick={btnBuildSnakefile}>BUILD SNAKEFILE</button>
       <button className="btn" onClick={btnLaunchSnakefile}>RUN</button>
+      <button className="btn" onClick={btnQueryJobStatus}>CHECK STATUS</button>
       <button className="btn" onClick={btnDeleteResults}>DELETE RESULTS</button>
       <button className="btn" onClick={btnZoomToFit}>RESET VIEW</button>
     </div>

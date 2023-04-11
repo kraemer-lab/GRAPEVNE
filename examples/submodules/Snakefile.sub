@@ -1,0 +1,31 @@
+rule rule_2:
+    input:
+        "results/rule1"
+    output:
+        "results/rule2"
+    shell:
+        "sleep 5 && touch results/rule2"
+
+rule rule_3:
+    input:
+        "results/rule2"
+    output:
+        "results/rule3"
+    shell:
+        "sleep 5 && touch results/rule3"
+
+rule rule_4:
+    input:
+        "results/rule3"
+    output:
+        "results/rule4"
+    shell:
+        "sleep 5 && touch results/rule4"
+
+rule rule_5:
+    input:
+        "results/rule4"
+    output:
+        "results/rule5"
+    shell:
+        "sleep 5 && touch results/rule5"
