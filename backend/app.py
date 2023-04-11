@@ -39,11 +39,17 @@ def post():
                     "query": request.json["query"],
                     "body": json.dumps(parser.Tokenize(request.json["data"])),
                 }
-            case "tokenize_load":
+            case "tokenize_load" | "jobstatus":
                 app.logger.debug(f"Data: {request.json['data']}")
                 data = {
                     "query": request.json["query"],
                     "body": json.dumps(parser.TokenizeLoad(request.json["data"])),
+                }
+            case "launch":
+                app.logger.debug(f"Data: {request.json['data']}")
+                data = {
+                    "query": request.json["query"],
+                    "body": json.dumps(parser.Launch(request.json["data"])),
                 }
             case _:
                 return Response(

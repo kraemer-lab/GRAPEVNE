@@ -5,6 +5,7 @@ import { BodyWidget } from './BodyWidget'
 import { nodemapNodeSelected } from '../redux/actions'
 import { nodemapNodeDeselected } from '../redux/actions'
 import { nodemapLintSnakefile } from '../redux/actions'
+import { nodemapStoreJobStatus } from '../redux/actions'
 import { displayStoreFolderInfo } from '../redux/actions'
 import { nodemapStoreLint } from '../redux/actions'
 import { nodemapStoreMap } from '../redux/actions'
@@ -92,12 +93,16 @@ function NodeManager() {
         dispatch(nodemapStoreLint(content['body']))
         break;
       }
+      case 'jobstatus': {
+        dispatch(nodemapStoreJobStatus(content["body"]))
+        break;
+      }
       case 'tokenize':
       case 'tokenize_load': {
         // Rebuild map from returned (segmented) representation
         nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content['body']))
         dispatch(nodemapStoreMap(content['body']))
-        setupNodeSelectionListeners();
+        setupNodeSelectionListeners()
         // Submit query to automatically lint file
         dispatch(nodemapLintSnakefile())
         break;

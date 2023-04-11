@@ -83,6 +83,30 @@ export function nodemapMiddleware({ getState, dispatch }) {
               break;
           }
 
+          case "nodemap/launch-snakefile": {
+              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+                  'query': 'launch',
+                  'data': {
+                      'format': 'Snakefile',
+                      'content': getState().display.filename
+                  }
+              }
+              dispatch(nodemapSubmitQuery(query));
+              break;
+          }
+
+          case "nodemap/query-job-status": {
+              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+                  'query': 'jobstatus',
+                  'data': {
+                      'format': 'Snakefile',
+                      'content': getState().display.filename
+                  }
+              }
+              dispatch(nodemapSubmitQuery(query));
+              break;
+          }
+
           case "nodemap/build-snakefile": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
                   'query': 'build',

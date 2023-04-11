@@ -5,6 +5,7 @@ import * as action from "../actions"
 const nodemapStateInit = {
   serialize: '',
   linter: '',
+  jobstatus: '',
   query: {},  // temp location
 };
 
@@ -52,6 +53,10 @@ const nodemapReducer = createReducer(
       .addCase(action.nodemapStoreMap, (state, action) => {
         state.serialize = action.payload
         console.info("[Reducer] (nodemap)StoreMap");
+      })
+      .addCase(action.nodemapStoreJobStatus, (state, action) => {
+        state.jobstatus = action.payload
+        console.info("[Reducer] (nodemap)StoreJobStatus");
       })
   }
 );

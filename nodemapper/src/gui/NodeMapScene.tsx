@@ -2,7 +2,7 @@ import React from 'react'
 import { Component, StrictMode, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { action } from '@storybook/addon-actions'
-import createEngine, { DiagramModel, DiagramEngine } from '@projectstorm/react-diagrams'
+import createEngine, { DiagramModel, DiagramEngine, DagreEngine } from '@projectstorm/react-diagrams'
 import { DefaultNodeModel, DefaultLinkModel } from  '../NodeMapComponents'
 import { BodyWidget } from './BodyWidget'
 
@@ -31,6 +31,14 @@ class NodeScene {
     link.setSourcePort(port_from);
     link.setTargetPort(port_to);
     this.engine.getModel().addLink(link);
+  }
+
+  getNodeUserConfig(node) {
+    return JSON.parse(node.options.extras)
+  }
+
+  isNodeTypeRule(node) {
+    return this.getNodeUserConfig(node).type == 'rule'
   }
 
   InitializeScene() {
@@ -67,6 +75,19 @@ class NodeScene {
     this.addLink(node1.getPort('out-4'), node4.getPort('in-2'));
   }
 
+  distributeModel(model) {
+    const dagre_engine = new DagreEngine({
+			graph: {
+				rankdir: 'LR',
+				rankSep: 200,
+        marginx: 100,
+        marginy: 100,
+			},
+		});
+    dagre_engine.redistribute(model)
+    this.engine.repaintCanvas();
+  }
+
   loadModel(str) {
     const model = new DiagramModel();
     model.deserializeModel(JSON.parse(str), this.engine);
@@ -82,6 +103,7 @@ class NodeScene {
     this.engine.setModel(model);
     const pos = [50, 50]
     const nodelist = []
+    let node_index = 0
     data['block'].forEach((block) => {
       let colstr = 'rgb(0,192,255)'
       if (block['type'] == 'config') {
@@ -90,15 +112,32 @@ class NodeScene {
       const node = this.addNode(block['name'], colstr, pos, block);
       nodelist.push(node)
       pos[0] += 150
-      // add ports
+      // count and add ports
+      let count_ports_in = 0
+      let count_ports_out = 0
+      data['links']['content'].forEach((link) => {
+        if (link[0]==node_index)
+          count_ports_out++
+        if (link[1]==node_index)
+          count_ports_in++
+      })
       if (block['type'] == 'rule') {
-        node.addInPort('in-1')
-        node.addOutPort('out-1')
+        if (count_ports_in > 0)
+          node.addInPort('in')
+        if (count_ports_out > 0)
+          node.addOutPort('out')
       }
+      node_index = node_index + 1
     });
     data['links']['content'].forEach((link) => {
-      this.addLink(nodelist[link[0]].getPort('out-1'), nodelist[link[1]].getPort('in-1'))
+      this.addLink(nodelist[link[0]].getPort('out'), nodelist[link[1]].getPort('in'))
     });
+    // Mark nodes without connections as completed
+    nodelist.forEach((node) => {
+      if ((this.isNodeTypeRule(node)) && (node.portsIn.length==0) && (node.portsOut.length==0))
+        node.options.color = 'rgb(0,255,0)'
+    });
+    this.distributeModel(model)
   }
 }
 

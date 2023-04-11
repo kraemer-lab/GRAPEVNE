@@ -28,6 +28,14 @@ def Build(data: dict) -> str:
     return contents
 
 
+def Launch(filename: str) -> dict:
+    snakemake(
+        filename,
+        lock=False,
+    )
+    return {"status": "ok"}
+
+
 def Lint(filename: str) -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
     return Snakemake_Lint(filename)
