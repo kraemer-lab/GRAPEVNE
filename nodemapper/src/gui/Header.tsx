@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useAppSelector } from '../redux/store/hooks'
 import { useAppDispatch } from '../redux/store/hooks'
 import { displayZoomToFit } from '../redux/actions'
+import { displayDeleteResults } from '../redux/actions'
 import { nodemapImportSnakefile } from '../redux/actions'
 import { nodemapLoadSnakefile } from '../redux/actions'
 import { nodemapBuildSnakefile } from '../redux/actions'
@@ -43,8 +44,8 @@ function Header() {
   }
 
   // Query job status
-  const btnJobStatus = () => {
-    dispatch(nodemapQueryJobStatus())
+  const btnDeleteResults = () => {
+    dispatch(displayDeleteResults())
   }
 
   // Zoom to fit
@@ -62,7 +63,7 @@ function Header() {
       <button className="btn" onClick={btnCheckSnakefile}>CHECK SNAKEFILE</button>
       <button className="btn" onClick={btnBuildSnakefile}>BUILD SNAKEFILE</button>
       <button className="btn" onClick={btnLaunchSnakefile}>RUN</button>
-      <button className="btn" onClick={btnJobStatus}>JOB STATUS</button>
+      <button className="btn" onClick={btnDeleteResults}>DELETE RESULTS</button>
       <button className="btn" onClick={btnZoomToFit}>RESET VIEW</button>
     </div>
     </>

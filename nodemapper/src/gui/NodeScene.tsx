@@ -1,13 +1,19 @@
-import React from 'react'
 import { Component, StrictMode, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { action } from '@storybook/addon-actions'
-import createEngine, { DiagramModel, DiagramEngine, DagreEngine } from '@projectstorm/react-diagrams'
-import { DefaultNodeModel, DefaultLinkModel } from  '../NodeMapComponents'
+
+import createEngine from '@projectstorm/react-diagrams'
+import { DiagramModel } from '@projectstorm/react-diagrams'
+import { DiagramEngine } from '@projectstorm/react-diagrams'
+import { DagreEngine } from '@projectstorm/react-diagrams'
+
+import { DefaultNodeModel } from  '../NodeMapComponents'
+import { DefaultLinkModel } from  '../NodeMapComponents'
+
 import { BodyWidget } from './BodyWidget'
 
 class NodeScene {
   engine: DiagramEngine;
+  nodelist: DefaultNodeModel[] = []
 
   constructor() {
     this.InitializeScene();
@@ -102,7 +108,7 @@ class NodeScene {
     const model = new DiagramModel();
     this.engine.setModel(model);
     const pos = [50, 50]
-    const nodelist = []
+    this.nodelist = []
     let node_index = 0
     data['block'].forEach((block) => {
       let colstr = 'rgb(0,192,255)'
@@ -110,7 +116,7 @@ class NodeScene {
         colstr = 'rgb(192,0,255)'
       }
       const node = this.addNode(block['name'], colstr, pos, block);
-      nodelist.push(node)
+      this.nodelist.push(node)
       pos[0] += 150
       // count and add ports
       let count_ports_in = 0
@@ -130,14 +136,32 @@ class NodeScene {
       node_index = node_index + 1
     });
     data['links']['content'].forEach((link) => {
-      this.addLink(nodelist[link[0]].getPort('out'), nodelist[link[1]].getPort('in'))
+      this.addLink(this.nodelist[link[0]].getPort('out'), this.nodelist[link[1]].getPort('in'))
     });
     // Mark nodes without connections as completed
-    nodelist.forEach((node) => {
-      if ((this.isNodeTypeRule(node)) && (node.portsIn.length==0) && (node.portsOut.length==0))
-        node.options.color = 'rgb(0,255,0)'
+    this.nodelist.forEach((node) => {
+      const portsIn = node.getInPorts()
+      const portsOut = node.getOutPorts()
+      if ((this.isNodeTypeRule(node)) && (portsIn.length==0) && (portsOut.length==0))
+        node.setColor('rgb(0,255,0)')
     });
     this.distributeModel(model)
+  }
+
+  markNodesWithoutConnectionsAsComplete(data: JSON) {
+    let node_index = 0
+    this.nodelist.forEach((node) => {
+      // Check if node has any remaining dependencies in the latest DAG
+      let has_input = false;
+      data['links']['content'].forEach((link) => {
+        if ((link[0] == node_index) || (link[1] == node_index)) {
+          has_input = true;
+        }
+      });
+      if (!has_input)
+        node.setColor('rgb(0,255,0)')
+      node_index = node_index + 1
+    });
   }
 }
 

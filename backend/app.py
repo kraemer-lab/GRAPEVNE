@@ -24,6 +24,11 @@ def post():
                     "query": request.json["query"],
                     "body": parser.Build(request.json["data"]),
                 }
+            case "deleteresults":
+                data = {
+                    "query": request.json["query"],
+                    "body": json.dumps(filesystem.DeleteResults(request.json["data"])),
+                }
             case "folderinfo":
                 data = {
                     "query": request.json["query"],

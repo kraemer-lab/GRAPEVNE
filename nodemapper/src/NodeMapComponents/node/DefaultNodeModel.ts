@@ -124,4 +124,8 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
 	getOutPorts(): DefaultPortModel[] {
 		return this.portsOut;
 	}
+
+  setColor(color: string) {
+    this.options.color = color;
+  }
 }

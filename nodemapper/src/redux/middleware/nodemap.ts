@@ -2,6 +2,7 @@ import { displayCloseSettings } from '../actions'
 import { displayOpenSettings } from '../actions'
 import { displayUpdateNodeInfo } from '../actions'
 import { nodemapSubmitQuery } from '../actions'
+import { nodemapQueryJobStatus } from '../actions'
 
 import NodeMapEngine from '../../gui/NodeMapEngine'
 
@@ -92,6 +93,10 @@ export function nodemapMiddleware({ getState, dispatch }) {
                   }
               }
               dispatch(nodemapSubmitQuery(query));
+              setTimeout(
+                () => dispatch(nodemapQueryJobStatus()),
+                5000
+              );
               break;
           }
 
@@ -104,6 +109,10 @@ export function nodemapMiddleware({ getState, dispatch }) {
                   }
               }
               dispatch(nodemapSubmitQuery(query));
+              setTimeout(
+                () => dispatch(nodemapQueryJobStatus()),
+                1000
+              );
               break;
           }
 
