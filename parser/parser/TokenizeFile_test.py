@@ -105,7 +105,7 @@ def test_GetIndentLevels():
     assert indent_level == expected_list
 
 
-def GetBlockList():
+def test_GetBlockList():
     tf = TokenizeFile(content)
     block_list = tf.GetBlockList(level=1)
     # index[0]=encoding; index[-1]=dedent-to-start

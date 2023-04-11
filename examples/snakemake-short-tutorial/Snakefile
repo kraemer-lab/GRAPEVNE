@@ -49,3 +49,14 @@ rule plot_quals:
         "envs/stats.yaml"
     notebook:
         "notebooks/plot-quals.py.ipynb"
+
+
+rule in_genome:
+    output:
+        "data/genome.fa"
+
+rule in_samples:
+    output:
+        "data/samples/A.fastq",
+        "data/samples/B.fastq",
+        "data/samples/C.fastq"

@@ -179,6 +179,8 @@ def DagLocal(filename: str) -> dict:
     """Lint using snakemake library (returns on stdout with extra elements)"""
     stdout, stderr = snakemake(filename, "--d3dag")
     # strip first and last lines as needed (snakemake returns True/False)
+    print(stdout)
+    print(stderr)
     sl = stdout.split("\n")
     if sl[0] in {"True", "False"}:
         sl = sl[1:]
