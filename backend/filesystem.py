@@ -1,4 +1,12 @@
 import os
+import shutil
+
+
+def DeleteResults(data) -> dict:
+    dirname = data["content"]
+    dirname = f"{dirname}/results"
+    shutil.rmtree(dirname)
+    return {}
 
 
 def GetFolderItems(data) -> dict:

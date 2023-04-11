@@ -31,6 +31,15 @@ def LintContents(data: dict) -> dict:
     return lint_response
 
 
+def Launch(data: dict) -> dict:
+    match data["format"]:
+        case "Snakefile":
+            launch_response: dict = snakefile.Launch(data["content"])
+        case _:
+            raise ValueError("Format not supported: {data['format']}")
+    return launch_response
+
+
 def Tokenize(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":

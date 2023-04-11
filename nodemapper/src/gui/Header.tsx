@@ -4,9 +4,12 @@ import { useEffect } from 'react'
 import { useAppSelector } from '../redux/store/hooks'
 import { useAppDispatch } from '../redux/store/hooks'
 import { displayZoomToFit } from '../redux/actions'
+import { displayDeleteResults } from '../redux/actions'
 import { nodemapImportSnakefile } from '../redux/actions'
 import { nodemapLoadSnakefile } from '../redux/actions'
 import { nodemapBuildSnakefile } from '../redux/actions'
+import { nodemapLaunchSnakefile } from '../redux/actions'
+import { nodemapQueryJobStatus } from '../redux/actions'
 import NodeMapEngine from './NodeMapEngine'
 import "./Header.css"
 
@@ -35,6 +38,16 @@ function Header() {
     dispatch(nodemapBuildSnakefile())
   }
 
+  // Launch Snakefile
+  const btnLaunchSnakefile = () => {
+    dispatch(nodemapLaunchSnakefile())
+  }
+
+  // Query job status
+  const btnDeleteResults = () => {
+    dispatch(displayDeleteResults())
+  }
+
   // Zoom to fit
   const btnZoomToFit = () => {
     dispatch(displayZoomToFit())
@@ -49,6 +62,8 @@ function Header() {
       <button className="btn" onClick={btnSaveScene}>SAVE</button>
       <button className="btn" onClick={btnCheckSnakefile}>CHECK SNAKEFILE</button>
       <button className="btn" onClick={btnBuildSnakefile}>BUILD SNAKEFILE</button>
+      <button className="btn" onClick={btnLaunchSnakefile}>RUN</button>
+      <button className="btn" onClick={btnDeleteResults}>DELETE RESULTS</button>
       <button className="btn" onClick={btnZoomToFit}>RESET VIEW</button>
     </div>
     </>

@@ -1,5 +1,5 @@
 import React from 'react'
-import NodeMapScene from './NodeMapScene'
+import NodeScene from './NodeScene'
 import { useAppSelector } from '../redux/store/hooks'
 import { useAppDispatch } from '../redux/store/hooks'
 
@@ -10,7 +10,7 @@ export default class NodeMapEngine {
   engine = null;
 
   constructor() {
-    this.nodeScene = new NodeMapScene();
+    this.nodeScene = new NodeScene();
     this.engine = this.nodeScene.engine;
   }
 
@@ -88,6 +88,10 @@ export default class NodeMapEngine {
 
   public ConstructMapFromBlocks(data: JSON) {
     this.nodeScene.buildMapWithSnippets(data);
+  }
+
+  public MarkNodesWithoutConnectionsAsComplete(data: JSON) {
+    this.nodeScene.markNodesWithoutConnectionsAsComplete(data);
   }
 
   public ZoomToFit() {

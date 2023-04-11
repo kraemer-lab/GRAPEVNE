@@ -2,6 +2,7 @@ import { displayCloseSettings } from '../actions'
 import { displayOpenSettings } from '../actions'
 import { displayUpdateNodeInfo } from '../actions'
 import { nodemapSubmitQuery } from '../actions'
+import { nodemapQueryJobStatus } from '../actions'
 
 import NodeMapEngine from '../../gui/NodeMapEngine'
 
@@ -80,6 +81,38 @@ export function nodemapMiddleware({ getState, dispatch }) {
               }
               dispatch(nodemapSubmitQuery(query));
               dispatch(displayUpdateNodeInfo(""));
+              break;
+          }
+
+          case "nodemap/launch-snakefile": {
+              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+                  'query': 'launch',
+                  'data': {
+                      'format': 'Snakefile',
+                      'content': getState().display.filename
+                  }
+              }
+              dispatch(nodemapSubmitQuery(query));
+              setTimeout(
+                () => dispatch(nodemapQueryJobStatus()),
+                5000
+              );
+              break;
+          }
+
+          case "nodemap/query-job-status": {
+              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+                  'query': 'jobstatus',
+                  'data': {
+                      'format': 'Snakefile',
+                      'content': getState().display.filename
+                  }
+              }
+              dispatch(nodemapSubmitQuery(query));
+              setTimeout(
+                () => dispatch(nodemapQueryJobStatus()),
+                1000
+              );
               break;
           }
 

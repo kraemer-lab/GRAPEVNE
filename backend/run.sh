@@ -14,7 +14,7 @@ fi
 
 . venv/bin/activate
 # Ensure we are loading the latest parser library
-python -m pip install ../parser
+python -m pip install -e ../parser
 flask --app app.py --debug run
 
 popd

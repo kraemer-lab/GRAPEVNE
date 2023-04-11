@@ -1,10 +1,12 @@
 import { createReducer } from "@reduxjs/toolkit"
-import * as action from "../actions"
+import * as actions from "../actions"
 
 // State
 const nodemapStateInit = {
   serialize: '',
   linter: '',
+  jobstatus: '',
+  jobstatus_update: false,  // should we poll for updates?
   query: {},  // temp location
 };
 
@@ -13,45 +15,49 @@ const nodemapReducer = createReducer(
   nodemapStateInit,
   (builder) => {
     builder
-      .addCase(action.nodemapAddNode, (state, action) => {
+      .addCase(actions.nodemapAddNode, (state, action) => {
         // Business logic
         console.info("[Reducer] (nodemap)AddNode");
       })
-      .addCase(action.nodemapNodeSelected, (state, action) => {
+      .addCase(actions.nodemapNodeSelected, (state, action) => {
         // Action intercepted in middleware to control display
         console.info("[Reducer] (nodemap)NodeSelected", state, action);
       })
-      .addCase(action.nodemapNodeDeselected, (state, action) => {
+      .addCase(actions.nodemapNodeDeselected, (state, action) => {
         // Action intercepted in middleware to control display
         console.info("[Reducer] (nodemap)NodeDeselected");
       })
-      .addCase(action.nodemapSelectNone, (state, action) => {
+      .addCase(actions.nodemapSelectNone, (state, action) => {
         // Business logic
         console.info("[Reducer] (nodemap)SelectNone");
       })
-      .addCase(action.nodemapSubmitQuery, (state, action) => {
+      .addCase(actions.nodemapSubmitQuery, (state, action) => {
         state.query = action.payload
         console.info("[Reducer] (nodemap)SubmitQuery");
       })
-      .addCase(action.nodemapImportSnakefile, (state, action) => {
+      .addCase(actions.nodemapImportSnakefile, (state, action) => {
         console.info("[Reducer] (nodemap)ImportSnakefile");
       })
-      .addCase(action.nodemapLoadSnakefile, (state, action) => {
+      .addCase(actions.nodemapLoadSnakefile, (state, action) => {
         console.info("[Reducer] (nodemap)LoadSnakefile");
       })
-      .addCase(action.nodemapBuildSnakefile, (state, action) => {
+      .addCase(actions.nodemapBuildSnakefile, (state, action) => {
         console.info("[Reducer] (nodemap)BuildSnakefile");
       })
-      .addCase(action.nodemapLintSnakefile, (state, action) => {
+      .addCase(actions.nodemapLintSnakefile, (state, action) => {
         console.info("[Reducer] (nodemap)LintSnakefile");
       })
-      .addCase(action.nodemapStoreLint, (state, action) => {
+      .addCase(actions.nodemapStoreLint, (state, action) => {
         state.linter = action.payload
         console.info("[Reducer] (nodemap)StoreLint");
       })
-      .addCase(action.nodemapStoreMap, (state, action) => {
+      .addCase(actions.nodemapStoreMap, (state, action) => {
         state.serialize = action.payload
         console.info("[Reducer] (nodemap)StoreMap");
+      })
+      .addCase(actions.nodemapStoreJobStatus, (state, action) => {
+        state.jobstatus = action.payload
+        console.info("[Reducer] (nodemap)StoreJobStatus");
       })
   }
 );

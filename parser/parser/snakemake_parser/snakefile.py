@@ -1,16 +1,14 @@
-import io
+import contextlib
 import itertools
 import json
 import os
+import shutil
+import subprocess
 import tempfile
 import tokenize
-from contextlib import redirect_stdout
 from typing import Dict
 from typing import List
 from typing import Tuple
-
-from snakemake import snakemake
-from snakemake.exceptions import RuleException
 
 from parser.TokenizeFile import TokenizeFile
 
@@ -28,6 +26,11 @@ def Build(data: dict) -> str:
     return contents
 
 
+def Launch(filename: str) -> dict:
+    stdout, stderr = snakemake(filename, "--nolock")
+    return {"status": "ok"}
+
+
 def Lint(filename: str) -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
     return Snakemake_Lint(filename)
@@ -35,9 +38,8 @@ def Lint(filename: str) -> dict:
 
 def LintContents(content: str, tempdir: str | None = None) -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
-    snakefile = ToTempFile(content)
-    lint_return = Snakemake_Lint(snakefile)
-    DeleteTempFile(snakefile)
+    with IsolatedTempFile(content) as snakefile:
+        lint_return = Snakemake_Lint(snakefile)
     return lint_return
 
 
@@ -58,9 +60,8 @@ def SplitByRulesLocal(filename: str) -> dict:
 
 def SplitByRulesFileContent(content: str) -> dict:
     """Tokenize Snakefile, split into 'rules', return as dict list of rules"""
-    snakefile = ToTempFile(content)
-    rules = SplitByRulesLocal(snakefile)
-    DeleteTempFile(snakefile)
+    with IsolatedTempFile(content) as snakefile:
+        rules = SplitByRulesLocal(snakefile)
     return rules
 
 
@@ -149,25 +150,16 @@ def SplitByRules(file, get_dag: bool = False):
 
 
 def DagFileContent(content: str) -> dict:
-    snakefile = ToTempFile(content)
-    dag = DagLocal(snakefile)
-    DeleteTempFile(snakefile)
+    with IsolatedTempFile(content) as snakefile:
+        dag = DagLocal(snakefile)
     return dag
 
 
 def DagLocal(filename: str) -> dict:
     """Lint using snakemake library (returns on stdout with extra elements)"""
-    # Change to originating direcotry so that snakemake can parse folder structure
-    snakefile = os.path.abspath(filename)
-    original_folder = os.getcwd()
-    os.chdir(os.path.dirname(snakefile))
-    # Capture snakemake stdout
-    f = io.StringIO()
-    with redirect_stdout(f):
-        snakemake(snakefile, printd3dag=True)
-    os.chdir(original_folder)
+    stdout, stderr = snakemake(filename, "--d3dag")
     # strip first and last lines as needed (snakemake returns True/False)
-    sl = f.getvalue().split("\n")
+    sl = stdout.split("\n")
     if sl[0] in {"True", "False"}:
         sl = sl[1:]
     if sl[-1] in {"True", "False"}:
@@ -177,14 +169,12 @@ def DagLocal(filename: str) -> dict:
 
 def Snakemake_Lint(snakefile: str) -> dict:
     # Lint using snakemake library (returns on stdout with extra elements)
-    f = io.StringIO()
-    with redirect_stdout(f):
-        try:
-            snakemake(snakefile, lint="json")
-        except RuleException as e:
-            return {"error": str(e)}
+    try:
+        stdout, stderr = snakemake(snakefile, "--lint", "json")
+    except BaseException as e:
+        return {"error": str(e)}
     # strip first and last lines as needed (snakemake returns)
-    sl = f.getvalue().split("\n")
+    sl = stdout.split("\n")
     if sl[0] in {"True", "False"}:
         sl = sl[1:]
     if sl[-1] in {"True", "False"}:
@@ -192,16 +182,43 @@ def Snakemake_Lint(snakefile: str) -> dict:
     return json.loads("\n".join(sl))
 
 
-def ToTempFile(content: str, tempdir: str = "/tmp") -> str:
+@contextlib.contextmanager
+def IsolatedTempFile(content: str, tempdir=None):
+    """Create isolated file with passed content placed into a new blank folder"""
+    snakefile_dir = tempfile.TemporaryDirectory(dir=tempdir)
     snakefile_file = tempfile.NamedTemporaryFile(
-        dir=tempdir, mode="w", encoding="utf-8", delete=False
+        dir=snakefile_dir.name, mode="w", encoding="utf-8", delete=False
     )
     snakefile: str = snakefile_file.name
     snakefile_file.write(content)
     snakefile_file.seek(0)
     snakefile_file.close
-    return snakefile
-
-
-def DeleteTempFile(snakefile: str) -> None:
+    # Yield filename as context
+    yield snakefile
+    # Cleanup
     os.remove(snakefile)
+    shutil.rmtree(snakefile_dir.name)
+
+
+def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
+    """Run snakemake as subprocess"""
+    # Collate arguments list
+    arglist = list(args)
+    for k, v in kwargs.items():
+        arglist.extend([k, v])
+    # Default set a single core if none specified
+    if "--cores" not in kwargs.keys() and "--cores" not in args:
+        arglist.extend(["--cores", "1"])
+    # Launch process and wait for it to return
+    snakefile = os.path.abspath(filename)
+    p = subprocess.run(
+        [
+            "snakemake",
+            "--snakefile",
+            os.path.basename(snakefile),
+            *arglist,
+        ],
+        cwd=os.path.dirname(snakefile),
+        capture_output=True,
+    )
+    return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")

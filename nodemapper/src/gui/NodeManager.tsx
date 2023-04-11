@@ -5,6 +5,9 @@ import { BodyWidget } from './BodyWidget'
 import { nodemapNodeSelected } from '../redux/actions'
 import { nodemapNodeDeselected } from '../redux/actions'
 import { nodemapLintSnakefile } from '../redux/actions'
+import { nodemapStoreJobStatus } from '../redux/actions'
+import { nodemapQueryJobStatus } from '../redux/actions'
+import { displayGetFolderInfo } from '../redux/actions'
 import { displayStoreFolderInfo } from '../redux/actions'
 import { nodemapStoreLint } from '../redux/actions'
 import { nodemapStoreMap } from '../redux/actions'
@@ -46,9 +49,26 @@ function NodeManager() {
   }
   setupNodeSelectionListeners();
 
+
+
+  // Job status changes
+  const jobstatus = useAppSelector(state => state.nodemap.jobstatus);
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  async function JobStatusUpdate() {
+    if ((jobstatus !== "") && (nodeMapEngine.engine != null)) {
+      nodeMapEngine.MarkNodesWithoutConnectionsAsComplete(JSON.parse(jobstatus))
+    }
+  }
+  React.useEffect(() => {
+    JobStatusUpdate();
+  }, [jobstatus]);
+
+
+
+
   // POST request handler [refactor out of this function later]
   const query = useAppSelector(state => state.nodemap.query);
-  const [responseData, setResponseData] = React.useState(null)
+  const [responseData, setResponseData] = React.useState(null);
   async function postRequest() {
     const postRequestOptions = {
       method: 'POST',
@@ -87,9 +107,17 @@ function NodeManager() {
         document.body.removeChild(element);
         break;
       }
+      case 'launch': {
+        console.info("Launch response: ", content['body']);
+        break;
+      }
       case 'lint': {
         // Update the held linter message
         dispatch(nodemapStoreLint(content['body']))
+        break;
+      }
+      case 'jobstatus': {
+        dispatch(nodemapStoreJobStatus(content["body"]))
         break;
       }
       case 'tokenize':
@@ -97,7 +125,7 @@ function NodeManager() {
         // Rebuild map from returned (segmented) representation
         nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content['body']))
         dispatch(nodemapStoreMap(content['body']))
-        setupNodeSelectionListeners();
+        setupNodeSelectionListeners()
         // Submit query to automatically lint file
         dispatch(nodemapLintSnakefile())
         break;
@@ -105,6 +133,11 @@ function NodeManager() {
       case 'folderinfo': {
         // Read folder contents into state
         dispatch(displayStoreFolderInfo(content['body']))
+        break;
+      }
+      case 'deleteresults': {
+        // Refresh folder list
+        dispatch(displayGetFolderInfo())
         break;
       }
       default:
