@@ -5,9 +5,7 @@ import os
 import shutil
 import subprocess
 import tempfile
-import tokenize
 from typing import Dict
-from typing import List
 from typing import Tuple
 
 from parser.TokenizeFile import TokenizeFile
@@ -74,8 +72,7 @@ def SplitByRulesFromFile(filename: str) -> dict:
     (DAGs)
     """
     fullfilename = os.path.abspath(filename)
-    file = open(fullfilename, "rb")
-    return SplitByRules(file, get_dag=True)
+    return SplitByIndent(fullfilename, get_dag=True)
 
 
 def SplitByRulesFileContent(content: str) -> dict:
@@ -85,16 +82,14 @@ def SplitByRulesFileContent(content: str) -> dict:
     return rules
 
 
-def SplitByRules(file, get_dag: bool = False):
-    # Tokenize input, splitting chunks by 'rule' statement
-    result: List = [[]]
-    chunk = 0
-    tokens = tokenize.tokenize(file.readline)
-    for toknum, tokval, _, _, _ in tokens:
-        if toknum == tokenize.NAME and tokval == "rule":
-            chunk += 1
-            result.append([])
-        result[chunk].append((toknum, tokval))
+def SplitByIndent(filename: str, get_dag: bool = False):
+    """Tokenize input, splitting chunks by indentation level"""
+
+    # Tokenize into blocks by indentation level
+    with open(filename, "r") as file:
+        contents = file.read()
+    tf = TokenizeFile(contents)
+    blockcount = max(tf.rootblock)
 
     # Query snakemake for DAG of graph (used for connections)
     if get_dag:
@@ -103,30 +98,23 @@ def SplitByRules(file, get_dag: bool = False):
         dag = {"nodes": [], "links": []}
     dag_to_block = {}
 
-    # Build JSON representation (consisting of a list of rules text)
+    # Build JSON representation
     rules: Dict = {"block": []}
-    for block_index, r in enumerate(result):
-        # stringify code block
-        content = tokenize.untokenize(r)
-        if isinstance(content, bytes):  # if byte string, decode
-            content = content.decode("utf-8")
-        # derive rule name
-        if r[0][1] == "rule":
-            blocktype = "rule"
-            strlist = [tokval for _, tokval in r]
-            index_to = strlist.index(":")
-            name = "".join(strlist[1:index_to])
-        else:
-            blocktype = "config"
-            name = "Configuration"
-        # Find and parse input block
-        ignore_tokens: List[Tuple] = []
-        search_seq = [(1, "input"), (54, ":")]
-        tf = TokenizeFile(content)
-        input_sections = tf.GetBlock(search_seq, ignore_tokens)
-        # Find and parse output block
-        search_seq = [(1, "output"), (54, ":")]
-        output_sections = tf.GetBlock(search_seq, ignore_tokens)
+    for block_index in range(blockcount + 1):
+        content = tf.GetBlockFromIndex(block_index)
+        words = content.split()
+        if not words:
+            continue
+        match words[0]:
+            case "rule":
+                blocktype = "rule"
+                name = words[1].replace(":", "")
+            case "module":
+                blocktype = "module"
+                name = words[1].replace(":", "")
+            case _:
+                blocktype = "config"
+                name = "config"
         # Cross-reference with DAG and mark associations with nodes and lines
         dag_index = [
             ix for ix, node in enumerate(dag["nodes"]) if node["value"]["label"] == name
@@ -141,15 +129,16 @@ def SplitByRules(file, get_dag: bool = False):
             "name": name,
             "type": blocktype,
             "content": content,
-            "input": input_sections,
-            "output": output_sections,
         }
         rules["block"].append(block)
 
     # Return links, as determined by snakemake DAG
     links = []
     for link in dag["links"]:
-        links.append([dag_to_block[link["u"]], dag_to_block[link["v"]]])
+        try:
+            links.append([dag_to_block[link["u"]], dag_to_block[link["v"]]])
+        except KeyError:
+            pass
     # Remove duplicates (from multiple input files in DAG)
     links.sort()
     links = list(k for k, _ in itertools.groupby(links))

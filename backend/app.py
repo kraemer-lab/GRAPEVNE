@@ -48,11 +48,15 @@ def post():
                     "body": json.dumps(parser.Tokenize(request.json["data"])),
                 }
             case "tokenize_load":
+                try:
+                    # Try full-tokenize (may fail if dependencies not present)
+                    body = parser.FullTokenizeFromFile(request.json["data"])
+                except BaseException:
+                    # ...then try in-situ tokenization
+                    body = parser.TokenizeFromFile(request.json["data"])
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(
-                        parser.FullTokenizeFromFile(request.json["data"])
-                    ),
+                    "body": json.dumps(body),
                 }
             case "jobstatus":
                 data = {

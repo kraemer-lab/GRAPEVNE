@@ -109,14 +109,14 @@ class NodeScene {
     this.engine.setModel(model);
     const pos = [50, 50]
     this.nodelist = []
-    let node_index = 0
     data['block'].forEach((block) => {
+      const node_index: number = block['id']
       let colstr = 'rgb(0,192,255)'
       if (block['type'] == 'config') {
         colstr = 'rgb(192,0,255)'
       }
       const node = this.addNode(block['name'], colstr, pos, block);
-      this.nodelist.push(node)
+      this.nodelist[node_index] = node
       pos[0] += 150
       // count and add ports
       let count_ports_in = 0
@@ -133,9 +133,9 @@ class NodeScene {
         if (count_ports_out > 0)
           node.addOutPort('out')
       }
-      node_index = node_index + 1
     });
     data['links']['content'].forEach((link) => {
+      console.log(link, this.nodelist)
       this.addLink(this.nodelist[link[0]].getPort('out'), this.nodelist[link[1]].getPort('in'))
     });
     // Mark nodes without connections as completed

@@ -1,3 +1,5 @@
+import pytest
+
 from parser.TokenizeFile import TokenizeFile
 
 
@@ -86,6 +88,20 @@ def test_GetContentOfIndentBlock():
     expected_list = ["    level3:\n        level3_item\n"]
     for line, indent, expected in zip(linenumber, indent, expected_list, strict=True):
         assert tf.GetContentOfIndentBlock(line, indent) == expected
+
+
+@pytest.mark.parametrize(
+    "blockno,expected",
+    [
+        (1, "rule:\n    rule_item\n"),
+        (2, "level2:\n    level3:\n        level3_item\n"),
+        (3, "input:\n    input_item\n"),
+        (4, "output:\n    output_item\n"),
+    ],
+)
+def test_GetBlockFromNumber(blockno, expected):
+    tf = TokenizeFile(content)
+    assert tf.GetBlockFromIndex(blockno) == expected
 
 
 def test_GetBlock():

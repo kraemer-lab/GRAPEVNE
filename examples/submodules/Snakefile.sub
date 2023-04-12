@@ -1,3 +1,7 @@
+rule all:
+  input:
+      "results/rule5"
+
 rule rule_2:
     input:
         "results/rule1"
@@ -29,3 +33,7 @@ rule rule_5:
         "results/rule5"
     shell:
         "sleep 5 && touch results/rule5"
+
+rule gen_rule1:
+  output:
+        "results/rule1"
