@@ -5,11 +5,14 @@ from typing import Tuple
 
 
 class TokenizeFile:
+    """Use GetBlockFromIndex(blockno) to retreive the top-level indentation blocks"""
+
     def __init__(self, content: str):
         self.content: str = ""
         self.tokens: List[Tuple] = []
         self.indent_levels: List[int] = []
         self.blocks: List[int] = []
+        self.rootblock: List[int] = []
 
         self.content = content
         file = io.BytesIO(bytes(content, "utf-8"))
@@ -30,6 +33,16 @@ class TokenizeFile:
                 match = True
             if match:
                 log_fn(ix, token)
+
+    def PrintLineInfo(self):
+        lineno = 0
+        print("Block Indent Line")
+        with io.StringIO(self.content) as file:
+            for line in file:
+                blockno = self.rootblock[lineno + 1]
+                indentlevel = self.GetIndentLevelFromLinenumber(lineno + 1)
+                print(f"{blockno} {indentlevel} {line}", end="")
+                lineno = lineno + 1
 
     def FindTokenSequence(self, search_seq) -> List[int]:
         """Find token sequence in longer sequence and return indices"""
@@ -91,6 +104,12 @@ class TokenizeFile:
             )
         return tokenize.untokenize(tokens)
 
+    def GetBlockFromIndex(self, blockno: int):
+        return self.GetContentBetweenLines(
+            self.rootblock.index(blockno),
+            len(self.rootblock) - self.rootblock[::-1].index(blockno) - 1,
+        )
+
     def GetContentBetweenLines(self, line_from, line_to):
         content = ""
         for line in range(line_from, line_to + 1):
@@ -116,9 +135,12 @@ class TokenizeFile:
 
     def CalcIndentLevels(self):
         """Return indentation levels for each line in the file"""
+        blockno = 0
         lastlinenumber = self.tokens[-1][2][0]
         indent_list = [None] * (lastlinenumber + 1)
+        rootblock = [None] * (lastlinenumber + 1)
         indent = 0
+        lastindent = 1
         for token in self.tokens:
             toknum, _, start, _, _ = token
             row, _ = start
@@ -128,7 +150,13 @@ class TokenizeFile:
                 indent -= 1
             # Update indent for line
             indent_list[row] = indent
+            if lastindent == 0 and indent > 0:
+                blockno = blockno + 1
+                rootblock[row - 1] = blockno
+            rootblock[row] = blockno
+            lastindent = indent
         self.indent_levels = indent_list
+        self.rootblock = rootblock
 
     def GetIndentLevels(self):
         return self.indent_levels

@@ -35,6 +35,7 @@ export function displayMiddleware({ getState, dispatch }) {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
                   'query': 'deleteresults',
                   'data': {
+                      'format': 'Snakefile',
                       'content': JSON.parse(getState().display.folderinfo).foldername
                   }
               }

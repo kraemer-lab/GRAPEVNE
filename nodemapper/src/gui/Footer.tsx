@@ -45,13 +45,6 @@ function Footer() {
         onChange={()=>{}}  // eslint-disable-line @typescript-eslint/no-empty-function
       />
       </p>
-      <p>
-      <button
-        className="btn"
-        style={{padding: "10px"}}
-        onClick={updateLinter}
-      >LINT</button>
-      </p>
     </div>
     </>
   )

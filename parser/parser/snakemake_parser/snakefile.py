@@ -5,9 +5,7 @@ import os
 import shutil
 import subprocess
 import tempfile
-import tokenize
 from typing import Dict
-from typing import List
 from typing import Tuple
 
 from parser.TokenizeFile import TokenizeFile
@@ -26,24 +24,70 @@ def Build(data: dict) -> str:
     return contents
 
 
+def DeleteAllOutput(filename: str) -> dict:
+    """Ask snakemake to remove all output files"""
+    filename, workdir = GetFileAndWorkingDirectory(filename)
+    stdout, stderr = snakemake(
+        filename,
+        "--delete-all-output",
+        workdir=workdir,
+    )
+    return {
+        "status": "ok" if not stderr else "error",
+        "content": {"stdout": stdout, "stderr": stderr},
+    }
+
+
 def Launch(filename: str) -> dict:
+    """Launch snakemake workflow based upon provided [locally accessible] Snakefile"""
     stdout, stderr = snakemake(filename, "--nolock")
-    return {"status": "ok"}
+    return {
+        "status": "ok" if not stderr else "error",
+        "content": {"stdout": stdout, "stderr": stderr},
+    }
 
 
-def Lint(filename: str) -> dict:
+def Lint(snakefile: str) -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
-    return Snakemake_Lint(filename)
+    try:
+        stdout, stderr = snakemake(snakefile, "--lint", "json")
+    except BaseException as e:
+        return {"error": str(e)}
+    # strip first and last lines as needed (snakemake returns)
+    sl = stdout.split("\n")
+    if sl[0] in {"True", "False"}:
+        sl = sl[1:]
+    if sl[-1] in {"True", "False"}:
+        sl = sl[:-1]
+    return json.loads("\n".join(sl))
 
 
 def LintContents(content: str, tempdir: str | None = None) -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
     with IsolatedTempFile(content) as snakefile:
-        lint_return = Snakemake_Lint(snakefile)
+        lint_return = Lint(snakefile)
     return lint_return
 
 
-def SplitByRulesLocal(filename: str) -> dict:
+def LoadWorkflow(filename: str) -> dict:
+    """Load workflow from provided folder
+
+    Valid Snakefile locations:
+        ./Snakefile
+        ./workflow/Snakefile
+    """
+    filename, workdir = GetFileAndWorkingDirectory(filename)
+    return SplitByRulesFromFile(filename, workdir)
+
+
+def FullTokenizeFromFile(filename: str) -> dict:
+    """Copy Snakefile contents to a new temporary file and analyze in isolation"""
+    with open(filename, "r") as infile:
+        with IsolatedTempFile(infile.read()) as tempfile:
+            return SplitByRulesFromFile(tempfile)
+
+
+def SplitByRulesFromFile(filename: str, workdir: str = "") -> dict:
     """
     Tokenize snakefile, split by 'rule' segments
 
@@ -54,59 +98,49 @@ def SplitByRulesLocal(filename: str) -> dict:
     (DAGs)
     """
     fullfilename = os.path.abspath(filename)
-    file = open(fullfilename, "rb")
-    return SplitByRules(file, get_dag=True)
+    return SplitByIndent(fullfilename, workdir, get_dag=True)
 
 
 def SplitByRulesFileContent(content: str) -> dict:
     """Tokenize Snakefile, split into 'rules', return as dict list of rules"""
     with IsolatedTempFile(content) as snakefile:
-        rules = SplitByRulesLocal(snakefile)
+        rules = SplitByRulesFromFile(snakefile)
     return rules
 
 
-def SplitByRules(file, get_dag: bool = False):
-    # Tokenize input, splitting chunks by 'rule' statement
-    result: List = [[]]
-    chunk = 0
-    tokens = tokenize.tokenize(file.readline)
-    for toknum, tokval, _, _, _ in tokens:
-        if toknum == tokenize.NAME and tokval == "rule":
-            chunk += 1
-            result.append([])
-        result[chunk].append((toknum, tokval))
+def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
+    """Tokenize input, splitting chunks by indentation level"""
+
+    # Tokenize into blocks by indentation level
+    with open(filename, "r") as file:
+        contents = file.read()
+    tf = TokenizeFile(contents)
+    blockcount = max(tf.rootblock)
 
     # Query snakemake for DAG of graph (used for connections)
     if get_dag:
-        dag = DagLocal(os.path.abspath(file.name))
+        dag = DagLocal(os.path.abspath(file.name), workdir)
     else:
         dag = {"nodes": [], "links": []}
     dag_to_block = {}
 
-    # Build JSON representation (consisting of a list of rules text)
+    # Build JSON representation
     rules: Dict = {"block": []}
-    for block_index, r in enumerate(result):
-        # stringify code block
-        content = tokenize.untokenize(r)
-        if isinstance(content, bytes):  # if byte string, decode
-            content = content.decode("utf-8")
-        # derive rule name
-        if r[0][1] == "rule":
-            blocktype = "rule"
-            strlist = [tokval for _, tokval in r]
-            index_to = strlist.index(":")
-            name = "".join(strlist[1:index_to])
-        else:
-            blocktype = "config"
-            name = "Configuration"
-        # Find and parse input block
-        ignore_tokens: List[Tuple] = []
-        search_seq = [(1, "input"), (54, ":")]
-        tf = TokenizeFile(content)
-        input_sections = tf.GetBlock(search_seq, ignore_tokens)
-        # Find and parse output block
-        search_seq = [(1, "output"), (54, ":")]
-        output_sections = tf.GetBlock(search_seq, ignore_tokens)
+    for block_index in range(blockcount + 1):
+        content = tf.GetBlockFromIndex(block_index)
+        words = content.split()
+        if not words:
+            continue
+        match words[0]:
+            case "rule":
+                blocktype = "rule"
+                name = words[1].replace(":", "")
+            case "module":
+                blocktype = "module"
+                name = words[1].replace(":", "")
+            case _:
+                blocktype = "config"
+                name = "config"
         # Cross-reference with DAG and mark associations with nodes and lines
         dag_index = [
             ix for ix, node in enumerate(dag["nodes"]) if node["value"]["label"] == name
@@ -121,15 +155,16 @@ def SplitByRules(file, get_dag: bool = False):
             "name": name,
             "type": blocktype,
             "content": content,
-            "input": input_sections,
-            "output": output_sections,
         }
         rules["block"].append(block)
 
     # Return links, as determined by snakemake DAG
     links = []
     for link in dag["links"]:
-        links.append([dag_to_block[link["u"]], dag_to_block[link["v"]]])
+        try:
+            links.append([dag_to_block[link["u"]], dag_to_block[link["v"]]])
+        except KeyError:
+            pass
     # Remove duplicates (from multiple input files in DAG)
     links.sort()
     links = list(k for k, _ in itertools.groupby(links))
@@ -155,9 +190,12 @@ def DagFileContent(content: str) -> dict:
     return dag
 
 
-def DagLocal(filename: str) -> dict:
+def DagLocal(filename: str, workdir: str = "") -> dict:
     """Lint using snakemake library (returns on stdout with extra elements)"""
-    stdout, stderr = snakemake(filename, "--d3dag")
+    kwargs = {"workdir": workdir} if workdir else {}
+    stdout, stderr = snakemake(filename, "--d3dag", **kwargs)
+    print(stdout)
+    print(stderr)
     # strip first and last lines as needed (snakemake returns True/False)
     sl = stdout.split("\n")
     if sl[0] in {"True", "False"}:
@@ -167,19 +205,20 @@ def DagLocal(filename: str) -> dict:
     return json.loads("\n".join(sl))
 
 
-def Snakemake_Lint(snakefile: str) -> dict:
-    # Lint using snakemake library (returns on stdout with extra elements)
-    try:
-        stdout, stderr = snakemake(snakefile, "--lint", "json")
-    except BaseException as e:
-        return {"error": str(e)}
-    # strip first and last lines as needed (snakemake returns)
-    sl = stdout.split("\n")
-    if sl[0] in {"True", "False"}:
-        sl = sl[1:]
-    if sl[-1] in {"True", "False"}:
-        sl = sl[:-1]
-    return json.loads("\n".join(sl))
+def GetFileAndWorkingDirectory(filename):
+    if os.path.isdir(filename):
+        workdir = os.path.abspath(filename)
+        filelist = [
+            f"{workdir}/Snakefile",
+            f"{workdir}/workflow/Snakefile",
+        ]
+        for file in filelist:
+            if os.path.exists(file):
+                filename = file
+                break
+    else:
+        workdir = ""
+    return filename, workdir
 
 
 @contextlib.contextmanager
@@ -201,24 +240,48 @@ def IsolatedTempFile(content: str, tempdir=None):
 
 
 def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
-    """Run snakemake as subprocess"""
+    """Run snakemake as subprocess
+
+    This function takes optional arguments that are passed through to the
+    snakemake executable, with the exception of:
+        workdir     Sets the working directory for job execution
+    """
+    # Get Snakefile path
+    snakefile = os.path.abspath(filename)
+    # Check for work directory, otherwise default to Snakefile directory
+    workdir = kwargs.get("workdir", "")
+    if not workdir:
+        workdir = os.path.dirname(snakefile)
     # Collate arguments list
+    try:
+        del kwargs["workdir"]
+    except KeyError:
+        pass
+    print(args)
     arglist = list(args)
     for k, v in kwargs.items():
         arglist.extend([k, v])
     # Default set a single core if none specified
     if "--cores" not in kwargs.keys() and "--cores" not in args:
         arglist.extend(["--cores", "1"])
-    # Launch process and wait for it to return
-    snakefile = os.path.abspath(filename)
+    # Launch process and wait for return
+    print(
+        [
+            "snakemake",
+            "--snakefile",
+            snakefile,
+            *arglist,
+            workdir,
+        ]
+    )
     p = subprocess.run(
         [
             "snakemake",
             "--snakefile",
-            os.path.basename(snakefile),
+            snakefile,
             *arglist,
         ],
-        cwd=os.path.dirname(snakefile),
+        cwd=workdir,
         capture_output=True,
     )
     return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")

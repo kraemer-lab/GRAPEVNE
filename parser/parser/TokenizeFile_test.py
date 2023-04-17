@@ -1,3 +1,5 @@
+import pytest
+
 from parser.TokenizeFile import TokenizeFile
 
 
@@ -88,6 +90,20 @@ def test_GetContentOfIndentBlock():
         assert tf.GetContentOfIndentBlock(line, indent) == expected
 
 
+@pytest.mark.parametrize(
+    "blockno,expected",
+    [
+        (1, "rule:\n    rule_item\n"),
+        (2, "level2:\n    level3:\n        level3_item\n"),
+        (3, "input:\n    input_item\n"),
+        (4, "output:\n    output_item\n"),
+    ],
+)
+def test_GetBlockFromNumber(blockno, expected):
+    tf = TokenizeFile(content)
+    assert tf.GetBlockFromIndex(blockno) == expected
+
+
 def test_GetBlock():
     tf = TokenizeFile(content)
     search_seq = [(1, "level2"), (54, ":")]
@@ -105,7 +121,7 @@ def test_GetIndentLevels():
     assert indent_level == expected_list
 
 
-def GetBlockList():
+def test_GetBlockList():
     tf = TokenizeFile(content)
     block_list = tf.GetBlockList(level=1)
     # index[0]=encoding; index[-1]=dedent-to-start

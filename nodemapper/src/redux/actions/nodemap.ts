@@ -15,3 +15,4 @@ export const nodemapSubmitQuery = createAction<Record<string, any>>("nodemap/sub
 export const nodemapStoreLint = createAction("nodemap/store-lint")
 export const nodemapStoreMap = createAction("nodemap/store-map")
 export const nodemapStoreJobStatus = createAction<string>("nodemap/store-job-status")
+export const nodemapLoadWorkflow = createAction("nodemap/load-workflow")
