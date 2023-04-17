@@ -42,6 +42,11 @@ def post():
                     "query": request.json["query"],
                     "body": json.dumps(parser.LintContents(request.json["data"])),
                 }
+            case "loadworkflow":
+                data = {
+                    "query": request.json["query"],
+                    "body": json.dumps(parser.LoadWorkflow(request.json["data"])),
+                }
             case "tokenize":
                 data = {
                     "query": request.json["query"],

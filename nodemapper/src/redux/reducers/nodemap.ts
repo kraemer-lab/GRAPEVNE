@@ -59,6 +59,9 @@ const nodemapReducer = createReducer(
         state.jobstatus = action.payload
         console.info("[Reducer] (nodemap)StoreJobStatus");
       })
+      .addCase(actions.nodemapLoadWorkflow, (state, action) => {
+        console.info("[Reducer] (nodemap)LoadWorkflow");
+      })
   }
 );
 

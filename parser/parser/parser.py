@@ -58,6 +58,15 @@ def Tokenize(data: dict) -> dict:
     return tokenized_data
 
 
+def LoadWorkflow(data: dict) -> dict:
+    match data["format"]:
+        case "Snakefile":
+            tokenized_data: dict = snakefile.LoadWorkflow(data["content"])
+        case _:
+            raise ValueError("Format not supported: {data['format']}")
+    return tokenized_data
+
+
 def TokenizeFromFile(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":

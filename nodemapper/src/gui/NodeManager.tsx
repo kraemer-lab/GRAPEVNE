@@ -120,6 +120,7 @@ function NodeManager() {
         dispatch(nodemapStoreJobStatus(content["body"]))
         break;
       }
+      case 'loadworkflow':
       case 'tokenize':
       case 'tokenize_load': {
         // Rebuild map from returned (segmented) representation

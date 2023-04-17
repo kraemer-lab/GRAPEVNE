@@ -140,6 +140,17 @@ export function nodemapMiddleware({ getState, dispatch }) {
               break;
           }
 
+          case "nodemap/load_workflow": {
+              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+                  'query': 'loadworkflow',
+                  'data': {
+                      'content': JSON.parse(getState().display.folderinfo).foldername
+                  }
+              }
+              dispatch(nodemapSubmitQuery(query))
+              break;
+          }
+
           default:
             break;
       }
