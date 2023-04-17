@@ -26,7 +26,12 @@ def Build(data: dict) -> str:
 
 def DeleteAllOutput(filename: str) -> dict:
     """Ask snakemake to remove all output files"""
-    stdout, stderr = snakemake(filename, "--delete-all-output")
+    filename, workdir = GetFileAndWorkingDirectory(filename)
+    stdout, stderr = snakemake(
+        filename,
+        "--delete-all-output",
+        workdir=workdir,
+    )
     return {
         "status": "ok" if not stderr else "error",
         "content": {"stdout": stdout, "stderr": stderr},
@@ -42,15 +47,25 @@ def Launch(filename: str) -> dict:
     }
 
 
-def Lint(filename: str) -> dict:
+def Lint(snakefile: str) -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
-    return Snakemake_Lint(filename)
+    try:
+        stdout, stderr = snakemake(snakefile, "--lint", "json")
+    except BaseException as e:
+        return {"error": str(e)}
+    # strip first and last lines as needed (snakemake returns)
+    sl = stdout.split("\n")
+    if sl[0] in {"True", "False"}:
+        sl = sl[1:]
+    if sl[-1] in {"True", "False"}:
+        sl = sl[:-1]
+    return json.loads("\n".join(sl))
 
 
 def LintContents(content: str, tempdir: str | None = None) -> dict:
     """Lint the Snakefile using the snakemake library, returns JSON"""
     with IsolatedTempFile(content) as snakefile:
-        lint_return = Snakemake_Lint(snakefile)
+        lint_return = Lint(snakefile)
     return lint_return
 
 
@@ -61,10 +76,7 @@ def LoadWorkflow(filename: str) -> dict:
         ./Snakefile
         ./workflow/Snakefile
     """
-
-    # """"""""""""""""""""""""""""" GET WORKING DIR HERE """""""""""""""""""""
-    workdir = ""
-
+    filename, workdir = GetFileAndWorkingDirectory(filename)
     return SplitByRulesFromFile(filename, workdir)
 
 
@@ -182,6 +194,8 @@ def DagLocal(filename: str, workdir: str = "") -> dict:
     """Lint using snakemake library (returns on stdout with extra elements)"""
     kwargs = {"workdir": workdir} if workdir else {}
     stdout, stderr = snakemake(filename, "--d3dag", **kwargs)
+    print(stdout)
+    print(stderr)
     # strip first and last lines as needed (snakemake returns True/False)
     sl = stdout.split("\n")
     if sl[0] in {"True", "False"}:
@@ -191,19 +205,20 @@ def DagLocal(filename: str, workdir: str = "") -> dict:
     return json.loads("\n".join(sl))
 
 
-def Snakemake_Lint(snakefile: str) -> dict:
-    # Lint using snakemake library (returns on stdout with extra elements)
-    try:
-        stdout, stderr = snakemake(snakefile, "--lint", "json")
-    except BaseException as e:
-        return {"error": str(e)}
-    # strip first and last lines as needed (snakemake returns)
-    sl = stdout.split("\n")
-    if sl[0] in {"True", "False"}:
-        sl = sl[1:]
-    if sl[-1] in {"True", "False"}:
-        sl = sl[:-1]
-    return json.loads("\n".join(sl))
+def GetFileAndWorkingDirectory(filename):
+    if os.path.isdir(filename):
+        workdir = os.path.abspath(filename)
+        filelist = [
+            f"{workdir}/Snakefile",
+            f"{workdir}/workflow/Snakefile",
+        ]
+        for file in filelist:
+            if os.path.exists(file):
+                filename = file
+                break
+    else:
+        workdir = ""
+    return filename, workdir
 
 
 @contextlib.contextmanager
@@ -224,37 +239,49 @@ def IsolatedTempFile(content: str, tempdir=None):
     shutil.rmtree(snakefile_dir.name)
 
 
-def snakemake(filename: str, workdir: str, *args, **kwargs) -> Tuple[str, str]:
+def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
     """Run snakemake as subprocess
 
     This function takes optional arguments that are passed through to the
     snakemake executable, with the exception of:
         workdir     Sets the working directory for job execution
     """
+    # Get Snakefile path
+    snakefile = os.path.abspath(filename)
+    # Check for work directory, otherwise default to Snakefile directory
+    workdir = kwargs.get("workdir", "")
+    if not workdir:
+        workdir = os.path.dirname(snakefile)
     # Collate arguments list
+    try:
+        del kwargs["workdir"]
+    except KeyError:
+        pass
+    print(args)
     arglist = list(args)
     for k, v in kwargs.items():
         arglist.extend([k, v])
     # Default set a single core if none specified
     if "--cores" not in kwargs.keys() and "--cores" not in args:
         arglist.extend(["--cores", "1"])
-    # Get Snakefile path
-    snakefile = os.path.abspath(filename)
-    # Check for work directory, otherwise default to Snakefile directory
-    workdir = kwargs.get("workdir", os.path.basename(snakefile))
-    try:
-        del kwargs["workdir"]
-    except KeyError:
-        pass
     # Launch process and wait for return
+    print(
+        [
+            "snakemake",
+            "--snakefile",
+            snakefile,
+            *arglist,
+            workdir,
+        ]
+    )
     p = subprocess.run(
         [
             "snakemake",
             "--snakefile",
-            workdir,
+            snakefile,
             *arglist,
         ],
-        cwd=os.path.dirname(snakefile),
+        cwd=workdir,
         capture_output=True,
     )
     return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")

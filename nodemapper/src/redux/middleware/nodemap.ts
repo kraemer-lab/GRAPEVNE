@@ -140,10 +140,11 @@ export function nodemapMiddleware({ getState, dispatch }) {
               break;
           }
 
-          case "nodemap/load_workflow": {
+          case "nodemap/load-workflow": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
                   'query': 'loadworkflow',
                   'data': {
+                      'format': 'Snakefile',
                       'content': JSON.parse(getState().display.folderinfo).foldername
                   }
               }
