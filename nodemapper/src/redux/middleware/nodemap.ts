@@ -105,7 +105,7 @@ export function nodemapMiddleware({ getState, dispatch }) {
                   'query': 'jobstatus',
                   'data': {
                       'format': 'Snakefile',
-                      'content': getState().display.filename
+                      'content': JSON.parse(getState().display.folderinfo).foldername
                   }
               }
               dispatch(nodemapSubmitQuery(query));
