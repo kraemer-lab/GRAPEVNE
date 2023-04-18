@@ -127,7 +127,7 @@ def SplitByDagFromFile(filename: str, workdir: str = "") -> dict:
         rules["block"].append(block)
     # include config nodes
     for b in blocks["block"]:
-        if b["type"] == "config":
+        if b["type"] == "config" or b["type"] == "module":
             rules["block"].append(
                 {
                     "id": len(rules["block"]),
