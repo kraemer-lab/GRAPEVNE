@@ -13,7 +13,7 @@ import { BodyWidget } from './BodyWidget'
 
 class NodeScene {
   engine: DiagramEngine;
-  nodelist: DefaultNodeModel[] = []
+  nodelist = {}
 
   constructor() {
     this.InitializeScene();
@@ -45,6 +45,10 @@ class NodeScene {
 
   isNodeTypeRule(node) {
     return this.getNodeUserConfig(node).type == 'rule'
+  }
+
+  getNodeName(node) {
+    return this.getNodeUserConfig(node).name
   }
 
   InitializeScene() {
@@ -108,7 +112,7 @@ class NodeScene {
     const model = new DiagramModel();
     this.engine.setModel(model);
     const pos = [50, 50]
-    this.nodelist = []
+    this.nodelist = {}
     data['block'].forEach((block) => {
       const node_index: number = block['id']
       let colstr = 'rgb(0,192,255)'
@@ -116,15 +120,15 @@ class NodeScene {
         colstr = 'rgb(192,0,255)'
       }
       const node = this.addNode(block['name'], colstr, pos, block);
-      this.nodelist[node_index] = node
+      this.nodelist[block['name']] = node
       pos[0] += 150
       // count and add ports
       let count_ports_in = 0
       let count_ports_out = 0
       data['links']['content'].forEach((link) => {
-        if (link[0]==node_index)
+        if (link[0]==block['name'])
           count_ports_out++
-        if (link[1]==node_index)
+        if (link[1]==block['name'])
           count_ports_in++
       })
       if (block['type'] == 'rule') {
@@ -136,32 +140,40 @@ class NodeScene {
     });
     data['links']['content'].forEach((link) => {
       console.log(link, this.nodelist)
-      this.addLink(this.nodelist[link[0]].getPort('out'), this.nodelist[link[1]].getPort('in'))
+      try {
+        this.addLink(this.nodelist[link[0]].getPort('out'), this.nodelist[link[1]].getPort('in'))
+      } catch(e) {
+        // pass
+      }
     });
     // Mark nodes without connections as completed
-    this.nodelist.forEach((node) => {
+    for (const key of Object.keys(this.nodelist)) {
+      const node = this.nodelist[key]
       const portsIn = node.getInPorts()
       const portsOut = node.getOutPorts()
       if ((this.isNodeTypeRule(node)) && (portsIn.length==0) && (portsOut.length==0))
         node.setColor('rgb(0,255,0)')
-    });
+      else if ((this.isNodeTypeRule(node)) && (portsIn.length==0))
+        node.setColor('rgb(128,255,0)')
+      else if ((this.isNodeTypeRule(node)) && (portsOut.length==0))
+        node.setColor('rgb(255,0,255)')
+    }
     this.distributeModel(model)
   }
 
   markNodesWithoutConnectionsAsComplete(data: JSON) {
-    let node_index = 0
-    this.nodelist.forEach((node) => {
+    for (const key of Object.keys(this.nodelist)) {
+      const node = this.nodelist[key]
       // Check if node has any remaining dependencies in the latest DAG
       let has_input = false;
       data['links']['content'].forEach((link) => {
-        if ((link[0] == node_index) || (link[1] == node_index)) {
+        if ((link[0] == this.getNodeName(node)) || (link[1] == this.getNodeName(node))) {
           has_input = true;
         }
       });
       if (!has_input)
         node.setColor('rgb(0,255,0)')
-      node_index = node_index + 1
-    });
+    }
   }
 }
 

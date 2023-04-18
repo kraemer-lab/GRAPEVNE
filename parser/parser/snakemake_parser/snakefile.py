@@ -1,11 +1,11 @@
 import contextlib
-import itertools
 import json
 import os
 import shutil
 import subprocess
 import tempfile
 from typing import Dict
+from typing import List
 from typing import Tuple
 
 from parser.TokenizeFile import TokenizeFile
@@ -77,7 +77,7 @@ def LoadWorkflow(filename: str) -> dict:
         ./workflow/Snakefile
     """
     filename, workdir = GetFileAndWorkingDirectory(filename)
-    return SplitByRulesFromFile(filename, workdir)
+    return SplitByDagFromFile(filename, workdir)
 
 
 def FullTokenizeFromFile(filename: str) -> dict:
@@ -101,6 +101,71 @@ def SplitByRulesFromFile(filename: str, workdir: str = "") -> dict:
     return SplitByIndent(fullfilename, workdir, get_dag=True)
 
 
+def SplitByDagFromFile(filename: str, workdir: str = "") -> dict:
+    """Tokenize input using rules derived from dag graph"""
+
+    # Query snakemake for DAG of graph (used for connections)
+    dag = DagLocal(os.path.abspath(filename), workdir)
+
+    # Get rules text from origin Snakefile
+    blocks = SplitByIndent(filename, workdir, get_dag=False)
+
+    # Build JSON representation
+    rules: Dict = {"block": []}
+    for node in dag["nodes"]:
+        # construct dictionary for block and add to list
+        block = {
+            "id": node["id"],
+            "name": node["value"]["rule"],
+            "type": "rule",
+            "content": "(module)",
+        }
+        # cross-reference with block parser
+        for b in blocks["block"]:
+            if b["name"] == block["name"]:
+                block["content"] = b["content"]
+        rules["block"].append(block)
+    # include config nodes
+    for b in blocks["block"]:
+        if b["type"] == "config":
+            rules["block"].append(
+                {
+                    "id": len(rules["block"]),
+                    "name": b["name"],
+                    "type": b["type"],
+                    "content": b["content"],
+                }
+            )
+
+    # Return links, as determined by snakemake DAG
+    links = []
+    for link in dag["links"]:
+        try:
+            links.append(
+                [
+                    GetRuleFromID(rules["block"], link["u"]),
+                    GetRuleFromID(rules["block"], link["v"]),
+                ]
+            )
+        except KeyError:
+            pass
+
+    rules["links"] = {
+        "id": -1,
+        "name": "links",
+        "type": "links",
+        "content": links,
+    }
+    return rules
+
+
+def GetRuleFromID(blocks: List[dict], id: int) -> str:
+    for block in blocks:
+        if block["id"] == id:
+            return block["name"]
+    return ""
+
+
 def SplitByRulesFileContent(content: str) -> dict:
     """Tokenize Snakefile, split into 'rules', return as dict list of rules"""
     with IsolatedTempFile(content) as snakefile:
@@ -122,7 +187,6 @@ def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
         dag = DagLocal(os.path.abspath(file.name), workdir)
     else:
         dag = {"nodes": [], "links": []}
-    dag_to_block = {}
 
     # Build JSON representation
     rules: Dict = {"block": []}
@@ -141,14 +205,6 @@ def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
             case _:
                 blocktype = "config"
                 name = "config"
-        # Cross-reference with DAG and mark associations with nodes and lines
-        dag_index = [
-            ix for ix, node in enumerate(dag["nodes"]) if node["value"]["label"] == name
-        ]
-        # dag from snakemake can contain the same rules multiple times for
-        # multiple input files, associate all with the same rule block
-        for ix in dag_index:
-            dag_to_block[ix] = block_index
         # construct dictionary for block and add to list
         block = {
             "id": block_index,
@@ -160,14 +216,16 @@ def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
 
     # Return links, as determined by snakemake DAG
     links = []
+    dagnodes = [
+        {"id": d["value"]["jobid"], "name": d["value"]["rule"]} for d in dag["nodes"]
+    ]
     for link in dag["links"]:
         try:
-            links.append([dag_to_block[link["u"]], dag_to_block[link["v"]]])
+            links.append(
+                [GetRuleFromID(dagnodes, link["u"]), GetRuleFromID(dagnodes, link["v"])]
+            )
         except KeyError:
             pass
-    # Remove duplicates (from multiple input files in DAG)
-    links.sort()
-    links = list(k for k, _ in itertools.groupby(links))
 
     rules["links"] = {
         "id": -1,

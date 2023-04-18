@@ -70,7 +70,7 @@ def LoadWorkflow(data: dict) -> dict:
 def TokenizeFromFile(data: dict) -> dict:
     match data["format"]:
         case "Snakefile":
-            tokenized_data: dict = snakefile.SplitByRulesFromFile(data["content"])
+            tokenized_data: dict = snakefile.LoadWorkflow(data["content"])
         case _:
             raise ValueError("Format not supported: {data['format']}")
     return tokenized_data
