@@ -40,6 +40,7 @@ def DeleteAllOutput(filename: str) -> dict:
 
 def Launch(filename: str) -> dict:
     """Launch snakemake workflow based upon provided [locally accessible] Snakefile"""
+    filename, workdir = GetFileAndWorkingDirectory(filename)
     stdout, stderr = snakemake(filename, "--nolock")
     return {
         "status": "ok" if not stderr else "error",
