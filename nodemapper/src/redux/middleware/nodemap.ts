@@ -89,7 +89,7 @@ export function nodemapMiddleware({ getState, dispatch }) {
                   'query': 'launch',
                   'data': {
                       'format': 'Snakefile',
-                      'content': getState().display.filename
+                      'content': JSON.parse(getState().display.folderinfo).foldername,
                   }
               }
               dispatch(nodemapSubmitQuery(query));

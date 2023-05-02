@@ -5,8 +5,10 @@ rule all:
 rule rule_1:
     output:
         "results/rule1"
+    benchmark:
+        "benchmark/rule1.txt"
     shell:
-        "sleep 1 && touch results/rule1"
+        "sleep 3 && touch results/rule1"
 
 rule rule_2:
     input:
@@ -14,7 +16,7 @@ rule rule_2:
     output:
         "results/rule2"
     shell:
-        "sleep 5 && touch results/rule2"
+        "sleep 3 && touch results/rule2"
 
 rule rule_3:
     input:
@@ -22,7 +24,7 @@ rule rule_3:
     output:
         "results/rule3"
     shell:
-        "sleep 5 && touch results/rule3"
+        "sleep 3 && touch results/rule3"
 
 rule rule_4:
     input:
@@ -30,7 +32,7 @@ rule rule_4:
     output:
         "results/rule4"
     shell:
-        "sleep 5 && touch results/rule4"
+        "sleep 3 && touch results/rule4"
 
 rule rule_5:
     input:
@@ -38,7 +40,7 @@ rule rule_5:
     output:
         "results/rule5"
     shell:
-        "sleep 5 && touch results/rule5"
+        "sleep 3 && touch results/rule5"
 
 rule rule_6:
     input:
@@ -46,4 +48,4 @@ rule rule_6:
     output:
         "results/rule6"
     shell:
-        "sleep 5 && touch results/rule6"
+        "sleep 3 && touch results/rule6"
