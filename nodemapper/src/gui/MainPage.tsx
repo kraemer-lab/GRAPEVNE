@@ -15,7 +15,7 @@ function MenuChoiceRender(props) {
 }
 
 function MainPage() {
-  const [menuChoice, setMenuChoice] = useState(1)
+  const [menuChoice, setMenuChoice] = useState(0)
 
   return (
     <>

@@ -12,14 +12,14 @@ function FileBrowser() {
 
   return (
     <>
-    <p>
     <table style={{width: "100%"}}>
+      <thead>
       <tr>
         <th><div style={{textAlign: "left"}}>File Browser</div></th>
         <th><div style={{textAlign: "right"}}><button onClick={btnLoadWorkflow}>LOAD</button></div></th>
       </tr>
+      </thead>
     </table>
-    </p>
     <FolderContents />
     </>
   )

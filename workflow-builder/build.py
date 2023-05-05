@@ -143,7 +143,7 @@ class Model:
 
 if __name__ == "__main__":
 
-    def module(path: str, local=True):
+    def module(path: str, local=False):
         if local:
             return {
                 "url": f"../../../../snakeshack/workflows/{path}/workflow/Snakefile",
