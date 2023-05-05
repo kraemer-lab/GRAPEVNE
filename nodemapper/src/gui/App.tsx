@@ -1,9 +1,6 @@
 import React from 'react'
-import { Component, StrictMode, } from 'react'
-import { connect } from 'react-redux'
-import Header from './Header'
-import MainPanel from './MainPanel'
-import SidePane from './SidePane'
+import { StrictMode } from 'react'
+import MainPage from './MainPage'
 
 import './App.css'
 
@@ -12,12 +9,8 @@ export default function App() {
   return (
   <StrictMode>
 
-    <div className="header">
-    <Header />
-    </div>
-
-    <div className="main">
-    <MainPanel />
+    <div className="mainpage">
+    <MainPage />
     </div>
 
   </StrictMode>

@@ -1,7 +1,7 @@
 import React from 'react'
 import NodeScene from './NodeScene'
-import { useAppSelector } from '../redux/store/hooks'
-import { useAppDispatch } from '../redux/store/hooks'
+import { useAppSelector } from 'redux/store/hooks'
+import { useAppDispatch } from 'redux/store/hooks'
 
 export default class NodeMapEngine {
   // Set up a singleton instance of a class

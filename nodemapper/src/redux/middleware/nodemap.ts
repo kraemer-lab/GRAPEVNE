@@ -1,10 +1,10 @@
-import { displayCloseSettings } from '../actions'
-import { displayOpenSettings } from '../actions'
-import { displayUpdateNodeInfo } from '../actions'
-import { nodemapSubmitQuery } from '../actions'
-import { nodemapQueryJobStatus } from '../actions'
+import { displayCloseSettings } from 'redux/actions'
+import { displayOpenSettings } from 'redux/actions'
+import { displayUpdateNodeInfo } from 'redux/actions'
+import { nodemapSubmitQuery } from 'redux/actions'
+import { nodemapQueryJobStatus } from 'redux/actions'
 
-import NodeMapEngine from '../../gui/NodeMapEngine'
+import NodeMapEngine from 'gui/Runner/NodeMapEngine'
 
 export function nodemapMiddleware({ getState, dispatch }) {
   return function(next) {

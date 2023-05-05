@@ -1,0 +1,14 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+
+html, body, #header-panel, #header-panel>div {
+    background: #DDDDDD;
+	font-family: 'Oswald', sans-serif;
+}
+#header-panel, #header-panel>div {
+	margin-left: 20px;
+}
+
+@import "Buttons.css"

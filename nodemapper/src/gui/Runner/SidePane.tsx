@@ -2,9 +2,9 @@ import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { ReactSlidingPane } from 'react-sliding-pane'
-import { displayCloseSettings } from '../redux/actions'
+import { displayCloseSettings } from 'redux/actions'
 import SidePaneContent from './SidePaneContent'
-import { useAppSelector, useAppDispatch } from '../redux/store/hooks'
+import { useAppSelector, useAppDispatch } from 'redux/store/hooks'
 
 import './SidePane.css'
 

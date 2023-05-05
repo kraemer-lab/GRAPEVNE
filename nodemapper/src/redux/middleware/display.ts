@@ -1,6 +1,6 @@
-import { nodemapSelectNone } from '../actions'
-import { nodemapSubmitQuery } from '../actions'
-import NodeMapEngine from '../../gui/NodeMapEngine'
+import { nodemapSelectNone } from 'redux/actions'
+import { nodemapSubmitQuery } from 'redux/actions'
+import NodeMapEngine from 'gui/Runner/NodeMapEngine'
 
 export function displayMiddleware({ getState, dispatch }) {
   return function(next) {

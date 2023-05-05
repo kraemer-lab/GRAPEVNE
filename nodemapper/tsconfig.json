@@ -6,12 +6,13 @@
 		"jsx": "react",
 		"allowJs": true,
 		"target": "es6",
-		"module": "CommonJS"
+		"module": "CommonJS",
+        "baseUrl": "src"
 	},
 	"include": [
-		"./src"
+		"src"
 	],
     "exclude": [
-        "./src/**/*.test.tsx"
+        "src/**/*.test.tsx"
     ]
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import FolderContents from './FolderContents'
-import { useAppDispatch } from '../redux/store/hooks'
-import { nodemapLoadWorkflow } from '../redux/actions'
+import { useAppDispatch } from 'redux/store/hooks'
+import { nodemapLoadWorkflow } from 'redux/actions'
 
 function FileBrowser() {
 

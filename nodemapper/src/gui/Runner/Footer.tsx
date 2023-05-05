@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { useState, useEffect } from 'react'
-import { useAppSelector } from '../redux/store/hooks'
-import { useAppDispatch } from '../redux/store/hooks'
-import { nodemapLintSnakefile } from '../redux/actions/nodemap'
+import { useAppSelector } from 'redux/store/hooks'
+import { useAppDispatch } from 'redux/store/hooks'
+import { nodemapLintSnakefile } from 'redux/actions/nodemap'
 
 import "./Footer.css"
 

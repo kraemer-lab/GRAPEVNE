@@ -12,6 +12,11 @@ module.exports = {
 		filename: 'bundle.js'
 	},
 	resolve: {
+    modules: ['src/', 'node_modules'],
+    alias: {
+      components: path.resolve(__dirname, 'src', 'scripts', 'components'),
+    	utils: path.resolve(__dirname, 'src', 'scripts', 'utils'),
+    },
 		extensions: ['.ts', '.tsx', '.js', '.jsx']
 	},
 	optimization: {
