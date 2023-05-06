@@ -3,6 +3,7 @@ import * as actions from "../actions"
 
 // State
 const builderStateInit = {
+  query: {},
 };
 
 // Nodemap
@@ -12,6 +13,10 @@ const builderReducer = createReducer(
     builder
       .addCase(actions.builderCompileToJson, (state, action) => {
         console.info("[Reducer] (builder)compileToJson");
+      })
+      .addCase(actions.builderSubmitQuery, (state, action) => {
+        state.query = action.payload
+        console.info("[Reducer] (builder)SubmitQuery");
       })
   }
 );

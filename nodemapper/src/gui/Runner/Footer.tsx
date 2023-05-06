@@ -3,19 +3,19 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
-import { nodemapLintSnakefile } from 'redux/actions/nodemap'
+import { runnerLintSnakefile } from 'redux/actions/runner'
 
 import "./Footer.css"
 
 function Footer() {
-  const linter = useAppSelector(state => state.nodemap.linter);
+  const linter = useAppSelector(state => state.runner.linter);
   const dispatch = useAppDispatch();
 
   const [title, setTitle] = useState("Linter")
   const [body, setBody] = useState("")
 
   const updateLinter = () => {
-    dispatch(nodemapLintSnakefile())
+    dispatch(runnerLintSnakefile())
   }
 
   useEffect(() => {

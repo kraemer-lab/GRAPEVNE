@@ -5,8 +5,8 @@ import { useAppSelector, useAppDispatch } from 'redux/store/hooks'
 import { displayGetFolderInfo } from 'redux/actions/display'
 import { displaySetFolder } from 'redux/actions/display'
 import { displaySetFilename } from 'redux/actions/display'
-import { nodemapLoadSnakefile } from 'redux/actions/nodemap'
-import { nodemapSubmitQuery } from 'redux/actions/nodemap'
+import { runnerLoadSnakefile } from 'redux/actions/runner'
+import { runnerSubmitQuery } from 'redux/actions/runner'
 
 import "./FolderContents.css"
 
@@ -32,7 +32,7 @@ function FolderContents() {
       dispatch(displaySetFolder(newpath))
     } else {
       dispatch(displaySetFilename(newpath))
-      dispatch(nodemapLoadSnakefile(newpath))
+      dispatch(runnerLoadSnakefile(newpath))
     }
   }
   const listitems = items.map(item =>

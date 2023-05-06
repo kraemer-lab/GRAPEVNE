@@ -1,5 +1,5 @@
-import { nodemapSelectNone } from 'redux/actions'
-import { nodemapSubmitQuery } from 'redux/actions'
+import { runnerSelectNone } from 'redux/actions'
+import { runnerSubmitQuery } from 'redux/actions'
 import NodeMapEngine from 'gui/Runner/NodeMapEngine'
 
 export function displayMiddleware({ getState, dispatch }) {
@@ -10,36 +10,36 @@ export function displayMiddleware({ getState, dispatch }) {
       switch (action.type) {
 
           case "display/close-settings": {
-            dispatch(nodemapSelectNone());
+            dispatch(runnerSelectNone());
             break;
           }
 
           case "display/zoom-to-fit": {
-              const nodemap = NodeMapEngine.Instance;
-              nodemap.ZoomToFit();
+              const runner = NodeMapEngine.Instance;
+              runner.ZoomToFit();
             break;
           }
 
           case "display/get-folder-info": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'folderinfo',
+                  'query': 'display/folderinfo',
                   'data': {
                       'content': JSON.parse(getState().display.folderinfo).foldername
                   }
               }
-              dispatch(nodemapSubmitQuery(query))
+              dispatch(runnerSubmitQuery(query))
               break;
           }
 
           case "display/delete-results": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'deleteresults',
+                  'query': 'runner/deleteresults',
                   'data': {
                       'format': 'Snakefile',
                       'content': JSON.parse(getState().display.folderinfo).foldername
                   }
               }
-              dispatch(nodemapSubmitQuery(query))
+              dispatch(runnerSubmitQuery(query))
               break;
           }
 

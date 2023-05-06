@@ -1,10 +1,10 @@
-import nodemapReducer from './nodemap'
+import runnerReducer from './runner'
 import builderReducer from './builder'
 import displayReducer from './display'
 import { combineReducers } from 'redux'
 
 const rootReducer = combineReducers({
-  nodemap: nodemapReducer,
+  runner: runnerReducer,
   builder: builderReducer,
   display: displayReducer,
 })

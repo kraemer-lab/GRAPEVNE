@@ -1,6 +1,6 @@
 import pytest
 
-from parser.TokenizeFile import TokenizeFile
+from runner.TokenizeFile import TokenizeFile
 
 
 content = """\

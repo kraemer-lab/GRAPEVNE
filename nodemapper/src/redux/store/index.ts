@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { nodemapMiddleware } from 'redux/middleware/nodemap'
+import { runnerMiddleware } from 'redux/middleware/runner'
 import { builderMiddleware } from 'redux/middleware/builder'
 import { displayMiddleware } from 'redux/middleware/display'
 import rootReducer from 'redux/reducers'
@@ -7,7 +7,7 @@ import rootReducer from 'redux/reducers'
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
-    .concat(nodemapMiddleware)
+    .concat(runnerMiddleware)
     .concat(builderMiddleware)
     .concat(displayMiddleware)
   ,

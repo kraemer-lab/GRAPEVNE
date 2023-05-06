@@ -4,5 +4,5 @@ venv
 .venv
 build
 .mypy_cache
-parser.egg-info
+runner.egg-info
 .pytest_cache

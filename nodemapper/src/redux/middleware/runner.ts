@@ -1,12 +1,12 @@
 import { displayCloseSettings } from 'redux/actions'
 import { displayOpenSettings } from 'redux/actions'
 import { displayUpdateNodeInfo } from 'redux/actions'
-import { nodemapSubmitQuery } from 'redux/actions'
-import { nodemapQueryJobStatus } from 'redux/actions'
+import { runnerSubmitQuery } from 'redux/actions'
+import { runnerQueryJobStatus } from 'redux/actions'
 
 import NodeMapEngine from 'gui/Runner/NodeMapEngine'
 
-export function nodemapMiddleware({ getState, dispatch }) {
+export function runnerMiddleware({ getState, dispatch }) {
   return function(next) {
     return function(action) {
       // action.type
@@ -14,11 +14,11 @@ export function nodemapMiddleware({ getState, dispatch }) {
       console.log("Middleware: ", action );
       switch (action.type) {
 
-          case "nodemap/node-selected": {
+          case "runner/node-selected": {
             const graph_is_moveable = getState().display.graph_is_moveable
             if (!graph_is_moveable) {
-              const nodemap = NodeMapEngine.Instance;
-              const node = nodemap.getNodeById(action.payload.id);
+              const runner = NodeMapEngine.Instance;
+              const node = runner.getNodeById(action.payload.id);
               let payload = {}
               if (node === null) {
                 console.debug("Selected node not found in engine: ", action.payload.id)
@@ -43,112 +43,112 @@ export function nodemapMiddleware({ getState, dispatch }) {
             break;
           }
 
-          case "nodemap/node-deselected": {
+          case "runner/node-deselected": {
             dispatch(displayUpdateNodeInfo(""));
             dispatch(displayCloseSettings());
             break;
           }
 
-          case "nodemap/select-none": {
-            // Link to singleton instance of nodemap graph engine
-            const nodemap = NodeMapEngine.Instance;
-            nodemap.NodesSelectNone();
+          case "runner/select-none": {
+            // Link to singleton instance of runner graph engine
+            const runner = NodeMapEngine.Instance;
+            runner.NodesSelectNone();
             break;
           }
 
-          case "nodemap/import-snakefile": {
+          case "runner/import-snakefile": {
               QueryAndLoadTextFile((content, filename) => {
                   const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                      'query': 'tokenize',
+                      'query': 'runner/tokenize',
                       'data': {
                           'format': 'Snakefile',
                           'content': content
                       }
                   }
-                  dispatch(nodemapSubmitQuery(query));
+                  dispatch(runnerSubmitQuery(query));
                   dispatch(displayUpdateNodeInfo(""));
               });
               break;
           }
 
-          case "nodemap/load-snakefile": {
+          case "runner/load-snakefile": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'tokenize_load',
+                  'query': 'runner/tokenize_load',
                   'data': {
                       'format': 'Snakefile',
                       'content': action.payload
                   }
               }
-              dispatch(nodemapSubmitQuery(query));
+              dispatch(runnerSubmitQuery(query));
               dispatch(displayUpdateNodeInfo(""));
               break;
           }
 
-          case "nodemap/launch-snakefile": {
+          case "runner/launch-snakefile": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'launch',
+                  'query': 'runner/launch',
                   'data': {
                       'format': 'Snakefile',
                       'content': JSON.parse(getState().display.folderinfo).foldername,
                   }
               }
-              dispatch(nodemapSubmitQuery(query));
+              dispatch(runnerSubmitQuery(query));
               setTimeout(
-                () => dispatch(nodemapQueryJobStatus()),
+                () => dispatch(runnerQueryJobStatus()),
                 5000
               );
               break;
           }
 
-          case "nodemap/query-job-status": {
+          case "runner/query-job-status": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'jobstatus',
+                  'query': 'runner/jobstatus',
                   'data': {
                       'format': 'Snakefile',
                       'content': JSON.parse(getState().display.folderinfo).foldername
                   }
               }
-              dispatch(nodemapSubmitQuery(query));
+              dispatch(runnerSubmitQuery(query));
               setTimeout(
-                () => dispatch(nodemapQueryJobStatus()),
+                () => dispatch(runnerQueryJobStatus()),
                 1000
               );
               break;
           }
 
-          case "nodemap/build-snakefile": {
+          case "runner/build-snakefile": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'build',
+                  'query': 'runner/build',
                   'data': {
                       'format': 'Snakefile',
-                      'content': getState().nodemap.serialize
+                      'content': getState().runner.serialize
                   }
               }
-              dispatch(nodemapSubmitQuery(query))
+              dispatch(runnerSubmitQuery(query))
               break;
           }
 
-          case "nodemap/lint-snakefile": {
+          case "runner/lint-snakefile": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'lint',
+                  'query': 'runner/lint',
                   'data': {
                       'format': 'Snakefile',
-                      'content': getState().nodemap.serialize
+                      'content': getState().runner.serialize
                   }
               }
-              dispatch(nodemapSubmitQuery(query))
+              dispatch(runnerSubmitQuery(query))
               break;
           }
 
-          case "nodemap/load-workflow": {
+          case "runner/load-workflow": {
               const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'loadworkflow',
+                  'query': 'runner/loadworkflow',
                   'data': {
                       'format': 'Snakefile',
                       'content': JSON.parse(getState().display.folderinfo).foldername
                   }
               }
-              dispatch(nodemapSubmitQuery(query))
+              dispatch(runnerSubmitQuery(query))
               break;
           }
 

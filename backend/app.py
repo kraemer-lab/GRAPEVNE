@@ -1,13 +1,17 @@
+import base64
+import io
 import json
-
 import filesystem
+import zipfile
+
 from flask import Flask
 from flask import request
 from flask import Response
 from flask_cors import CORS
 from flask_cors import cross_origin
 
-import parser
+import runner
+import builder
 
 app = Flask(__name__)
 CORS(app)
@@ -20,66 +24,83 @@ def post():
         app.logger.debug(f"POST request: {request.json}")
         match request.json["query"]:
             # File system queries
-            case "folderinfo":
+            case "display/folderinfo":
                 data = {
                     "query": request.json["query"],
                     "body": json.dumps(filesystem.GetFolderItems(request.json["data"])),
                 }
 
-            # Parser queries
-            case "build":
+            # Parser queries -- builder
+            case "builder/compile-to-json":
+                # HOW TO DEAL WITH ZIP AS RETURN FILE??
+                with open('../builder/builder/build_local.json', 'r') as file:  # <- temporary load from local file
+                    config = json.load(file)
+                memory_zip = base64.b64encode(builder.BuildFromJSON(config))  # EXPECTS JSON CONFIG AS INPUT <- request.json["data"])
+                return Response(memory_zip,
+                                mimetype='application/zip',
+                                headers={
+                                    'Content-Disposition':
+                                    'attachment;filename=workflow.zip'
+                                })
+                # data = {
+                #     "query": request.json["query"],
+                #     "body": builder.BuildFromJSON(config)  # EXPECTS JSON CONFIG AS INPUT <- request.json["data"]),
+                # }
+
+            # Parser queries -- nodemapper
+            case "runner/build":
                 data = {
                     "query": request.json["query"],
-                    "body": parser.Build(request.json["data"]),
+                    "body": runner.Build(request.json["data"]),
                 }
-            case "deleteresults":
+            case "runner/deleteresults":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(parser.DeleteAllOutput(request.json["data"])),
+                    "body": json.dumps(runner.DeleteAllOutput(request.json["data"])),
                 }
-            case "lint":
+            case "runner/lint":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(parser.LintContents(request.json["data"])),
+                    "body": json.dumps(runner.LintContents(request.json["data"])),
                 }
-            case "loadworkflow":
+            case "runner/loadworkflow":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(parser.LoadWorkflow(request.json["data"])),
+                    "body": json.dumps(runner.LoadWorkflow(request.json["data"])),
                 }
-            case "tokenize":
+            case "runner/tokenize":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(parser.Tokenize(request.json["data"])),
+                    "body": json.dumps(runner.Tokenize(request.json["data"])),
                 }
-            case "tokenize_load":
+            case "runner/tokenize_load":
                 try:
                     # Try full-tokenize (may fail if dependencies not present)
-                    body = parser.FullTokenizeFromFile(request.json["data"])
+                    body = runner.FullTokenizeFromFile(request.json["data"])
                 except BaseException:
                     # ...then try in-situ tokenization
-                    body = parser.TokenizeFromFile(request.json["data"])
+                    body = runner.TokenizeFromFile(request.json["data"])
                 data = {
                     "query": request.json["query"],
                     "body": json.dumps(body),
                 }
-            case "jobstatus":
+            case "runner/jobstatus":
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(parser.TokenizeFromFile(request.json["data"])),
+                    "body": json.dumps(runner.TokenizeFromFile(request.json["data"])),
                 }
-            case "launch":
+            case "runner/launch":
                 app.logger.debug(f"Data: {request.json['data']}")
                 data = {
                     "query": request.json["query"],
-                    "body": json.dumps(parser.Launch(request.json["data"])),
+                    "body": json.dumps(runner.Launch(request.json["data"])),
                 }
             case _:
                 return Response(
                     f"Query not supported: {request.json['query']}", status=400
                 )
     except ValueError as err:
-        # can be raised by parser module (provided with invalid file format)
+        # can be raised by runner module (provided with invalid file format)
         app.logger.error(err)
         return Response(err, status=400)
     except TypeError as err:

@@ -1,4 +1,5 @@
 import { builderCompileToJson } from 'redux/actions'
+import { builderSubmitQuery } from 'redux/actions'
 import Application from 'gui/Builder/Application'
 
 export function builderMiddleware({ getState, dispatch }) {
@@ -11,7 +12,14 @@ export function builderMiddleware({ getState, dispatch }) {
 
           case "builder/compile-to-json": {
             const app = Application.Instance;
-            app.TestCreateDiagram();
+            const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+              'query': 'builder/compile-to-json',
+              'data': {
+                'format': 'Snakefile',
+                'content': JSON.stringify(app.engine.getModel().serialize())
+              }
+            }
+            dispatch(builderSubmitQuery(query))
             break;
           }
 
@@ -22,18 +30,4 @@ export function builderMiddleware({ getState, dispatch }) {
       return next(action)
     }
   }
-}
-
-function QueryAndLoadTextFile(onLoad: Function) {  // eslint-disable-line @typescript-eslint/ban-types
-// Opens a file dialog, then executes readerEvent
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.onchange = e => {
-    console.log(e);
-    const file = (e.target as HTMLInputElement).files[0];
-    const reader = new FileReader();
-    reader.readAsText(file,'UTF-8');
-    reader.onload = (readerEvent) => onLoad(readerEvent.target.result, file.name)
-  }
-  input.click();
 }

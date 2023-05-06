@@ -2,15 +2,15 @@ import React from 'react'
 import 'isomorphic-fetch'
 import NodeMapEngine from './NodeMapEngine'
 import { BodyWidget } from './BodyWidget'
-import { nodemapNodeSelected } from 'redux/actions'
-import { nodemapNodeDeselected } from 'redux/actions'
-import { nodemapLintSnakefile } from 'redux/actions'
-import { nodemapStoreJobStatus } from 'redux/actions'
-import { nodemapQueryJobStatus } from 'redux/actions'
+import { runnerNodeSelected } from 'redux/actions'
+import { runnerNodeDeselected } from 'redux/actions'
+import { runnerLintSnakefile } from 'redux/actions'
+import { runnerStoreJobStatus } from 'redux/actions'
+import { runnerQueryJobStatus } from 'redux/actions'
 import { displayGetFolderInfo } from 'redux/actions'
 import { displayStoreFolderInfo } from 'redux/actions'
-import { nodemapStoreLint } from 'redux/actions'
-import { nodemapStoreMap } from 'redux/actions'
+import { runnerStoreLint } from 'redux/actions'
+import { runnerStoreMap } from 'redux/actions'
 import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
 import { DiagramModel } from "@projectstorm/react-diagrams"
@@ -22,7 +22,7 @@ const API_ENDPOINT = "http://127.0.0.1:5000/api"
 
 
 function NodeManager() {
-  // Link to singleton instance of nodemap graph engine
+  // Link to singleton instance of runner graph engine
   const nodeMapEngine = NodeMapEngine.Instance;
   const engine = nodeMapEngine.engine;
 
@@ -38,10 +38,10 @@ function NodeManager() {
             id: node.options.id,
           }
           if (e.isSelected) {
-            dispatch(nodemapNodeSelected(payload))
+            dispatch(runnerNodeSelected(payload))
           }
           else {
-            dispatch(nodemapNodeDeselected(payload))
+            dispatch(runnerNodeDeselected(payload))
           }
         }
       })
@@ -52,7 +52,7 @@ function NodeManager() {
 
 
   // Job status changes
-  const jobstatus = useAppSelector(state => state.nodemap.jobstatus);
+  const jobstatus = useAppSelector(state => state.runner.jobstatus);
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
   async function JobStatusUpdate() {
     if ((jobstatus !== "") && (nodeMapEngine.engine != null)) {
@@ -67,7 +67,7 @@ function NodeManager() {
 
 
   // POST request handler [refactor out of this function later]
-  const query = useAppSelector(state => state.nodemap.query);
+  const query = useAppSelector(state => state.runner.query);
   const [responseData, setResponseData] = React.useState(null);
   async function postRequest() {
     const postRequestOptions = {
@@ -94,7 +94,7 @@ function NodeManager() {
   function processResponse(content: JSON) {
     console.log("Process response: ", content)
     switch (content['query']) {
-      case 'build': {
+      case 'runner/build': {
         // Download returned content as file
         const filename = 'Snakefile'
         const element = document.createElement('a');
@@ -107,36 +107,36 @@ function NodeManager() {
         document.body.removeChild(element);
         break;
       }
-      case 'launch': {
+      case 'runner/launch': {
         console.info("Launch response: ", content['body']);
         break;
       }
-      case 'lint': {
+      case 'runner/lint': {
         // Update the held linter message
-        dispatch(nodemapStoreLint(content['body']))
+        dispatch(runnerStoreLint(content['body']))
         break;
       }
-      case 'jobstatus': {
-        dispatch(nodemapStoreJobStatus(content["body"]))
+      case 'runner/jobstatus': {
+        dispatch(runnerStoreJobStatus(content["body"]))
         break;
       }
-      case 'loadworkflow':
-      case 'tokenize':
-      case 'tokenize_load': {
+      case 'runner/loadworkflow':
+      case 'runner/tokenize':
+      case 'runner/tokenize_load': {
         // Rebuild map from returned (segmented) representation
         nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content['body']))
-        dispatch(nodemapStoreMap(content['body']))
+        dispatch(runnerStoreMap(content['body']))
         setupNodeSelectionListeners()
         // Submit query to automatically lint file
-        dispatch(nodemapLintSnakefile())
+        dispatch(runnerLintSnakefile())
         break;
       }
-      case 'folderinfo': {
+      case 'display/folderinfo': {
         // Read folder contents into state
         dispatch(displayStoreFolderInfo(content['body']))
         break;
       }
-      case 'deleteresults': {
+      case 'runner/deleteresults': {
         // Refresh folder list
         dispatch(displayGetFolderInfo())
         break;

@@ -1,13 +1,13 @@
 import React from 'react'
 import FolderContents from './FolderContents'
 import { useAppDispatch } from 'redux/store/hooks'
-import { nodemapLoadWorkflow } from 'redux/actions'
+import { runnerLoadWorkflow } from 'redux/actions'
 
 function FileBrowser() {
 
   const dispatch = useAppDispatch();
   const btnLoadWorkflow = () => {
-    dispatch(nodemapLoadWorkflow())
+    dispatch(runnerLoadWorkflow())
   }
 
   return (

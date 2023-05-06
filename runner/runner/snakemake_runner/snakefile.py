@@ -8,7 +8,7 @@ from typing import Dict
 from typing import List
 from typing import Tuple
 
-from parser.TokenizeFile import TokenizeFile
+from runner.TokenizeFile import TokenizeFile
 
 
 # ##############################################################################
@@ -97,7 +97,7 @@ def SplitByRulesFromFile(filename: str, workdir: str = "") -> dict:
 
     This function is conceptually similar to SplitByRulesFile, but takes the
     full filename of the Snakefile, which requires the file to be accessible by
-    the local filesystem, allowing the parser to interrogate the originating
+    the local filesystem, allowing the runner to interrogate the originating
     folder for data files. This permits construction of directed acyclic graphs
     (DAGs)
     """
@@ -124,7 +124,7 @@ def SplitByDagFromFile(filename: str, workdir: str = "") -> dict:
             "type": "rule",
             "content": "(module)",
         }
-        # cross-reference with block parser
+        # cross-reference with block runner
         for b in blocks["block"]:
             if b["name"] == block["name"]:
                 block["content"] = b["content"]

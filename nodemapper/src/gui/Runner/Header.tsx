@@ -5,11 +5,11 @@ import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
 import { displayZoomToFit } from 'redux/actions'
 import { displayDeleteResults } from 'redux/actions'
-import { nodemapImportSnakefile } from 'redux/actions'
-import { nodemapLoadSnakefile } from 'redux/actions'
-import { nodemapBuildSnakefile } from 'redux/actions'
-import { nodemapLaunchSnakefile } from 'redux/actions'
-import { nodemapQueryJobStatus } from 'redux/actions'
+import { runnerImportSnakefile } from 'redux/actions'
+import { runnerLoadSnakefile } from 'redux/actions'
+import { runnerBuildSnakefile } from 'redux/actions'
+import { runnerLaunchSnakefile } from 'redux/actions'
+import { runnerQueryJobStatus } from 'redux/actions'
 import NodeMapEngine from './NodeMapEngine'
 import "./Header.css"
 
@@ -30,22 +30,22 @@ function Header() {
 
   // Check (import) Snakefile
   const btnCheckSnakefile = () => {
-    dispatch(nodemapImportSnakefile())
+    dispatch(runnerImportSnakefile())
   }
 
   // Build Snakefile
   const btnBuildSnakefile = () => {
-    dispatch(nodemapBuildSnakefile())
+    dispatch(runnerBuildSnakefile())
   }
 
   // Launch Snakefile
   const btnLaunchSnakefile = () => {
-    dispatch(nodemapLaunchSnakefile())
+    dispatch(runnerLaunchSnakefile())
   }
 
   // Query job status
   const btnQueryJobStatus = () => {
-    dispatch(nodemapQueryJobStatus())
+    dispatch(runnerQueryJobStatus())
   }
 
   // Delete results

@@ -1,6 +1,7 @@
 import argparse
 import json
 import pathlib
+import shutil
 from typing import List
 
 
@@ -168,14 +169,7 @@ class Model:
         return True
 
 
-if __name__ == "__main__":
-
-    # Command line parameters
-    parser = argparse.ArgumentParser()
-    parser.add_argument("filename", help="Filename of json configuration")
-    args = parser.parse_args()
-    filename = args.filename
-
+def BuildFromFile(filename: str):
     # Read JSON config file
     try:
         with open(filename, "r") as file:
@@ -187,6 +181,10 @@ if __name__ == "__main__":
         print(f"Invalid JSON file: {filename}")
         exit(1)
 
+    BuildFromJSON(config)
+
+
+def BuildFromJSON(config: dict):
     m = Model()
     for item in config:
         match item["type"]:
@@ -200,4 +198,20 @@ if __name__ == "__main__":
                     item["name"],
                     item["config"],
                 )
+    # Create workflow directory structure
     m.SaveWorkflow()
+    # Create zip archive
+    zipfilename = 'build'
+    shutil.make_archive(zipfilename, 'zip', 'build')
+    # Load contents of zip file and return as string
+    with open(f"{zipfilename}.zip", 'rb') as file:
+        contents = file.read()
+    return contents
+
+
+if __name__ == "__main__":
+    # Command line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", help="Filename of json configuration")
+    args = parser.parse_args()
+    BuildFromFile(args.filename)

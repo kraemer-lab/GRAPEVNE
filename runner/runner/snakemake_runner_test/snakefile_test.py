@@ -2,12 +2,12 @@ import json
 import os
 from unittest import mock
 
-from parser.snakemake_parser.snakefile import Build
-from parser.snakemake_parser.snakefile import FullTokenizeFromFile
-from parser.snakemake_parser.snakefile import IsolatedTempFile
-from parser.snakemake_parser.snakefile import LintContents
-from parser.snakemake_parser.snakefile import SplitByRulesFileContent
-from parser.snakemake_parser.snakefile import SplitByRulesFromFile
+from runner.snakemake_runner.snakefile import Build
+from runner.snakemake_runner.snakefile import FullTokenizeFromFile
+from runner.snakemake_runner.snakefile import IsolatedTempFile
+from runner.snakemake_runner.snakefile import LintContents
+from runner.snakemake_runner.snakefile import SplitByRulesFileContent
+from runner.snakemake_runner.snakefile import SplitByRulesFromFile
 
 
 def test_Snakefile_Build():
@@ -25,24 +25,24 @@ def test_Snakefile_Build():
 
 def test_Snakefile_Lint():
     # Load test case
-    with open("parser/snakemake_parser_test/Snakefile", "r") as file:
+    with open("runner/snakemake_runner_test/Snakefile", "r") as file:
         contents = file.read()
     lint_return = LintContents(contents)
-    with open("parser/snakemake_parser_test/Snakefile_lint", "r") as file:
+    with open("runner/snakemake_runner_test/Snakefile_lint", "r") as file:
         expected = json.load(file)
     # Linters will differ by their Snakefile filenames:
     for rule in lint_return["rules"]:
-        rule["for"]["snakefile"] = "parser/Snakefile"
+        rule["for"]["snakefile"] = "runner/Snakefile"
     assert lint_return == expected
 
 
 def test_Snakefile_SplitByRules():
     # Load test case
-    with open("parser/snakemake_parser_test/Snakefile", "r") as file:
+    with open("runner/snakemake_runner_test/Snakefile", "r") as file:
         contents = file.read()
     # Tokenise and split by rule
     with mock.patch(
-        "parser.snakemake_parser.snakefile.DagLocal",
+        "runner.snakemake_runner.snakefile.DagLocal",
         return_value={"nodes": [], "links": []},
     ):
         result = SplitByRulesFileContent(contents)

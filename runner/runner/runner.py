@@ -1,6 +1,6 @@
 import json
 
-from .snakemake_parser import snakefile
+from .snakemake_runner import snakefile
 
 
 def Build(data: dict) -> str:

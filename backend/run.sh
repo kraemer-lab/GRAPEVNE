@@ -13,8 +13,10 @@ if [ ! -d "venv" ]; then
 fi
 
 . venv/bin/activate
-# Ensure we are loading the latest parser library
-python -m pip install -e ../parser
+
+# Ensure we are loading the latest local libraries
+python -m pip install -e ../runner
+python -m pip install -e ../builder
 flask --app app.py --debug run
 
 popd
