@@ -1,15 +1,16 @@
-import * as React from 'react';
+import React from 'react';
 import * as _ from 'lodash';
-import { TrayWidget } from './TrayWidget';
-import { Application } from 'gui/Builder/Application';
-import { TrayItemWidget } from './TrayItemWidget';
-import { DefaultNodeModel } from  'NodeMapComponents'
+import { DiagramEngine } from '@projectstorm/react-diagrams'
 import { CanvasWidget } from '@projectstorm/react-diagrams';
-import { GridCanvasWidget } from './GridCanvasWidget';
 import styled from '@emotion/styled';
 
+import { TrayWidget } from './TrayWidget';
+import { TrayItemWidget } from './TrayItemWidget';
+import { DefaultNodeModel } from  'NodeMapComponents'
+import { GridCanvasWidget } from './GridCanvasWidget';
+
 export interface BodyWidgetProps {
-	app: Application;
+  engine: DiagramEngine
 }
 
 export const Body = styled.div`
@@ -42,8 +43,9 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 					</TrayWidget>
 					<Layer
 						onDrop={(event) => {
+              const engine = this.props.engine;
 							const data = JSON.parse(event.dataTransfer.getData('storm-diagram-node'));
-							const nodesCount = _.keys(this.props.app.getDiagramEngine().getModel().getNodes()).length;
+							const nodesCount = _.keys(engine.getModel().getNodes()).length;
 
 							let node: DefaultNodeModel = null;
               switch(data.type) {
@@ -75,9 +77,9 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
                 default:
                   throw Error('Invalid node type requested: ' + data.type);
 							}
-							const point = this.props.app.getDiagramEngine().getRelativeMousePoint(event);
+							const point = engine.getRelativeMousePoint(event);
 							node.setPosition(point);
-							this.props.app.getDiagramEngine().getModel().addNode(node);
+							engine.getModel().addNode(node);
 							this.forceUpdate();
 						}}
 						onDragOver={(event) => {
@@ -85,7 +87,7 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 						}}
 					>
           <GridCanvasWidget>
-            <CanvasWidget engine={this.props.app.getDiagramEngine()} />
+            <CanvasWidget engine={this.props.engine} />
           </GridCanvasWidget>
 					</Layer>
 				</Content>

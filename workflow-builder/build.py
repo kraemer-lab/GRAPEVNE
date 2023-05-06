@@ -1,3 +1,5 @@
+import argparse
+import json
 import pathlib
 from typing import List
 
@@ -11,6 +13,7 @@ class Node:
         rulename: str,
         nodetype: str = "Module",
         url="",
+        params={},
         input_namespace: str = "",
         output_namespace: str = "",
     ):
@@ -18,6 +21,7 @@ class Node:
         self.rulename = rulename
         self.nodetype = nodetype
         self.url = url
+        self.params = params
         self.input_namespace = input_namespace
         self.output_namespace = output_namespace
 
@@ -36,10 +40,10 @@ class Module(Node):
 class Connector(Node):
     def __init__(self, name: str, kwargs: dict) -> None:
         kwargs["nodetype"] = "Connector"
-        self.map: List[Node] = kwargs.pop("map", None)
+        self.map: List[str] = kwargs.pop("map", "")
         super().__init__(name, **kwargs)
 
-    def GetMapping(self) -> List[Node]:
+    def GetMapping(self) -> List[str]:
         return self.map
 
 
@@ -56,7 +60,8 @@ class Model:
         s += "rule all:\n"
         s += "    input:\n"
         for node in self.nodes:
-            if node.nodetype == "Module":
+            # Add to terminal node if output if not connected to another module
+            if node.nodetype == "Module" and self.NodeIsTerminus(node):
                 s += f'        "results/{node.output_namespace}/mark",\n'
         s += "    default_target: True\n"
         s += "\n"
@@ -89,6 +94,9 @@ class Model:
             c += '  input_filename : "mark"\n'
             c += f'  output_namespace : "{node.output_namespace}"\n'
             c += '  output_filename : "mark"\n'
+            # Override parameters
+            for k, v in node.params.items():
+                c += f'  {k} : "{v}"\n'
             c += "\n"
         return c
 
@@ -136,46 +144,60 @@ class Model:
             kwargs["rulename"] = self.WrangleRuleName(name)
         node = Connector(name, kwargs)
         self.nodes.append(node)
-        node.input_namespace = node.GetMapping()[0].GetOutputNamespace()
-        node.output_namespace = node.GetMapping()[1].GetInputNamespace()
+        node_in = self.GetNodeByName(node.GetMapping()[0])
+        node_out = self.GetNodeByName(node.GetMapping()[1])
+        node.input_namespace = node_in.GetOutputNamespace() if node_in else ""
+        node.output_namespace = node_out.GetInputNamespace() if node_out else ""
         return node
+
+    def GetNodeByName(self, name: str) -> Node | None:
+        for node in self.nodes:
+            if node.name == name:
+                return node
+        return None
+
+    def NodeIsTerminus(self, node: Node) -> bool:
+        # Check for onward connections from the given node
+        for n in self.nodes:
+            try:
+                # Only Connectors have the map attribute
+                if n.map[0] is node.name:
+                    return False
+            except AttributeError:
+                pass
+        return True
 
 
 if __name__ == "__main__":
 
-    def module(path: str, local=False):
-        if local:
-            return {
-                "url": f"../../../../snakeshack/workflows/{path}/workflow/Snakefile",
-            }
-        return {
-            "url": {
-                "function": "github",
-                "args": ["jsbrittain/snakeshack"],
-                "kwargs": {
-                    "path": f"workflows/{path}/workflow/Snakefile",
-                    "branch": "main",
-                },
-            },
-        }
+    # Command line parameters
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", help="Filename of json configuration")
+    args = parser.parse_args()
+    filename = args.filename
 
-    def connector(path: str, mapping: List):
-        m = module(path)
-        m["map"] = mapping
-        return m
+    # Read JSON config file
+    try:
+        with open(filename, "r") as file:
+            config = json.load(file)
+    except FileNotFoundError:
+        print(f"Configuration file not found: {filename}")
+        exit(1)
+    except json.decoder.JSONDecodeError:
+        print(f"Invalid JSON file: {filename}")
+        exit(1)
 
     m = Model()
-    node0 = m.AddModule("Init", module("OxfordPhyloGenetics/init"))
-    node1 = m.AddModule("Sleep 1", module("OxfordPhyloGenetics/sleep"))
-    node2 = m.AddModule("Sleep 2", module("OxfordPhyloGenetics/sleep"))
-    node3 = m.AddModule("Sleep 3", module("OxfordPhyloGenetics/sleep"))
-    m.AddConnector(
-        "Connector 01", connector("OxfordPhyloGenetics/connector_copy", [node0, node1])
-    )
-    m.AddConnector(
-        "Connector 12", connector("OxfordPhyloGenetics/connector_copy", [node1, node2])
-    )
-    m.AddConnector(
-        "Connector 23", connector("OxfordPhyloGenetics/connector_copy", [node2, node3])
-    )
+    for item in config:
+        match item["type"]:
+            case "Module":
+                m.AddModule(
+                    item["name"],
+                    item["config"],
+                )
+            case "Connector":
+                m.AddConnector(
+                    item["name"],
+                    item["config"],
+                )
     m.SaveWorkflow()

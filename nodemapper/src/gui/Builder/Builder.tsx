@@ -1,11 +1,20 @@
 import React from 'react'
-import { BodyWidget } from './components/BodyWidget';
-import { Application } from './Application';
+import Header from './Header'
+import NodeManager from './NodeManager'
 import './Builder.css'
 
 function Builder() {
-	const app = new Application();
-	return <BodyWidget app={app} />;
+  return (
+    <>
+      <div className="header">
+      <Header />
+      </div>
+
+      <div className="main">
+      <NodeManager />
+      </div>
+    </>
+  )
 }
 
 export default Builder;

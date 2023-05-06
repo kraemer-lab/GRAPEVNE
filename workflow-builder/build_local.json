@@ -1,0 +1,72 @@
+[
+    {
+        "name": "Init",
+        "type": "Module",
+        "config" : {
+            "url": "../../../../snakeshack/workflows/OxfordPhyloGenetics/init/workflow/Snakefile"
+        }
+    },
+    {
+        "name": "Sleep 1",
+        "type": "Module",
+        "config" : {
+            "url": "../../../../snakeshack/workflows/OxfordPhyloGenetics/sleep/workflow/Snakefile",
+            "params": {
+                "sleeptime": 3
+            }
+        }
+    },
+    {
+        "name": "Sleep 2",
+        "type": "Module",
+        "config" : {
+            "url": "../../../../snakeshack/workflows/OxfordPhyloGenetics/sleep/workflow/Snakefile",
+            "params": {
+                "sleeptime": 3
+            }
+        }
+    },
+    {
+        "name": "Sleep 3",
+        "type": "Module",
+        "config" : {
+            "url": "../../../../snakeshack/workflows/OxfordPhyloGenetics/sleep/workflow/Snakefile",
+            "params": {
+                "sleeptime": 3
+            }
+        }
+    },
+    {
+        "name": "Connector 01",
+        "type": "Connector",
+        "config" : {
+            "url": "../../../../snakeshack/workflows/OxfordPhyloGenetics/connector_copy/workflow/Snakefile",
+            "map": [
+                "Init",
+                "Sleep 1"
+            ]
+        }
+    },
+    {
+        "name": "Connector 12",
+        "type": "Connector",
+        "config" : {
+            "url": "../../../../snakeshack/workflows/OxfordPhyloGenetics/connector_copy/workflow/Snakefile",
+            "map": [
+                "Sleep 1",
+                "Sleep 2"
+            ]
+        }
+    },
+    {
+        "name": "Connector 23",
+        "type": "Connector",
+        "config" : {
+            "url": "../../../../snakeshack/workflows/OxfordPhyloGenetics/connector_copy/workflow/Snakefile",
+            "map": [
+                "Sleep 2",
+                "Sleep 3"
+            ]
+        }
+    }
+]

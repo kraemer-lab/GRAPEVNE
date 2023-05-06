@@ -1,4 +1,3 @@
-import React from 'react'
 import NodeScene from './NodeScene'
 import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
