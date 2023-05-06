@@ -14,7 +14,8 @@ export class Application {
 		this.activeModel = new SRD.DiagramModel();
 		this.diagramEngine.setModel(this.activeModel);
 
-		//3-A) create a default node
+		/*
+    //3-A) create a default node
 		const node1 = new SRD.DefaultNodeModel('Node 1', 'rgb(0,192,255)');
 		const port = node1.addOutPort('Out');
 		node1.setPosition(100, 100);
@@ -28,6 +29,7 @@ export class Application {
 		const link1 = port.link(port2);
 
 		this.activeModel.addAll(node1, node2, link1);
+    */
 	}
 
 	public getActiveDiagram(): SRD.DiagramModel {

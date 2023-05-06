@@ -7,23 +7,22 @@ export interface TrayItemWidgetProps {
 	name: string;
 }
 
-namespace S {
-	export const Tray = styled.div<{ color: string }>`
-		color: white;
-		font-family: Helvetica, Arial;
-		padding: 5px;
-		margin: 0px 10px;
-		border: solid 1px ${(p) => p.color};
-		border-radius: 5px;
-		margin-bottom: 2px;
-		cursor: pointer;
-	`;
-}
+export const Tray = styled.div<{ color: string }>`
+  color: white;
+  font-family: Helvetica, Arial;
+  padding: 5px;
+  margin: 0px 10px;
+  border: solid 1px ${(p) => p.color};
+  border-radius: 5px;
+  margin-bottom: 2px;
+  margin-top: 2px;
+  cursor: pointer;
+`;
 
 export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
 	render() {
 		return (
-			<S.Tray
+			<Tray
 				color={this.props.color}
 				draggable={true}
 				onDragStart={(event) => {
@@ -32,7 +31,7 @@ export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
 				className="tray-item"
 			>
 				{this.props.name}
-			</S.Tray>
+			</Tray>
 		);
 	}
 }

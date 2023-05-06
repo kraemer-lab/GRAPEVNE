@@ -1,5 +1,6 @@
 import React from 'react';
-import { DiagramEngine, CanvasWidget } from '@projectstorm/react-diagrams';
+import { DiagramEngine } from '@projectstorm/react-diagrams';
+import { CanvasWidget } from '@projectstorm/react-diagrams';
 
 export interface BodyWidgetProps {
     engine: DiagramEngine;

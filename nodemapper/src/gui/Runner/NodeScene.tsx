@@ -57,32 +57,34 @@ class NodeScene {
     const model = new DiagramModel();
     this.engine.setModel(model);
 
-    const node1 = this.addNode('Input', 'rgb(192,255,0)', [200, 118]);
-    node1.addOutPort('out-1');
-    node1.addOutPort('out-2');
-    node1.addOutPort('out-3');
-    node1.addOutPort('out-4');
+    /*if ( false ) {
+      const node1 = this.addNode('Input', 'rgb(192,255,0)', [200, 118]);
+      node1.addOutPort('out-1');
+      node1.addOutPort('out-2');
+      node1.addOutPort('out-3');
+      node1.addOutPort('out-4');
 
-    const node2 = this.addNode('Process 1', 'rgb(0,192,255)', [325, 100]);
-    node2.addInPort('in-1');
-    node2.addInPort('in-2');
-    node2.addOutPort('out-1');
-    node2.addOutPort('out-2');
+      const node2 = this.addNode('Process 1', 'rgb(0,192,255)', [325, 100]);
+      node2.addInPort('in-1');
+      node2.addInPort('in-2');
+      node2.addOutPort('out-1');
+      node2.addOutPort('out-2');
 
-    const node3 = this.addNode('Process 2', 'rgb(0,192,255)', [500, 80]);
-    node3.addInPort('in-1');
-    node3.addInPort('in-2');
+      const node3 = this.addNode('Process 2', 'rgb(0,192,255)', [500, 80]);
+      node3.addInPort('in-1');
+      node3.addInPort('in-2');
 
-    const node4 = this.addNode('Logging', 'rgb(192,0,255)', [500, 150]);
-    node4.addInPort('in-1');
-    node4.addInPort('in-2');
-    node4.addInPort('in-3');
-    node4.addInPort('in-4');
+      const node4 = this.addNode('Logging', 'rgb(192,0,255)', [500, 150]);
+      node4.addInPort('in-1');
+      node4.addInPort('in-2');
+      node4.addInPort('in-3');
+      node4.addInPort('in-4');
 
-    this.addLink(node1.getPort('out-1'), node2.getPort('in-1'));
-    this.addLink(node2.getPort('out-1'), node3.getPort('in-1'));
-    this.addLink(node2.getPort('out-2'), node4.getPort('in-1'));
-    this.addLink(node1.getPort('out-4'), node4.getPort('in-2'));
+      this.addLink(node1.getPort('out-1'), node2.getPort('in-1'));
+      this.addLink(node2.getPort('out-1'), node3.getPort('in-1'));
+      this.addLink(node2.getPort('out-2'), node4.getPort('in-1'));
+      this.addLink(node1.getPort('out-4'), node4.getPort('in-2'));
+    }*/
   }
 
   distributeModel(model) {

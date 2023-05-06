@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { TrayWidget } from './TrayWidget';
-import { Application } from '../Application';
+import { Application } from 'gui/Builder/Application';
 import { TrayItemWidget } from './TrayItemWidget';
-import { DefaultNodeModel } from '@projectstorm/react-diagrams';
-import { CanvasWidget } from '@projectstorm/react-canvas-core';
+import { DefaultNodeModel } from  'NodeMapComponents'
+import { CanvasWidget } from '@projectstorm/react-diagrams';
+import { GridCanvasWidget } from './GridCanvasWidget';
 import styled from '@emotion/styled';
 
 export interface BodyWidgetProps {
@@ -16,6 +17,7 @@ export const Body = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  height: 800px;
 `;
 
 export const Content = styled.div`
@@ -34,8 +36,9 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 			<Body>
 				<Content>
 					<TrayWidget>
-						<TrayItemWidget model={{ type: 'in' }} name="In Node" color="rgb(192,255,0)" />
-						<TrayItemWidget model={{ type: 'out' }} name="Out Node" color="rgb(0,192,255)" />
+						<TrayItemWidget model={{ type: 'out' }} name="Source" color="rgb(192,255,0)" />
+						<TrayItemWidget model={{ type: 'inout' }} name="Module" color="rgb(0,192,255)" />
+						<TrayItemWidget model={{ type: 'in' }} name="Terminal" color="rgb(192,0,255)" />
 					</TrayWidget>
 					<Layer
 						onDrop={(event) => {
@@ -43,12 +46,34 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 							const nodesCount = _.keys(this.props.app.getDiagramEngine().getModel().getNodes()).length;
 
 							let node: DefaultNodeModel = null;
-							if (data.type === 'in') {
-								node = new DefaultNodeModel('Node ' + (nodesCount + 1), 'rgb(192,255,0)');
-								node.addInPort('In');
-							} else {
-								node = new DefaultNodeModel('Node ' + (nodesCount + 1), 'rgb(0,192,255)');
-								node.addOutPort('Out');
+              switch(data.type) {
+                case 'in':
+                  node = new DefaultNodeModel(
+                    'Node ' + (nodesCount + 1),
+                    'rgb(192,0,255)',
+                    JSON.stringify({'id': 'idcode', 'type': 'in'})
+                  );
+                  node.addInPort('In');
+                  break;
+                case 'out':
+                  node = new DefaultNodeModel(
+                    'Node ' + (nodesCount + 1),
+                    'rgb(192,255,0)',
+                    JSON.stringify({'id': 'idcode', 'type': 'in'})
+                  );
+                  node.addOutPort('Out');
+                  break;
+                case 'inout':
+                  node = new DefaultNodeModel(
+                    'Node ' + (nodesCount + 1),
+                    'rgb(0,192,255)',
+                    JSON.stringify({'id': 'idcode', 'type': 'in'})
+                  );
+                  node.addInPort('In');
+                  node.addOutPort('Out');
+                  break;
+                default:
+                  throw Error('Invalid node type requested: ' + data.type);
 							}
 							const point = this.props.app.getDiagramEngine().getRelativeMousePoint(event);
 							node.setPosition(point);
@@ -59,7 +84,9 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
 							event.preventDefault();
 						}}
 					>
-          <CanvasWidget engine={this.props.app.getDiagramEngine()} />
+          <GridCanvasWidget>
+            <CanvasWidget engine={this.props.app.getDiagramEngine()} />
+          </GridCanvasWidget>
 					</Layer>
 				</Content>
 			</Body>
