@@ -10,7 +10,7 @@ import { runnerLoadSnakefile } from 'redux/actions'
 import { runnerBuildSnakefile } from 'redux/actions'
 import { runnerLaunchSnakefile } from 'redux/actions'
 import { runnerQueryJobStatus } from 'redux/actions'
-import NodeMapEngine from './NodeMapEngine'
+import RunnerEngine from './RunnerEngine'
 import "./Header.css"
 
 function Header() {
@@ -20,12 +20,12 @@ function Header() {
 
   // Load Scene
   const btnLoadScene = () => {
-    NodeMapEngine.Instance.LoadScene()
+    RunnerEngine.Instance.LoadScene()
   }
 
   // Save Scene
   const btnSaveScene = () => {
-    NodeMapEngine.Instance.SaveScene()
+    RunnerEngine.Instance.SaveScene()
   }
 
   // Check (import) Snakefile

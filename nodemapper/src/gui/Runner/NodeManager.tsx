@@ -1,6 +1,6 @@
 import React from 'react'
 import 'isomorphic-fetch'
-import NodeMapEngine from './NodeMapEngine'
+import RunnerEngine from './RunnerEngine'
 import { BodyWidget } from './BodyWidget'
 import { runnerNodeSelected } from 'redux/actions'
 import { runnerNodeDeselected } from 'redux/actions'
@@ -23,7 +23,7 @@ const API_ENDPOINT = "http://127.0.0.1:5000/api"
 
 function NodeManager() {
   // Link to singleton instance of runner graph engine
-  const nodeMapEngine = NodeMapEngine.Instance;
+  const nodeMapEngine = RunnerEngine.Instance;
   const engine = nodeMapEngine.engine;
 
   // Add listeners, noting the following useful resource:

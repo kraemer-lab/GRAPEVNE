@@ -1,7 +1,7 @@
 __pycache__
 */*/__pycache__
-venv
-.venv
+*/*/venv
+*/*/.venv
 build
 .mypy_cache
 parser.egg-info

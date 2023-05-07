@@ -4,7 +4,7 @@ import { displayUpdateNodeInfo } from 'redux/actions'
 import { runnerSubmitQuery } from 'redux/actions'
 import { runnerQueryJobStatus } from 'redux/actions'
 
-import NodeMapEngine from 'gui/Runner/NodeMapEngine'
+import RunnerEngine from 'gui/Runner/RunnerEngine'
 
 export function runnerMiddleware({ getState, dispatch }) {
   return function(next) {
@@ -17,7 +17,7 @@ export function runnerMiddleware({ getState, dispatch }) {
           case "runner/node-selected": {
             const graph_is_moveable = getState().display.graph_is_moveable
             if (!graph_is_moveable) {
-              const runner = NodeMapEngine.Instance;
+              const runner = RunnerEngine.Instance;
               const node = runner.getNodeById(action.payload.id);
               let payload = {}
               if (node === null) {
@@ -51,7 +51,7 @@ export function runnerMiddleware({ getState, dispatch }) {
 
           case "runner/select-none": {
             // Link to singleton instance of runner graph engine
-            const runner = NodeMapEngine.Instance;
+            const runner = RunnerEngine.Instance;
             runner.NodesSelectNone();
             break;
           }

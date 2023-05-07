@@ -1,6 +1,6 @@
 import { runnerSelectNone } from 'redux/actions'
 import { runnerSubmitQuery } from 'redux/actions'
-import NodeMapEngine from 'gui/Runner/NodeMapEngine'
+import RunnerEngine from 'gui/Runner/RunnerEngine'
 
 export function displayMiddleware({ getState, dispatch }) {
   return function(next) {
@@ -15,7 +15,7 @@ export function displayMiddleware({ getState, dispatch }) {
           }
 
           case "display/zoom-to-fit": {
-              const runner = NodeMapEngine.Instance;
+              const runner = RunnerEngine.Instance;
               runner.ZoomToFit();
             break;
           }

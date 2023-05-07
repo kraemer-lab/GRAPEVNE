@@ -17,50 +17,50 @@ const runnerReducer = createReducer(
     builder
       .addCase(actions.runnerAddNode, (state, action) => {
         // Business logic
-        console.info("[Reducer] (runner)AddNode");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerNodeSelected, (state, action) => {
         // Action intercepted in middleware to control display
-        console.info("[Reducer] (runner)NodeSelected", state, action);
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerNodeDeselected, (state, action) => {
         // Action intercepted in middleware to control display
-        console.info("[Reducer] (runner)NodeDeselected");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerSelectNone, (state, action) => {
         // Business logic
-        console.info("[Reducer] (runner)SelectNone");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerSubmitQuery, (state, action) => {
         state.query = action.payload
-        console.info("[Reducer] (runner)SubmitQuery");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerImportSnakefile, (state, action) => {
-        console.info("[Reducer] (runner)ImportSnakefile");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerLoadSnakefile, (state, action) => {
-        console.info("[Reducer] (runner)LoadSnakefile");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerBuildSnakefile, (state, action) => {
-        console.info("[Reducer] (runner)BuildSnakefile");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerLintSnakefile, (state, action) => {
-        console.info("[Reducer] (runner)LintSnakefile");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerStoreLint, (state, action) => {
         state.linter = action.payload
-        console.info("[Reducer] (runner)StoreLint");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerStoreMap, (state, action) => {
         state.serialize = action.payload
-        console.info("[Reducer] (runner)StoreMap");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerStoreJobStatus, (state, action) => {
         state.jobstatus = action.payload
-        console.info("[Reducer] (runner)StoreJobStatus");
+        console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerLoadWorkflow, (state, action) => {
-        console.info("[Reducer] (runner)LoadWorkflow");
+        console.info("[Reducer] " + action.type);
       })
   }
 );

@@ -3,18 +3,12 @@ import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
 
 export default class NodeMapEngine {
-  // Set up a singleton instance of a class
-  private static _Instance: NodeMapEngine;
   nodeScene = null;
   engine = null;
 
   constructor() {
     this.nodeScene = new NodeScene();
     this.engine = this.nodeScene.engine;
-  }
-
-  public static get Instance(): NodeMapEngine {
-    return NodeMapEngine._Instance || (this._Instance = new this());
   }
 
   public NodesSelectNone() {

@@ -18,24 +18,46 @@ function NodeManager() {
   async function postRequest() {
     const postRequestOptions = {
       method: 'POST',
-      headers: {'Content-Type': 'application/json;charset=UTF-8'},
+      headers: {'Content-Type': 'application/json;charset=UTF-8', 'responseType': 'blob'},
       body: JSON.stringify(query)
     };
     console.info("Sending query: ", query)
     fetch(API_ENDPOINT + '/post', postRequestOptions)
       .then(response => {
-        if (response.ok) {
-          return response.json()
-        }
-        throw response
+          const reader = response.body.getReader()
+          return new ReadableStream({
+            start(controller) {
+              function push() {
+                reader.read().then(({done, value}) => {
+                  if (done) {
+                    controller.close();
+                    return;
+                  }
+                  controller.enqueue(value);
+                  push();
+                });
+              }
+              push();
+            }
+          });
+
       })
-      .then(data => {
-        setResponseData(data);
-        console.info("Got response: ", data);
-      })
-      .catch(error => {
-        console.error("Error during query: ", error);
-      })
+      .then((stream) =>
+        new Response(stream, {headers: {"Content-type": "application/zip"}
+      }).text()
+      )
+      .then((result) => {
+        // Download returned content as file
+        const filename = 'workflow'
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:application/zip;base64,' +
+          encodeURIComponent(result));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      });
   }
   function processResponse(content: JSON) {
     console.log("Process response: ", content)
