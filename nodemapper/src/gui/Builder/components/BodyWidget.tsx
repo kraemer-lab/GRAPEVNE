@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 
 import { TrayWidget } from './TrayWidget';
 import { TrayItemWidget } from './TrayItemWidget';
-import { DefaultNodeModel } from  'NodeMapComponents'
+import { DefaultNodeModel } from  'NodeMap'
 import { GridCanvasWidget } from './GridCanvasWidget';
 
 export interface BodyWidgetProps {

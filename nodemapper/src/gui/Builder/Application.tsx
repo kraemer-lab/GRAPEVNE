@@ -1,8 +1,8 @@
 import createEngine from '@projectstorm/react-diagrams';
 import { DiagramEngine } from '@projectstorm/react-diagrams';
 import { DiagramModel } from '@projectstorm/react-diagrams';
-import { DefaultNodeModel } from 'NodeMapComponents'
-import { DefaultLinkModel } from 'NodeMapComponents'
+import { DefaultNodeModel } from 'NodeMap'
+import { DefaultLinkModel } from 'NodeMap'
 
 // Based on the projectstorm drag-and-drop demo by Dylan Vorster
 export default class Application {

@@ -9,10 +9,8 @@ import { DiagramModel } from '@projectstorm/react-diagrams'
 import { DiagramEngine } from '@projectstorm/react-diagrams'
 import { DagreEngine } from '@projectstorm/react-diagrams'
 
-import { DefaultNodeModel } from 'NodeMapComponents'
-import { DefaultLinkModel } from 'NodeMapComponents'
-
-import { BodyWidget } from './BodyWidget'
+import { DefaultNodeModel } from 'NodeMap'
+import { DefaultLinkModel } from 'NodeMap'
 
 class NodeSceneBase {
   engine: DiagramEngine;
