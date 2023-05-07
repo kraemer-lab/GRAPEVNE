@@ -1,15 +1,15 @@
 import React from 'react'
+import BuilderEngine from './BuilderEngine'
 import { BodyWidget } from './components/BodyWidget';
 import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
-import Application from './Application';
 
 // TODO: Replace with webpack proxy (problems getting this to work)
 const API_ENDPOINT = "http://127.0.0.1:5000/api"
 
 function NodeManager() {
   // Link to singleton instance
-  const app = Application.Instance;
+  const app = BuilderEngine.Instance;
   const engine = app.engine;
 
   // POST request handler

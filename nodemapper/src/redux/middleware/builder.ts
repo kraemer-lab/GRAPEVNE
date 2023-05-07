@@ -1,6 +1,6 @@
 import { builderCompileToJson } from 'redux/actions'
 import { builderSubmitQuery } from 'redux/actions'
-import Application from 'gui/Builder/Application'
+import BuilderEngine from 'gui/Builder/BuilderEngine'
 
 export function builderMiddleware({ getState, dispatch }) {
   return function(next) {
@@ -11,7 +11,7 @@ export function builderMiddleware({ getState, dispatch }) {
       switch (action.type) {
 
           case "builder/compile-to-json": {
-            const app = Application.Instance;
+            const app = BuilderEngine.Instance;
             const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
               'query': 'builder/compile-to-json',
               'data': {

@@ -1,4 +1,5 @@
 import React from 'react'
+import BuilderEngine from './BuilderEngine'
 import { useAppDispatch } from 'redux/store/hooks'
 import { builderLoadNodemap } from 'redux/actions'
 import { builderSaveNodemap } from 'redux/actions'
@@ -9,12 +10,12 @@ function Header() {
   
   // Load nodemap from file
   const btnLoad = () => {
-    dispatch(builderLoadNodemap())
+    BuilderEngine.Instance.LoadScene();
   }
   
   // Save nodemap to file
   const btnSave = () => {
-    dispatch(builderSaveNodemap())
+    BuilderEngine.Instance.SaveScene();
   }
 
   // Build - compile config to workflow zip and download
