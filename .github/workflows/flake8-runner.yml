@@ -1,19 +1,19 @@
-name: Flake8-parser
+name: Flake8-runner
 
 on:
   push:
     branches: [main]
     paths:
-    - '.github/workflows/flake8-parser.yml'
-    - 'parser/**'
-    - '!parser/README.md'
+    - '.github/workflows/flake8-runner.yml'
+    - 'runner/**'
+    - '!runner/README.md'
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: parser
+        working-directory: runner
     strategy:
       matrix:
         python-version: ["3.10", "3.11"]
