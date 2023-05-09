@@ -13,7 +13,7 @@ function NodeManager() {
   // Link to singleton instance
   const app = BuilderEngine.Instance;
   const engine = app.engine;
-  
+
   // Add listeners, noting the following useful resource:
   // https://github.com/projectstorm/react-diagrams/issues/164
   const dispatch = useAppDispatch();
@@ -116,7 +116,7 @@ function NodeManager() {
     if (responseData !== null)
       processResponse(responseData);
   }, [responseData]);
-  
+
   return (
     <BodyWidget engine={engine}/>
   )

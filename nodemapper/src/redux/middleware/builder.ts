@@ -27,7 +27,7 @@ export function builderMiddleware({ getState, dispatch }) {
             dispatch(builderSubmitQuery(query))
             break;
           }
-          
+
           case "builder/node-selected": {
             const graph_is_moveable = getState().display.graph_is_moveable
             if (!graph_is_moveable) {

@@ -10,7 +10,7 @@ export default class BuilderEngine extends NodeMapEngine {
   public static get Instance(): BuilderEngine {
     return BuilderEngine._Instance || (this._Instance = new this());
   }
-  
+
   public UpdateListeners() {
     const dispatch = useAppDispatch();
     const model = this.engine.getModel();

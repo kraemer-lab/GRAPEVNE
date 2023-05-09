@@ -52,7 +52,7 @@ function Header() {
   const btnDeleteResults = () => {
     dispatch(displayDeleteResults())
   }
-  
+
   // Distribute model (visual)
   const btnArrange = () => {
     RunnerEngine.Instance.RedistributeModel();

@@ -1,15 +1,15 @@
 import base64
 import json
-import filesystem
 
+import filesystem
 from flask import Flask
 from flask import request
 from flask import Response
 from flask_cors import CORS
 from flask_cors import cross_origin
 
-import runner
 import builder
+import runner
 
 app = Flask(__name__)
 CORS(app)
@@ -36,10 +36,8 @@ def post():
                 memory_zip = builder.BuildFromJSON(js)
                 return Response(
                     base64.b64encode(memory_zip),
-                    mimetype='application/zip',
-                    headers={
-                        'Content-Disposition': 'attachment;filename=workflow.zip'
-                    }
+                    mimetype="application/zip",
+                    headers={"Content-Disposition": "attachment;filename=workflow.zip"},
                 )
 
             # Parser queries -- nodemapper

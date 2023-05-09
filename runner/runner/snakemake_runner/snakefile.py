@@ -42,7 +42,8 @@ def Launch(filename: str) -> dict:
     """Launch snakemake workflow based upon provided [locally accessible] Snakefile"""
     filename, workdir = GetFileAndWorkingDirectory(filename)
     stdout, stderr = snakemake(
-        filename, "--nolock",
+        filename,
+        "--nolock",
         workdir=workdir,
     )
     return {

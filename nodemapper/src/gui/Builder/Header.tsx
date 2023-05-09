@@ -7,12 +7,12 @@ import { builderCompileToJson } from 'redux/actions'
 
 function Header() {
   const dispatch = useAppDispatch();
-  
+
   // Load nodemap from file
   const btnLoadScene = () => {
     BuilderEngine.Instance.LoadScene();
   }
-  
+
   // Save nodemap to file
   const btnSaveScene = () => {
     BuilderEngine.Instance.SaveScene();
@@ -22,7 +22,7 @@ function Header() {
   const btnBuild = () => {
     dispatch(builderCompileToJson())
   }
-  
+
   // Distribute model (visual)
   const btnArrange = () => {
     BuilderEngine.Instance.RedistributeModel();
