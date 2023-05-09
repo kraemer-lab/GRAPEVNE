@@ -4,6 +4,7 @@ import { useAppDispatch } from 'redux/store/hooks'
 import { builderLoadNodemap } from 'redux/actions'
 import { builderSaveNodemap } from 'redux/actions'
 import { builderCompileToJson } from 'redux/actions'
+import { builderGetRemoteModules } from 'redux/actions'
 
 function Header() {
   const dispatch = useAppDispatch();
@@ -28,6 +29,10 @@ function Header() {
     BuilderEngine.Instance.RedistributeModel();
   }
 
+  const btnGetModuleList = () => {
+    dispatch(builderGetRemoteModules())
+  }
+
   return (
     <>
     <link href="http://fonts.googleapis.com/css?family=Oswald" rel="stylesheet" type="text/css"/>
@@ -36,6 +41,7 @@ function Header() {
       <button className="btn" onClick={btnSaveScene}>SAVE</button>
       <button className="btn" onClick={btnBuild}>BUILD</button>
       <button className="btn" onClick={btnArrange}>ARRANGE</button>
+      <button className="btn" onClick={btnGetModuleList}>GET MODULE LIST</button>
     </div>
     </>
   )

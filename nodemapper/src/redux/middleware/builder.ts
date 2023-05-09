@@ -6,6 +6,9 @@ import { displayCloseSettings } from 'redux/actions'
 import { displayOpenSettings } from 'redux/actions'
 import { displayUpdateNodeInfo } from 'redux/actions'
 
+// TODO: Replace with webpack proxy (problems getting this to work)
+const API_ENDPOINT = "http://127.0.0.1:5000/api"
+
 export function builderMiddleware({ getState, dispatch }) {
   return function(next) {
     return function(action) {
@@ -16,7 +19,6 @@ export function builderMiddleware({ getState, dispatch }) {
 
           case "builder/compile-to-json": {
             const app = BuilderEngine.Instance;
-            console.log(app.GetModuleListJSON());
             const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
               'query': 'builder/compile-to-json',
               'data': {
@@ -24,7 +26,7 @@ export function builderMiddleware({ getState, dispatch }) {
                 'content': JSON.stringify(app.GetModuleListJSON())
               }
             }
-            dispatch(builderSubmitQuery(query))
+            SubmitQueryExpectZip(query)
             break;
           }
 
@@ -63,6 +65,23 @@ export function builderMiddleware({ getState, dispatch }) {
             break;
           }
 
+          case "builder/get-remote-modules": {
+            // Get list of remote modules
+            const app = BuilderEngine.Instance;
+            const url = 'https://github.com/jsbrittain/snakeshack/tree/main/workflows/OxfordPhyloGenetics';
+            const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+              'query': 'builder/get-remote-modules',
+              'data': {
+                'format': 'Snakefile',
+                'content': JSON.stringify({
+                  'url': url
+                })
+              }
+            }
+            dispatch(builderSubmitQuery(query))
+            break;
+          }
+
           default:
             break;
       }
@@ -70,4 +89,55 @@ export function builderMiddleware({ getState, dispatch }) {
       return next(action)
     }
   }
+}
+
+function SubmitQueryExpectZip(query: Record<string, any>) {
+  // POST request handler
+  async function postRequest() {
+    const postRequestOptions = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json;charset=UTF-8', 'responseType': 'blob'},
+      body: JSON.stringify(query)
+    };
+    console.info("Sending query: ", query)
+    fetch(API_ENDPOINT + '/post', postRequestOptions)
+      .then(response => {
+        if (response.ok) {
+          const reader = response.body.getReader()
+          return new ReadableStream({
+            start(controller) {
+              function push() {
+                reader.read().then(({done, value}) => {
+                  if (done) {
+                    controller.close();
+                    return;
+                  }
+                  controller.enqueue(value);
+                  push();
+                });
+              }
+              push();
+            }
+          });
+        }
+        throw response
+      })
+      .then((stream) =>
+        new Response(stream, {headers: {"Content-type": "application/zip"}
+      }).text()
+      )
+      .then((result) => {
+        // Download returned content as file
+        const filename = 'workflow'
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:application/zip;base64,' +
+          encodeURIComponent(result));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      });
+  }
+  postRequest();
 }

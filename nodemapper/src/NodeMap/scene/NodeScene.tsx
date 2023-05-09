@@ -34,7 +34,7 @@ class NodeScene extends NodeSceneBase {
       }
     });
     data['links']['content'].forEach((link) => {
-      console.log(link, this.nodelist)
+      console.debug(link, this.nodelist)
       try {
         this.addLink(this.nodelist[link[0]].getPort('out'), this.nodelist[link[1]].getPort('in'))
       } catch(e) {

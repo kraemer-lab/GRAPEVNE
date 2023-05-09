@@ -1,6 +1,8 @@
 import NodeScene from './NodeScene'
-import { useAppSelector } from 'redux/store/hooks'
-import { useAppDispatch } from 'redux/store/hooks'
+
+interface IPayload {
+  id: string;
+}
 
 export default class NodeMapEngine {
   nodeScene = null;
@@ -97,5 +99,26 @@ export default class NodeMapEngine {
 
   public GetModuleListJSON() {
     return this.nodeScene.getModuleListJSON();
+  }
+
+  public AddSelectionListeners(select_fn: (payload: IPayload) => void, deselect_fn: (payload: IPayload) => void) {
+    // Add listeners, noting the following useful resource:
+    // https://github.com/projectstorm/react-diagrams/issues/164
+    const model = this.engine.getModel();
+    model.getNodes().forEach(node =>
+      node.registerListener({
+        selectionChanged: (e) => {
+          const payload: IPayload = {
+            id: node.options.id,
+          }
+          if (e.isSelected) {
+            select_fn(payload)
+          }
+          else {
+            deselect_fn(payload)
+          }
+        }
+      })
+    );
   }
 }

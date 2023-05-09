@@ -5,6 +5,8 @@ import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
 import { builderNodeSelected } from 'redux/actions'
 import { builderNodeDeselected } from 'redux/actions'
+import { builderGetRemoteModules } from 'redux/actions'
+import { builderUpdateModulesList } from 'redux/actions'
 
 // TODO: Replace with webpack proxy (problems getting this to work)
 const API_ENDPOINT = "http://127.0.0.1:5000/api"
@@ -14,90 +16,43 @@ function NodeManager() {
   const app = BuilderEngine.Instance;
   const engine = app.engine;
 
-  // Add listeners, noting the following useful resource:
-  // https://github.com/projectstorm/react-diagrams/issues/164
+  // Initialise (add selection listeners to nodes)
   const dispatch = useAppDispatch();
-  function setupNodeSelectionListeners() {
-    const model = engine.getModel();
-    model.getNodes().forEach(node =>
-      node.registerListener({
-        selectionChanged: (e) => {
-          const payload = {
-            id: node.options.id,
-          }
-          if (e.isSelected) {
-            dispatch(builderNodeSelected(payload))
-          }
-          else {
-            dispatch(builderNodeDeselected(payload))
-          }
-        }
-      })
-    );
-  }
-  setupNodeSelectionListeners();
+  app.AddSelectionListeners(
+    (x) => {dispatch(builderNodeSelected(x))},
+    (x) => {dispatch(builderNodeDeselected(x))}
+  );
 
-  // POST request handler
+  // POST request handler [refactor out of this function later]
   const query = useAppSelector(state => state.builder.query);
   const [responseData, setResponseData] = React.useState(null);
   async function postRequest() {
     const postRequestOptions = {
       method: 'POST',
-      headers: {'Content-Type': 'application/json;charset=UTF-8', 'responseType': 'blob'},
+      headers: {'Content-Type': 'application/json;charset=UTF-8'},
       body: JSON.stringify(query)
     };
     console.info("Sending query: ", query)
     fetch(API_ENDPOINT + '/post', postRequestOptions)
       .then(response => {
-          const reader = response.body.getReader()
-          return new ReadableStream({
-            start(controller) {
-              function push() {
-                reader.read().then(({done, value}) => {
-                  if (done) {
-                    controller.close();
-                    return;
-                  }
-                  controller.enqueue(value);
-                  push();
-                });
-              }
-              push();
-            }
-          });
-
+        if (response.ok) {
+          return response.json()
+        }
+        throw response
       })
-      .then((stream) =>
-        new Response(stream, {headers: {"Content-type": "application/zip"}
-      }).text()
-      )
-      .then((result) => {
-        // Download returned content as file
-        const filename = 'workflow'
-        const element = document.createElement('a');
-        element.setAttribute('href', 'data:application/zip;base64,' +
-          encodeURIComponent(result));
-        element.setAttribute('download', filename);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-      });
+      .then(data => {
+        setResponseData(data);
+        console.info("Got response: ", data);
+      })
+      .catch(error => {
+        console.error("Error during query: ", error);
+      })
   }
   function processResponse(content: JSON) {
     console.log("Process response: ", content)
     switch (content['query']) {
-      case 'builder/compile-to-json': {
-        // Download returned content as file
-        const filename = 'workflow.zip'
-        const element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' +
-          encodeURIComponent(content['body']));
-        element.setAttribute('download', filename);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
+      case 'builder/get-remote-modules': {
+        dispatch(builderUpdateModulesList(content["body"]));
         break;
       }
       default:

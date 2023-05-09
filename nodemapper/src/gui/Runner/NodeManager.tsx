@@ -29,27 +29,13 @@ function NodeManager() {
   // Add listeners, noting the following useful resource:
   // https://github.com/projectstorm/react-diagrams/issues/164
   const dispatch = useAppDispatch();
-  function setupNodeSelectionListeners() {
-    const model = engine.getModel();
-    model.getNodes().forEach(node =>
-      node.registerListener({
-        selectionChanged: (e) => {
-          const payload = {
-            id: node.options.id,
-          }
-          if (e.isSelected) {
-            dispatch(runnerNodeSelected(payload))
-          }
-          else {
-            dispatch(runnerNodeDeselected(payload))
-          }
-        }
-      })
+  const UpdateActionListeners = () => {
+    nodeMapEngine.AddSelectionListeners(
+      (x) => {dispatch(runnerNodeSelected(x))},
+      (x) => {dispatch(runnerNodeDeselected(x))}
     );
   }
-  setupNodeSelectionListeners();
-
-
+  UpdateActionListeners();
 
   // Job status changes
   const jobstatus = useAppSelector(state => state.runner.jobstatus);
@@ -126,7 +112,7 @@ function NodeManager() {
         // Rebuild map from returned (segmented) representation
         nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content['body']))
         dispatch(runnerStoreMap(content['body']))
-        setupNodeSelectionListeners()
+        UpdateActionListeners()
         // Submit query to automatically lint file
         dispatch(runnerLintSnakefile())
         break;

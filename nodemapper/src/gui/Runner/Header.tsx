@@ -7,9 +7,7 @@ import { displayZoomToFit } from 'redux/actions'
 import { displayDeleteResults } from 'redux/actions'
 import { runnerImportSnakefile } from 'redux/actions'
 import { runnerLoadSnakefile } from 'redux/actions'
-import { runnerBuildSnakefile } from 'redux/actions'
 import { runnerLaunchSnakefile } from 'redux/actions'
-import { runnerQueryJobStatus } from 'redux/actions'
 import RunnerEngine from './RunnerEngine'
 import "./Header.css"
 
@@ -33,19 +31,9 @@ function Header() {
     dispatch(runnerImportSnakefile())
   }
 
-  // Build Snakefile
-  const btnBuildSnakefile = () => {
-    dispatch(runnerBuildSnakefile())
-  }
-
   // Launch Snakefile
   const btnLaunchSnakefile = () => {
     dispatch(runnerLaunchSnakefile())
-  }
-
-  // Query job status
-  const btnQueryJobStatus = () => {
-    dispatch(runnerQueryJobStatus())
   }
 
   // Delete results
@@ -71,9 +59,7 @@ function Header() {
       <button className="btn" onClick={btnLoadScene}>LOAD</button>
       <button className="btn" onClick={btnSaveScene}>SAVE</button>
       <button className="btn" onClick={btnCheckSnakefile}>CHECK SNAKEFILE</button>
-      <button className="btn" onClick={btnBuildSnakefile}>BUILD SNAKEFILE</button>
       <button className="btn" onClick={btnLaunchSnakefile}>RUN</button>
-      <button className="btn" onClick={btnQueryJobStatus}>CHECK STATUS</button>
       <button className="btn" onClick={btnDeleteResults}>DELETE RESULTS</button>
       <button className="btn" onClick={btnArrange}>ARRANGE</button>
       <button className="btn" onClick={btnZoomToFit}>RESET VIEW</button>

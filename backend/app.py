@@ -32,13 +32,34 @@ def post():
             case "builder/compile-to-json":
                 data = request.json["data"]
                 js = json.loads(data["content"])
-                print(js)
                 memory_zip = builder.BuildFromJSON(js)
                 return Response(
                     base64.b64encode(memory_zip),
                     mimetype="application/zip",
                     headers={"Content-Disposition": "attachment;filename=workflow.zip"},
                 )
+            case "builder/get-remote-modules":
+                data = request.json["data"]
+                js = json.loads(data["content"])
+                data = {
+                    "query": request.json["query"],
+                    # "body": builder.GetRemoteModules(js["content"]["url"])
+                    "body": [
+                        {"name": "Init", "type": "source", "config": "config1"},  # TODO
+                        {"name": "Sleep", "type": "module", "config": "config2"},
+                        {
+                            "name": "get_remote_file",
+                            "type": "module",
+                            "config": "config",
+                        },
+                        {"name": "gisaid", "type": "module", "config": "config3"},
+                        {
+                            "name": "connector_copy",
+                            "type": "connector",
+                            "config": "config",
+                        },
+                    ],
+                }
 
             # Parser queries -- nodemapper
             case "runner/build":
