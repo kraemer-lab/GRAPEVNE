@@ -9,12 +9,12 @@ function Header() {
   const dispatch = useAppDispatch();
   
   // Load nodemap from file
-  const btnLoad = () => {
+  const btnLoadScene = () => {
     BuilderEngine.Instance.LoadScene();
   }
   
   // Save nodemap to file
-  const btnSave = () => {
+  const btnSaveScene = () => {
     BuilderEngine.Instance.SaveScene();
   }
 
@@ -22,14 +22,20 @@ function Header() {
   const btnBuild = () => {
     dispatch(builderCompileToJson())
   }
+  
+  // Distribute model (visual)
+  const btnArrange = () => {
+    BuilderEngine.Instance.RedistributeModel();
+  }
 
   return (
     <>
     <link href="http://fonts.googleapis.com/css?family=Oswald" rel="stylesheet" type="text/css"/>
     <div style={{fontSize: 18, marginLeft: 0}}>
-      <button className="btn" onClick={btnLoad}>LOAD</button>
-      <button className="btn" onClick={btnSave}>SAVE</button>
+      <button className="btn" onClick={btnLoadScene}>LOAD</button>
+      <button className="btn" onClick={btnSaveScene}>SAVE</button>
       <button className="btn" onClick={btnBuild}>BUILD</button>
+      <button className="btn" onClick={btnArrange}>ARRANGE</button>
     </div>
     </>
   )

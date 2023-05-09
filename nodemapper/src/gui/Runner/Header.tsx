@@ -52,6 +52,11 @@ function Header() {
   const btnDeleteResults = () => {
     dispatch(displayDeleteResults())
   }
+  
+  // Distribute model (visual)
+  const btnArrange = () => {
+    RunnerEngine.Instance.RedistributeModel();
+  }
 
   // Zoom to fit
   const btnZoomToFit = () => {
@@ -70,6 +75,7 @@ function Header() {
       <button className="btn" onClick={btnLaunchSnakefile}>RUN</button>
       <button className="btn" onClick={btnQueryJobStatus}>CHECK STATUS</button>
       <button className="btn" onClick={btnDeleteResults}>DELETE RESULTS</button>
+      <button className="btn" onClick={btnArrange}>ARRANGE</button>
       <button className="btn" onClick={btnZoomToFit}>RESET VIEW</button>
     </div>
     </>

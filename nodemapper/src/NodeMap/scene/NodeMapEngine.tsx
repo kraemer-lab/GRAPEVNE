@@ -90,4 +90,12 @@ export default class NodeMapEngine {
   public ZoomToFit() {
     this.engine.zoomToFit();
   }
+
+  public RedistributeModel() {
+    this.nodeScene.distributeModel(this.engine.getModel());
+  }
+
+  public GetModuleListJSON() {
+    return this.nodeScene.getModuleListJSON();
+  }
 }

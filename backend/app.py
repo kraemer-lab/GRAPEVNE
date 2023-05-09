@@ -1,8 +1,6 @@
 import base64
-import io
 import json
 import filesystem
-import zipfile
 
 from flask import Flask
 from flask import request
@@ -32,20 +30,17 @@ def post():
 
             # Parser queries -- builder
             case "builder/compile-to-json":
-                # HOW TO DEAL WITH ZIP AS RETURN FILE??
-                with open('../builder/builder/build_local.json', 'r') as file:  # <- temporary load from local file
-                    config = json.load(file)
-                memory_zip = base64.b64encode(builder.BuildFromJSON(config))  # EXPECTS JSON CONFIG AS INPUT <- request.json["data"])
-                return Response(memory_zip,
-                                mimetype='application/zip',
-                                headers={
-                                    'Content-Disposition':
-                                    'attachment;filename=workflow.zip'
-                                })
-                # data = {
-                #     "query": request.json["query"],
-                #     "body": builder.BuildFromJSON(config)  # EXPECTS JSON CONFIG AS INPUT <- request.json["data"]),
-                # }
+                data = request.json["data"]
+                js = json.loads(data["content"])
+                print(js)
+                memory_zip = builder.BuildFromJSON(js)
+                return Response(
+                    base64.b64encode(memory_zip),
+                    mimetype='application/zip',
+                    headers={
+                        'Content-Disposition': 'attachment;filename=workflow.zip'
+                    }
+                )
 
             # Parser queries -- nodemapper
             case "runner/build":

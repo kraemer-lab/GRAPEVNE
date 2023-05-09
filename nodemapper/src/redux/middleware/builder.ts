@@ -12,11 +12,12 @@ export function builderMiddleware({ getState, dispatch }) {
 
           case "builder/compile-to-json": {
             const app = BuilderEngine.Instance;
+            console.log(app.GetModuleListJSON());
             const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
               'query': 'builder/compile-to-json',
               'data': {
                 'format': 'Snakefile',
-                'content': JSON.stringify(app.engine.getModel().serialize())
+                'content': JSON.stringify(app.GetModuleListJSON())
               }
             }
             dispatch(builderSubmitQuery(query))

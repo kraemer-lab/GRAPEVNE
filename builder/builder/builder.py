@@ -203,7 +203,7 @@ def BuildFromJSON(config: dict):
     # Create zip archive
     zipfilename = 'build'
     shutil.make_archive(zipfilename, 'zip', 'build')
-    # Load contents of zip file and return as string
+    # Load contents of zip file and return as string
     with open(f"{zipfilename}.zip", 'rb') as file:
         contents = file.read()
     return contents

@@ -32,66 +32,113 @@ export const Layer = styled.div`
 `;
 
 export class BodyWidget extends React.Component<BodyWidgetProps> {
-	render() {
-		return (
-			<Body>
-				<Content>
-					<TrayWidget>
-						<TrayItemWidget model={{ type: 'out' }} name="Source" color="rgb(192,255,0)" />
-						<TrayItemWidget model={{ type: 'inout' }} name="Module" color="rgb(0,192,255)" />
-						<TrayItemWidget model={{ type: 'in' }} name="Terminal" color="rgb(192,0,255)" />
-					</TrayWidget>
-					<Layer
-						onDrop={(event) => {
+  render() {
+    return (
+      <Body>
+        <Content>
+          <TrayWidget>
+            <TrayItemWidget model={{ type: 'source' }} name="Source" color="rgb(192,255,0)" />
+            <TrayItemWidget model={{ type: 'module' }} name="Module" color="rgb(0,192,255)" />
+            <TrayItemWidget model={{ type: 'connector' }} name="Connector" color="rgb(0,255,192)" />
+            <TrayItemWidget model={{ type: 'terminal' }} name="Terminal" color="rgb(192,0,255)" />
+          </TrayWidget>
+          <Layer
+            onDrop={(event) => {
               const engine = this.props.engine;
-							const data = JSON.parse(event.dataTransfer.getData('storm-diagram-node'));
-							const nodesCount = _.keys(engine.getModel().getNodes()).length;
+              const data = JSON.parse(event.dataTransfer.getData('storm-diagram-node'));
+              const nodesCount = _.keys(engine.getModel().getNodes()).length;
 
-							let node: DefaultNodeModel = null;
+              let node: DefaultNodeModel = null;
+              let node_name = "";
               switch(data.type) {
-                case 'in':
+                case 'terminal':
+                  node_name = 'Terminal' + (nodesCount+1);
                   node = new DefaultNodeModel(
-                    'Node ' + (nodesCount + 1),
+                    node_name,
                     'rgb(192,0,255)',
-                    JSON.stringify({'id': 'idcode', 'type': 'in'})
+                    JSON.stringify({
+                      'id': 'idcode',
+                      'name': node_name,
+                      'type': 'Module',
+                      'content': 'this is code'})
                   );
                   node.addInPort('In');
                   break;
-                case 'out':
+                case 'source':
+                  node_name = 'Source' + (nodesCount+1);
                   node = new DefaultNodeModel(
-                    'Node ' + (nodesCount + 1),
+                    node_name,
                     'rgb(192,255,0)',
-                    JSON.stringify({'id': 'idcode', 'type': 'in'})
+                    JSON.stringify({
+                      'id': 'idcode',
+                      'name': node_name,
+                      'type': 'Module',
+                      'config' : {
+                          'url': '../../../../../snakeshack/workflows/OxfordPhyloGenetics/init/workflow/Snakefile'
+                      }
+                    })
                   );
                   node.addOutPort('Out');
                   break;
-                case 'inout':
+                case 'module':
+                  node_name = 'Sleep' + (nodesCount+1);
                   node = new DefaultNodeModel(
-                    'Node ' + (nodesCount + 1),
+                    node_name,
                     'rgb(0,192,255)',
-                    JSON.stringify({'id': 'idcode', 'type': 'in'})
+                    JSON.stringify({
+                      'id': 'idcode',
+                      'name': node_name,
+                      'type': 'Module',
+                      'config' : {
+                          'url': '../../../../../snakeshack/workflows/OxfordPhyloGenetics/sleep/workflow/Snakefile',
+                          'params': {
+                              'sleeptime': 3
+                          }
+                      }
+                    })
+                  );
+                  node.addInPort('In');
+                  node.addOutPort('Out');
+                  break;
+                case 'connector':
+                  node_name = 'Connector' + (nodesCount+1);
+                  node = new DefaultNodeModel(
+                    node_name,
+                    'rgb(0,255,192)',
+                    JSON.stringify({
+                      'id': 'idcode',
+                      'name': node_name,
+                      'type': 'Connector',
+                      'config' : {
+                          'url': '../../../../../snakeshack/workflows/OxfordPhyloGenetics/connector_copy/workflow/Snakefile',
+                          'map': [
+                              'Init',
+                              'Sleep 1'
+                          ]
+                      }
+                    })
                   );
                   node.addInPort('In');
                   node.addOutPort('Out');
                   break;
                 default:
                   throw Error('Invalid node type requested: ' + data.type);
-							}
-							const point = engine.getRelativeMousePoint(event);
-							node.setPosition(point);
-							engine.getModel().addNode(node);
-							this.forceUpdate();
-						}}
-						onDragOver={(event) => {
-							event.preventDefault();
-						}}
-					>
+              }
+              const point = engine.getRelativeMousePoint(event);
+              node.setPosition(point);
+              engine.getModel().addNode(node);
+              this.forceUpdate();
+            }}
+            onDragOver={(event) => {
+              event.preventDefault();
+            }}
+          >
           <GridCanvasWidget>
             <CanvasWidget engine={this.props.engine} />
           </GridCanvasWidget>
-					</Layer>
-				</Content>
-			</Body>
-		);
-	}
+          </Layer>
+        </Content>
+      </Body>
+    );
+  }
 }

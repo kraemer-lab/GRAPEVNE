@@ -61,13 +61,13 @@ class NodeSceneBase {
 
   distributeModel(model) {
     const dagre_engine = new DagreEngine({
-			graph: {
-				rankdir: 'LR',
-				rankSep: 200,
+      graph: {
+        rankdir: 'LR',
+        rankSep: 100,
         marginx: 100,
         marginy: 100,
-			},
-		});
+      },
+    });
     dagre_engine.redistribute(model)
     this.engine.repaintCanvas();
   }
@@ -80,6 +80,14 @@ class NodeSceneBase {
 
   serializeModel() {
     return JSON.stringify(this.engine.getModel().serialize());
+  }
+
+  getModuleListJSON() {
+    const js = []
+    this.engine.getModel().getNodes().forEach(node => {
+      js.push(this.getNodeUserConfig(node));
+    });
+    return js
   }
 
 }
