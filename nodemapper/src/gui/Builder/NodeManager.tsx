@@ -3,6 +3,8 @@ import BuilderEngine from './BuilderEngine'
 import { BodyWidget } from './components/BodyWidget';
 import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
+import { builderNodeSelected } from 'redux/actions'
+import { builderNodeDeselected } from 'redux/actions'
 
 // TODO: Replace with webpack proxy (problems getting this to work)
 const API_ENDPOINT = "http://127.0.0.1:5000/api"
@@ -11,6 +13,29 @@ function NodeManager() {
   // Link to singleton instance
   const app = BuilderEngine.Instance;
   const engine = app.engine;
+  
+  // Add listeners, noting the following useful resource:
+  // https://github.com/projectstorm/react-diagrams/issues/164
+  const dispatch = useAppDispatch();
+  function setupNodeSelectionListeners() {
+    const model = engine.getModel();
+    model.getNodes().forEach(node =>
+      node.registerListener({
+        selectionChanged: (e) => {
+          const payload = {
+            id: node.options.id,
+          }
+          if (e.isSelected) {
+            dispatch(builderNodeSelected(payload))
+          }
+          else {
+            dispatch(builderNodeDeselected(payload))
+          }
+        }
+      })
+    );
+  }
+  setupNodeSelectionListeners();
 
   // POST request handler
   const query = useAppSelector(state => state.builder.query);

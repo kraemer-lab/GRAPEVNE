@@ -128,4 +128,8 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
   setColor(color: string) {
     this.options.color = color;
   }
+
+  getNodeID(): string {
+    return this.options.id;
+  }
 }

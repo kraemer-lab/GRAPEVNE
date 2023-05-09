@@ -24,6 +24,14 @@ const builderReducer = createReducer(
         state.query = action.payload
         console.info("[Reducer] " + action.type);
       })
+      .addCase(actions.builderNodeSelected, (state, action) => {
+        // Action intercepted in middleware to control display
+        console.info("[Reducer] " + action.type);
+      })
+      .addCase(actions.builderNodeDeselected, (state, action) => {
+        // Action intercepted in middleware to control display
+        console.info("[Reducer] " + action.type);
+      })
   }
 );
 

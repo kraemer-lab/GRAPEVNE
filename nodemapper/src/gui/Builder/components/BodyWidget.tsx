@@ -8,6 +8,7 @@ import { TrayWidget } from './TrayWidget';
 import { TrayItemWidget } from './TrayItemWidget';
 import { DefaultNodeModel } from  'NodeMap'
 import { GridCanvasWidget } from './GridCanvasWidget';
+import NodeInfo from './NodeInfo';
 
 export interface BodyWidgetProps {
   engine: DiagramEngine
@@ -18,7 +19,7 @@ export const Body = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  height: 800px;
+  height: 1000px;
 `;
 
 export const Content = styled.div`
@@ -34,6 +35,7 @@ export const Layer = styled.div`
 export class BodyWidget extends React.Component<BodyWidgetProps> {
   render() {
     return (
+      <>
       <Body>
         <Content>
           <TrayWidget>
@@ -60,7 +62,10 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
                       'id': 'idcode',
                       'name': node_name,
                       'type': 'Module',
-                      'content': 'this is code'})
+                      'config' : {
+                          'url': ''
+                      }
+                    })
                   );
                   node.addInPort('In');
                   break;
@@ -139,6 +144,8 @@ export class BodyWidget extends React.Component<BodyWidgetProps> {
           </Layer>
         </Content>
       </Body>
+      <NodeInfo />
+      </>
     );
   }
 }
