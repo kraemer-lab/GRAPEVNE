@@ -1,4 +1,5 @@
 from os import listdir
+from os.path import abspath
 from os.path import isdir
 from os.path import join
 from typing import List
@@ -53,10 +54,10 @@ def GetLocalModules(path: str) -> List[dict]:
                     params = yaml.safe_load(file)
                 modules.append(
                     {
-                        "name": f"{org}/{workflow}",
+                        "name": f"{org}_{workflow}",
                         "type": module_type[:-1],  # remove plural
                         "config": {
-                            "url": url_workflow,
+                            "url": abspath(url_workflow),
                             "params": params,
                         },
                     }
@@ -72,7 +73,12 @@ def GetRemoteModulesGithub(
     Function currently supports workflows by directory listing, but could also
     support listings by branches in the future.
 
-    repo: repository string in the format: "owner/repository"
+    Input
+        repo:           repository string in the format: "owner/repository"
+        listing_type:   "DirectoryListing" or "BranchListing"
+
+    Output
+        list of modules
     """
 
     match listing_type:
@@ -97,6 +103,7 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
     if r_base.status_code != 200:
         raise Exception("Github API request failed (getting organisation listing).")
     modules = []
+    branch = "main"
 
     # First-level (organisation) listing
     for org in r_base.json():
@@ -123,13 +130,43 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
             for workflow in r_workflow.json():
                 if workflow["type"] != "dir":
                     continue
-                url_workflow = f"{repo}/workflows/{org['name']}/{module_type['name']}/{workflow['name']}"
+                url_workflow = (
+                    f"{repo}/workflows/"
+                    f"{org['name']}/"
+                    f"{module_type['name']}/"
+                    f"{workflow['name']}"
+                )
+                url_config = (
+                    f"https://raw.githubusercontent.com/{repo}/"
+                    f"{branch}/workflows/"
+                    f"{org['name']}/"
+                    f"{module_type['name']}/"
+                    f"{workflow['name']}/config/config.yaml"
+                )
+                print(url_config)
+                r_config = requests.get(url_config)
+                if r_config.status_code != 200:
+                    raise Exception(
+                        "Github API request failed (getting workflow config file)."
+                    )
+                params = yaml.safe_load(r_config.text)
                 modules.append(
                     {
-                        "name": f"{org['name']}/{workflow['name']}",
+                        "name": f"{org['name']}_{workflow['name']}",
                         "type": module_type["name"][:-1],  # remove plural
                         "config": {
-                            "url": url_workflow,
+                            "url": {
+                                "function": "github",
+                                "args": [repo],
+                                "kwargs": {
+                                    "path": f"workflows/{org['name']}/"
+                                    f"{module_type['name']}/"
+                                    f"{workflow['name']}/"
+                                    "workflow/Snakefile",
+                                    "branch": branch,
+                                },
+                            },
+                            "params": params,
                         },
                     }
                 )

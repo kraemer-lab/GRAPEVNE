@@ -67,6 +67,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
                 'name': node_name,
                 'type': data.type,
                 'config': data.config,
+                'params': { 'sleeptime': 2 },
 
                 // Add params for module: 'params': {'sleeptime': 3},
 
