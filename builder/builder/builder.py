@@ -160,12 +160,9 @@ class Model:
     def NodeIsTerminus(self, node: Node) -> bool:
         # Check for onward connections from the given node
         for n in self.nodes:
-            try:
-                # Only Connectors have the map attribute
-                if n.map[0] is node.name:
-                    return False
-            except AttributeError:
-                pass
+            # Only Connectors have the 'map' attribute
+            if getattr(n, "map", None) is node.name:
+                return False
         return True
 
 

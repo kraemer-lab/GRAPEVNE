@@ -28,7 +28,7 @@ def post():
                     "body": json.dumps(filesystem.GetFolderItems(request.json["data"])),
                 }
 
-            # Parser queries -- builder
+            # Builder queries
             case "builder/compile-to-json":
                 data = request.json["data"]
                 js = json.loads(data["content"])
@@ -43,25 +43,10 @@ def post():
                 js = json.loads(data["content"])
                 data = {
                     "query": request.json["query"],
-                    # "body": builder.GetRemoteModules(js["content"]["url"])
-                    "body": [
-                        {"name": "Init", "type": "source", "config": "config1"},  # TODO
-                        {"name": "Sleep", "type": "module", "config": "config2"},
-                        {
-                            "name": "get_remote_file",
-                            "type": "module",
-                            "config": "config",
-                        },
-                        {"name": "gisaid", "type": "module", "config": "config3"},
-                        {
-                            "name": "connector_copy",
-                            "type": "connector",
-                            "config": "config",
-                        },
-                    ],
+                    "body": builder.GetRemoteModulesGithub(js["url"]),
                 }
 
-            # Parser queries -- nodemapper
+            # Runner queries
             case "runner/build":
                 data = {
                     "query": request.json["query"],

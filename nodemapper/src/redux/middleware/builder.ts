@@ -68,7 +68,7 @@ export function builderMiddleware({ getState, dispatch }) {
           case "builder/get-remote-modules": {
             // Get list of remote modules
             const app = BuilderEngine.Instance;
-            const url = 'https://github.com/jsbrittain/snakeshack/tree/main/workflows/OxfordPhyloGenetics';
+            const url = 'jsbrittain/snakeshack';
             const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
               'query': 'builder/get-remote-modules',
               'data': {
