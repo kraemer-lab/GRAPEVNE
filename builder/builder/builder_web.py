@@ -1,6 +1,67 @@
+from os import listdir
+from os.path import isdir
+from os.path import join
 from typing import List
 
 import requests
+import yaml
+
+
+def GetModulesList(url: dict) -> List[dict]:
+    """Get modules list from url"""
+    match url["type"]:
+        case "github":
+            return GetRemoteModulesGithub(url["repo"], url["listing_type"])
+        case "local":
+            return GetLocalModules(url["repo"])
+        case _:
+            raise Exception("Invalid url type.")
+
+
+def GetLocalModules(path: str) -> List[dict]:
+    """Get local modules from path"""
+    path_base: str = f"{path}/workflows"
+
+    # Get list of local filesystem directories in path
+    orgs = sorted([f for f in listdir(path_base) if isdir(join(path_base, f))])
+    modules = []
+
+    # First-level (organisation) listing
+    for org in orgs:
+        org_path = f"{path_base}/{org}"
+        module_types = reversed(
+            sorted([f for f in listdir(org_path) if isdir(join(org_path, f))])
+        )
+
+        # Second-level (module type) listing
+        for module_type in module_types:
+            module_type_path = f"{org_path}/{module_type}"
+            workflows = sorted(
+                [
+                    f
+                    for f in listdir(module_type_path)
+                    if isdir(join(module_type_path, f))
+                ]
+            )
+
+            # Third-level (module/workflow) listing
+            for workflow in workflows:
+                url_workflow = f"{path_base}/{org}/{module_type}/{workflow}"
+                config_file = f"{url_workflow}/config/config.yaml"
+                params = []
+                with open(config_file, "r") as file:
+                    params = yaml.safe_load(file)
+                modules.append(
+                    {
+                        "name": f"{org}/{workflow}",
+                        "type": module_type[:-1],  # remove plural
+                        "config": {
+                            "url": url_workflow,
+                            "params": params,
+                        },
+                    }
+                )
+    return modules
 
 
 def GetRemoteModulesGithub(
@@ -18,6 +79,7 @@ def GetRemoteModulesGithub(
         case "DirectoryListing":
             return GetRemoteModulesGithubDirectoryListing(repo)
         case "BranchListing":
+            # hint: use https://api.github.com/repos/{owner}/{repo}/branches
             raise Exception("Github branch listing not yet supported.")
         case _:
             raise Exception("Invalid Github listing type.")
@@ -65,7 +127,7 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                 modules.append(
                     {
                         "name": f"{org['name']}/{workflow['name']}",
-                        "type": module_type["name"],
+                        "type": module_type["name"][:-1],  # remove plural
                         "config": {
                             "url": url_workflow,
                         },
@@ -77,4 +139,12 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
 
 if __name__ == "__main__":
     # Test function using default repository
-    print(GetRemoteModulesGithub("jsbrittain/snakeshack", "DirectoryListing"))
+    print(
+        GetModulesList(
+            {
+                "type": "local",
+                "listing_type": "DirectoryListing",
+                "path": "../../snakeshack",
+            }
+        )
+    )

@@ -6,13 +6,13 @@ from typing import List
 
 
 class Node:
-    NODE_TYPES = ["Module", "Connector"]
+    NODE_TYPES = ["module", "connector"]
 
     def __init__(
         self,
         name: str,
         rulename: str,
-        nodetype: str = "Module",
+        nodetype: str = "module",
         url="",
         params={},
         input_namespace: str = "",
@@ -40,7 +40,7 @@ class Module(Node):
 
 class Connector(Node):
     def __init__(self, name: str, kwargs: dict) -> None:
-        kwargs["nodetype"] = "Connector"
+        kwargs["nodetype"] = "connector"
         self.map: List[str] = kwargs.pop("map", "")
         super().__init__(name, **kwargs)
 
@@ -52,9 +52,6 @@ class Model:
     def __init__(self) -> None:
         self.nodes: List[Node] = []  # List of Node objects
 
-    def Build(self):
-        ...
-
     def BuildSnakefile(self):
         s = 'configfile: "config/config.yaml"\n\n'
         # Start with default rule, which lists ALL outputs
@@ -62,7 +59,7 @@ class Model:
         s += "    input:\n"
         for node in self.nodes:
             # Add to terminal node if output if not connected to another module
-            if node.nodetype == "Module" and self.NodeIsTerminus(node):
+            if node.nodetype.casefold() == "module" and self.NodeIsTerminus(node):
                 s += f'        "results/{node.output_namespace}/mark",\n'
         s += "    default_target: True\n"
         s += "\n"
@@ -96,8 +93,9 @@ class Model:
             c += f'  output_namespace : "{node.output_namespace}"\n'
             c += '  output_filename : "mark"\n'
             # Override parameters
-            for k, v in node.params.items():
-                c += f'  {k} : "{v}"\n'
+            if node.params:
+                for k, v in node.params.items():
+                    c += f'  {k} : "{v}"\n'
             c += "\n"
         return c
 
@@ -184,13 +182,13 @@ def BuildFromFile(filename: str):
 def BuildFromJSON(config: dict):
     m = Model()
     for item in config:
-        match item["type"]:
-            case "Module":
+        match item["type"].casefold():
+            case "module":
                 m.AddModule(
                     item["name"],
                     item["config"],
                 )
-            case "Connector":
+            case "connector":
                 m.AddConnector(
                     item["name"],
                     item["config"],

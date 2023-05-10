@@ -34,14 +34,13 @@ export const Layer = styled.div`
 `;
 
 export const BodyWidget = (props: BodyWidgetProps) => {
-  const app = BuilderEngine.Instance;
   const modules = useAppSelector(state => state.builder.modules_list);
   const trayitems = JSON.parse(modules).map(m =>
     <TrayItemWidget
       key={m['name']}
       model={m}
       name={m['name']}
-      color={app.GetModuleTypeColor(m['type'])}
+      color={BuilderEngine.GetModuleTypeColor(m['type'])}
     />
   );
 
@@ -59,78 +58,31 @@ export const BodyWidget = (props: BodyWidgetProps) => {
             const nodesCount = keys(engine.getModel().getNodes()).length;
 
             let node: DefaultNodeModel = null;
-            let node_name = "";
+            const node_name = data.name + (nodesCount+1);
+            node = new DefaultNodeModel(
+              node_name,
+              BuilderEngine.GetModuleTypeColor(data.type),
+              JSON.stringify({
+                'id': 'idcode',
+                'name': node_name,
+                'type': data.type,
+                'config': data.config,
+
+                // Add params for module: 'params': {'sleeptime': 3},
+
+                // Add mapping for connector: 'map': {'Init': 'Init', 'Sleep 1': 'Sleep 1'}
+                //  nb. this should be done dynamically by nodemapper
+              })
+            );
             switch(data.type) {
               case 'terminal':
-                node_name = 'Terminal' + (nodesCount+1);
-                node = new DefaultNodeModel(
-                  node_name,
-                  'rgb(192,0,255)',
-                  JSON.stringify({
-                    'id': 'idcode',
-                    'name': node_name,
-                    'type': 'Module',
-                    'config' : {
-                        'url': ''
-                    }
-                  })
-                );
                 node.addInPort('In');
                 break;
               case 'source':
-                node_name = 'Source' + (nodesCount+1);
-                node = new DefaultNodeModel(
-                  node_name,
-                  'rgb(192,255,0)',
-                  JSON.stringify({
-                    'id': 'idcode',
-                    'name': node_name,
-                    'type': 'Module',
-                    'config' : {
-                        'url': '../../../../../snakeshack/workflows/OxfordPhyloGenetics/init/workflow/Snakefile'
-                    }
-                  })
-                );
                 node.addOutPort('Out');
                 break;
               case 'module':
-                node_name = 'Sleep' + (nodesCount+1);
-                node = new DefaultNodeModel(
-                  node_name,
-                  'rgb(0,192,255)',
-                  JSON.stringify({
-                    'id': 'idcode',
-                    'name': node_name,
-                    'type': 'Module',
-                    'config' : {
-                        'url': '../../../../../snakeshack/workflows/OxfordPhyloGenetics/sleep/workflow/Snakefile',
-                        'params': {
-                            'sleeptime': 3
-                        }
-                    }
-                  })
-                );
-                node.addInPort('In');
-                node.addOutPort('Out');
-                break;
               case 'connector':
-                node_name = 'Connector' + (nodesCount+1);
-                node = new DefaultNodeModel(
-                  node_name,
-                  'rgb(0,255,192)',
-                  JSON.stringify({
-                    'id': 'idcode',
-                    'name': node_name,
-                    'type': 'Connector',
-                    'config' : {
-                        'url': '../../../../../snakeshack/workflows/OxfordPhyloGenetics/connector_copy/workflow/Snakefile',
-                        'map': [
-                            'Init',
-                            'Sleep 1'
-                        ]
-                    }
-                  })
-                );
                 node.addInPort('In');
                 node.addOutPort('Out');
                 break;

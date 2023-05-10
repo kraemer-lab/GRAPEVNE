@@ -10,7 +10,7 @@ export default class BuilderEngine extends NodeMapEngine {
 
   // BUILDER specific methods
 
-  public GetModuleTypeColor(type: string): string {
+  public static GetModuleTypeColor(type: string): string {
     let color = '';
     switch(type) {
       case 'source': {

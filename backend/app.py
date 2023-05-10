@@ -32,6 +32,10 @@ def post():
             case "builder/compile-to-json":
                 data = request.json["data"]
                 js = json.loads(data["content"])
+                with open(
+                    "workflow.json", "w"
+                ) as f:  # dump config file to disk for debug
+                    json.dump(js, f, indent=4)
                 memory_zip = builder.BuildFromJSON(js)
                 return Response(
                     base64.b64encode(memory_zip),
@@ -43,7 +47,7 @@ def post():
                 js = json.loads(data["content"])
                 data = {
                     "query": request.json["query"],
-                    "body": builder.GetRemoteModulesGithub(js["url"]),
+                    "body": builder.GetModulesList(js["url"]),
                 }
 
             # Runner queries
