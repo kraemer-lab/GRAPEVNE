@@ -4,6 +4,6 @@ set -euxo pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 pushd $SCRIPT_DIR
 
-rm -rf build build.zip
+rm -rf build build.zip workflow.json
 
 popd
