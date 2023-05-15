@@ -36,7 +36,7 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
 		this.portsIn = [];
 	}
 
-	doClone(lookupTable: {}, clone: any): void {
+	doClone(lookupTable: object, clone: any): void {
 		clone.portsIn = [];
 		clone.portsOut = [];
 		super.doClone(lookupTable, clone);

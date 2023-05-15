@@ -22,7 +22,7 @@ export class DefaultPortModel extends PortModel<DefaultPortModelGenerics> {
 	constructor(isIn: boolean, name?: string, label?: string);
 	constructor(options: DefaultPortModelOptions);
 	constructor(options: DefaultPortModelOptions | boolean, name?: string, label?: string) {
-		if (!!name) {
+		if (name) {
 			options = {
 				in: !!options,
 				name: name,
@@ -53,7 +53,7 @@ export class DefaultPortModel extends PortModel<DefaultPortModelGenerics> {
 	}
 
 	link<T extends LinkModel>(port: PortModel, factory?: AbstractModelFactory<T>): T {
-		let link = this.createLinkModel(factory);
+		const link = this.createLinkModel(factory);
 		link.setSourcePort(this);
 		link.setTargetPort(port);
 		return link as T;
@@ -67,7 +67,7 @@ export class DefaultPortModel extends PortModel<DefaultPortModelGenerics> {
 	}
 
 	createLinkModel(factory?: AbstractModelFactory<LinkModel>): LinkModel {
-		let link = super.createLinkModel();
+		const link = super.createLinkModel();
 		if (!link && factory) {
 			return factory.generateModel({});
 		}

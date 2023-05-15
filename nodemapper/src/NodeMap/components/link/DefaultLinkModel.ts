@@ -95,7 +95,7 @@ export class DefaultLinkModel extends LinkModel<DefaultLinkModelGenerics> {
 		if (label instanceof LabelModel) {
 			return super.addLabel(label);
 		}
-		let labelOb = new DefaultLabelModel();
+		const labelOb = new DefaultLabelModel();
 		labelOb.setLabel(label);
 		return super.addLabel(labelOb);
 	}
