@@ -1,15 +1,16 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import NodeInfo from './NodeInfo';
+import BuilderEngine from '../BuilderEngine';
+
 import { keys } from 'lodash';
-import { DiagramEngine } from '@projectstorm/react-diagrams'
-import { CanvasWidget } from '@projectstorm/react-diagrams';
-import { useAppSelector } from 'redux/store/hooks'
 import { TrayWidget } from './TrayWidget';
+import { CanvasWidget } from '@projectstorm/react-diagrams';
+import { DiagramEngine } from '@projectstorm/react-diagrams'
+import { useAppSelector } from 'redux/store/hooks'
 import { TrayItemWidget } from './TrayItemWidget';
 import { DefaultNodeModel } from  'NodeMap'
 import { GridCanvasWidget } from './GridCanvasWidget';
-import BuilderEngine from '../BuilderEngine';
 
 export interface BodyWidgetProps {
   engine: DiagramEngine
@@ -63,16 +64,10 @@ export const BodyWidget = (props: BodyWidgetProps) => {
               node_name,
               BuilderEngine.GetModuleTypeColor(data.type),
               JSON.stringify({
-                'id': 'idcode',
+                'id': 'idcode',  // TODO
                 'name': node_name,
                 'type': data.type,
                 'config': data.config,
-                'params': { 'sleeptime': 2 },
-
-                // Add params for module: 'params': {'sleeptime': 3},
-
-                // Add mapping for connector: 'map': {'Init': 'Init', 'Sleep 1': 'Sleep 1'}
-                //  nb. this should be done dynamically by nodemapper
               })
             );
             switch(data.type) {

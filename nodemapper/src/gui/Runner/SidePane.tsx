@@ -30,8 +30,8 @@ function SidePane() {
     <>
     <div className="sidepane">
       <div className="title">{title}</div>
-      <div className="subtitle">{blocktype}</div>
-      <br />
+      {/*<div className="subtitle">{blocktype}</div>
+      <br />*/}
       <SidePaneContent />
     </div>
     </>
