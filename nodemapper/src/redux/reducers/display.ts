@@ -7,6 +7,7 @@ const displayStateInit = {
   nodeinfo: "",
   filename: "",
   folderinfo: '{"foldername": ".", "contents": []}',
+  statustext: "",
 };
 
 // Display
@@ -16,35 +17,35 @@ const displayReducer = createReducer(
     builder
       .addCase(action.displayOpenSettings, (state, action) => {
         state.show_settings_panel = true;
-        console.debug("[Reducer] (display)OpenSettings", state, action);
+        console.info("[Reducer] " + action.type);
       })
       .addCase(action.displayCloseSettings, (state, action) => {
         state.show_settings_panel = false;
-        console.debug("[Reducer] (display)CloseSettings", state, action);
+        console.info("[Reducer] " + action.type);
       })
       .addCase(action.displayToggleSettingsVisibility, (state, action) => {
         state.show_settings_panel = !state.show_settings_panel;
-        console.debug("[Reducer] (display)ToggleSettingsVisibility", state, action);
+        console.info("[Reducer] " + action.type);
       })
       .addCase(action.displayUpdateNodeInfo, (state, action) => {
         state.nodeinfo = action.payload
-        console.debug("[Reducer] (display)UpdateCodeSnippet", state, action);
+        console.info("[Reducer] " + action.type);
       })
       .addCase(action.displaySaveCodeSnippet, (state, action) => {
         // TODO: Update codesnippet in node
-        console.info("[Reducer] (display)UpdateCodeSnippet", state, action);
+        console.info("[Reducer] " + action.type);
       })
       .addCase(action.displayStoreFolderInfo, (state, action) => {
         state.folderinfo = action.payload
-        console.info("[Reducer] (display)StoreFolderInfo", state, action);
+        console.info("[Reducer] " + action.type);
       })
       .addCase(action.displaySetFolder, (state, action) => {
         state.folderinfo = '{"foldername": "' + action.payload + '",  "contents": []}'
-        console.info("[Reducer] (display)SetFolder", state, action);
+        console.info("[Reducer] " + action.type);
       })
       .addCase(action.displaySetFilename, (state, action) => {
         state.filename = action.payload
-        console.info("[Reducer] (display)SetFilename", state, action);
+        console.info("[Reducer] " + action.type);
       })
   }
 );

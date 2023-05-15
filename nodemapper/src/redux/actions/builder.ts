@@ -8,3 +8,4 @@ export const builderNodeSelected = createAction<Record<string, any> | undefined>
 export const builderNodeDeselected = createAction<Record<string, any> | undefined>("builder/node-deselected");  // eslint-disable-line @typescript-eslint/no-explicit-any
 export const builderGetRemoteModules = createAction("builder/get-remote-modules");
 export const builderUpdateModulesList = createAction<string>("builder/update-modules-list");
+export const builderUpdateStatusText = createAction<string>("builder/update-status-text")

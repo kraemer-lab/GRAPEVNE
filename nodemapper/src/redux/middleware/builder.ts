@@ -1,6 +1,8 @@
+import BuilderEngine from 'gui/Builder/BuilderEngine'
+
 import { builderCompileToJson } from 'redux/actions'
 import { builderSubmitQuery } from 'redux/actions'
-import BuilderEngine from 'gui/Builder/BuilderEngine'
+import { builderUpdateStatusText } from 'redux/actions'
 
 import { displayCloseSettings } from 'redux/actions'
 import { displayOpenSettings } from 'redux/actions'
@@ -67,6 +69,7 @@ export function builderMiddleware({ getState, dispatch }) {
 
           case "builder/get-remote-modules": {
             // Get list of remote modules
+            dispatch(builderUpdateStatusText("Loading remote modules..."));
             const app = BuilderEngine.Instance;
             const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
               'query': 'builder/get-remote-modules',
@@ -78,6 +81,12 @@ export function builderMiddleware({ getState, dispatch }) {
               }
             }
             dispatch(builderSubmitQuery(query))
+            break;
+          }
+
+          case "builder/update-modules-list": {
+            // Update list of modules - done in reducer
+            dispatch(builderUpdateStatusText(""));
             break;
           }
 

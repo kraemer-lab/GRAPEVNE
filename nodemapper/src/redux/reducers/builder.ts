@@ -10,14 +10,15 @@ const builderStateInit = {
     repo: 'jsbrittain/snakeshack'
   },
   modules_list: '[]',
+  statustext: '',
 };
 
 // Replace with local reference to repository (TODO mainly for testing)
-builderStateInit['repo'] = {
+/*builderStateInit['repo'] = {
   type: 'local',
   listing_type: 'DirectoryListing',
   repo: '../../snakeshack',
-}
+}*/
 
 // Nodemap
 const builderReducer = createReducer(
@@ -52,6 +53,10 @@ const builderReducer = createReducer(
       .addCase(actions.builderUpdateModulesList, (state, action) => {
         // Get list of remote actions
         state.modules_list = JSON.stringify(action.payload);
+        console.info("[Reducer] " + action.type);
+      })
+      .addCase(actions.builderUpdateStatusText, (state, action) => {
+        state.statustext = action.payload
         console.info("[Reducer] " + action.type);
       })
   }

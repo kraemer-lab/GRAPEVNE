@@ -1,11 +1,15 @@
 import React from 'react'
-import { useState } from 'react';
-import Builder from './Builder/Builder'
 import Runner from './Runner/Runner'
+import Builder from './Builder/Builder'
+
+import { useState } from 'react';
 import "./MainPage.css"
 
+interface MenuChoiceRenderProps {
+  selection: number;
+}
 
-function MenuChoiceRender(props) {
+const MenuChoiceRender: React.FC<MenuChoiceRenderProps> = (props: MenuChoiceRenderProps) => {
   const selection = props.selection;
   if (selection == 0) {
     return <Builder />

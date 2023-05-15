@@ -1,10 +1,25 @@
 import React from 'react'
 import BuilderEngine from './BuilderEngine'
+import { useState } from 'react';
 import { useAppDispatch } from 'redux/store/hooks'
+import { useAppSelector } from 'redux/store/hooks'
 import { builderLoadNodemap } from 'redux/actions'
 import { builderSaveNodemap } from 'redux/actions'
 import { builderCompileToJson } from 'redux/actions'
 import { builderGetRemoteModules } from 'redux/actions'
+
+const StatusBar: React.FC = () => {
+  const [status, setStatus] = useState("");
+  const statustext = useAppSelector(state => state.builder.statustext);
+  React.useEffect(() => {
+    setStatus(statustext);
+  }, [statustext]);
+  return (
+    <div className="status-bar" style={{fontSize: 14}}>
+    {status}
+    </div>
+  )
+}
 
 function Header() {
   const dispatch = useAppDispatch();
@@ -42,6 +57,7 @@ function Header() {
       <button className="btn" onClick={btnBuild}>BUILD</button>
       <button className="btn" onClick={btnArrange}>ARRANGE</button>
       <button className="btn" onClick={btnGetModuleList}>GET MODULE LIST</button>
+      <StatusBar />
     </div>
     </>
   )
