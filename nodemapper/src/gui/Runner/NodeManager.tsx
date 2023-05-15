@@ -2,18 +2,21 @@ import React from 'react'
 import 'isomorphic-fetch'
 import RunnerEngine from './RunnerEngine'
 import { BodyWidget } from './BodyWidget'
-import { runnerNodeSelected } from 'redux/actions'
-import { runnerNodeDeselected } from 'redux/actions'
-import { runnerLintSnakefile } from 'redux/actions'
-import { runnerStoreJobStatus } from 'redux/actions'
-import { runnerQueryJobStatus } from 'redux/actions'
-import { displayGetFolderInfo } from 'redux/actions'
-import { displayStoreFolderInfo } from 'redux/actions'
-import { runnerStoreLint } from 'redux/actions'
-import { runnerStoreMap } from 'redux/actions'
+import { DiagramModel } from "@projectstorm/react-diagrams"
 import { useAppSelector } from 'redux/store/hooks'
 import { useAppDispatch } from 'redux/store/hooks'
-import { DiagramModel } from "@projectstorm/react-diagrams"
+
+import { displayGetFolderInfo } from 'redux/actions'
+import { displayStoreFolderInfo } from 'redux/actions'
+
+import { runnerStoreMap } from 'redux/actions'
+import { runnerStoreLint } from 'redux/actions'
+import { runnerNodeSelected } from 'redux/actions'
+import { runnerLintSnakefile } from 'redux/actions'
+import { runnerNodeDeselected } from 'redux/actions'
+import { runnerStoreJobStatus } from 'redux/actions'
+import { runnerQueryJobStatus } from 'redux/actions'
+import { runnerUpdateStatusText } from 'redux/actions'
 
 import './NodeManager.css'
 
@@ -49,9 +52,6 @@ function NodeManager() {
     JobStatusUpdate();
   }, [jobstatus]);
 
-
-
-
   // POST request handler [refactor out of this function later]
   const query = useAppSelector(state => state.runner.query);
   const [responseData, setResponseData] = React.useState(null);
@@ -67,6 +67,7 @@ function NodeManager() {
         if (response.ok) {
           return response.json()
         }
+        dispatch(runnerUpdateStatusText("Error: " + response.statusText));
         throw response
       })
       .then(data => {
@@ -78,7 +79,8 @@ function NodeManager() {
       })
   }
   function processResponse(content: JSON) {
-    console.log("Process response: ", content)
+    console.log("Process response: ", content);
+    dispatch(runnerUpdateStatusText(""));
     switch (content['query']) {
       case 'runner/build': {
         // Download returned content as file

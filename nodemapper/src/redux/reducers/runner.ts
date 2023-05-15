@@ -8,6 +8,7 @@ const runnerStateInit = {
   jobstatus: '',
   jobstatus_update: false,  // should we poll for updates?
   query: {},
+  statustext: '',
 };
 
 // Nodemap
@@ -60,6 +61,10 @@ const runnerReducer = createReducer(
         console.info("[Reducer] " + action.type);
       })
       .addCase(actions.runnerLoadWorkflow, (state, action) => {
+        console.info("[Reducer] " + action.type);
+      })
+      .addCase(actions.runnerUpdateStatusText, (state, action) => {
+        state.statustext = action.payload
         console.info("[Reducer] " + action.type);
       })
   }

@@ -1,10 +1,12 @@
+import RunnerEngine from 'gui/Runner/RunnerEngine'
+
 import { displayCloseSettings } from 'redux/actions'
 import { displayOpenSettings } from 'redux/actions'
 import { displayUpdateNodeInfo } from 'redux/actions'
+
 import { runnerSubmitQuery } from 'redux/actions'
 import { runnerQueryJobStatus } from 'redux/actions'
-
-import RunnerEngine from 'gui/Runner/RunnerEngine'
+import { runnerUpdateStatusText } from 'redux/actions'
 
 export function runnerMiddleware({ getState, dispatch }) {
   return function(next) {
@@ -72,16 +74,17 @@ export function runnerMiddleware({ getState, dispatch }) {
           }
 
           case "runner/load-snakefile": {
-              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'runner/tokenize_load',
-                  'data': {
-                      'format': 'Snakefile',
-                      'content': action.payload
-                  }
+            dispatch(runnerUpdateStatusText("Loading Snakefile..."));
+            const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+              'query': 'runner/tokenize_load',
+              'data': {
+                'format': 'Snakefile',
+                'content': action.payload
               }
-              dispatch(runnerSubmitQuery(query));
-              dispatch(displayUpdateNodeInfo(""));
-              break;
+            }
+            dispatch(runnerSubmitQuery(query));
+            dispatch(displayUpdateNodeInfo(""));
+            break;
           }
 
           case "runner/launch-snakefile": {
@@ -141,15 +144,16 @@ export function runnerMiddleware({ getState, dispatch }) {
           }
 
           case "runner/load-workflow": {
-              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'runner/loadworkflow',
-                  'data': {
-                      'format': 'Snakefile',
-                      'content': JSON.parse(getState().display.folderinfo).foldername
-                  }
+            dispatch(runnerUpdateStatusText("Loading Workflow..."));
+            const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
+              'query': 'runner/loadworkflow',
+              'data': {
+                'format': 'Snakefile',
+                'content': JSON.parse(getState().display.folderinfo).foldername
               }
-              dispatch(runnerSubmitQuery(query))
-              break;
+            }
+            dispatch(runnerSubmitQuery(query))
+            break;
           }
 
           default:

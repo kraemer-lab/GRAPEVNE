@@ -6,6 +6,7 @@ import { useAppDispatch } from 'redux/store/hooks'
 import { builderNodeSelected } from 'redux/actions'
 import { builderNodeDeselected } from 'redux/actions'
 import { builderGetRemoteModules } from 'redux/actions'
+import { builderUpdateStatusText } from 'redux/actions'
 import { builderUpdateModulesList } from 'redux/actions'
 
 // TODO: Replace with webpack proxy (problems getting this to work)
@@ -38,6 +39,7 @@ function NodeManager() {
         if (response.ok) {
           return response.json()
         }
+        dispatch(builderUpdateStatusText("Error: " + response.statusText));
         throw response
       })
       .then(data => {
@@ -50,6 +52,7 @@ function NodeManager() {
   }
   function processResponse(content: JSON) {
     console.log("Process response: ", content)
+    dispatch(builderUpdateStatusText(""));
     switch (content['query']) {
       case 'builder/get-remote-modules': {
         dispatch(builderUpdateModulesList(content["body"]));

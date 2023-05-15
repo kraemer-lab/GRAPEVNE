@@ -13,12 +13,12 @@ const builderStateInit = {
   statustext: '',
 };
 
-// Replace with local reference to repository (TODO mainly for testing)
-/*builderStateInit['repo'] = {
+// Replace with local reference to repository (TODO: replace with settings menu; used mainly for testing)
+builderStateInit['repo'] = {
   type: 'local',
   listing_type: 'DirectoryListing',
   repo: '../../snakeshack',
-}*/
+}
 
 // Nodemap
 const builderReducer = createReducer(
