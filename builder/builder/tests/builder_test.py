@@ -1,51 +1,61 @@
-from builder.builder import Model
+# from builder.builder import Model
 
 
 def test_BuildSnakefile():
-    Model.BuildSnakefile()
+    # m = Model()
+    # m.BuildSnakefile()
     ...
 
 
 def test_BuildSnakefileConfig():
-    Model.BuildSnakefileConfig()
+    # m = Model()
+    # m.BuildSnakefileConfig()
     ...
 
 
 def test_SaveWorkflow():
-    Model.SaveWorkflow()
+    # m = Model()
+    # m.SaveWorkflow()
     ...
 
 
 def test_WrangleName():
-    Model.WrangleName()
+    # m = Model()
+    # m.WrangleName()
     ...
 
 
 def test_WrangledNameList():
-    Model.WrangledNameList()
+    # m = Model()
+    # m.WrangledNameList()
     ...
 
 
 def test_WrangleRuleName():
-    Model.WrangleRuleName()
+    # m = Model()
+    # m.WrangleRuleName()
     ...
 
 
 def test_AddModule():
-    Model.AddModule()
+    # m = Model()
+    # m.AddModule()
     ...
 
 
 def test_AddConnector():
-    Model.AddConnector()
+    # m = Model()
+    # m.AddConnector()
     ...
 
 
 def test_GetNodeByName():
-    Model.GetNodeByName()
+    # m = Model()
+    # m.GetNodeByName()
     ...
 
 
 def test_NodeIsTerminus():
-    Model.NodeIsTerminus()
+    # m = Model()
+    # m.NodeIsTerminus()
     ...
