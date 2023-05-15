@@ -125,7 +125,7 @@ class Model:
         ]
 
     def WrangleRuleName(self, name: str):
-        return name.replace(" ", "_").lower()
+        return name.replace(" ", "_").replace("/", "_").replace(".", "_").lower()
 
     def AddModule(self, name: str, module: dict) -> Node:
         kwargs = module.copy()

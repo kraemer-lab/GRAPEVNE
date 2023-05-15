@@ -66,7 +66,7 @@ def GetLocalModules(path: str) -> List[dict]:
 
 
 def GetRemoteModulesGithub(
-    repo: str, listing_type: str = "DirectoryListing"
+    repo: str, listing_type: str = "BranchListing"
 ) -> List[dict]:
     """Get remote modules from url
 
@@ -85,14 +85,13 @@ def GetRemoteModulesGithub(
         case "DirectoryListing":
             return GetRemoteModulesGithubDirectoryListing(repo)
         case "BranchListing":
-            # hint: use https://api.github.com/repos/{owner}/{repo}/branches
-            raise Exception("Github branch listing not yet supported.")
+            return GetRemoteModulesGithubBranchListing(repo)
         case _:
             raise Exception("Invalid Github listing type.")
 
 
 def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
-    """Get remote modules from url
+    """Get remote modules from url (by directory listing)
 
     repo: repository string in the format: "owner/repository"
     """
@@ -170,6 +169,60 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                         },
                     }
                 )
+
+    return modules
+
+
+def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
+    """Get remote modules from url (by branches)
+
+    repo: repository string in the format: "owner/repository"
+    """
+
+    url_github: str = "https://api.github.com/repos"
+    url_base: str = f"{url_github}/{repo}/branches"
+    r_base = requests.get(url_base)
+    if r_base.status_code != 200:
+        raise Exception("Github API request failed (getting GitHub branches).")
+    modules = []
+
+    # Branch listing
+    module_types = {"m": "module", "c": "connector", "s": "source", "t": "terminal"}
+    for branch in r_base.json():
+        if branch["name"] == "main":
+            continue
+        [module_type, module_org_and_name] = branch["name"].split("/")
+        [module_org, module_name] = module_org_and_name.split(".")
+        if module_type not in module_types:
+            raise Exception(
+                f"Invalid module type '{module_type}' in branch '{branch['name']}'."
+            )
+
+        url_config = (
+            f"https://raw.githubusercontent.com/{repo}/"
+            f"{branch['name']}/config/config.yaml"
+        )
+        r_config = requests.get(url_config)
+        if r_config.status_code != 200:
+            raise Exception("Github API request failed (getting workflow config file).")
+        params = yaml.safe_load(r_config.text)
+        modules.append(
+            {
+                "name": branch["name"],
+                "type": module_types[module_type],
+                "config": {
+                    "url": {
+                        "function": "github",
+                        "args": [repo],
+                        "kwargs": {
+                            "path": "/workflow/Snakefile",
+                            "branch": branch["name"],
+                        },
+                    },
+                    "params": params,
+                },
+            }
+        )
 
     return modules
 

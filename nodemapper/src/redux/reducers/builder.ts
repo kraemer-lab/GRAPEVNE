@@ -6,18 +6,18 @@ const builderStateInit = {
   query: {},
   repo: {
     type: 'github',
-    listing_type: 'DirectoryListing',
+    listing_type: 'DirectoryListing', //'BranchListing',
     repo: 'jsbrittain/snakeshack'
   },
   modules_list: '[]',
 };
 
 // Replace with local reference to repository (TODO mainly for testing)
-/*builderStateInit['repo'] = {
+builderStateInit['repo'] = {
   type: 'local',
   listing_type: 'DirectoryListing',
   repo: '../../snakeshack',
-}*/
+}
 
 // Nodemap
 const builderReducer = createReducer(
