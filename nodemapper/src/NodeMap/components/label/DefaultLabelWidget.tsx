@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { DefaultLabelModel } from './DefaultLabelModel';
-import styled from '@emotion/styled';
+import * as React from "react";
+import { DefaultLabelModel } from "./DefaultLabelModel";
+import styled from "@emotion/styled";
 
-export interface DefaultLabelWidgetProps {
+interface DefaultLabelWidgetProps {
   model: DefaultLabelModel;
 }
 
-export const Label = styled.div`
+const Label = styled.div`
   background: rgba(0, 0, 0, 0.8);
   border-radius: 5px;
   color: white;

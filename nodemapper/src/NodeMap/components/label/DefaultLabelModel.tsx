@@ -1,36 +1,40 @@
-import { LabelModel, LabelModelGenerics, LabelModelOptions } from '@projectstorm/react-diagrams-core';
-import { DeserializeEvent } from '@projectstorm/react-canvas-core';
+import {
+  LabelModel,
+  LabelModelGenerics,
+  LabelModelOptions,
+} from "@projectstorm/react-diagrams-core";
+import { DeserializeEvent } from "@projectstorm/react-canvas-core";
 
 export interface DefaultLabelModelOptions extends LabelModelOptions {
-    label?: string;
+  label?: string;
 }
 
 export interface DefaultLabelModelGenerics extends LabelModelGenerics {
-    OPTIONS: DefaultLabelModelOptions;
+  OPTIONS: DefaultLabelModelOptions;
 }
 
 export class DefaultLabelModel extends LabelModel<DefaultLabelModelGenerics> {
-    constructor(options: DefaultLabelModelOptions = {}) {
-        super({
-            offsetY: options.offsetY == null ? -23 : options.offsetY,
-            type: 'default',
-            ...options
-        });
-    }
+  constructor(options: DefaultLabelModelOptions = {}) {
+    super({
+      offsetY: options.offsetY == null ? -23 : options.offsetY,
+      type: "default",
+      ...options,
+    });
+  }
 
-    setLabel(label: string) {
-        this.options.label = label;
-    }
+  setLabel(label: string) {
+    this.options.label = label;
+  }
 
-    deserialize(event: DeserializeEvent<this>) {
-        super.deserialize(event);
-        this.options.label = event.data.label;
-    }
+  deserialize(event: DeserializeEvent<this>) {
+    super.deserialize(event);
+    this.options.label = event.data.label;
+  }
 
-    serialize() {
-        return {
-            ...super.serialize(),
-            label: this.options.label
-        };
-    }
+  serialize() {
+    return {
+      ...super.serialize(),
+      label: this.options.label,
+    };
+  }
 }

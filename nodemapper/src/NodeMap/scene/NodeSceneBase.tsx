@@ -1,39 +1,50 @@
-import { Component } from 'react'
-import { StrictMode } from 'react'
-import { useRef } from 'react'
-import { useState } from 'react'
-import { createRoot } from 'react-dom/client'
+import { Component } from "react";
+import { StrictMode } from "react";
+import { useRef } from "react";
+import { useState } from "react";
+import { createRoot } from "react-dom/client";
 
-import createEngine from '@projectstorm/react-diagrams'
-import { DiagramModel } from '@projectstorm/react-diagrams'
-import { DiagramEngine } from '@projectstorm/react-diagrams'
-import { DagreEngine } from '@projectstorm/react-diagrams'
+import createEngine from "@projectstorm/react-diagrams";
+import { DiagramModel } from "@projectstorm/react-diagrams";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
+import { DagreEngine } from "@projectstorm/react-diagrams";
 
-import { DefaultNodeModel } from 'NodeMap'
-import { DefaultLinkModel } from 'NodeMap'
+import { DefaultNodeModel } from "NodeMap";
+import { DefaultLinkModel } from "NodeMap";
 
 class NodeSceneBase {
   engine: DiagramEngine;
-  nodelist = {}
+  nodelist = {};
 
   constructor() {
     this.InitializeScene();
   }
 
-  addNode(name: string, color: string, pos: Array<number>, config: JSON = {} as JSON) {
-    const config_str = JSON.stringify(config)
+  addNode(
+    name: string,
+    color: string,
+    pos: Array<number>,
+    config: JSON = {} as JSON
+  ) {
+    const config_str = JSON.stringify(config);
     const node = new DefaultNodeModel(name, color, config_str);
     node.setPosition(pos[0], pos[1]);
     this.engine.getModel().addNode(node);
     return node;
   }
 
-  addNodeWithCode(name: string, color: string, pos: Array<number>, code: string) {
-    const config = JSON.parse(JSON.stringify({ 'code': code }));
+  addNodeWithCode(
+    name: string,
+    color: string,
+    pos: Array<number>,
+    code: string
+  ) {
+    const config = JSON.parse(JSON.stringify({ code: code }));
     return this.addNode(name, color, pos, config);
   }
 
-  addLink(port_from: any, port_to: any) {  // eslint-disable-line @typescript-eslint/no-explicit-any
+  addLink(port_from: any, port_to: any) {
+    // eslint-disable-line @typescript-eslint/no-explicit-any
     const link = new DefaultLinkModel();
     link.setSourcePort(port_from);
     link.setTargetPort(port_to);
@@ -41,15 +52,15 @@ class NodeSceneBase {
   }
 
   getNodeUserConfig(node) {
-    return JSON.parse(node.options.extras)
+    return JSON.parse(node.options.extras);
   }
 
   isNodeTypeRule(node) {
-    return this.getNodeUserConfig(node).type == 'rule'
+    return this.getNodeUserConfig(node).type == "rule";
   }
 
   getNodeName(node) {
-    return this.getNodeUserConfig(node).name
+    return this.getNodeUserConfig(node).name;
   }
 
   InitializeScene() {
@@ -62,13 +73,13 @@ class NodeSceneBase {
   distributeModel(model) {
     const dagre_engine = new DagreEngine({
       graph: {
-        rankdir: 'LR',
+        rankdir: "LR",
         rankSep: 100,
         marginx: 100,
         marginy: 100,
       },
     });
-    dagre_engine.redistribute(model)
+    dagre_engine.redistribute(model);
     this.engine.repaintCanvas();
   }
 
@@ -83,13 +94,15 @@ class NodeSceneBase {
   }
 
   getModuleListJSON() {
-    const js = []
-    this.engine.getModel().getNodes().forEach(node => {
-      js.push(this.getNodeUserConfig(node));
-    });
-    return js
+    const js = [];
+    this.engine
+      .getModel()
+      .getNodes()
+      .forEach((node) => {
+        js.push(this.getNodeUserConfig(node));
+      });
+    return js;
   }
-
 }
 
 export default NodeSceneBase;

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import styled from '@emotion/styled';
+import * as React from "react";
+import styled from "@emotion/styled";
 
 export const Tray = styled.div`
   min-width: 200px;
@@ -9,11 +9,11 @@ export const Tray = styled.div`
 `;
 
 interface ItemProps {
-  children: any
+  children: any;
 }
 
 export class TrayWidget extends React.Component<ItemProps> {
-	render() {
-		return <Tray>{this.props.children}</Tray>;
-	}
+  render() {
+    return <Tray>{this.props.children}</Tray>;
+  }
 }

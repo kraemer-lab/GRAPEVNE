@@ -1,9 +1,9 @@
-import * as React from 'react';
-import * as _ from 'lodash';
-import { DiagramEngine } from '@projectstorm/react-diagrams-core';
-import { DefaultNodeModel } from './DefaultNodeModel';
-import { DefaultPortLabel } from '../port/DefaultPortLabelWidget';
-import styled from '@emotion/styled';
+import * as React from "react";
+import * as _ from "lodash";
+import { DiagramEngine } from "@projectstorm/react-diagrams-core";
+import { DefaultNodeModel } from "./DefaultNodeModel";
+import { DefaultPortLabel } from "../port/DefaultPortLabelWidget";
+import styled from "@emotion/styled";
 
 export const Node = styled.div<{ background: string; selected: boolean }>`
   background-color: ${(p) => p.background};
@@ -13,7 +13,7 @@ export const Node = styled.div<{ background: string; selected: boolean }>`
   border: solid 2px black;
   overflow: visible;
   font-size: 11px;
-  border: solid 2px ${(p) => (p.selected ? 'rgb(0,192,255)' : 'black')};
+  border: solid 2px ${(p) => (p.selected ? "rgb(0,192,255)" : "black")};
 `;
 
 export const Title = styled.div`
@@ -39,11 +39,11 @@ export const PortsContainer = styled.div`
   flex-direction: column;
 
   &:first-of-type {
-      margin-right: 10px;
+    margin-right: 10px;
   }
 
   &:only-child {
-      margin-right: 0px;
+    margin-right: 0px;
   }
 `;
 
@@ -58,7 +58,13 @@ export interface DefaultNodeProps {
  */
 export class DefaultNodeWidget extends React.Component<DefaultNodeProps> {
   generatePort = (port) => {
-    return <DefaultPortLabel engine={this.props.engine} port={port} key={port.getID()} />;
+    return (
+      <DefaultPortLabel
+        engine={this.props.engine}
+        port={port}
+        key={port.getID()}
+      />
+    );
   };
 
   render() {
@@ -67,13 +73,17 @@ export class DefaultNodeWidget extends React.Component<DefaultNodeProps> {
         data-default-node-name={this.props.node.getOptions().name}
         selected={this.props.node.isSelected()}
         background={this.props.node.getOptions().color}
-    >
+      >
         <Title>
           <TitleName>{this.props.node.getOptions().name}</TitleName>
         </Title>
         <Ports>
-          <PortsContainer>{_.map(this.props.node.getInPorts(), this.generatePort)}</PortsContainer>
-          <PortsContainer>{_.map(this.props.node.getOutPorts(), this.generatePort)}</PortsContainer>
+          <PortsContainer>
+            {_.map(this.props.node.getInPorts(), this.generatePort)}
+          </PortsContainer>
+          <PortsContainer>
+            {_.map(this.props.node.getOutPorts(), this.generatePort)}
+          </PortsContainer>
         </Ports>
       </Node>
     );

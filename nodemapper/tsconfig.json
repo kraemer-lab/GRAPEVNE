@@ -1,18 +1,14 @@
 {
-	"compileOnSave": false,
-	"compilerOptions": {
-		"esModuleInterop": true,
-		"declaration": false,
-		"jsx": "react",
-		"allowJs": true,
-		"target": "es6",
-		"module": "CommonJS",
-        "baseUrl": "src"
-	},
-	"include": [
-		"src"
-	],
-    "exclude": [
-        "src/**/*.test.tsx"
-    ]
+  "compileOnSave": false,
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "declaration": false,
+    "jsx": "react",
+    "allowJs": true,
+    "target": "es6",
+    "module": "CommonJS",
+    "baseUrl": "src"
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.tsx"]
 }

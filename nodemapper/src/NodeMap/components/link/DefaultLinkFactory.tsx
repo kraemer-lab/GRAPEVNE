@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { DefaultLinkModel } from './DefaultLinkModel';
-import { DefaultLinkWidget } from './DefaultLinkWidget';
-import styled from '@emotion/styled';
-import { AbstractReactFactory } from '@projectstorm/react-canvas-core';
-import { DiagramEngine } from '@projectstorm/react-diagrams-core';
-import { css, keyframes } from '@emotion/react';
+import * as React from "react";
+import { DefaultLinkModel } from "./DefaultLinkModel";
+import { DefaultLinkWidget } from "./DefaultLinkWidget";
+import styled from "@emotion/styled";
+import { AbstractReactFactory } from "@projectstorm/react-canvas-core";
+import { DiagramEngine } from "@projectstorm/react-diagrams-core";
+import { css, keyframes } from "@emotion/react";
 
 export const Keyframes = keyframes`
   from {
@@ -26,11 +26,10 @@ export const Path = styled.path<{ selected: boolean }>`
   pointer-events: auto;
 `;
 
-export class DefaultLinkFactory<Link extends DefaultLinkModel = DefaultLinkModel> extends AbstractReactFactory<
-  Link,
-  DiagramEngine
-> {
-  constructor(type = 'default') {
+export class DefaultLinkFactory<
+  Link extends DefaultLinkModel = DefaultLinkModel
+> extends AbstractReactFactory<Link, DiagramEngine> {
+  constructor(type = "default") {
     super(type);
   }
 
@@ -46,7 +45,9 @@ export class DefaultLinkFactory<Link extends DefaultLinkModel = DefaultLinkModel
     return (
       <Path
         selected={selected}
-        stroke={selected ? model.getOptions().selectedColor : model.getOptions().color}
+        stroke={
+          selected ? model.getOptions().selectedColor : model.getOptions().color
+        }
         strokeWidth={model.getOptions().width}
         d={path}
       />

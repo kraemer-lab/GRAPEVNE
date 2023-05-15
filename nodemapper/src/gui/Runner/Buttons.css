@@ -1,7 +1,7 @@
 .btn {
-  border: 2px solid #04AA6D;
-  background-color: #DDDDDD; /* Green */
-  color: #04AA6D;
+  border: 2px solid #04aa6d;
+  background-color: #dddddd; /* Green */
+  color: #04aa6d;
   text-align: center;
   text-decoration: none;
   vertical-align: middle;
@@ -18,13 +18,13 @@
 }
 
 .btn:hover {
-  background-color: #04AA6D;
-  color: #DDDDDD;
+  background-color: #04aa6d;
+  color: #dddddd;
 }
 
 .btn:active {
   background-color: #008554;
-  color: #DDDDDD;
+  color: #dddddd;
 }
 
 .btn:disabled {

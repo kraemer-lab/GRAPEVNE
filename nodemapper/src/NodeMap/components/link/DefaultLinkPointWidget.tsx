@@ -1,6 +1,6 @@
-import * as React from 'react';
-import { PointModel } from '@projectstorm/react-diagrams-core';
-import styled from '@emotion/styled';
+import * as React from "react";
+import { PointModel } from "@projectstorm/react-diagrams-core";
+import styled from "@emotion/styled";
 
 export interface DefaultLinkPointWidgetProps {
   point: PointModel;
@@ -16,11 +16,14 @@ export const PointTop = styled.circle`
   pointer-events: all;
 `;
 
-export class DefaultLinkPointWidget extends React.Component<DefaultLinkPointWidgetProps, DefaultLinkPointWidgetState> {
+export class DefaultLinkPointWidget extends React.Component<
+  DefaultLinkPointWidgetProps,
+  DefaultLinkPointWidgetState
+> {
   constructor(props) {
     super(props);
     this.state = {
-      selected: false
+      selected: false,
     };
   }
 
@@ -32,15 +35,19 @@ export class DefaultLinkPointWidget extends React.Component<DefaultLinkPointWidg
           cx={point.getPosition().x}
           cy={point.getPosition().y}
           r={5}
-          fill={this.state.selected || this.props.point.isSelected() ? this.props.colorSelected : this.props.color}
+          fill={
+            this.state.selected || this.props.point.isSelected()
+              ? this.props.colorSelected
+              : this.props.color
+          }
         />
         <PointTop
           className="point"
           onMouseLeave={() => {
-              this.setState({ selected: false });
+            this.setState({ selected: false });
           }}
           onMouseEnter={() => {
-              this.setState({ selected: true });
+            this.setState({ selected: true });
           }}
           data-id={point.getID()}
           data-linkid={point.getLink().getID()}

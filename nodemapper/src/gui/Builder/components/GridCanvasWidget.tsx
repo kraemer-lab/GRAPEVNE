@@ -1,10 +1,10 @@
-import * as React from 'react';
-import styled from '@emotion/styled';
-import { css, Global } from '@emotion/react';
+import * as React from "react";
+import styled from "@emotion/styled";
+import { css, Global } from "@emotion/react";
 
 export interface GridCanvasWidgetProps {
-	color?: string;
-	background?: string;
+  color?: string;
+  background?: string;
 }
 
 export const Container = styled.div<{ color: string; background: string }>`
@@ -53,18 +53,20 @@ export const Expand = css`
   }
 `;
 
-export class GridCanvasWidget extends React.Component<React.PropsWithChildren<GridCanvasWidgetProps>> {
-	render() {
-		return (
-			<>
-				<Global styles={Expand} />
-				<Container
-					background={this.props.background || 'rgb(60, 60, 60)'}
-					color={this.props.color || 'rgba(255,255,255, 0.05)'}
-				>
-					{this.props.children}
-				</Container>
-			</>
-		);
-	}
+export class GridCanvasWidget extends React.Component<
+  React.PropsWithChildren<GridCanvasWidgetProps>
+> {
+  render() {
+    return (
+      <>
+        <Global styles={Expand} />
+        <Container
+          background={this.props.background || "rgb(60, 60, 60)"}
+          color={this.props.color || "rgba(255,255,255, 0.05)"}
+        >
+          {this.props.children}
+        </Container>
+      </>
+    );
+  }
 }

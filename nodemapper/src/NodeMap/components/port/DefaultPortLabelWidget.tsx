@@ -1,7 +1,7 @@
-import * as React from 'react';
-import { DiagramEngine, PortWidget } from '@projectstorm/react-diagrams-core';
-import { DefaultPortModel } from './DefaultPortModel';
-import styled from '@emotion/styled';
+import * as React from "react";
+import { DiagramEngine, PortWidget } from "@projectstorm/react-diagrams-core";
+import { DefaultPortModel } from "./DefaultPortModel";
+import styled from "@emotion/styled";
 
 export interface DefaultPortLabelProps {
   port: DefaultPortModel;

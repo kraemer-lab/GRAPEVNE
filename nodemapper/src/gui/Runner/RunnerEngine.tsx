@@ -1,4 +1,4 @@
-import NodeMapEngine from 'NodeMap/scene/NodeMapEngine'
+import NodeMapEngine from "NodeMap/scene/NodeMapEngine";
 
 export default class RunnerEngine extends NodeMapEngine {
   // Set up a singleton instance of a class

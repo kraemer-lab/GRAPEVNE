@@ -9,15 +9,15 @@ Status:
 Client-server architecture:
 
 - [nodemapper](nodemapper): Graphical front-end; Typescript/React/Redux
-[![ESLint](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml) [![Jest](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml)
+  [![ESLint](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml) [![Jest](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml)
 
 - [builder](builder): Workflow construction library; Python [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-builder.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-builder.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-builder.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-builder.yml)
 
 - [runner](runner): Workflow execution and monitoring library; Python
-[![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-runner.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-runner.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-runner.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-runner.yml)
+  [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-runner.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-runner.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-runner.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-runner.yml)
 
 - [backend](backend): Flask server; Python
-[![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-backend.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-backend.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-backend.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-backend.yml)
+  [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-backend.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-backend.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-backend.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-backend.yml)
 
 ### Background
 

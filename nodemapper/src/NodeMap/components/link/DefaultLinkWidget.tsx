@@ -1,9 +1,13 @@
-import * as React from 'react';
-import { DiagramEngine, LinkWidget, PointModel } from '@projectstorm/react-diagrams-core';
-import { DefaultLinkModel } from './DefaultLinkModel';
-import { DefaultLinkPointWidget } from './DefaultLinkPointWidget';
-import { DefaultLinkSegmentWidget } from './DefaultLinkSegmentWidget';
-import { MouseEvent } from 'react';
+import * as React from "react";
+import {
+  DiagramEngine,
+  LinkWidget,
+  PointModel,
+} from "@projectstorm/react-diagrams-core";
+import { DefaultLinkModel } from "./DefaultLinkModel";
+import { DefaultLinkPointWidget } from "./DefaultLinkPointWidget";
+import { DefaultLinkSegmentWidget } from "./DefaultLinkSegmentWidget";
+import { MouseEvent } from "react";
 
 export interface DefaultLinkProps {
   link: DefaultLinkModel;
@@ -17,14 +21,17 @@ export interface DefaultLinkState {
   selected: boolean;
 }
 
-export class DefaultLinkWidget extends React.Component<DefaultLinkProps, DefaultLinkState> {
+export class DefaultLinkWidget extends React.Component<
+  DefaultLinkProps,
+  DefaultLinkState
+> {
   refPaths: React.RefObject<SVGPathElement>[];
 
   constructor(props: DefaultLinkProps) {
     super(props);
     this.refPaths = [];
     this.state = {
-      selected: false
+      selected: false,
     };
   }
 
@@ -56,8 +63,9 @@ export class DefaultLinkWidget extends React.Component<DefaultLinkProps, Default
     if (
       !event.shiftKey &&
       !this.props.link.isLocked() &&
-      this.props.link.getPoints().length - 1 <= this.props.diagramEngine.getMaxNumberPointsPerLink()
-  ) {
+      this.props.link.getPoints().length - 1 <=
+        this.props.diagramEngine.getMaxNumberPointsPerLink()
+    ) {
       const position = this.props.diagramEngine.getRelativeMousePoint(event);
       const point = this.props.link.point(position.x, position.y, index);
       event.persist();
@@ -65,7 +73,7 @@ export class DefaultLinkWidget extends React.Component<DefaultLinkProps, Default
       this.forceUpdate(() => {
         this.props.diagramEngine.getActionEventBus().fireAction({
           event,
-          model: point
+          model: point,
         });
       });
     }
@@ -82,7 +90,11 @@ export class DefaultLinkWidget extends React.Component<DefaultLinkProps, Default
     );
   }
 
-  generateLink(path: string, extraProps: any, id: string | number): JSX.Element {
+  generateLink(
+    path: string,
+    extraProps: any,
+    id: string | number
+  ): JSX.Element {
     const ref = React.createRef<SVGPathElement>();
     this.refPaths.push(ref);
     return (
@@ -103,60 +115,64 @@ export class DefaultLinkWidget extends React.Component<DefaultLinkProps, Default
   }
 
   render() {
-      //ensure id is present for all points on the path
-      const points = this.props.link.getPoints();
-      const paths = [];
-      this.refPaths = [];
+    //ensure id is present for all points on the path
+    const points = this.props.link.getPoints();
+    const paths = [];
+    this.refPaths = [];
 
-      if (points.length === 2) {
-          paths.push(
-              this.generateLink(
-                  this.props.link.getSVGPath(),
-                  {
-                      onMouseDown: (event) => {
-                          this.props.selected?.(event);
-                          this.addPointToLink(event, 1);
-                      }
-                  },
-                  '0'
-              )
-          );
+    if (points.length === 2) {
+      paths.push(
+        this.generateLink(
+          this.props.link.getSVGPath(),
+          {
+            onMouseDown: (event) => {
+              this.props.selected?.(event);
+              this.addPointToLink(event, 1);
+            },
+          },
+          "0"
+        )
+      );
 
-          // draw the link as dangeling
-          if (this.props.link.getTargetPort() == null) {
-              paths.push(this.generatePoint(points[1]));
-          }
-      } else {
-          //draw the multiple anchors and complex line instead
-          for (let j = 0; j < points.length - 1; j++) {
-              paths.push(
-                  this.generateLink(
-                      LinkWidget.generateLinePath(points[j], points[j + 1]),
-                      {
-                          'data-linkid': this.props.link.getID(),
-                          'data-point': j,
-                          onMouseDown: (event: MouseEvent) => {
-                              this.props.selected?.(event);
-                              this.addPointToLink(event, j + 1);
-                          }
-                      },
-                      j
-                  )
-              );
-          }
-
-          if (this.renderPoints()) {
-              //render the circles
-              for (let i = 1; i < points.length - 1; i++) {
-                  paths.push(this.generatePoint(points[i]));
-              }
-
-              if (this.props.link.getTargetPort() == null) {
-                  paths.push(this.generatePoint(points[points.length - 1]));
-              }
-          }
+      // draw the link as dangeling
+      if (this.props.link.getTargetPort() == null) {
+        paths.push(this.generatePoint(points[1]));
+      }
+    } else {
+      //draw the multiple anchors and complex line instead
+      for (let j = 0; j < points.length - 1; j++) {
+        paths.push(
+          this.generateLink(
+            LinkWidget.generateLinePath(points[j], points[j + 1]),
+            {
+              "data-linkid": this.props.link.getID(),
+              "data-point": j,
+              onMouseDown: (event: MouseEvent) => {
+                this.props.selected?.(event);
+                this.addPointToLink(event, j + 1);
+              },
+            },
+            j
+          )
+        );
       }
 
-      return <g data-default-link-test={this.props.link.getOptions().testName}>{paths}</g>;
+      if (this.renderPoints()) {
+        //render the circles
+        for (let i = 1; i < points.length - 1; i++) {
+          paths.push(this.generatePoint(points[i]));
+        }
+
+        if (this.props.link.getTargetPort() == null) {
+          paths.push(this.generatePoint(points[points.length - 1]));
+        }
+      }
+    }
+
+    return (
+      <g data-default-link-test={this.props.link.getOptions().testName}>
+        {paths}
+      </g>
+    );
   }
 }

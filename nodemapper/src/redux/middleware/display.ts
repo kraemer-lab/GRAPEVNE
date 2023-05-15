@@ -1,53 +1,53 @@
-import { runnerSelectNone } from 'redux/actions'
-import { runnerSubmitQuery } from 'redux/actions'
-import RunnerEngine from 'gui/Runner/RunnerEngine'
+import { runnerSelectNone } from "redux/actions";
+import { runnerSubmitQuery } from "redux/actions";
+import RunnerEngine from "gui/Runner/RunnerEngine";
 
 export function displayMiddleware({ getState, dispatch }) {
-  return function(next) {
-    return function(action) {
-
+  return function (next) {
+    return function (action) {
       console.debug(action);
       switch (action.type) {
+        case "display/close-settings": {
+          dispatch(runnerSelectNone());
+          break;
+        }
 
-          case "display/close-settings": {
-            dispatch(runnerSelectNone());
-            break;
-          }
+        case "display/zoom-to-fit": {
+          const runner = RunnerEngine.Instance;
+          runner.ZoomToFit();
+          break;
+        }
 
-          case "display/zoom-to-fit": {
-              const runner = RunnerEngine.Instance;
-              runner.ZoomToFit();
-            break;
-          }
+        case "display/get-folder-info": {
+          const query: Record<string, any> = {
+            // eslint-disable-line @typescript-eslint/no-explicit-any
+            query: "display/folderinfo",
+            data: {
+              content: JSON.parse(getState().display.folderinfo).foldername,
+            },
+          };
+          dispatch(runnerSubmitQuery(query));
+          break;
+        }
 
-          case "display/get-folder-info": {
-              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'display/folderinfo',
-                  'data': {
-                      'content': JSON.parse(getState().display.folderinfo).foldername
-                  }
-              }
-              dispatch(runnerSubmitQuery(query))
-              break;
-          }
+        case "display/delete-results": {
+          const query: Record<string, any> = {
+            // eslint-disable-line @typescript-eslint/no-explicit-any
+            query: "runner/deleteresults",
+            data: {
+              format: "Snakefile",
+              content: JSON.parse(getState().display.folderinfo).foldername,
+            },
+          };
+          dispatch(runnerSubmitQuery(query));
+          break;
+        }
 
-          case "display/delete-results": {
-              const query: Record<string, any> = {  // eslint-disable-line @typescript-eslint/no-explicit-any
-                  'query': 'runner/deleteresults',
-                  'data': {
-                      'format': 'Snakefile',
-                      'content': JSON.parse(getState().display.folderinfo).foldername
-                  }
-              }
-              dispatch(runnerSubmitQuery(query))
-              break;
-          }
-
-          default:
-            break;
+        default:
+          break;
       }
 
-      return next(action)
-    }
-  }
+      return next(action);
+    };
+  };
 }
