@@ -168,13 +168,12 @@ export function runnerMiddleware({ getState, dispatch }) {
   };
 }
 
-function QueryAndLoadTextFile(onLoad: Function) {
+function QueryAndLoadTextFile(onLoad: (result, filename: string) => void) {
   // eslint-disable-line @typescript-eslint/ban-types
   // Opens a file dialog, then executes readerEvent
   const input = document.createElement("input");
   input.type = "file";
   input.onchange = (e) => {
-    console.log(e);
     const file = (e.target as HTMLInputElement).files[0];
     const reader = new FileReader();
     reader.readAsText(file, "UTF-8");
