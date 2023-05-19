@@ -1,0 +1,49 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "type": {
+        "type": "string",
+        "enum": ["module", "connector", "source", "terminal"]
+      },
+      "config": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "object",
+            "properties": {
+              "function": {
+                "type": "string"
+              },
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "kwargs": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "branch": {
+                    "type": "string"
+                  }
+                },
+                "required": ["path", "branch"]
+              }
+            },
+            "required": ["function", "args", "kwargs"]
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    "required": ["name", "type", "config"]
+  }
+}

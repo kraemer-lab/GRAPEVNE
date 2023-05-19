@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Get GISAID",
+    "type": "Module",
+    "config": {
+      "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/GetGISAID/workflow/Snakefile",
+      "params": {}
+    }
+  },
+  {
+    "name": "Connector GISAID",
+    "type": "Connector",
+    "config": {
+      "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/connectors/copy/workflow/Snakefile",
+      "map": ["Get GISAID", "GISAID metadata"]
+    }
+  },
+  {
+    "name": "GISAID metadata",
+    "type": "Module",
+    "config": {
+      "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/GISAID_metadata/workflow/Snakefile",
+      "params": {}
+    }
+  },
+  {
+    "name": "Get OWID",
+    "type": "Module",
+    "config": {
+      "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/GetOWID/workflow/Snakefile",
+      "params": {}
+    }
+  },
+  {
+    "name": "Connector OWID",
+    "type": "Connector",
+    "config": {
+      "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/connectors/copy/workflow/Snakefile",
+      "map": ["Get OWID", "OWID Case Data"]
+    }
+  },
+  {
+    "name": "OWID Case Data",
+    "type": "Module",
+    "config": {
+      "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/OWIDCaseData/workflow/Snakefile",
+      "params": {}
+    }
+  },
+  {
+    "name": "Combine GISAID and OWID",
+    "type": "Connector",
+    "config": {
+      "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/connectors/combine/workflow/Snakefile",
+      "map": [["GISAID metadata", "OWID Case Data"], "Case Incidence"]
+    }
+  },
+  {
+    "name": "Case Incidence",
+    "type": "Module",
+    "config": {
+      "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/CaseIncidence/workflow/Snakefile",
+      "params": {}
+    }
+  }
+]
