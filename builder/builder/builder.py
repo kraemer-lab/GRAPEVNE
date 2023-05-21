@@ -17,8 +17,8 @@ class Node:
         nodetype: str = "module",
         url="",
         params={},
-        namespaces={},  # ## TODO: Remove once connectors connect filename(s)
         input_namespace: str | dict = "",
+        input_filename: str | dict = "",
         output_namespace: str = "",
     ):
         self.name = name
@@ -26,15 +26,22 @@ class Node:
         self.nodetype = nodetype
         self.url = url
         self.params = params
-        self.namespaces = namespaces
         self.input_namespace = input_namespace
+        self.input_filename = input_filename
         self.output_namespace = output_namespace
+        self.output_filename = params.get("output_filename", "")
 
     def GetOutputNamespace(self) -> str:
         return self.output_namespace
 
     def GetInputNamespace(self) -> str | dict:
         return self.input_namespace
+
+    def GetOutputFilepath(self) -> str:
+        if self.output_filename:
+            return f"{self.output_namespace}/{self.output_filename}"
+        else:
+            return f"{self.output_namespace}/mark"
 
 
 class Module(Node):
@@ -64,7 +71,7 @@ class Model:
         for node in self.nodes:
             # Add to terminal node if output if not connected to another module
             if node.nodetype.casefold() == "module" and self.NodeIsTerminus(node):
-                s += f'        "results/{node.output_namespace}/{node.namespaces["output_filename"]}",\n'
+                s += f'        "results/{node.GetOutputFilepath()}",\n'
         s += "    default_target: True\n"
         s += "\n"
         # Build Snakefile
@@ -93,17 +100,13 @@ class Model:
         for node in self.nodes:
             cnode = {}
             cnode["input_namespace"] = node.input_namespace
-            if node.namespaces:
-                cnode["input_filename"] = node.namespaces[
-                    "input_filename"
-                ]  # ## TODO: Repace/remove
+            if node.input_filename:
+                cnode["input_filename"] = node.input_filename
             else:
-                cnode["input_filename"] = "mark"
+                cnode["input_filename"] = ""
             cnode["output_namespace"] = node.output_namespace
-            if node.namespaces:
-                cnode["output_filename"] = node.namespaces[
-                    "output_filename"
-                ]  # ## TODO: Repace/remove
+            if node.output_filename:
+                cnode["output_filename"] = node.output_filename
             else:
                 cnode["output_filename"] = "mark"
             for k, v in node.params.items():
@@ -145,7 +148,6 @@ class Model:
             kwargs["rulename"] = self.WrangleRuleName(name)
         node = Module(name, kwargs)
         self.nodes.append(node)
-        node.input_namespace = ""  # self.WrangleName(node.name, "in")
         node.output_namespace = self.WrangleName(node.name)
         return node
 
@@ -170,13 +172,16 @@ class Model:
                 raise ValueError("No matching node found for connector source")
             if isinstance(mapping[0], dict):
                 node_to.input_namespace = {}
+                node_to.input_filename = {}
                 for k, v in mapping[0].items():
                     node_to.input_namespace[k] = v
+                    node_to.input_filename[k] = self.GetNodeByName(v).output_filename
             else:
                 node_from = self.GetNodeByName(mapping[0])
                 if not node_from:
                     raise ValueError("No matching node found for connector destination")
                 node_to.input_namespace = node_from.output_namespace
+                node_to.input_filename = node_from.output_filename
             return None
 
     def GetNodeByName(self, name: str) -> Node | None:
