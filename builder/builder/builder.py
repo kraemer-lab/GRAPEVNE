@@ -4,6 +4,8 @@ import pathlib
 import shutil
 from typing import List
 
+import yaml
+
 
 class Node:
     NODE_TYPES = ["module", "connector"]
@@ -15,7 +17,8 @@ class Node:
         nodetype: str = "module",
         url="",
         params={},
-        input_namespace: str = "",
+        namespaces={},  # ## TODO: Remove once connectors connect filename(s)
+        input_namespace: str | dict = "",
         output_namespace: str = "",
     ):
         self.name = name
@@ -23,13 +26,14 @@ class Node:
         self.nodetype = nodetype
         self.url = url
         self.params = params
+        self.namespaces = namespaces
         self.input_namespace = input_namespace
         self.output_namespace = output_namespace
 
     def GetOutputNamespace(self) -> str:
         return self.output_namespace
 
-    def GetInputNamespace(self) -> str:
+    def GetInputNamespace(self) -> str | dict:
         return self.input_namespace
 
 
@@ -60,7 +64,7 @@ class Model:
         for node in self.nodes:
             # Add to terminal node if output if not connected to another module
             if node.nodetype.casefold() == "module" and self.NodeIsTerminus(node):
-                s += f'        "results/{node.output_namespace}/mark",\n'
+                s += f'        "results/{node.output_namespace}/{node.namespaces["output_filename"]}",\n'
         s += "    default_target: True\n"
         s += "\n"
         # Build Snakefile
@@ -85,19 +89,27 @@ class Model:
 
     def BuildSnakefileConfig(self):
         # Build config file
-        c = ""
+        c = {}
         for node in self.nodes:
-            c += f"{node.rulename} :\n"
-            c += f'  input_namespace : "{node.input_namespace}"\n'
-            c += '  input_filename : "mark"\n'
-            c += f'  output_namespace : "{node.output_namespace}"\n'
-            c += '  output_filename : "mark"\n'
-            # Override parameters
-            if node.params:
-                for k, v in node.params.items():
-                    c += f'  {k} : "{v}"\n'
-            c += "\n"
-        return c
+            cnode = {}
+            cnode["input_namespace"] = node.input_namespace
+            if node.namespaces:
+                cnode["input_filename"] = node.namespaces[
+                    "input_filename"
+                ]  # ## TODO: Repace/remove
+            else:
+                cnode["input_filename"] = "mark"
+            cnode["output_namespace"] = node.output_namespace
+            if node.namespaces:
+                cnode["output_filename"] = node.namespaces[
+                    "output_filename"
+                ]  # ## TODO: Repace/remove
+            else:
+                cnode["output_filename"] = "mark"
+            for k, v in node.params.items():
+                cnode[k] = v
+            c[node.rulename] = cnode
+        return yaml.dump(c)
 
     def SaveWorkflow(self):
         pathlib.Path("build/config").mkdir(parents=True, exist_ok=True)
@@ -107,7 +119,7 @@ class Model:
         with open("build/config/config.yaml", "w") as file:
             file.write(self.BuildSnakefileConfig())
 
-    def WrangleName(self, basename: str, subname: str):
+    def WrangleName(self, basename: str, subname: str = ""):
         rulename = self.WrangleRuleName(basename)
         name = f"{rulename}"
         if subname:
@@ -133,21 +145,39 @@ class Model:
             kwargs["rulename"] = self.WrangleRuleName(name)
         node = Module(name, kwargs)
         self.nodes.append(node)
-        node.input_namespace = self.WrangleName(node.name, "in")
-        node.output_namespace = self.WrangleName(node.name, "out")
+        node.input_namespace = ""  # self.WrangleName(node.name, "in")
+        node.output_namespace = self.WrangleName(node.name)
         return node
 
-    def AddConnector(self, name, connector) -> Node:
-        kwargs = connector.copy()
-        if "rulename" not in kwargs:
-            kwargs["rulename"] = self.WrangleRuleName(name)
-        node = Connector(name, kwargs)
-        self.nodes.append(node)
-        node_in = self.GetNodeByName(node.GetMapping()[0])
-        node_out = self.GetNodeByName(node.GetMapping()[1])
-        node.input_namespace = node_in.GetOutputNamespace() if node_in else ""
-        node.output_namespace = node_out.GetInputNamespace() if node_out else ""
-        return node
+    def AddConnector(self, name, connector) -> Node | None:
+        if connector.get("url", None):
+            # url specified - add node
+            kwargs = connector.copy()
+            if "rulename" not in kwargs:
+                kwargs["rulename"] = self.WrangleRuleName(name)
+            node = Connector(name, kwargs)
+            self.nodes.append(node)
+            node_in = self.GetNodeByName(node.GetMapping()[0])
+            node_out = self.GetNodeByName(node.GetMapping()[1])
+            node.input_namespace = node_in.GetOutputNamespace() if node_in else ""
+            node.output_namespace = node_out.GetInputNamespace() if node_out else ""
+            return node
+        else:
+            # no url specified - join namespaces
+            mapping = connector.get("map", None)
+            node_to = self.GetNodeByName(mapping[1])
+            if not node_to:
+                raise ValueError("No matching node found for connector source")
+            if isinstance(mapping[0], dict):
+                node_to.input_namespace = {}
+                for k, v in mapping[0].items():
+                    node_to.input_namespace[k] = v
+            else:
+                node_from = self.GetNodeByName(mapping[0])
+                if not node_from:
+                    raise ValueError("No matching node found for connector destination")
+                node_to.input_namespace = node_from.output_namespace
+            return None
 
     def GetNodeByName(self, name: str) -> Node | None:
         for node in self.nodes:
@@ -175,7 +205,6 @@ def BuildFromFile(filename: str):
     except json.decoder.JSONDecodeError:
         print(f"Invalid JSON file: {filename}")
         exit(1)
-
     BuildFromJSON(config)
 
 

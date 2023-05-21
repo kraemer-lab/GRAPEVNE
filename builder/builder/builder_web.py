@@ -49,9 +49,12 @@ def GetLocalModules(path: str) -> List[dict]:
             for workflow in workflows:
                 url_workflow = f"{path_base}/{org}/{module_type}/{workflow}"
                 config_file = f"{url_workflow}/config/config.yaml"
-                params = []
-                with open(config_file, "r") as file:
-                    params = yaml.safe_load(file)
+                params = {}
+                try:
+                    with open(config_file, "r") as file:
+                        params = yaml.safe_load(file)
+                except FileNotFoundError:
+                    print(f"Config file not found - assuming blank: {file}")
                 modules.append(
                     {
                         "name": f"{org}_{workflow}",
