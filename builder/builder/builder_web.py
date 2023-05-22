@@ -47,8 +47,12 @@ def GetLocalModules(path: str) -> List[dict]:
 
             # Third-level (module/workflow) listing
             for workflow in workflows:
-                url_workflow = f"{path_base}/{org}/{module_type}/{workflow}"
-                config_file = f"{url_workflow}/config/config.yaml"
+                url_workflow = (
+                    f"{path_base}/{org}/{module_type}/{workflow}/workflow/Snakefile"
+                )
+                config_file = (
+                    f"{path_base}/{org}/{module_type}/{workflow}/config/config.yaml"
+                )
                 params = {}
                 try:
                     with open(config_file, "r") as file:
@@ -136,7 +140,7 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                     f"{repo}/workflows/"
                     f"{org['name']}/"
                     f"{module_type['name']}/"
-                    f"{workflow['name']}"
+                    f"{workflow['name']}/workflow/Snakefile"
                 )
                 url_config = (
                     f"https://raw.githubusercontent.com/{repo}/"

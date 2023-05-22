@@ -10,6 +10,7 @@ import { DiagramEngine } from "@projectstorm/react-diagrams";
 import { DagreEngine } from "@projectstorm/react-diagrams";
 
 import { DefaultNodeModel } from "NodeMap";
+import { DefaultPortModel } from "NodeMap";
 import { DefaultLinkModel } from "NodeMap";
 
 class NodeSceneBase {
@@ -103,9 +104,56 @@ class NodeSceneBase {
     this.engine
       .getModel()
       .getNodes()
-      .forEach((node) => {
+      .forEach((node: DefaultNodeModel) => {
         js.push(this.getNodeUserConfig(node));
+        // Add connector (for inputs)
+        const map = [null, null];
+        if (node.getInPorts().length == 1) {
+          // Single input port
+          const port = node.getInPorts()[0];
+          if (Object.keys(port.getLinks()).length > 0) {
+            if (Object.keys(port.getLinks()).length > 1)
+              throw new Error("Input port has more than one link" + node);
+            const link = port.getLinks()[Object.keys(port.getLinks())[0]];
+            const node_from =
+              link.getTargetPort().getNode() == node
+                ? link.getSourcePort().getNode()
+                : link.getTargetPort().getNode();
+            const input_port_config = this.getNodeUserConfig(node_from);
+            map[0] = input_port_config.name;
+          }
+        } else if (node.getInPorts().length > 1) {
+          // Multiple input ports
+          map[0] = {};
+          node.getInPorts().forEach((port: DefaultPortModel) => {
+            // Links return a dictionary, indexed by connected node
+            if (Object.keys(port.getLinks()).length > 0) {
+              if (Object.keys(port.getLinks()).length > 1)
+                throw new Error("Input port has more than one link" + node);
+              const link = port.getLinks()[Object.keys(port.getLinks())[0]];
+              const node_from =
+                link.getTargetPort().getNode() == node
+                  ? link.getSourcePort().getNode()
+                  : link.getTargetPort().getNode();
+              const input_port_config = this.getNodeUserConfig(node_from);
+              map[0][port.getName()] = input_port_config.name;
+            }
+          });
+        }
+        // Add connector
+        if (map[0] !== null) {
+          map[1] = this.getNodeUserConfig(node).name;
+          const conn = {
+            name: "Join [" + map[1] + "]",
+            type: "connector",
+            config: {
+              map: map,
+            },
+          };
+          js.push(conn);
+        }
       });
+    console.log(js);
     return js;
   }
 }

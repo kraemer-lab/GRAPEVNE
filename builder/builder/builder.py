@@ -25,11 +25,11 @@ class Node:
         self.rulename = rulename
         self.nodetype = nodetype
         self.url = url
-        self.params = params
+        self.params = params if params else {}
         self.input_namespace = input_namespace
         self.input_filename = input_filename
         self.output_namespace = output_namespace
-        self.output_filename = params.get("output_filename", "")
+        self.output_filename = self.params.get("output_filename", "")
 
     def GetOutputNamespace(self) -> str:
         return self.output_namespace
@@ -109,8 +109,9 @@ class Model:
                 cnode["output_filename"] = node.output_filename
             else:
                 cnode["output_filename"] = "mark"
-            for k, v in node.params.items():
-                cnode[k] = v
+            for key, value in node.params.items():
+                if key not in ["input_namespace"]:
+                    cnode[key] = value
             c[node.rulename] = cnode
         return yaml.dump(c)
 
@@ -174,7 +175,7 @@ class Model:
                 node_to.input_namespace = {}
                 node_to.input_filename = {}
                 for k, v in mapping[0].items():
-                    node_to.input_namespace[k] = v
+                    node_to.input_namespace[k] = self.GetNodeByName(v).output_namespace
                     node_to.input_filename[k] = self.GetNodeByName(v).output_filename
             else:
                 node_from = self.GetNodeByName(mapping[0])
@@ -215,13 +216,16 @@ def BuildFromFile(filename: str):
 
 def BuildFromJSON(config: dict):
     m = Model()
+    # Add modules first to ensure all namespaces are defined
     for item in config:
         match item["type"].casefold():
-            case "module":
+            case "module" | "source" | "terminal":
                 m.AddModule(
                     item["name"],
                     item["config"],
                 )
+    for item in config:
+        match item["type"].casefold():
             case "connector":
                 m.AddConnector(
                     item["name"],
