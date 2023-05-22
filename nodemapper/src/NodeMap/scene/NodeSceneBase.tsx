@@ -83,6 +83,11 @@ class NodeSceneBase {
     this.engine.repaintCanvas();
   }
 
+  clearModel() {
+    const model = new DiagramModel();
+    this.engine.setModel(model);
+  }
+
   loadModel(str) {
     const model = new DiagramModel();
     model.deserializeModel(JSON.parse(str), this.engine);

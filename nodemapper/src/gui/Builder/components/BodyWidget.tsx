@@ -70,20 +70,31 @@ export const BodyWidget = (props: BodyWidgetProps) => {
                   config: data.config,
                 })
               );
+              // Determine number (and names of input ports)
+              let input_namespace = {};
+              try {
+                input_namespace = Object.keys(
+                  data.config.params.input_namespace
+                );
+              } catch (e: unknown) {
+                switch (data.type) {
+                  case "module":
+                  case "connector":
+                  case "terminal":
+                    input_namespace["In"] = "In";
+                    break;
+                }
+              }
+              for (const key in input_namespace) {
+                node.addInPort(input_namespace[key]);
+              }
+              // Add output port (if applicable)
               switch (data.type) {
-                case "terminal":
-                  node.addInPort("In");
-                  break;
                 case "source":
-                  node.addOutPort("Out");
-                  break;
                 case "module":
                 case "connector":
-                  node.addInPort("In");
                   node.addOutPort("Out");
                   break;
-                default:
-                  throw Error("Invalid node type requested: " + data.type);
               }
               const point = engine.getRelativeMousePoint(event);
               node.setPosition(point);

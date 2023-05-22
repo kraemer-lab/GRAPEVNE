@@ -5,6 +5,8 @@ import { useState } from "react";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
 
+import { displayUpdateNodeInfo } from "redux/actions";
+
 import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
@@ -34,6 +36,12 @@ function Header() {
   // Save nodemap to file
   const btnSaveScene = () => {
     BuilderEngine.Instance.SaveScene();
+  };
+
+  // Load nodemap from file
+  const btnClearScene = () => {
+    BuilderEngine.Instance.ClearScene();
+    dispatch(displayUpdateNodeInfo(""));
   };
 
   // Build - compile config to workflow zip and download
@@ -66,6 +74,9 @@ function Header() {
         </button>
         <button className="btn" onClick={btnBuild}>
           BUILD
+        </button>
+        <button className="btn" onClick={btnClearScene}>
+          CLEAR
         </button>
         <button className="btn" onClick={btnArrange}>
           ARRANGE

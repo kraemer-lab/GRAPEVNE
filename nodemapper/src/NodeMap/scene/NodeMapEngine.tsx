@@ -36,6 +36,10 @@ export default class NodeMapEngine {
     input.click();
   }
 
+  public ClearScene() {
+    this.nodeScene.clearModel();
+  }
+
   public LoadScene() {
     const onLoad = (content) => {
       this.nodeScene.loadModel(content);

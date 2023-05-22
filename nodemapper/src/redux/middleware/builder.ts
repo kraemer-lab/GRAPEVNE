@@ -59,7 +59,6 @@ export function builderMiddleware({ getState, dispatch }) {
               };
             }
             dispatch(displayUpdateNodeInfo(JSON.stringify(payload)));
-            // dispatch(displayOpenSettings());
           }
           break;
         }
@@ -104,6 +103,7 @@ export function builderMiddleware({ getState, dispatch }) {
 }
 
 function SubmitQueryExpectZip(query: Record<string, any>) {
+  // eslint-disable-line @typescript-eslint/no-explicit-any
   // POST request handler
   async function postRequest() {
     const postRequestOptions = {
