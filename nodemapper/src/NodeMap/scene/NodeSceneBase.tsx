@@ -74,10 +74,10 @@ class NodeSceneBase {
   distributeModel(model) {
     const dagre_engine = new DagreEngine({
       graph: {
-        rankdir: "LR",
-        rankSep: 100,
+        rankdir: "UD",
+        rankSep: 50,
         marginx: 100,
-        marginy: 100,
+        marginy: 50,
       },
     });
     dagre_engine.redistribute(model);

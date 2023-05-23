@@ -40,8 +40,8 @@ export class DefaultPortModel extends PortModel<DefaultPortModelGenerics> {
     super({
       label: options.label || options.name,
       alignment: options.in
-        ? PortModelAlignment.LEFT
-        : PortModelAlignment.RIGHT,
+        ? PortModelAlignment.TOP
+        : PortModelAlignment.BOTTOM,
       type: "default",
       ...options,
     });

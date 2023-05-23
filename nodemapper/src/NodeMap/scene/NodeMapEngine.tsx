@@ -1,16 +1,26 @@
 import NodeScene from "./NodeScene";
 
+import { DiagramEngine } from "@projectstorm/react-diagrams";
+
+import { DefaultNodeFactory } from "NodeMap";
+import { DefaultPortFactory } from "NodeMap";
+
 interface IPayload {
   id: string;
 }
 
 export default class NodeMapEngine {
-  nodeScene = null;
-  engine = null;
+  nodeScene: NodeScene = null;
+  engine: DiagramEngine = null;
 
   constructor() {
     this.nodeScene = new NodeScene();
     this.engine = this.nodeScene.engine;
+    // Register custom factories
+    this.engine.getNodeFactories().clearFactories();
+    this.engine.getNodeFactories().registerFactory(new DefaultNodeFactory());
+    this.engine.getPortFactories().clearFactories();
+    this.engine.getPortFactories().registerFactory(new DefaultPortFactory());
   }
 
   public NodesSelectNone() {
@@ -65,10 +75,6 @@ export default class NodeMapEngine {
     document.body.removeChild(element);
   }
 
-  public RunScene() {
-    alert("Running the scene isn't supported just yet!");
-  }
-
   public getNodeById(id: string): any {
     // eslint-disable-line @typescript-eslint/no-explicit-any
     let returnNode = null;
@@ -76,7 +82,7 @@ export default class NodeMapEngine {
       .getModel()
       .getNodes()
       .forEach((item) => {
-        if (item.options.id === id) returnNode = item;
+        //if (item.options.id === id) returnNode = item;
       });
     return returnNode;
   }
@@ -127,14 +133,14 @@ export default class NodeMapEngine {
     model.getNodes().forEach((node) =>
       node.registerListener({
         selectionChanged: (e) => {
-          const payload: IPayload = {
+          /*const payload: IPayload = {
             id: node.options.id,
           };
           if (e.isSelected) {
             select_fn(payload);
           } else {
             deselect_fn(payload);
-          }
+          }*/
         },
       })
     );

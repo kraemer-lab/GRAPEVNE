@@ -36,7 +36,7 @@ export const Ports = styled.div`
 export const PortsContainer = styled.div`
   flex-grow: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 
   &:first-of-type {
     margin-right: 10px;
@@ -74,13 +74,15 @@ export class DefaultNodeWidget extends React.Component<DefaultNodeProps> {
         selected={this.props.node.isSelected()}
         background={this.props.node.getOptions().color}
       >
-        <Title>
-          <TitleName>{this.props.node.getOptions().name}</TitleName>
-        </Title>
         <Ports>
           <PortsContainer>
             {_.map(this.props.node.getInPorts(), this.generatePort)}
           </PortsContainer>
+        </Ports>
+        <Title>
+          <TitleName>{this.props.node.getOptions().name}</TitleName>
+        </Title>
+        <Ports>
           <PortsContainer>
             {_.map(this.props.node.getOutPorts(), this.generatePort)}
           </PortsContainer>

@@ -77,7 +77,7 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
       in: true,
       name: label,
       label: label,
-      alignment: PortModelAlignment.LEFT,
+      alignment: PortModelAlignment.TOP,
     });
     if (!after) {
       this.portsIn.splice(0, 0, p);
@@ -90,7 +90,7 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
       in: false,
       name: label,
       label: label,
-      alignment: PortModelAlignment.RIGHT,
+      alignment: PortModelAlignment.BOTTOM,
     });
     if (!after) {
       this.portsOut.splice(0, 0, p);
