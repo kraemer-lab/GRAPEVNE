@@ -10,7 +10,7 @@ export interface DefaultLinkSegmentWidgetProps {
   forwardRef: React.RefObject<SVGPathElement>;
   factory: DefaultLinkFactory;
   diagramEngine: DiagramEngine;
-  onSelection: (selected: boolean) => any;
+  onSelection: (selected: boolean) => unknown;
   extras: object;
 }
 

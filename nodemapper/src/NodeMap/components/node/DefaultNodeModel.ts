@@ -25,7 +25,7 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
 
   constructor(name: string, color: string, userconfig: string);
   constructor(options?: DefaultNodeModelOptions);
-  constructor(options: any = {}, color?: string, userconfig?: string) {
+  constructor(options: unknown = {}, color?: string, userconfig?: string) {
     if (typeof options === "string") {
       options = {
         name: options,
@@ -37,13 +37,13 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
       type: "default",
       name: "Untitled",
       color: "rgb(0,192,255)",
-      ...options,
+      ...(options as object),
     });
     this.portsOut = [];
     this.portsIn = [];
   }
 
-  doClone(lookupTable: object, clone: any): void {
+  doClone(lookupTable: object, clone: DefaultNodeModel): void {
     clone.portsIn = [];
     clone.portsOut = [];
     super.doClone(lookupTable, clone);
@@ -138,5 +138,9 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
 
   getNodeID(): string {
     return this.options.id;
+  }
+
+  getOptions() {
+    return this.options;
   }
 }

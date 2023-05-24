@@ -1,7 +1,9 @@
 import NodeScene from "./NodeScene";
 
+import { NodeModel } from "@projectstorm/react-diagrams";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
+import { DefaultNodeModel } from "NodeMap";
 import { DefaultNodeFactory } from "NodeMap";
 import { DefaultPortFactory } from "NodeMap";
 
@@ -33,7 +35,6 @@ export default class NodeMapEngine {
   }
 
   public QueryAndLoadTextFile(onLoad: (result) => void) {
-    // eslint-disable-line @typescript-eslint/ban-types
     // Opens a file dialog, then executes readerEvent
     const input = document.createElement("input");
     input.type = "file";
@@ -75,30 +76,26 @@ export default class NodeMapEngine {
     document.body.removeChild(element);
   }
 
-  public getNodeById(id: string): any {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
+  public getNodeById(id: string): NodeModel {
     let returnNode = null;
     this.engine
       .getModel()
       .getNodes()
       .forEach((item) => {
-        //if (item.options.id === id) returnNode = item;
+        if (item.getOptions().id === id) returnNode = item;
       });
     return returnNode;
   }
 
-  public getNodePropertiesAsJSON(node: any): Record<string, any> {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    return JSON.parse(node.options.extra);
+  public getNodePropertiesAsJSON(node: NodeModel): Record<string, undefined> {
+    return JSON.parse(node.getOptions().extras);
   }
 
-  public getNodePropertiesAsStr(node: any): string {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
-    return node.options.extra;
+  public getNodePropertiesAsStr(node: NodeModel): string {
+    return node.getOptions().extras;
   }
 
-  public getProperty(node: any, prop: string): string {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
+  public getProperty(node: NodeModel, prop: string): string {
     const json = this.getNodePropertiesAsJSON(node);
     return json[prop];
   }
@@ -133,14 +130,14 @@ export default class NodeMapEngine {
     model.getNodes().forEach((node) =>
       node.registerListener({
         selectionChanged: (e) => {
-          /*const payload: IPayload = {
-            id: node.options.id,
+          const payload: IPayload = {
+            id: node.getOptions().id,
           };
           if (e.isSelected) {
             select_fn(payload);
           } else {
             deselect_fn(payload);
-          }*/
+          }
         },
       })
     );

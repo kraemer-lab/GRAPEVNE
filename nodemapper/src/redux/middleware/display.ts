@@ -19,8 +19,7 @@ export function displayMiddleware({ getState, dispatch }) {
         }
 
         case "display/get-folder-info": {
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "display/folderinfo",
             data: {
               content: JSON.parse(getState().display.folderinfo).foldername,
@@ -31,8 +30,7 @@ export function displayMiddleware({ getState, dispatch }) {
         }
 
         case "display/delete-results": {
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "runner/deleteresults",
             data: {
               format: "Snakefile",

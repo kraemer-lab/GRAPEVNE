@@ -33,10 +33,10 @@ export function runnerMiddleware({ getState, dispatch }) {
                 code: "ERROR: Failed to find node (" + action.payload.id + ")",
               };
             } else {
-              const json = JSON.parse(node.options.extras);
+              const json = JSON.parse(node.getOptions().extras);
               payload = {
                 id: action.payload.id,
-                name: node.options.name,
+                name: node.getOptions()["name"],
                 type: json.type,
                 code: json.content,
               };
@@ -62,8 +62,7 @@ export function runnerMiddleware({ getState, dispatch }) {
 
         case "runner/import-snakefile": {
           QueryAndLoadTextFile((content, filename) => {
-            const query: Record<string, any> = {
-              // eslint-disable-line @typescript-eslint/no-explicit-any
+            const query: Record<string, unknown> = {
               query: "runner/tokenize",
               data: {
                 format: "Snakefile",
@@ -78,8 +77,7 @@ export function runnerMiddleware({ getState, dispatch }) {
 
         case "runner/load-snakefile": {
           dispatch(runnerUpdateStatusText("Loading Snakefile..."));
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "runner/tokenize_load",
             data: {
               format: "Snakefile",
@@ -92,8 +90,7 @@ export function runnerMiddleware({ getState, dispatch }) {
         }
 
         case "runner/launch-snakefile": {
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "runner/launch",
             data: {
               format: "Snakefile",
@@ -106,8 +103,7 @@ export function runnerMiddleware({ getState, dispatch }) {
         }
 
         case "runner/query-job-status": {
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "runner/jobstatus",
             data: {
               format: "Snakefile",
@@ -120,8 +116,7 @@ export function runnerMiddleware({ getState, dispatch }) {
         }
 
         case "runner/build-snakefile": {
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "runner/build",
             data: {
               format: "Snakefile",
@@ -133,8 +128,7 @@ export function runnerMiddleware({ getState, dispatch }) {
         }
 
         case "runner/lint-snakefile": {
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "runner/lint",
             data: {
               format: "Snakefile",
@@ -147,8 +141,7 @@ export function runnerMiddleware({ getState, dispatch }) {
 
         case "runner/load-workflow": {
           dispatch(runnerUpdateStatusText("Loading Workflow..."));
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "runner/loadworkflow",
             data: {
               format: "Snakefile",

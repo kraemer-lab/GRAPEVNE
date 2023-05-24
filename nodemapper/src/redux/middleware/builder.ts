@@ -20,8 +20,7 @@ export function builderMiddleware({ getState, dispatch }) {
       switch (action.type) {
         case "builder/compile-to-json": {
           const app = BuilderEngine.Instance;
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "builder/compile-to-json",
             data: {
               format: "Snakefile",
@@ -50,10 +49,10 @@ export function builderMiddleware({ getState, dispatch }) {
                 code: "ERROR: Failed to find node (" + action.payload.id + ")",
               };
             } else {
-              const json = JSON.parse(node.options.extras);
+              const json = JSON.parse(node.getOptions().extras);
               payload = {
                 id: action.payload.id,
-                name: node.options.name,
+                name: node.getOptions()["name"],
                 type: json.type,
                 code: JSON.stringify(json.config, null, 2),
               };
@@ -73,8 +72,7 @@ export function builderMiddleware({ getState, dispatch }) {
           // Get list of remote modules
           dispatch(builderUpdateStatusText("Loading remote modules..."));
           const app = BuilderEngine.Instance;
-          const query: Record<string, any> = {
-            // eslint-disable-line @typescript-eslint/no-explicit-any
+          const query: Record<string, unknown> = {
             query: "builder/get-remote-modules",
             data: {
               format: "Snakefile",
@@ -102,8 +100,7 @@ export function builderMiddleware({ getState, dispatch }) {
   };
 }
 
-function SubmitQueryExpectZip(query: Record<string, any>) {
-  // eslint-disable-line @typescript-eslint/no-explicit-any
+function SubmitQueryExpectZip(query: Record<string, unknown>) {
   // POST request handler
   async function postRequest() {
     const postRequestOptions = {
