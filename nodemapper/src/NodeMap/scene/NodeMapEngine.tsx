@@ -127,7 +127,7 @@ export default class NodeMapEngine {
     // Add listeners, noting the following useful resource:
     // https://github.com/projectstorm/react-diagrams/issues/164
     const model = this.engine.getModel();
-    model.getNodes().forEach((node) =>
+    model.getNodes().forEach((node) => {
       node.registerListener({
         selectionChanged: (e) => {
           const payload: IPayload = {
@@ -139,7 +139,7 @@ export default class NodeMapEngine {
             deselect_fn(payload);
           }
         },
-      })
-    );
+      });
+    });
   }
 }
