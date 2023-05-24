@@ -1,0 +1,31 @@
+.json {
+  justify-content: left;
+  color: #cccccc;
+  background: #333333;
+}
+
+/* colours inspired by gruvbox dark mode */
+
+/* first line not indented */
+& > .line {
+  margin-left: 0;
+}
+.line {
+  margin-left: 1rem;
+}
+.key {
+  margin-right: 0.5rem;
+  color: #cccccc;
+}
+.string {
+  color: #b8bb26;
+}
+.number {
+  color: #83a598;
+}
+.boolean {
+  color: #d3869b;
+}
+.null {
+  color: #cc241d;
+}
