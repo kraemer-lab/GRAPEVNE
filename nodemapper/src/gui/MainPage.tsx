@@ -3,7 +3,6 @@ import Runner from "./Runner/Runner";
 import Builder from "./Builder/Builder";
 
 import { useState } from "react";
-import "./MainPage.css";
 
 interface MenuChoiceRenderProps {
   selection: number;
@@ -42,7 +41,7 @@ function MainPage() {
         </div>
       </div>
 
-      <div className="body">
+      <div className="body" style={{ height: "100%" }}>
         <MenuChoiceRender selection={menuChoice} />
       </div>
     </>

@@ -64,7 +64,6 @@ export function builderMiddleware({ getState, dispatch }) {
 
         case "builder/node-deselected": {
           dispatch(displayUpdateNodeInfo(""));
-          // dispatch(displayCloseSettings());
           break;
         }
 

@@ -20,24 +20,25 @@ interface IPayload {
   id: string;
 }
 
-export interface BodyWidgetProps {
+interface BodyWidgetProps {
   engine: DiagramEngine;
 }
 
-export const Body = styled.div`
+const Body = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  height: 1000px;
+  height: 100%;
 `;
 
-export const Content = styled.div`
+const Content = styled.div`
   display: flex;
   flex-grow: 1;
+  height: 100%;
 `;
 
-export const Layer = styled.div`
+const Layer = styled.div`
   position: relative;
   flex-grow: 1;
 `;
@@ -121,13 +122,42 @@ export const BodyWidget = (props: BodyWidgetProps) => {
           if (e.isSelected) {
             dispatch(builderNodeSelected(payload));
           } else {
-            dispatch(builderNodeSelected(payload));
+            dispatch(builderNodeDeselected(payload));
           }
         },
       });
       setNewnode(null);
     }
   }, [newnode]);
+
+  const NodeInfoRenderer = (props) => {
+    const nodeinfo = useAppSelector((state) => state.display.nodeinfo);
+    if (nodeinfo) {
+      return (
+        <div
+          style={{
+            width: "33%",
+            height: "100%",
+          }}
+        >
+          <div
+            style={{
+              borderStyle: "solid",
+              borderWidth: "1px 0px 1px 0px",
+              borderColor: "#666666",
+              backgroundColor: "#333333",
+              color: "#dddddd",
+            }}
+          >
+            Node Info
+          </div>
+          <NodeInfo />
+        </div>
+      );
+    } else {
+      return <></>;
+    }
+  };
 
   return (
     <>
@@ -139,9 +169,9 @@ export const BodyWidget = (props: BodyWidgetProps) => {
               <CanvasWidget engine={props.engine} />
             </GridCanvasWidget>
           </Layer>
+          <NodeInfoRenderer />
         </Content>
       </Body>
-      <NodeInfo />
     </>
   );
 };

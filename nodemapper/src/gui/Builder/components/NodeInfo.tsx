@@ -1,18 +1,15 @@
 import React from "react";
-import { useState, useEffect } from "react";
-import { useAppSelector } from "redux/store/hooks";
-import { useAppDispatch } from "redux/store/hooks";
 import styled from "@emotion/styled";
 
-export const Content = styled.div`
+import { useState } from "react";
+import { useEffect } from "react";
+import { useAppSelector } from "redux/store/hooks";
+import { useAppDispatch } from "redux/store/hooks";
+
+const Content = styled.div`
   display: flex;
   flex-grow: 1;
-  margin-top: 20px;
-  background: #dddddd;
-  height: 100px;
-  position: fixed;
-  bottom: 0px;
-  width: 100%;
+  height: 100%;
 `;
 
 export default function NodeInfo() {
@@ -35,8 +32,16 @@ export default function NodeInfo() {
       <Content>
         <textarea
           id="codesnippet"
-          {...{ rows: 15 }}
-          style={{ width: "100%" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            border: "0px",
+            boxSizing: "border-box",
+            outline: "none", // Remove highlight on focus
+            resize: "none",
+            color: "#dddddd",
+            backgroundColor: "#333333",
+          }}
           value={codesnippet}
           onChange={() => {}} // eslint-disable-line @typescript-eslint/no-empty-function
         />
