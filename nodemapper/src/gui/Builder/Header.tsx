@@ -11,6 +11,7 @@ import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
+import { builderSetRepositoryTarget } from "redux/actions";
 
 const StatusBar: React.FC = () => {
   const [status, setStatus] = useState("");
@@ -54,8 +55,39 @@ function Header() {
     BuilderEngine.Instance.RedistributeModel();
   };
 
+  // Load modules from repository
   const btnGetModuleList = () => {
     dispatch(builderGetRemoteModules());
+  };
+
+  const selectRepositoryTarget = (target) => {
+    let repo = {};
+    switch (target) {
+      case "LocalFilesystem":
+        repo = {
+          type: "local",
+          listing_type: "DirectoryListing",
+          repo: "../../snakeshack",
+        };
+        break;
+      case "DirectoryListing":
+        repo = {
+          type: "github",
+          listing_type: "DirectoryListing",
+          repo: "jsbrittain/snakeshack",
+        };
+        break;
+      case "BranchListing":
+        repo = {
+          type: "github",
+          listing_type: "BranchListing",
+          repo: "jsbrittain/snakeshack",
+        };
+        break;
+      default:
+        console.error("Unknown repository type selected: ", target);
+    }
+    dispatch(builderSetRepositoryTarget(repo));
   };
 
   return (
@@ -65,7 +97,13 @@ function Header() {
         rel="stylesheet"
         type="text/css"
       />
-      <div style={{ fontSize: 18, marginLeft: 0, marginBottom: 2 }}>
+      <div
+        style={{
+          fontSize: 18,
+          marginLeft: 0,
+          marginBottom: 2,
+        }}
+      >
         <button className="btn" onClick={btnLoadScene}>
           LOAD
         </button>
@@ -84,6 +122,14 @@ function Header() {
         <button className="btn" onClick={btnGetModuleList}>
           GET MODULE LIST
         </button>
+        <select
+          defaultValue="localFilesystem"
+          onChange={(e) => selectRepositoryTarget(e.target.value)}
+        >
+          <option value="LocalFilesystem">Local filesystem</option>
+          <option value="DirectoryListing">Directory Listing (Github)</option>
+          <option value="BranchListing">Branch Listing (Github)</option>
+        </select>
         <StatusBar />
       </div>
     </>

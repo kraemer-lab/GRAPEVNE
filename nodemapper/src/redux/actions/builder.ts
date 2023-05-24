@@ -21,3 +21,6 @@ export const builderUpdateModulesList = createAction<string>(
 export const builderUpdateStatusText = createAction<string>(
   "builder/update-status-text"
 );
+export const builderSetRepositoryTarget = createAction<Record<string, any>>(
+  "builder/set-repository-target"
+);

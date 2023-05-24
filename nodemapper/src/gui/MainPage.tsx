@@ -24,25 +24,43 @@ function MainPage() {
 
   return (
     <>
-      <div className="header">
-        <link
-          href="http://fonts.googleapis.com/css?family=Oswald"
-          rel="stylesheet"
-          type="text/css"
-        />
-        <div style={{ fontSize: 18, marginLeft: 0 }}>
-          PhyloFlow
-          <button className="btn" onClick={() => setMenuChoice(0)}>
-            BUILDER
-          </button>
-          <button className="btn" onClick={() => setMenuChoice(1)}>
-            RUNNER
-          </button>
+      <div
+        style={{
+          display: "flex",
+          height: "100%",
+          width: "100%",
+          flexFlow: "column",
+        }}
+      >
+        <div
+          className="header"
+          style={{
+            flex: "0 1 auto",
+          }}
+        >
+          <link
+            href="http://fonts.googleapis.com/css?family=Oswald"
+            rel="stylesheet"
+            type="text/css"
+          />
+          <div
+            style={{
+              fontSize: 18,
+              marginLeft: 0,
+            }}
+          >
+            PhyloFlow
+            <button className="btn" onClick={() => setMenuChoice(0)}>
+              BUILDER
+            </button>
+            <button className="btn" onClick={() => setMenuChoice(1)}>
+              RUNNER
+            </button>
+          </div>
         </div>
-      </div>
-
-      <div className="body" style={{ height: "100%" }}>
-        <MenuChoiceRender selection={menuChoice} />
+        <div className="body" style={{ flex: "1 1 auto" }}>
+          <MenuChoiceRender selection={menuChoice} />
+        </div>
       </div>
     </>
   );

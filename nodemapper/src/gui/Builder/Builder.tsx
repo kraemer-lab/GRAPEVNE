@@ -5,8 +5,21 @@ import NodeManager from "./NodeManager";
 function Builder() {
   return (
     <>
-      <Header />
-      <NodeManager />
+      <div
+        style={{
+          display: "flex",
+          height: "100%",
+          width: "100%",
+          flexFlow: "column",
+        }}
+      >
+        <div style={{ flex: "0 1 auto" }}>
+          <Header />
+        </div>
+        <div style={{ flex: "1 1 auto" }}>
+          <NodeManager />
+        </div>
+      </div>
     </>
   );
 }

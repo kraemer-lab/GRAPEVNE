@@ -28,7 +28,6 @@ const Body = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100%;
   height: 100%;
 `;
 
@@ -136,8 +135,10 @@ export const BodyWidget = (props: BodyWidgetProps) => {
       return (
         <div
           style={{
+            display: "flex",
             width: "33%",
             height: "100%",
+            flexFlow: "column",
           }}
         >
           <div
@@ -147,11 +148,14 @@ export const BodyWidget = (props: BodyWidgetProps) => {
               borderColor: "#666666",
               backgroundColor: "#333333",
               color: "#dddddd",
+              flex: "0 0 auto",
             }}
           >
             Node Info
           </div>
-          <NodeInfo />
+          <div style={{ flex: "1 1 auto" }}>
+            <NodeInfo />
+          </div>
         </div>
       );
     } else {

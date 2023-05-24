@@ -1,24 +1,28 @@
 import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "../actions";
 
+interface IBuilderState {
+  query: Record<string, string>;
+  repo: Record<string, string>;
+  modules_list: string;
+  statustext: string;
+}
+
 // State
-const builderStateInit = {
+const builderStateInit: IBuilderState = {
   query: {},
   repo: {
-    type: "github",
-    listing_type: "DirectoryListing", //'BranchListing',
-    repo: "jsbrittain/snakeshack",
+    // (TODO: replace with proper settings menu)
+    type: "local",
+    listing_type: "DirectoryListing",
+    repo: "../../snakeshack",
+    //type: "github",
+    //listing_type: "DirectoryListing", //'BranchListing',
+    //repo: "jsbrittain/snakeshack",
   },
   modules_list: "[]",
   statustext: "",
 };
-
-// Replace with local reference to repository (TODO: replace with settings menu; used mainly for testing)
-/*builderStateInit["repo"] = {
-  type: "local",
-  listing_type: "DirectoryListing",
-  repo: "../../snakeshack",
-};*/
 
 // Nodemap
 const builderReducer = createReducer(builderStateInit, (builder) => {
@@ -33,7 +37,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSubmitQuery, (state, action) => {
-      state.query = action.payload;
+      state.query = action.payload as Record<string, string>;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderNodeSelected, (state, action) => {
@@ -55,6 +59,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {
       state.statustext = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetRepositoryTarget, (state, action) => {
+      state.repo = action.payload as Record<string, string>;
       console.info("[Reducer] " + action.type);
     });
 });

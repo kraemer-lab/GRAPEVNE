@@ -26,8 +26,6 @@ const HighlightedJSON = (json_obj) => {
   if (json === JSON.stringify({})) {
     return <div className="json"></div>;
   }
-  console.log(json);
-  console.log(JSON.parse(json));
   const highlightedJSON = (jsonObj) =>
     Object.keys(jsonObj).map((key) => {
       const value = jsonObj[key];
@@ -77,25 +75,4 @@ export default function NodeInfo() {
       </Content>
     </>
   );
-  /*return (
-    <>
-      <Content>
-        <textarea
-          id="codesnippet"
-          style={{
-            width: "100%",
-            height: "100%",
-            border: "0px",
-            boxSizing: "border-box",
-            outline: "none", // Remove highlight on focus
-            resize: "none",
-            color: "#dddddd",
-            backgroundColor: "#333333",
-          }}
-          value={codesnippet}
-          onChange={() => {}} // eslint-disable-line @typescript-eslint/no-empty-function
-        />
-      </Content>
-    </>
-  );*/
 }
