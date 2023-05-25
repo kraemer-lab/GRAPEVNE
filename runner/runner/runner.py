@@ -8,7 +8,7 @@ def Build(data: dict) -> str:
         case "Snakefile":
             build_data: str = snakefile.Build(json.loads(data["content"]))
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return build_data
 
 
@@ -17,7 +17,7 @@ def DeleteAllOutput(data: dict) -> dict:
         case "Snakefile":
             del_data: dict = snakefile.DeleteAllOutput(data["content"])
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return del_data
 
 
@@ -26,7 +26,7 @@ def Lint(data: dict) -> dict:
         case "Snakefile":
             lint_response: dict = snakefile.LintContents(data["content"])
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return lint_response
 
 
@@ -36,7 +36,7 @@ def LintContents(data: dict) -> dict:
             build_data: str = snakefile.Build(json.loads(data["content"]))
             lint_response: dict = snakefile.LintContents(build_data)
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return lint_response
 
 
@@ -45,7 +45,7 @@ def Launch(data: dict) -> dict:
         case "Snakefile":
             launch_response: dict = snakefile.Launch(data["content"])
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return launch_response
 
 
@@ -54,7 +54,7 @@ def Tokenize(data: dict) -> dict:
         case "Snakefile":
             tokenized_data: dict = snakefile.SplitByRulesFileContent(data["content"])
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return tokenized_data
 
 
@@ -63,7 +63,7 @@ def LoadWorkflow(data: dict) -> dict:
         case "Snakefile":
             tokenized_data: dict = snakefile.LoadWorkflow(data["content"])
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return tokenized_data
 
 
@@ -72,7 +72,7 @@ def TokenizeFromFile(data: dict) -> dict:
         case "Snakefile":
             tokenized_data: dict = snakefile.LoadWorkflow(data["content"])
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return tokenized_data
 
 
@@ -81,5 +81,15 @@ def FullTokenizeFromFile(data: dict) -> dict:
         case "Snakefile":
             tokenized_data: dict = snakefile.FullTokenizeFromFile(data["content"])
         case _:
-            raise ValueError("Format not supported: {data['format']}")
+            raise ValueError(f"Format not supported: {data['format']}")
     return tokenized_data
+
+
+def CheckNodeDependencies(data: dict) -> dict:
+    match data["format"]:
+        case "Snakefile":
+            js = json.loads(data["content"])
+            response: dict = snakefile.CheckNodeDependencies(js)
+        case _:
+            raise ValueError(f"Format not supported: {data['format']}")
+    return response

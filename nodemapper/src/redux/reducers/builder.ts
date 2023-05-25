@@ -36,8 +36,14 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderCompileToJson, (state, action) => {
       console.info("[Reducer] " + action.type);
     })
+    .addCase(actions.builderRedraw, (state, action) => {
+      console.info("[Reducer] " + action.type);
+    })
     .addCase(actions.builderSubmitQuery, (state, action) => {
       state.query = action.payload as Record<string, string>;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderAddLink, (state, action) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderNodeSelected, (state, action) => {

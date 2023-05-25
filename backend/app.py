@@ -98,6 +98,12 @@ def post():
                     "query": request.json["query"],
                     "body": json.dumps(runner.Launch(request.json["data"])),
                 }
+            case "runner/check-node-dependencies":
+                data = {
+                    "query": request.json["query"],
+                    "body": runner.CheckNodeDependencies(request.json["data"]),
+                }
+
             case _:
                 return Response(
                     f"Query not supported: {request.json['query']}", status=400

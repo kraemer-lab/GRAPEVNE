@@ -1,4 +1,4 @@
-# from builder.builder import Model
+from builder.builder import YAMLToConfig
 
 
 def test_BuildSnakefile():
@@ -59,3 +59,18 @@ def test_NodeIsTerminus():
     # m = Model()
     # m.NodeIsTerminus()
     ...
+
+
+def test_YAMLToConfig():
+    content = """singleton: alone
+modules:
+    name1: first
+    name2: second
+"""
+    target = """config={}
+config["singleton"]="alone"
+config["modules"]={}
+config["modules"]["name1"]="first"
+config["modules"]["name2"]="second"
+"""
+    assert YAMLToConfig(content) == target

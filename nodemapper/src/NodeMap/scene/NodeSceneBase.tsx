@@ -44,8 +44,7 @@ class NodeSceneBase {
     return this.addNode(name, color, pos, config);
   }
 
-  addLink(port_from: any, port_to: any) {
-    // eslint-disable-line @typescript-eslint/no-explicit-any
+  addLink(port_from: DefaultPortModel, port_to: DefaultPortModel) {
     const link = new DefaultLinkModel();
     link.setSourcePort(port_from);
     link.setTargetPort(port_to);
@@ -99,46 +98,55 @@ class NodeSceneBase {
     return JSON.stringify(this.engine.getModel().serialize());
   }
 
+  getNodeInputNodes(node: DefaultNodeModel) {
+    const nodes = {};
+    node.getInPorts().forEach((port: DefaultPortModel) => {
+      // Links return a dictionary, indexed by connected node
+      if (Object.keys(port.getLinks()).length > 0) {
+        if (Object.keys(port.getLinks()).length > 1)
+          throw new Error("Input port has more than one link" + node);
+        const link = port.getLinks()[Object.keys(port.getLinks())[0]];
+        const node_from =
+          link.getTargetPort().getNode() == node
+            ? link.getSourcePort().getNode()
+            : link.getTargetPort().getNode();
+        const input_port_config = this.getNodeUserConfig(node_from);
+        nodes[port.getName()] = input_port_config.name;
+      }
+    });
+    return nodes;
+  }
+
   getModuleListJSON() {
     const js = [];
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((node: DefaultNodeModel) => {
-        js.push(this.getNodeUserConfig(node));
-        // Add connector (for inputs)
-        const map = [null, null];
+    return this.getModuleListJSONFromNodes(this.engine.getModel().getNodes());
+  }
+
+  getModuleListJSONFromNodeNames(nodenames: string[]) {
+    const nodes = nodenames.map((name) => {
+      let node = null;
+      for (const n of this.engine.getModel().getNodes()) {
+        if (this.getNodeName(n) === name) {
+          node = n;
+          break;
+        }
+      }
+      return node;
+    });
+    return this.getModuleListJSONFromNodes(nodes);
+  }
+
+  getModuleListJSONFromNodes(nodes) {
+    const js = [];
+    nodes.forEach((node: DefaultNodeModel) => {
+      js.push(this.getNodeUserConfig(node));
+      // Add connector (for inputs)
+      const map = [null, null];
+      map[0] = this.getNodeInputNodes(node);
+      if (node.getInPorts().length > 0) {
         if (node.getInPorts().length == 1) {
-          // Single input port
-          const port = node.getInPorts()[0];
-          if (Object.keys(port.getLinks()).length > 0) {
-            if (Object.keys(port.getLinks()).length > 1)
-              throw new Error("Input port has more than one link" + node);
-            const link = port.getLinks()[Object.keys(port.getLinks())[0]];
-            const node_from =
-              link.getTargetPort().getNode() == node
-                ? link.getSourcePort().getNode()
-                : link.getTargetPort().getNode();
-            const input_port_config = this.getNodeUserConfig(node_from);
-            map[0] = input_port_config.name;
-          }
-        } else if (node.getInPorts().length > 1) {
-          // Multiple input ports
-          map[0] = {};
-          node.getInPorts().forEach((port: DefaultPortModel) => {
-            // Links return a dictionary, indexed by connected node
-            if (Object.keys(port.getLinks()).length > 0) {
-              if (Object.keys(port.getLinks()).length > 1)
-                throw new Error("Input port has more than one link" + node);
-              const link = port.getLinks()[Object.keys(port.getLinks())[0]];
-              const node_from =
-                link.getTargetPort().getNode() == node
-                  ? link.getSourcePort().getNode()
-                  : link.getTargetPort().getNode();
-              const input_port_config = this.getNodeUserConfig(node_from);
-              map[0][port.getName()] = input_port_config.name;
-            }
-          });
+          // If singleton, return string instead of list
+          map[0] = map[0][Object.keys(map[0])[0]];
         }
         // Add connector
         if (map[0] !== null) {
@@ -152,8 +160,8 @@ class NodeSceneBase {
           };
           js.push(conn);
         }
-      });
-    console.log(js);
+      }
+    });
     return js;
   }
 }
