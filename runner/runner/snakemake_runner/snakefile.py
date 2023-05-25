@@ -284,6 +284,16 @@ def GetFileAndWorkingDirectory(filename):
     return filename, workdir
 
 
+def GetMissingFileDependencies(filename: str, *args, **kwargs) -> List[str]:
+    """Get missing file dependencies from snakemake"""
+    if "--d3dag" not in args:
+        args = args + ("--d3dag",)
+    stdout, stderr = snakemake(filename, *args, **kwargs)
+    if not stderr:
+        return []
+    return list(filter(None, map(str.strip, stderr.split("\n"))))[4:]
+
+
 @contextlib.contextmanager
 def IsolatedTempFile(content: str, tempdir=None):
     """Create isolated file with passed content placed into a new blank folder"""

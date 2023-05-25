@@ -4,6 +4,7 @@ from unittest import mock
 
 from runner.snakemake_runner.snakefile import Build
 from runner.snakemake_runner.snakefile import FullTokenizeFromFile
+from runner.snakemake_runner.snakefile import GetMissingFileDependencies
 from runner.snakemake_runner.snakefile import IsolatedTempFile
 from runner.snakemake_runner.snakefile import LintContents
 from runner.snakemake_runner.snakefile import SplitByRulesFileContent
@@ -144,3 +145,18 @@ def test_IsolatedTempFile():
         with open(filename, "r") as infile:
             assert infile.read() == contents
     assert not os.path.exists(filename)
+
+
+def test_GetMissingFileDependencies() -> None:
+    test_snakefile: str = """
+rule all:
+    input:
+        "a.txt",
+        "b.txt",
+        "c.txt"
+"""
+    target = ["a.txt", "b.txt", "c.txt"]
+    with IsolatedTempFile(test_snakefile) as temp_filename:
+        deps = GetMissingFileDependencies(temp_filename)
+    assert len(deps) == len(target)
+    assert set(deps) == set(target)
