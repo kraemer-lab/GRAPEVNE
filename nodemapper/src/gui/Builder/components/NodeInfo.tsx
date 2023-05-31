@@ -1,8 +1,10 @@
 import React from "react";
 import styled from "@emotion/styled";
+import HighlightedJSON from "./HighlightedJSON";
 
 import { useState } from "react";
 import { useEffect } from "react";
+import { Component } from "react";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 
@@ -14,50 +16,10 @@ const Content = styled.div`
   height: 100%;
 `;
 
-/*
- * HighlightedJSON code modified from:
- * https://codepen.io/benshope/pen/BxVpjo
- */
-const HighlightedJSON = (json_obj) => {
-  const json = json_obj.json;
-  if (json === "" || json === undefined || json === JSON.stringify({})) {
-    return <div className="json"></div>;
-  }
-  if (json === JSON.stringify({})) {
-    return <div className="json"></div>;
-  }
-  const highlightedJSON = (jsonObj) =>
-    Object.keys(jsonObj).map((key) => {
-      const value = jsonObj[key];
-      let valueType = typeof value;
-      const isSimpleValue =
-        ["string", "number", "boolean"].includes(valueType) || !value;
-      if (isSimpleValue && valueType === "object") {
-        valueType = "null" as undefined;
-      }
-      return (
-        <div key={key} className="line">
-          <span className="key">{key}:</span>
-          {isSimpleValue ? (
-            valueType === "string" ? (
-              <span className={valueType}>&quot;{`${value}`}&quot;</span>
-            ) : (
-              <span className={valueType}>{`${value}`}</span>
-            )
-          ) : (
-            highlightedJSON(value)
-          )}
-        </div>
-      );
-    });
-  return <div className="json">{highlightedJSON(JSON.parse(json))}</div>;
-};
-
 export default function NodeInfo() {
+  const [codesnippet, setCodesnippet] = useState("");
   const nodeinfo = useAppSelector((state) => state.display.nodeinfo);
   const dispatch = useAppDispatch();
-
-  const [codesnippet, setCodesnippet] = useState("");
 
   useEffect(() => {
     if (nodeinfo === "") {

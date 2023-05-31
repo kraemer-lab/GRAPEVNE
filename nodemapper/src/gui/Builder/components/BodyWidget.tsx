@@ -75,17 +75,19 @@ export const BodyWidget = (props: BodyWidgetProps) => {
     );
     // Determine number (and names of input ports)
     let input_namespace = {};
-    try {
-      input_namespace = Object.keys(data.config.params.input_namespace);
-    } catch (e: unknown) {
-      switch (data.type) {
-        case "module":
-        case "connector":
-        case "terminal":
-          input_namespace["In"] = "In";
-          break;
+    if (data.config.params.input_namespace === undefined) {
+      // No input namespace specified - use default unless source
+      if (data.type !== "source") {
+        input_namespace["In"] = "In";
       }
+    } else if (typeof data.config.params.input_namespace === "object") {
+      // Where the input namespace is an object (probably a dictionary)
+      input_namespace = Object.keys(data.config.params.input_namespace);
+    } else {
+      // Where the input namespace is not an object (probably a string)
+      input_namespace["In"] = "In";
     }
+    // Add input ports
     for (const key in input_namespace) {
       node.addInPort(input_namespace[key]);
     }

@@ -61,7 +61,7 @@ def GetLocalModules(path: str) -> List[dict]:
                     print(f"Config file not found - assuming blank: {file}")
                 modules.append(
                     {
-                        "name": f"{org}_{workflow}",
+                        "name": f"({org}) {FormatName(workflow)}",
                         "type": module_type[:-1],  # remove plural
                         "config": {
                             "url": abspath(url_workflow),
@@ -158,7 +158,7 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                 params = yaml.safe_load(r_config.text)
                 modules.append(
                     {
-                        "name": f"{org['name']}_{workflow['name']}",
+                        "name": f"({org['name']}) {FormatName(workflow['name'])}",
                         "type": module_type["name"][:-1],  # remove plural
                         "config": {
                             "url": {
@@ -232,6 +232,10 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
         )
 
     return modules
+
+
+def FormatName(name: str) -> str:
+    return " ".join([n[0].upper() + n[1:] for n in name.replace("_", " ").split(" ")])
 
 
 if __name__ == "__main__":

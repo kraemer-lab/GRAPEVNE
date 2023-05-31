@@ -36,7 +36,7 @@ def post():
                     "workflow.json", "w"
                 ) as f:  # dump config file to disk for debug
                     json.dump(js, f, indent=4)
-                memory_zip = builder.BuildFromJSON(js)
+                memory_zip, _ = builder.BuildFromJSON(js)
                 return Response(
                     base64.b64encode(memory_zip),
                     mimetype="application/zip",

@@ -127,7 +127,7 @@ function NodeSelected(
     const node = builder.getNodeById(id);
     let payload = {};
     if (node === null) {
-      console.debug("Selected node not found in engine: ", action.payload.id);
+      console.error("Selected node not found in engine: ", action.payload.id);
       payload = {
         id: action.payload.id,
         name: "ERROR: Failed to find node (" + id + ")",
@@ -189,7 +189,7 @@ function UpdateModulesList(dispatch: TPayloadString) {
 
 function SubmitQueryExpectZip(query: Record<string, unknown>) {
   // POST request handler
-  async function postRequest() {
+  async function postZIPRequest() {
     const postRequestOptions = {
       method: "POST",
       headers: {
@@ -241,7 +241,7 @@ function SubmitQueryExpectZip(query: Record<string, unknown>) {
         document.body.removeChild(element);
       });
   }
-  postRequest();
+  postZIPRequest();
 }
 
 async function postRequestCheckNodeDependencies(
