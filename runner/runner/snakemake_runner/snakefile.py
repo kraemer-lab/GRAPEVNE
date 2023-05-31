@@ -8,6 +8,7 @@ from typing import Dict
 from typing import List
 from typing import Tuple
 
+from builder.builder import BuildFromJSON
 from runner.TokenizeFile import TokenizeFile
 
 
@@ -242,6 +243,28 @@ def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
     return rules
 
 
+def CheckNodeDependencies(jsDeps: dict) -> dict:
+    build = BuildFromJSON(jsDeps, singlefile=True)
+    missing_deps = set(GetMissingFileDependencies_FromContents(build))
+    output_namespaces = set(
+        [
+            j.get("config", {}).get("params", {}).get("output_namespace", "")
+            for j in jsDeps
+            if j.get("type", "") in ["module", "source"]
+        ]
+    )
+    unresolved_dep_sources = set(
+        [s.split("/")[1] for s in missing_deps if s.startswith("results/")]
+    )
+    unresolved_deps = unresolved_dep_sources - output_namespaces
+    if unresolved_deps:
+        return {
+            "status": "missing",
+            "unresolved": list(unresolved_deps),
+        }
+    return {"status": "ok"}
+
+
 # ##############################################################################
 # Utility functions
 # ##############################################################################
@@ -257,8 +280,6 @@ def DagLocal(filename: str, workdir: str = "") -> dict:
     """Lint using snakemake library (returns on stdout with extra elements)"""
     kwargs = {"workdir": workdir} if workdir else {}
     stdout, stderr = snakemake(filename, "--d3dag", **kwargs)
-    print(stdout)
-    print(stderr)
     # strip first and last lines as needed (snakemake returns True/False)
     sl = stdout.split("\n")
     if sl[0] in {"True", "False"}:
@@ -284,14 +305,36 @@ def GetFileAndWorkingDirectory(filename):
     return filename, workdir
 
 
-def GetMissingFileDependencies(filename: str, *args, **kwargs) -> List[str]:
+def GetMissingFileDependencies_FromContents(content: str, *args, **kwargs) -> List[str]:
+    """Get missing file dependencies from snakemake"""
+    with IsolatedTempFile(content) as snakefile:
+        file_list = GetMissingFileDependencies_FromFile(snakefile)
+    return file_list
+
+
+def GetMissingFileDependencies_FromFile(filename: str, *args, **kwargs) -> List[str]:
     """Get missing file dependencies from snakemake"""
     if "--d3dag" not in args:
         args = args + ("--d3dag",)
     stdout, stderr = snakemake(filename, *args, **kwargs)
+    print(
+        f"A non-MissingInputException error has been detected: \nstdout={stdout}\nstderr={stderr}"
+    )
+    stderr = "\n".join(stderr.split("\n"))
+    if stdout:
+        # build succeeded
+        return []
     if not stderr:
         return []
-    return list(filter(None, map(str.strip, stderr.split("\n"))))[4:]
+    if "MissingInputException" not in [
+        line.split(" ")[0] for line in stderr.split("\n")[0:2]
+    ]:
+        raise Exception(
+            f"A non-MissingInputException error has been detected: \nstdout={stdout}\nstderr={stderr}"
+        )
+    fileslist = list(filter(None, map(str.strip, stderr.split("\n"))))
+    ix = fileslist.index("affected files:")
+    return fileslist[(ix + 1) :]
 
 
 @contextlib.contextmanager
@@ -330,7 +373,6 @@ def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
         del kwargs["workdir"]
     except KeyError:
         pass
-    print(args)
     arglist = list(args)
     for k, v in kwargs.items():
         arglist.extend([k, v])

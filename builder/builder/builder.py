@@ -18,7 +18,6 @@ class Node:
         url="",
         params={},
         input_namespace: str | dict = "",
-        input_filename: str | dict = "",
         output_namespace: str = "",
     ):
         self.name = name
@@ -27,21 +26,13 @@ class Node:
         self.url = url
         self.params = params if params else {}
         self.input_namespace = input_namespace
-        self.input_filename = input_filename
         self.output_namespace = output_namespace
-        self.output_filename = self.params.get("output_filename", "")
 
     def GetOutputNamespace(self) -> str:
         return self.output_namespace
 
     def GetInputNamespace(self) -> str | dict:
         return self.input_namespace
-
-    def GetOutputFilepath(self) -> str:
-        if self.output_filename:
-            return f"{self.output_namespace}/{self.output_filename}"
-        else:
-            return f"{self.output_namespace}/mark"
 
 
 class Module(Node):
@@ -63,17 +54,24 @@ class Model:
     def __init__(self) -> None:
         self.nodes: List[Node] = []  # List of Node objects
 
-    def BuildSnakefile(self):
-        s = 'configfile: "config/config.yaml"\n\n'
+    def BuildSnakefile(
+        self,
+        configfile: str = "config/config.yaml",
+        allrule: bool = True,
+    ):
+        s = ""
+        if configfile:
+            s = f'configfile: "{configfile}"\n\n'
         # Start with default rule, which lists ALL outputs
-        s += "rule all:\n"
-        s += "    input:\n"
-        for node in self.nodes:
-            # Add to terminal node if output if not connected to another module
-            if node.nodetype.casefold() == "module" and self.NodeIsTerminus(node):
-                s += f'        "results/{node.GetOutputFilepath()}",\n'
-        s += "    default_target: True\n"
-        s += "\n"
+        # if allrule:
+        #    s += "rule all:\n"
+        #    s += "    input:\n"
+        #    for node in self.nodes:
+        #        # Add to terminal node if output if not connected to another module
+        #        if node.nodetype.casefold() == "module" and self.NodeIsTerminus(node):
+        #            s += f'        "results/{node.GetOutputFilepath()}",\n'
+        #    s += "    default_target: True\n"
+        #    s += "\n"
         # Build Snakefile
         for node in self.nodes:
             s += f"module {node.rulename}:\n"
@@ -98,20 +96,28 @@ class Model:
         # Build config file
         c = {}
         for node in self.nodes:
-            cnode = {}
-            cnode["input_namespace"] = node.input_namespace
-            if node.input_filename:
-                cnode["input_filename"] = node.input_filename
-            else:
-                cnode["input_filename"] = ""
+            cnode = node.params.copy()
+
+            # Input namespace
+            cnode["input_namespace"] = cnode.get(
+                "input_namespace", node.input_namespace
+            )
+            if isinstance(cnode["input_namespace"], dict):
+                if not isinstance(node.input_namespace, dict):
+                    node.input_namespace = {}
+                for k, v in cnode["input_namespace"].items():
+                    if node.input_namespace.get(k, None):
+                        cnode["input_namespace"][k] = node.input_namespace[k]
+                    # Don't use 'null' for input namespaces
+                    if not cnode["input_namespace"][k]:
+                        cnode["input_namespace"][k] = k
+            if isinstance(node.input_namespace, str):
+                cnode["input_namespace"] = node.input_namespace
+
+            # Output namespace
             cnode["output_namespace"] = node.output_namespace
-            if node.output_filename:
-                cnode["output_filename"] = node.output_filename
-            else:
-                cnode["output_filename"] = "mark"
-            for key, value in node.params.items():
-                if key not in ["input_namespace"]:
-                    cnode[key] = value
+
+            # Save
             c[node.rulename] = cnode
         return yaml.dump(c)
 
@@ -173,16 +179,13 @@ class Model:
                 raise ValueError("No matching node found for connector source")
             if isinstance(mapping[0], dict):
                 node_to.input_namespace = {}
-                node_to.input_filename = {}
                 for k, v in mapping[0].items():
                     node_to.input_namespace[k] = self.GetNodeByName(v).output_namespace
-                    node_to.input_filename[k] = self.GetNodeByName(v).output_filename
             else:
                 node_from = self.GetNodeByName(mapping[0])
                 if not node_from:
                     raise ValueError("No matching node found for connector destination")
                 node_to.input_namespace = node_from.output_namespace
-                node_to.input_filename = node_from.output_filename
             return None
 
     def GetNodeByName(self, name: str) -> Node | None:
@@ -200,6 +203,35 @@ class Model:
         return True
 
 
+def YAMLToConfig(content: str) -> str:
+    yl = yaml.safe_load(content)
+
+    def parse_struct(yl: dict):
+        c = ""
+        for key, value in yl.items():
+            if isinstance(value, dict):
+                vv = parse_struct(value)
+                vv = [v for v in vv.split("\n") if v]
+                c += f'["{key}"]={{}}\n'  # Create empty dict
+                c += "\n".join([f'["{key}"]{v}' for v in vv]) + "\n"
+            elif isinstance(value, list):
+                raise Exception("Lists not supported in config")
+            elif not value:
+                # Null
+                c += f'["{key}"]="None"\n'
+            else:
+                # Some primitive type
+                c += f'["{key}"]="{value}"\n'
+        return c
+
+    c = parse_struct(yl)
+    c = ["config" + s for s in c.split("\n") if s]
+    c = "\n".join(c) + "\n"
+    c = "config={}\n" + c
+    print(c)
+    return c
+
+
 def BuildFromFile(filename: str):
     # Read JSON config file
     try:
@@ -214,7 +246,7 @@ def BuildFromFile(filename: str):
     BuildFromJSON(config)
 
 
-def BuildFromJSON(config: dict):
+def BuildFromJSON(config: dict, singlefile: bool = False):
     m = Model()
     # Add modules first to ensure all namespaces are defined
     for item in config:
@@ -231,15 +263,22 @@ def BuildFromJSON(config: dict):
                     item["name"],
                     item["config"],
                 )
-    # Create workflow directory structure
-    m.SaveWorkflow()
-    # Create zip archive
-    zipfilename = "build"
-    shutil.make_archive(zipfilename, "zip", "build")
-    # Load contents of zip file and return as string
-    with open(f"{zipfilename}.zip", "rb") as file:
-        contents = file.read()
-    return contents
+    if singlefile:
+        return (
+            YAMLToConfig(m.BuildSnakefileConfig())
+            + "\n"
+            + m.BuildSnakefile(configfile="", allrule=False)
+        )
+    else:
+        # Create workflow directory structure
+        m.SaveWorkflow()
+        # Create zip archive
+        zipfilename = "build"
+        shutil.make_archive(zipfilename, "zip", "build")
+        # Load contents of zip file and return as string
+        with open(f"{zipfilename}.zip", "rb") as file:
+            contents = file.read()
+        return contents
 
 
 if __name__ == "__main__":

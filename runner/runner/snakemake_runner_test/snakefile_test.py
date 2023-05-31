@@ -4,7 +4,7 @@ from unittest import mock
 
 from runner.snakemake_runner.snakefile import Build
 from runner.snakemake_runner.snakefile import FullTokenizeFromFile
-from runner.snakemake_runner.snakefile import GetMissingFileDependencies
+from runner.snakemake_runner.snakefile import GetMissingFileDependencies_FromContents
 from runner.snakemake_runner.snakefile import IsolatedTempFile
 from runner.snakemake_runner.snakefile import LintContents
 from runner.snakemake_runner.snakefile import SplitByRulesFileContent
@@ -148,15 +148,27 @@ def test_IsolatedTempFile():
 
 
 def test_GetMissingFileDependencies() -> None:
+    # Provide a list of files with no associated inputs, then mark then as
+    # outputs of a later rule one at a time; lists should correspond
+    target = ["a.txt", "b.txt", "c.txt"]
     test_snakefile: str = """
 rule all:
     input:
-        "a.txt",
-        "b.txt",
-        "c.txt"
 """
-    target = ["a.txt", "b.txt", "c.txt"]
-    with IsolatedTempFile(test_snakefile) as temp_filename:
-        deps = GetMissingFileDependencies(temp_filename)
+    for trgt in target:
+        test_snakefile += f'        "{trgt}",\n'
+    deps = GetMissingFileDependencies_FromContents(test_snakefile)
     assert len(deps) == len(target)
     assert set(deps) == set(target)
+    test_snakefile += """
+rule missing_targets:
+    output:
+"""
+    # Recurse through, emptying list
+    for _ in range(len(target)):
+        test_snakefile += f'        "{target[0]}",\n'
+        target.pop(0)
+        deps = GetMissingFileDependencies_FromContents(test_snakefile)
+        assert len(deps) == len(target)
+        assert set(deps) == set(target)
+    assert len(target) == 0

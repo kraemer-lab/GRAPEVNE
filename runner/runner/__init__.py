@@ -1,4 +1,5 @@
 from .runner import Build  # noqa: F401
+from .runner import CheckNodeDependencies  # noqa: F401
 from .runner import DeleteAllOutput  # noqa: F401
 from .runner import FullTokenizeFromFile  # noqa: F401
 from .runner import Launch  # noqa: F401

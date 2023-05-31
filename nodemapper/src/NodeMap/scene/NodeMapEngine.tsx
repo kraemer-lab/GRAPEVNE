@@ -3,9 +3,14 @@ import NodeScene from "./NodeScene";
 import { NodeModel } from "@projectstorm/react-diagrams";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
+import { DefaultLinkModel } from "NodeMap";
+import { DefaultPortModel } from "NodeMap";
 import { DefaultNodeModel } from "NodeMap";
 import { DefaultNodeFactory } from "NodeMap";
 import { DefaultPortFactory } from "NodeMap";
+
+// TODO: Replace with webpack proxy (problems getting this to work)
+const API_ENDPOINT = "http://127.0.0.1:5000/api";
 
 interface IPayload {
   id: string;
@@ -122,11 +127,26 @@ export default class NodeMapEngine {
 
   public AddSelectionListeners(
     select_fn: (payload: IPayload) => void,
-    deselect_fn: (payload: IPayload) => void
+    deselect_fn: (payload: IPayload) => void,
+    addlink_fn: (payload: DefaultLinkModel) => void
   ) {
     // Add listeners, noting the following useful resource:
     // https://github.com/projectstorm/react-diagrams/issues/164
     const model = this.engine.getModel();
+    // Clear listeners on base model (link listeners)
+    model.clearListeners();
+    // New link listener
+    model.registerListener({
+      linksUpdated: (event) => {
+        const link = event.link as DefaultLinkModel;
+        link.registerListener({
+          targetPortChanged: (event) => {
+            addlink_fn(link);
+          },
+        });
+      },
+    });
+    // Add node selection listeners
     model.getNodes().forEach((node) => {
       node.registerListener({
         selectionChanged: (e) => {

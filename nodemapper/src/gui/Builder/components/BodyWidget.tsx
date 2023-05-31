@@ -117,7 +117,6 @@ export const BodyWidget = (props: BodyWidgetProps) => {
           const payload: IPayload = {
             id: newnode.getOptions().id,
           };
-          console.log(e.isSelected);
           if (e.isSelected) {
             dispatch(builderNodeSelected(payload));
           } else {

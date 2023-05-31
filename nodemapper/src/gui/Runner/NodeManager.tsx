@@ -38,6 +38,9 @@ function NodeManager() {
       },
       (x) => {
         dispatch(runnerNodeDeselected(x));
+      },
+      (x) => {
+        return;
       }
     );
   };
