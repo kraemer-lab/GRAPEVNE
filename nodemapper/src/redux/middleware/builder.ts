@@ -127,7 +127,7 @@ function NodeSelected(
     const node = builder.getNodeById(id);
     let payload = {};
     if (node === null) {
-      console.debug("Selected node not found in engine: ", action.payload.id);
+      console.error("Selected node not found in engine: ", action.payload.id);
       payload = {
         id: action.payload.id,
         name: "ERROR: Failed to find node (" + id + ")",

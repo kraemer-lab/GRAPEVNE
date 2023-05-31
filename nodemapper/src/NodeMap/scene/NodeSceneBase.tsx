@@ -136,32 +136,36 @@ class NodeSceneBase {
     return this.getModuleListJSONFromNodes(nodes);
   }
 
-  getModuleListJSONFromNodes(nodes) {
+  getModuleListJSONFromNodes(nodes, add_connector = false) {
     const js = [];
+
+    // Add nodes
     nodes.forEach((node: DefaultNodeModel) => {
       js.push(this.getNodeUserConfig(node));
-      // Add connector (for inputs)
-      const map = [null, null];
-      map[0] = this.getNodeInputNodes(node);
-      if (node.getInPorts().length > 0) {
-        if (node.getInPorts().length == 1) {
-          // If singleton, return string instead of list
-          map[0] = map[0][Object.keys(map[0])[0]];
-        }
-        // Add connector
-        if (map[0] !== null) {
-          map[1] = this.getNodeUserConfig(node).name;
-          const conn = {
-            name: "Join [" + map[1] + "]",
-            type: "connector",
-            config: {
-              map: map,
-            },
-          };
-          js.push(conn);
-        }
-      }
     });
+
+    // Add connectors (for first node only)
+    const node: DefaultNodeModel = nodes[0];
+    const map = [null, null];
+    map[0] = this.getNodeInputNodes(node);
+    if (node.getInPorts().length > 0) {
+      if (node.getInPorts().length == 1) {
+        // If singleton, return string instead of list
+        map[0] = map[0][Object.keys(map[0])[0]];
+      }
+      // Add connector
+      if (map[0] !== null) {
+        map[1] = this.getNodeUserConfig(node).name;
+        const conn = {
+          name: "Join [" + map[1] + "]",
+          type: "connector",
+          config: {
+            map: map,
+          },
+        };
+        js.push(conn);
+      }
+    }
     return js;
   }
 }

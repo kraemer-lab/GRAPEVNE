@@ -147,7 +147,14 @@ class Model:
         ]
 
     def WrangleRuleName(self, name: str):
-        return name.replace(" ", "_").replace("/", "_").replace(".", "_").lower()
+        return (
+            name.replace(" ", "_")
+            .replace("/", "_")
+            .replace(".", "_")
+            .replace("(", "")
+            .replace(")", "")
+            .lower()
+        )
 
     def AddModule(self, name: str, module: dict) -> Node:
         kwargs = module.copy()
@@ -180,6 +187,8 @@ class Model:
             if isinstance(mapping[0], dict):
                 node_to.input_namespace = {}
                 for k, v in mapping[0].items():
+                    print("---")
+                    print(v)
                     node_to.input_namespace[k] = self.GetNodeByName(v).output_namespace
             else:
                 node_from = self.GetNodeByName(mapping[0])
@@ -190,6 +199,7 @@ class Model:
 
     def GetNodeByName(self, name: str) -> Node | None:
         for node in self.nodes:
+            print(node.name)
             if node.name == name:
                 return node
         return None
