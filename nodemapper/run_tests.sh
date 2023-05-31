@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-yarn
+set -euox pipefail
+cd "$(dirname "$0")"
 
+yarn
 yarn lint
 yarn test

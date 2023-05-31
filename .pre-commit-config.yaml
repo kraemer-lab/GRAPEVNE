@@ -28,3 +28,30 @@ repos:
     rev: v2.7.1
     hooks:
       - id: prettier
+  - repo: local
+    # Continuous integration checks
+    hooks:
+      - id: tests-runner
+        name: Testing Runner
+        entry: bash -c 'runner/run_tests.sh'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: tests-builder
+        name: Testing Builder
+        entry: bash -c 'builder/run_tests.sh'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: tests-nodemapper
+        name: Testing Nodemapper
+        entry: bash -c 'nodemapper/run_tests.sh'
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: tests-backend
+        name: Testing Backend
+        entry: bash -c 'backend/run_tests.sh'
+        language: system
+        pass_filenames: false
+        always_run: true
