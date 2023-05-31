@@ -189,7 +189,7 @@ function UpdateModulesList(dispatch: TPayloadString) {
 
 function SubmitQueryExpectZip(query: Record<string, unknown>) {
   // POST request handler
-  async function postRequest() {
+  async function postZIPRequest() {
     const postRequestOptions = {
       method: "POST",
       headers: {
@@ -241,7 +241,7 @@ function SubmitQueryExpectZip(query: Record<string, unknown>) {
         document.body.removeChild(element);
       });
   }
-  postRequest();
+  postZIPRequest();
 }
 
 async function postRequestCheckNodeDependencies(

@@ -93,6 +93,10 @@ class Model:
         return s
 
     def BuildSnakefileConfig(self):
+        c = self.ConstructSnakefileConfig()
+        return yaml.dump(c)
+
+    def ConstructSnakefileConfig(self):
         # Build config file
         c = {}
         for node in self.nodes:
@@ -119,7 +123,7 @@ class Model:
 
             # Save
             c[node.rulename] = cnode
-        return yaml.dump(c)
+        return c
 
     def SaveWorkflow(self):
         pathlib.Path("build/config").mkdir(parents=True, exist_ok=True)
@@ -187,8 +191,6 @@ class Model:
             if isinstance(mapping[0], dict):
                 node_to.input_namespace = {}
                 for k, v in mapping[0].items():
-                    print("---")
-                    print(v)
                     node_to.input_namespace[k] = self.GetNodeByName(v).output_namespace
             else:
                 node_from = self.GetNodeByName(mapping[0])
@@ -199,7 +201,6 @@ class Model:
 
     def GetNodeByName(self, name: str) -> Node | None:
         for node in self.nodes:
-            print(node.name)
             if node.name == name:
                 return node
         return None
@@ -238,7 +239,6 @@ def YAMLToConfig(content: str) -> str:
     c = ["config" + s for s in c.split("\n") if s]
     c = "\n".join(c) + "\n"
     c = "config={}\n" + c
-    print(c)
     return c
 
 
@@ -278,7 +278,7 @@ def BuildFromJSON(config: dict, singlefile: bool = False):
             YAMLToConfig(m.BuildSnakefileConfig())
             + "\n"
             + m.BuildSnakefile(configfile="", allrule=False)
-        )
+        ), m
     else:
         # Create workflow directory structure
         m.SaveWorkflow()
@@ -288,7 +288,7 @@ def BuildFromJSON(config: dict, singlefile: bool = False):
         # Load contents of zip file and return as string
         with open(f"{zipfilename}.zip", "rb") as file:
             contents = file.read()
-        return contents
+        return contents, m
 
 
 if __name__ == "__main__":

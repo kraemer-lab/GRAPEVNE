@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+from pathlib import Path
 from typing import Dict
 from typing import List
 from typing import Tuple
@@ -244,19 +245,30 @@ def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
 
 
 def CheckNodeDependencies(jsDeps: dict) -> dict:
-    build = BuildFromJSON(jsDeps, singlefile=True)
+    """Check if all dependencies are resolved for a given node"""
+
+    # Build model from JSON (for dependency analysis)
+    build, model = BuildFromJSON(jsDeps, singlefile=True)
     missing_deps = set(GetMissingFileDependencies_FromContents(build))
-    output_namespaces = set(
-        [
-            j.get("config", {}).get("params", {}).get("output_namespace", "")
-            for j in jsDeps
-            if j.get("type", "") in ["module", "source"]
-        ]
-    )
+
+    # Determine input namespaces for target node
+    input_namespaces = model.ConstructSnakefileConfig()[
+        model.GetNodeByName(model.nodes[0].name).rulename  # first (target) node
+    ].get("input_namespace", {})
+    if isinstance(input_namespaces, str):
+        input_namespaces = {"In": input_namespaces}
+    if not input_namespaces:
+        input_namespaces = {"In": "In"}
+    input_namespaces = set(input_namespaces.values())
+
+    # Determine unresolved dependencies (and their source namespaces)
     unresolved_dep_sources = set(
-        [s.split("/")[1] for s in missing_deps if s.startswith("results/")]
+        s.split("/")[1] for s in missing_deps if s.startswith("results/")
     )
-    unresolved_deps = unresolved_dep_sources - output_namespaces
+
+    # Target dependencies are resolved if there is no overlap between missing
+    # dependencies and the target node's input namespaces
+    unresolved_deps = unresolved_dep_sources.intersection(input_namespaces)
     if unresolved_deps:
         return {
             "status": "missing",
@@ -306,20 +318,34 @@ def GetFileAndWorkingDirectory(filename):
 
 
 def GetMissingFileDependencies_FromContents(content: str, *args, **kwargs) -> List[str]:
-    """Get missing file dependencies from snakemake"""
+    """Get missing file dependencies from snakemake
+
+    Recursively find missing dependencies for rulesets. One missing
+    dependencies are found, touch those file (in an isolated environment) and
+    repeat the process to capture all missing dependencies.
+    """
+    deps = []
     with IsolatedTempFile(content) as snakefile:
-        file_list = GetMissingFileDependencies_FromFile(snakefile)
-    return file_list
+        path = os.path.dirname(os.path.abspath(snakefile))
+        while file_list := GetMissingFileDependencies_FromFile(snakefile):
+            deps.extend(file_list)
+            for dep in deps:
+                # Touch missing file
+                target = os.path.abspath(f"{path}/{dep}")
+                Path(os.path.dirname(target)).mkdir(parents=True, exist_ok=True)
+                Path(target).touch()
+    return deps
 
 
 def GetMissingFileDependencies_FromFile(filename: str, *args, **kwargs) -> List[str]:
-    """Get missing file dependencies from snakemake"""
+    """Get missing file dependencies from snakemake (single file)
+
+    Find missing dependencies for one run of a ruleset; for recursive /
+    multiple runs use the corresponding _FromContents function.
+    """
     if "--d3dag" not in args:
         args = args + ("--d3dag",)
     stdout, stderr = snakemake(filename, *args, **kwargs)
-    print(
-        f"A non-MissingInputException error has been detected: \nstdout={stdout}\nstderr={stderr}"
-    )
     stderr = "\n".join(stderr.split("\n"))
     if stdout:
         # build succeeded
