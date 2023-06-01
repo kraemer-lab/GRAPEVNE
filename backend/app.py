@@ -18,6 +18,7 @@ CORS(app)
 @app.route("/api/post", methods=["POST"])
 @cross_origin()
 def post():
+    """Handles POST requests from the frontend."""
     try:
         app.logger.debug(f"POST request: {request.json}")
         match request.json["query"]:
@@ -120,4 +121,5 @@ def post():
 
 @app.route("/")
 def main() -> str:
+    """Returns a simple message to indicate that the server is running."""
     return "<p>Phyloflow flask server is running</p>"

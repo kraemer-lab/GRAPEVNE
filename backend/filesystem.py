@@ -3,6 +3,7 @@ import shutil
 
 
 def DeleteResults(data) -> dict:
+    """Remove the local 'results' folder"""
     dirname = data["content"]
     dirname = f"{dirname}/results"
     shutil.rmtree(dirname)
@@ -10,6 +11,7 @@ def DeleteResults(data) -> dict:
 
 
 def GetFolderItems(data) -> dict:
+    """Get the contents of a folder"""
     dirname = data["content"]
 
     dirlist = [

@@ -80,12 +80,13 @@ def GetRemoteModulesGithub(
     Function currently supports workflows by directory listing, but could also
     support listings by branches in the future.
 
-    Input
-        repo:           repository string in the format: "owner/repository"
-        listing_type:   "DirectoryListing" or "BranchListing"
+    Args:
+        repo: repository string in the format: "owner/repository"
+        listing_type: type of listing to use (default: "BranchListing").
+                      Options: "BranchListing", "DirectoryListing"
 
-    Output
-        list of modules
+    Returns:
+        List of modules
     """
 
     match listing_type:
@@ -100,7 +101,11 @@ def GetRemoteModulesGithub(
 def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
     """Get remote modules from url (by directory listing)
 
-    repo: repository string in the format: "owner/repository"
+    Args:
+        repo: repository string in the format: "owner/repository"
+
+    Returns:
+        List of modules
     """
 
     url_github: str = "https://api.github.com/repos"
@@ -183,7 +188,11 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
 def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
     """Get remote modules from url (by branches)
 
-    repo: repository string in the format: "owner/repository"
+    Args:
+        repo: repository string in the format: "owner/repository"
+
+    Returns:
+        List of modules
     """
 
     url_github: str = "https://api.github.com/repos"
@@ -235,11 +244,12 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
 
 
 def FormatName(name: str) -> str:
+    """Formats name to (human readable) title case"""
     return " ".join([n[0].upper() + n[1:] for n in name.replace("_", " ").split(" ")])
 
 
 if __name__ == "__main__":
-    # Test function using default repository
+    """Test function using default repository"""
     print(
         GetModulesList(
             {

@@ -5,9 +5,10 @@ from typing import Tuple
 
 
 class TokenizeFile:
-    """Use GetBlockFromIndex(blockno) to retreive the top-level indentation blocks"""
+    """Tokenize file and calculate indentation levels"""
 
     def __init__(self, content: str):
+        """Tokenize file and calculate indentation levels"""
         self.content: str = ""
         self.tokens: List[Tuple] = []
         self.indent_levels: List[int] = []
@@ -35,6 +36,7 @@ class TokenizeFile:
                 log_fn(ix, token)
 
     def PrintLineInfo(self):
+        """Print line number, indent level and line"""
         lineno = 0
         print("Block Indent Line")
         with io.StringIO(self.content) as file:
@@ -62,14 +64,17 @@ class TokenizeFile:
         return foundlist
 
     def GetLineNumberFromTokenIndex(self, pos) -> int:
+        """Return line number from token index"""
         _, _, start, _, _ = self.tokens[pos]
         row, _ = start
         return row
 
     def GetIndentLevelFromLinenumber(self, linenumber):
+        """Return indentation level from line number"""
         return self.indent_levels[linenumber]
 
     def GetIndentLevelFromTokenIndex(self, pos):
+        """Return indentation level from token index"""
         indent = 0
         for token in self.tokens[: pos - 1]:
             toknum, _, _, _, _ = token
@@ -80,6 +85,7 @@ class TokenizeFile:
         return indent
 
     def GetFirstTokenIndexOfLine(self, linenumber):
+        """Return first token index of line"""
         for ix, token in enumerate(self.tokens):
             _, _, start, _, _ = token
             row, col = start
@@ -88,6 +94,7 @@ class TokenizeFile:
         return None
 
     def GetContentBetweenTokenIndices(self, pos_from, pos_to):
+        """Return content between token indices"""
         tokens = []
         startrow = self.tokens[pos_from][2][0] - 1
         endrow = self.tokens[pos_from][3][0] - 1
@@ -105,12 +112,14 @@ class TokenizeFile:
         return tokenize.untokenize(tokens)
 
     def GetBlockFromIndex(self, blockno: int):
+        """Return content of block from block number"""
         return self.GetContentBetweenLines(
             self.rootblock.index(blockno),
             len(self.rootblock) - self.rootblock[::-1].index(blockno) - 1,
         )
 
     def GetContentBetweenLines(self, line_from, line_to):
+        """Return content between line numbers"""
         content = ""
         for line in range(line_from, line_to + 1):
             token = self.tokens[self.GetFirstTokenIndexOfLine(line)]
@@ -119,6 +128,7 @@ class TokenizeFile:
         return content
 
     def GetContentOfIndentBlock(self, linenumber, indentlevel):
+        """Return content of indent block"""
         block_list = self.GetBlockList(indentlevel)
         blockno = block_list[linenumber]
         line_from = block_list.index(blockno)
@@ -126,6 +136,7 @@ class TokenizeFile:
         return self.GetContentBetweenLines(line_from, line_to)
 
     def GetBlock(self, search_seq, ignore_tokens):
+        """Return content of block containing search sequence"""
         pos = self.FindTokenSequence(search_seq)
         if not pos:
             return None
@@ -159,9 +170,11 @@ class TokenizeFile:
         self.rootblock = rootblock
 
     def GetIndentLevels(self):
+        """Return indentation levels for each line in the file"""
         return self.indent_levels
 
     def CalcBlocks(self):
+        """Return block membership by number"""
         self.blocks = self.GetMembershipFromList(self.indent_levels)
 
     def GetBlockList(self, level=1):

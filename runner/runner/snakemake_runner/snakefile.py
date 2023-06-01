@@ -19,7 +19,7 @@ from runner.TokenizeFile import TokenizeFile
 
 
 def Build(data: dict) -> str:
-    """Build Snakefile out of structured [dict] data"""
+    """Build Snakefile from a dictionary of 'block' elements"""
     contents: str = ""
     for block in data["block"]:
         contents += block["content"] + "\n"
@@ -41,7 +41,7 @@ def DeleteAllOutput(filename: str) -> dict:
 
 
 def Launch(filename: str) -> dict:
-    """Launch snakemake workflow based upon provided [locally accessible] Snakefile"""
+    """Launch snakemake workflow given a [locally accessible] location"""
     filename, workdir = GetFileAndWorkingDirectory(filename)
     stdout, stderr = snakemake(
         filename,
@@ -55,7 +55,7 @@ def Launch(filename: str) -> dict:
 
 
 def Lint(snakefile: str) -> dict:
-    """Lint the Snakefile using the snakemake library, returns JSON"""
+    """Lint a Snakefile using the snakemake library, returns JSON"""
     try:
         stdout, stderr = snakemake(snakefile, "--lint", "json")
     except BaseException as e:
@@ -70,7 +70,7 @@ def Lint(snakefile: str) -> dict:
 
 
 def LintContents(content: str, tempdir: str | None = None) -> dict:
-    """Lint the Snakefile using the snakemake library, returns JSON"""
+    """Lint Snakefile contents using the snakemake library, returns JSON"""
     with IsolatedTempFile(content) as snakefile:
         lint_return = Lint(snakefile)
     return lint_return
@@ -167,6 +167,7 @@ def SplitByDagFromFile(filename: str, workdir: str = "") -> dict:
 
 
 def GetRuleFromID(blocks: List[dict], id: int) -> str:
+    """Get rule name from block ID"""
     for block in blocks:
         if block["id"] == id:
             return block["name"]
@@ -283,13 +284,14 @@ def CheckNodeDependencies(jsDeps: dict) -> dict:
 
 
 def DagFileContent(content: str) -> dict:
+    """Returns DAG as JSON from Snakefile content"""
     with IsolatedTempFile(content) as snakefile:
         dag = DagLocal(snakefile)
     return dag
 
 
 def DagLocal(filename: str, workdir: str = "") -> dict:
-    """Lint using snakemake library (returns on stdout with extra elements)"""
+    """Returns DAG as JSON from Snakefile"""
     kwargs = {"workdir": workdir} if workdir else {}
     stdout, stderr = snakemake(filename, "--d3dag", **kwargs)
     # strip first and last lines as needed (snakemake returns True/False)
@@ -301,7 +303,8 @@ def DagLocal(filename: str, workdir: str = "") -> dict:
     return json.loads("\n".join(sl))
 
 
-def GetFileAndWorkingDirectory(filename):
+def GetFileAndWorkingDirectory(filename: str) -> Tuple[str, str]:
+    """Get file and working directory from filename"""
     if os.path.isdir(filename):
         workdir = os.path.abspath(filename)
         filelist = [
@@ -386,7 +389,7 @@ def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
 
     This function takes optional arguments that are passed through to the
     snakemake executable, with the exception of:
-        workdir     Sets the working directory for job execution
+        workdir: sets the working directory for job execution
     """
     # Get Snakefile path
     snakefile = os.path.abspath(filename)

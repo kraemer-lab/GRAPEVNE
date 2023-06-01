@@ -8,7 +8,7 @@ import yaml
 
 
 class Node:
-    NODE_TYPES = ["module", "connector"]
+    """Node class for use with the workflow Model"""
 
     def __init__(
         self,
@@ -20,6 +20,18 @@ class Node:
         input_namespace: str | dict = "",
         output_namespace: str = "",
     ):
+        """Initialise a Node object, the parent class for Modules, Connector, etc.
+
+        Args:
+            name (str): Name of the node
+            rulename (str): Name of the rule
+            nodetype (str): Type of node (module, connector, etc.)
+            url (str): URL of the Snakefile
+            params (dict): Parameters for the Snakefile
+            input_namespace (str): Input namespace
+            output_namespace (str): Output namespace
+        """
+
         self.name = name
         self.rulename = rulename
         self.nodetype = nodetype
@@ -29,29 +41,51 @@ class Node:
         self.output_namespace = output_namespace
 
     def GetOutputNamespace(self) -> str:
+        """Returns the output namespace"""
         return self.output_namespace
 
     def GetInputNamespace(self) -> str | dict:
+        """Returns the input namespace, which can be a string or dictionary"""
         return self.input_namespace
 
 
 class Module(Node):
+    """Module class for use with the workflow Model"""
+
     def __init__(self, name: str, kwargs: dict):
+        """Initialise a Module object
+
+        Args:
+            name (str): Name of the module
+            kwargs: See Node class for kwargs
+        """
         super().__init__(name, **kwargs)
 
 
 class Connector(Node):
+    """Connector class for use with the workflow Model"""
+
     def __init__(self, name: str, kwargs: dict) -> None:
+        """Initialise a Module object
+
+        Args:
+            name (str): Name of the module
+            kwargs: See Node class for kwargs
+        """
         kwargs["nodetype"] = "connector"
         self.map: List[str] = kwargs.pop("map", "")
         super().__init__(name, **kwargs)
 
     def GetMapping(self) -> List[str]:
+        """Returns the mapping"""
         return self.map
 
 
 class Model:
+    """Model class for the workflow"""
+
     def __init__(self) -> None:
+        """Initialise the model"""
         self.nodes: List[Node] = []  # List of Node objects
 
     def BuildSnakefile(
@@ -59,6 +93,7 @@ class Model:
         configfile: str = "config/config.yaml",
         allrule: bool = True,
     ):
+        """Builds the workflow Snakefile (links modules)"""
         s = ""
         if configfile:
             s = f'configfile: "{configfile}"\n\n'
@@ -93,11 +128,12 @@ class Model:
         return s
 
     def BuildSnakefileConfig(self):
+        """Builds the workflow configuration as YAML"""
         c = self.ConstructSnakefileConfig()
         return yaml.dump(c)
 
     def ConstructSnakefileConfig(self):
-        # Build config file
+        """Builds the workflow configuration as a dictionary"""
         c = {}
         for node in self.nodes:
             cnode = node.params.copy()
@@ -126,6 +162,7 @@ class Model:
         return c
 
     def SaveWorkflow(self):
+        """Saves the workflow to the build directory"""
         pathlib.Path("build/config").mkdir(parents=True, exist_ok=True)
         pathlib.Path("build/workflow").mkdir(parents=True, exist_ok=True)
         with open("build/workflow/Snakefile", "w") as file:
@@ -134,6 +171,7 @@ class Model:
             file.write(self.BuildSnakefileConfig())
 
     def WrangleName(self, basename: str, subname: str = ""):
+        """Wrangles a valid and unique rule name"""
         rulename = self.WrangleRuleName(basename)
         name = f"{rulename}"
         if subname:
@@ -146,11 +184,13 @@ class Model:
         return wrangledName
 
     def WrangledNameList(self):
+        """Returns a list of all wrangled names"""
         return [n.input_namespace for n in self.nodes] + [
             n.output_namespace for n in self.nodes
         ]
 
     def WrangleRuleName(self, name: str):
+        """Wrangles a valid rulename (separate from the human readable name)"""
         return (
             name.replace(" ", "_")
             .replace("/", "_")
@@ -161,6 +201,7 @@ class Model:
         )
 
     def AddModule(self, name: str, module: dict) -> Node:
+        """Adds a module to the workflow"""
         kwargs = module.copy()
         if "rulename" not in kwargs:
             kwargs["rulename"] = self.WrangleRuleName(name)
@@ -170,6 +211,7 @@ class Model:
         return node
 
     def AddConnector(self, name, connector) -> Node | None:
+        """Adds a connector to the workflow"""
         if connector.get("url", None):
             # url specified - add node
             kwargs = connector.copy()
@@ -200,12 +242,14 @@ class Model:
             return None
 
     def GetNodeByName(self, name: str) -> Node | None:
+        """Returns a node object by name"""
         for node in self.nodes:
             if node.name == name:
                 return node
         return None
 
     def NodeIsTerminus(self, node: Node) -> bool:
+        """Returns true if the given node is a terminus"""
         # Check for onward connections from the given node
         for n in self.nodes:
             # Only Connectors have the 'map' attribute
@@ -215,9 +259,11 @@ class Model:
 
 
 def YAMLToConfig(content: str) -> str:
+    """Transcribes YAML to a (Snakemake readable) dictionary config syntax"""
     yl = yaml.safe_load(content)
 
     def parse_struct(yl: dict):
+        """Recursively parses a YAML structure"""
         c = ""
         for key, value in yl.items():
             if isinstance(value, dict):
@@ -243,7 +289,7 @@ def YAMLToConfig(content: str) -> str:
 
 
 def BuildFromFile(filename: str):
-    # Read JSON config file
+    """Builds a workflow from a JSON specification file"""
     try:
         with open(filename, "r") as file:
             config = json.load(file)
@@ -257,8 +303,14 @@ def BuildFromFile(filename: str):
 
 
 def BuildFromJSON(config: dict, singlefile: bool = False):
+    """Builds a workflow from a JSON specification
+
+    Returns a tuple of the workflow and the workflow model object.
+    With singlefile=True the workflow is a self-contained string.
+    With singlefile=False the workflow is a (zipped) directory structure.
+    """
     m = Model()
-    # Add modules first to ensure all namespaces are defined
+    # Add modules first to ensure all namespaces are defined before connectors
     for item in config:
         match item["type"].casefold():
             case "module" | "source" | "terminal":
@@ -266,6 +318,7 @@ def BuildFromJSON(config: dict, singlefile: bool = False):
                     item["name"],
                     item["config"],
                 )
+    # Add connectors
     for item in config:
         match item["type"].casefold():
             case "connector":
@@ -274,25 +327,24 @@ def BuildFromJSON(config: dict, singlefile: bool = False):
                     item["config"],
                 )
     if singlefile:
+        # Return composite string
         return (
             YAMLToConfig(m.BuildSnakefileConfig())
             + "\n"
             + m.BuildSnakefile(configfile="", allrule=False)
         ), m
     else:
-        # Create workflow directory structure
+        # Create (zipped) workflow and return as binary object
         m.SaveWorkflow()
-        # Create zip archive
         zipfilename = "build"
         shutil.make_archive(zipfilename, "zip", "build")
-        # Load contents of zip file and return as string
         with open(f"{zipfilename}.zip", "rb") as file:
             contents = file.read()
         return contents, m
 
 
 if __name__ == "__main__":
-    # Command line arguments
+    """Builds a workflow given a JSON specification file"""
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Filename of json configuration")
     args = parser.parse_args()

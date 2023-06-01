@@ -4,6 +4,7 @@ from .snakemake_runner import snakefile
 
 
 def Build(data: dict) -> str:
+    """Builds a workflow from a JSON object."""
     match data["format"]:
         case "Snakefile":
             build_data: str = snakefile.Build(json.loads(data["content"]))
@@ -13,6 +14,7 @@ def Build(data: dict) -> str:
 
 
 def DeleteAllOutput(data: dict) -> dict:
+    """Deletes all output files from a workflow."""
     match data["format"]:
         case "Snakefile":
             del_data: dict = snakefile.DeleteAllOutput(data["content"])
@@ -22,6 +24,7 @@ def DeleteAllOutput(data: dict) -> dict:
 
 
 def Lint(data: dict) -> dict:
+    """Lints a workflow given a directory location."""
     match data["format"]:
         case "Snakefile":
             lint_response: dict = snakefile.LintContents(data["content"])
@@ -31,6 +34,7 @@ def Lint(data: dict) -> dict:
 
 
 def LintContents(data: dict) -> dict:
+    """Lints a workflow given a Snakefile as string."""
     match data["format"]:
         case "Snakefile":
             build_data: str = snakefile.Build(json.loads(data["content"]))
@@ -41,6 +45,7 @@ def LintContents(data: dict) -> dict:
 
 
 def Launch(data: dict) -> dict:
+    """Launches a workflow in a given location."""
     match data["format"]:
         case "Snakefile":
             launch_response: dict = snakefile.Launch(data["content"])
@@ -50,6 +55,7 @@ def Launch(data: dict) -> dict:
 
 
 def Tokenize(data: dict) -> dict:
+    """Tokenizes a workflow given a Snakefile as string."""
     match data["format"]:
         case "Snakefile":
             tokenized_data: dict = snakefile.SplitByRulesFileContent(data["content"])
@@ -59,6 +65,7 @@ def Tokenize(data: dict) -> dict:
 
 
 def LoadWorkflow(data: dict) -> dict:
+    """Tokenizes a workflow and returns rule/module nodes."""
     match data["format"]:
         case "Snakefile":
             tokenized_data: dict = snakefile.LoadWorkflow(data["content"])
@@ -68,6 +75,7 @@ def LoadWorkflow(data: dict) -> dict:
 
 
 def TokenizeFromFile(data: dict) -> dict:
+    """Tokenizes a workflow given a workflow location."""
     match data["format"]:
         case "Snakefile":
             tokenized_data: dict = snakefile.LoadWorkflow(data["content"])
@@ -77,6 +85,7 @@ def TokenizeFromFile(data: dict) -> dict:
 
 
 def FullTokenizeFromFile(data: dict) -> dict:
+    """Creates a working copy of the Snakefile and tokenizes."""
     match data["format"]:
         case "Snakefile":
             tokenized_data: dict = snakefile.FullTokenizeFromFile(data["content"])
@@ -86,6 +95,7 @@ def FullTokenizeFromFile(data: dict) -> dict:
 
 
 def CheckNodeDependencies(data: dict) -> dict:
+    """Checks the dependencies of a node, given the node and first-order inputs."""
     match data["format"]:
         case "Snakefile":
             js = json.loads(data["content"])
