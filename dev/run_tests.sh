@@ -7,6 +7,14 @@ pushd backend
 ./run_tests.sh
 popd
 
+pushd builder
+./run_tests.sh
+popd
+
+pushd runner
+./run_tests.sh
+popd
+
 pushd nodemapper
 ./run_tests.sh
 popd
