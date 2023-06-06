@@ -1,4 +1,5 @@
 import BuilderEngine from "gui/Builder/BuilderEngine";
+
 import { DefaultPortModel } from "NodeMap";
 import { DefaultLinkModel } from "NodeMap";
 import { DefaultNodeModel } from "NodeMap";
@@ -6,11 +7,8 @@ import { DefaultNodeModel } from "NodeMap";
 import { builderRedraw } from "redux/actions";
 import { builderSubmitQuery } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
+import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
-
-import { displayOpenSettings } from "redux/actions";
-import { displayCloseSettings } from "redux/actions";
-import { displayUpdateNodeInfo } from "redux/actions";
 
 // TODO: Replace with webpack proxy (problems getting this to work)
 const API_ENDPOINT = "http://127.0.0.1:5000/api";
@@ -18,8 +16,7 @@ const API_ENDPOINT = "http://127.0.0.1:5000/api";
 export function builderMiddleware({ getState, dispatch }) {
   return function (next) {
     return function (action) {
-      // action.type
-      //       .payload
+      // action.type, action.payload
       console.log("Middleware: ", action);
       switch (action.type) {
         case "builder/compile-to-json":
@@ -32,7 +29,7 @@ export function builderMiddleware({ getState, dispatch }) {
           AddLink(action, dispatch);
           break;
         case "builder/node-selected":
-          NodeSelected(action, dispatch, getState().display.graph_is_moveable);
+          NodeSelected(action, dispatch);
           break;
         case "builder/node-deselected":
           NodeDeselected(dispatch);
@@ -99,12 +96,14 @@ function AddLink(action: IPayloadLink, dispatch: TPayloadString) {
   }
   const node = targetPort.getParent();
   const nodename = JSON.parse(node.getOptions().extras)["name"];
+
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
   const inputNodes = app.nodeScene.getNodeInputNodes(node);
   const depNodeNames = Object.values(inputNodes) as string[];
   depNodeNames.unshift(nodename);
   const jsDeps = app.nodeScene.getModuleListJSONFromNodeNames(depNodeNames);
+
   // Submit Build request
   const query: Record<string, unknown> = {
     query: "runner/check-node-dependencies",
@@ -116,35 +115,29 @@ function AddLink(action: IPayloadLink, dispatch: TPayloadString) {
   postRequestCheckNodeDependencies(query, node, dispatch);
 }
 
-function NodeSelected(
-  action: IPayloadRecord,
-  dispatch: TPayloadString,
-  graph_is_moveable: boolean
-) {
-  if (!graph_is_moveable) {
-    const builder = BuilderEngine.Instance;
-    const id = (action.payload as Record<string, string>).id;
-    const node = builder.getNodeById(id);
-    let payload = {};
-    if (node === null) {
-      console.error("Selected node not found in engine: ", action.payload.id);
-      payload = {
-        id: action.payload.id,
-        name: "ERROR: Failed to find node (" + id + ")",
-        type: "ERROR: Failed to find node (" + id + ")",
-        code: "ERROR: Failed to find node (" + id + ")",
-      };
-    } else {
-      const json = JSON.parse(node.getOptions().extras);
-      payload = {
-        id: action.payload.id,
-        name: node.getOptions()["name"],
-        type: json.type,
-        code: JSON.stringify(json.config, null, 2),
-      };
-    }
-    dispatch(displayUpdateNodeInfo(JSON.stringify(payload)));
+function NodeSelected(action: IPayloadRecord, dispatch: TPayloadString) {
+  const builder = BuilderEngine.Instance;
+  const id = (action.payload as Record<string, string>).id;
+  const node = builder.getNodeById(id);
+  let payload = {};
+  if (node === null) {
+    console.error("Selected node not found in engine: ", action.payload.id);
+    payload = {
+      id: action.payload.id,
+      name: "ERROR: Failed to find node (" + id + ")",
+      type: "ERROR: Failed to find node (" + id + ")",
+      code: "ERROR: Failed to find node (" + id + ")",
+    };
+  } else {
+    const json = JSON.parse(node.getOptions().extras);
+    payload = {
+      id: action.payload.id,
+      name: node.getOptions()["name"],
+      type: json.type,
+      code: JSON.stringify(json.config, null, 2),
+    };
   }
+  dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
 }
 
 interface INodeDeselectedDispatch {
@@ -153,7 +146,7 @@ interface INodeDeselectedDispatch {
 type TNodeDeselectedDispatch = (action: INodeDeselectedDispatch) => void;
 
 function NodeDeselected(dispatch: TNodeDeselectedDispatch) {
-  dispatch(displayUpdateNodeInfo(""));
+  dispatch(builderUpdateNodeInfo(""));
 }
 
 function GetRemoteModules(

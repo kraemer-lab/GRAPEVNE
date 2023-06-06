@@ -1,6 +1,9 @@
 import json
 import os
+import shutil
 from unittest import mock
+
+import pytest
 
 from runner.snakemake_runner.snakefile import Build
 from runner.snakemake_runner.snakefile import FullTokenizeFromFile
@@ -9,6 +12,8 @@ from runner.snakemake_runner.snakefile import IsolatedTempFile
 from runner.snakemake_runner.snakefile import LintContents
 from runner.snakemake_runner.snakefile import SplitByRulesFileContent
 from runner.snakemake_runner.snakefile import SplitByRulesFromFile
+
+snakemakerunner = shutil.which("snakemake")
 
 
 def test_Snakefile_Build():
@@ -147,8 +152,9 @@ def test_IsolatedTempFile():
     assert not os.path.exists(filename)
 
 
+@pytest.mark.skipif(not snakemakerunner, reason="Snakemake not installed")
 def test_GetMissingFileDependencies() -> None:
-    # Provide a list of files with no associated inputs, then mark then as
+    # Provide a list of files with no associated inputs, then mark them as
     # outputs of a later rule one at a time; lists should correspond
     target = ["a.txt", "b.txt", "c.txt"]
     test_snakefile: str = """
@@ -172,3 +178,27 @@ rule missing_targets:
         assert len(deps) == len(target)
         assert set(deps) == set(target)
     assert len(target) == 0
+
+
+def test_GetMissingFileDependencies_FullReturn() -> None:
+    # Returns all dependencies
+    test_snakefile: str = ""
+    with mock.patch(
+        "runner.snakemake_runner.snakefile.GetMissingFileDependencies_FromFile",
+        side_effect=[["a.txt"], ["b.txt"], ["c.txt"], []],
+    ):
+        depsAll = GetMissingFileDependencies_FromContents(test_snakefile)
+        assert depsAll == ["a.txt", "b.txt", "c.txt"]
+
+
+def test_GetMissingFileDependencies_TruncatedReturn() -> None:
+    # Returns only dependencies up to target namespace
+    test_snakefile: str = ""
+    with mock.patch(
+        "runner.snakemake_runner.snakefile.GetMissingFileDependencies_FromFile",
+        side_effect=[["a.txt"], ["b.txt"], ["c.txt"], []],
+    ):
+        depsTruncated = GetMissingFileDependencies_FromContents(
+            test_snakefile, target_namespaces=["a.txt"]
+        )
+        assert depsTruncated == ["a.txt"]

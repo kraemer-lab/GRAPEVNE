@@ -110,6 +110,7 @@ def SplitByRulesFromFile(filename: str, workdir: str = "") -> dict:
 
 def SplitByDagFromFile(filename: str, workdir: str = "") -> dict:
     """Tokenize input using rules derived from dag graph"""
+    print("here")
 
     # Query snakemake for DAG of graph (used for connections)
     dag = DagLocal(os.path.abspath(filename), workdir)
@@ -250,7 +251,6 @@ def CheckNodeDependencies(jsDeps: dict) -> dict:
 
     # Build model from JSON (for dependency analysis)
     build, model = BuildFromJSON(jsDeps, singlefile=True)
-    missing_deps = set(GetMissingFileDependencies_FromContents(build))
 
     # Determine input namespaces for target node
     input_namespaces = model.ConstructSnakefileConfig()[
@@ -263,6 +263,10 @@ def CheckNodeDependencies(jsDeps: dict) -> dict:
     input_namespaces = set(input_namespaces.values())
 
     # Determine unresolved dependencies (and their source namespaces)
+    target_namespaces = set([f"results/{n}" for n in input_namespaces])
+    missing_deps = set(
+        GetMissingFileDependencies_FromContents(build, target_namespaces)
+    )
     unresolved_dep_sources = set(
         s.split("/")[1] for s in missing_deps if s.startswith("results/")
     )
@@ -320,20 +324,30 @@ def GetFileAndWorkingDirectory(filename: str) -> Tuple[str, str]:
     return filename, workdir
 
 
-def GetMissingFileDependencies_FromContents(content: str, *args, **kwargs) -> List[str]:
+def GetMissingFileDependencies_FromContents(
+    content: str, target_namespaces: List[str] = []
+) -> List[str]:
     """Get missing file dependencies from snakemake
 
-    Recursively find missing dependencies for rulesets. One missing
+    Recursively find missing dependencies for rulesets. Once missing
     dependencies are found, touch those file (in an isolated environment) and
     repeat the process to capture all missing dependencies.
+
+    If target_namespaces is provided, return as soon as any target dependencies
+    are found.
     """
     deps = []
     with IsolatedTempFile(content) as snakefile:
         path = os.path.dirname(os.path.abspath(snakefile))
         while file_list := GetMissingFileDependencies_FromFile(snakefile):
             deps.extend(file_list)
+
+            # Return early if target dependencies are not resolved
+            if set(deps).intersection(target_namespaces):
+                return deps
+
+            # Touch missing files
             for dep in deps:
-                # Touch missing file
                 target = os.path.abspath(f"{path}/{dep}")
                 Path(os.path.dirname(target)).mkdir(parents=True, exist_ok=True)
                 Path(target).touch()

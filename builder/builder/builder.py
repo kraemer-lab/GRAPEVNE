@@ -91,22 +91,11 @@ class Model:
     def BuildSnakefile(
         self,
         configfile: str = "config/config.yaml",
-        allrule: bool = True,
     ):
         """Builds the workflow Snakefile (links modules)"""
         s = ""
         if configfile:
             s = f'configfile: "{configfile}"\n\n'
-        # Start with default rule, which lists ALL outputs
-        # if allrule:
-        #    s += "rule all:\n"
-        #    s += "    input:\n"
-        #    for node in self.nodes:
-        #        # Add to terminal node if output if not connected to another module
-        #        if node.nodetype.casefold() == "module" and self.NodeIsTerminus(node):
-        #            s += f'        "results/{node.GetOutputFilepath()}",\n'
-        #    s += "    default_target: True\n"
-        #    s += "\n"
         # Build Snakefile
         for node in self.nodes:
             s += f"module {node.rulename}:\n"
@@ -185,9 +174,7 @@ class Model:
 
     def WrangledNameList(self):
         """Returns a list of all wrangled names"""
-        return [n.input_namespace for n in self.nodes] + [
-            n.output_namespace for n in self.nodes
-        ]
+        return [n.output_namespace for n in self.nodes]
 
     def WrangleRuleName(self, name: str):
         """Wrangles a valid rulename (separate from the human readable name)"""
@@ -252,9 +239,20 @@ class Model:
         """Returns true if the given node is a terminus"""
         # Check for onward connections from the given node
         for n in self.nodes:
-            # Only Connectors have the 'map' attribute
-            if getattr(n, "map", None) is node.name:
-                return False
+            # Check Connector 'map' attribute for onward connections
+            if isinstance(n, Connector):
+                nodes_from = getattr(n, "map", None)
+                if not isinstance(nodes_from, list):
+                    nodes_from = [nodes_from]
+                if node.name in nodes_from:
+                    return False
+            # Check module input namespaces for onward connections
+            if isinstance(n, Module):
+                nodes_in = n.input_namespace
+                if isinstance(nodes_in, str):
+                    nodes_in = {"in": nodes_in}
+                if node.name in nodes_in.values():
+                    return False
         return True
 
 
@@ -331,7 +329,7 @@ def BuildFromJSON(config: dict, singlefile: bool = False):
         return (
             YAMLToConfig(m.BuildSnakefileConfig())
             + "\n"
-            + m.BuildSnakefile(configfile="", allrule=False)
+            + m.BuildSnakefile(configfile="")
         ), m
     else:
         # Create (zipped) workflow and return as binary object

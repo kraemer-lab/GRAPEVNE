@@ -34,7 +34,6 @@ function NodeManager() {
 
   // POST request handler [refactor out of this function later]
   const query = useAppSelector((state) => state.builder.query);
-  const [responseData, setResponseData] = React.useState(null);
   async function postRequest() {
     const postRequestOptions = {
       method: "POST",
@@ -51,13 +50,16 @@ function NodeManager() {
         throw response;
       })
       .then((data) => {
-        setResponseData(data);
+        if (data !== null) {
+          processResponse(data);
+        }
         console.info("Got response: ", data);
       })
       .catch((error) => {
         console.error("Error during query: ", error);
       });
   }
+
   function processResponse(content: JSON) {
     console.log("Process response: ", content);
     dispatch(builderUpdateStatusText(""));
@@ -79,10 +81,6 @@ function NodeManager() {
   React.useEffect(() => {
     if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
   }, [query]);
-  // ...POST request returned data successfully
-  React.useEffect(() => {
-    if (responseData !== null) processResponse(responseData);
-  }, [responseData]);
 
   return <BodyWidget engine={engine} />;
 }

@@ -28,3 +28,6 @@ export const builderUpdateStatusText = createAction<string>(
 export const builderSetRepositoryTarget = createAction<Record<string, any>>(
   "builder/set-repository-target"
 );
+export const builderUpdateNodeInfo = createAction<string>(
+  "builder/update-node-info"
+);

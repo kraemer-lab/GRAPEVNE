@@ -6,6 +6,7 @@ interface IBuilderState {
   repo: Record<string, string>;
   modules_list: string;
   statustext: string;
+  nodeinfo: string;
 }
 
 // State
@@ -22,6 +23,7 @@ const builderStateInit: IBuilderState = {
   },
   modules_list: "[]",
   statustext: "",
+  nodeinfo: "",
 };
 
 // Nodemap
@@ -65,6 +67,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {
       state.statustext = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderUpdateNodeInfo, (state, action) => {
+      state.nodeinfo = action.payload;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetRepositoryTarget, (state, action) => {

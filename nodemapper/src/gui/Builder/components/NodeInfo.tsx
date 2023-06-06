@@ -16,9 +16,9 @@ const Content = styled.div`
   height: 100%;
 `;
 
-export default function NodeInfo() {
+const NodeInfo = () => {
   const [codesnippet, setCodesnippet] = useState("");
-  const nodeinfo = useAppSelector((state) => state.display.nodeinfo);
+  const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -37,4 +37,6 @@ export default function NodeInfo() {
       </Content>
     </>
   );
-}
+};
+
+export default NodeInfo;

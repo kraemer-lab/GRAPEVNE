@@ -1,13 +1,14 @@
 import React from "react";
 import styled from "@emotion/styled";
-import NodeInfo from "./NodeInfo";
+import { NodeModel } from "@projectstorm/react-diagrams";
+import { CanvasWidget } from "@projectstorm/react-diagrams";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
+
+import NodeInfoRenderer from "./NodeInfoRenderer";
 import BuilderEngine from "../BuilderEngine";
 
 import { keys } from "lodash";
-import { NodeModel } from "@projectstorm/react-diagrams";
 import { TrayWidget } from "./TrayWidget";
-import { CanvasWidget } from "@projectstorm/react-diagrams";
-import { DiagramEngine } from "@projectstorm/react-diagrams";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
 import { TrayItemWidget } from "./TrayItemWidget";
@@ -41,6 +42,10 @@ const Layer = styled.div`
   position: relative;
   flex-grow: 1;
 `;
+
+const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
+  event.preventDefault();
+};
 
 export const BodyWidget = (props: BodyWidgetProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
@@ -107,10 +112,6 @@ export const BodyWidget = (props: BodyWidgetProps) => {
     setNewnode(node);
   };
 
-  const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-  };
-
   // Register listener for new node
   React.useEffect(() => {
     if (newnode) {
@@ -129,40 +130,6 @@ export const BodyWidget = (props: BodyWidgetProps) => {
       setNewnode(null);
     }
   }, [newnode]);
-
-  const NodeInfoRenderer = (props) => {
-    const nodeinfo = useAppSelector((state) => state.display.nodeinfo);
-    if (nodeinfo) {
-      return (
-        <div
-          style={{
-            display: "flex",
-            width: "33%",
-            height: "100%",
-            flexFlow: "column",
-          }}
-        >
-          <div
-            style={{
-              borderStyle: "solid",
-              borderWidth: "1px 0px 1px 0px",
-              borderColor: "#666666",
-              backgroundColor: "#333333",
-              color: "#dddddd",
-              flex: "0 0 auto",
-            }}
-          >
-            Node Info
-          </div>
-          <div style={{ flex: "1 1 auto" }}>
-            <NodeInfo />
-          </div>
-        </div>
-      );
-    } else {
-      return <></>;
-    }
-  };
 
   return (
     <>
