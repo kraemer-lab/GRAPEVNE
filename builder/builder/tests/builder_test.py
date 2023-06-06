@@ -1,19 +1,73 @@
+import pytest
+
 from builder.builder import Model
 from builder.builder import YAMLToConfig
 
 
 def test_BuildSnakefile():
-    # m = Model()
-    # m.BuildSnakefile()
-    ...
+    m = Model()
+    # Add modules
+    m.AddModule("module1", {"url": "url1"})
+    m.AddModule("module2", {"url": "url2"})
+    m.AddModule("module3", {"url": "url3"})
+    m.AddConnector("conn12", {"url": "url12", "map": ["module1", "module2"]})
+    m.AddConnector("conn23", {"map": ["module2", "module3"]})  # No url
+    # Verify Snakefile
+    target_snakefile = """configfile: "config/config.yaml"
+
+module module1:
+    snakefile:
+        "url1"
+    config: config["module1"]
+use rule * from module1 as module1_*
+
+module module2:
+    snakefile:
+        "url2"
+    config: config["module2"]
+use rule * from module2 as module2_*
+
+module module3:
+    snakefile:
+        "url3"
+    config: config["module3"]
+use rule * from module3 as module3_*
+
+module conn12:
+    snakefile:
+        "url12"
+    config: config["conn12"]
+use rule * from conn12 as conn12_*
+
+"""
+    assert m.BuildSnakefile() == target_snakefile
 
 
+def test_ConstructSnakefileConfig():
+    m = Model()
+    m.AddModule("module1", {"url": "url1", "params": {"param1": "value1"}})
+    m.AddModule("module2", {"url": "url2", "input_namespace": "in3", "params": {}})
+    m.AddModule("module3", {"url": "url2", "input_namespace": "in3", "params": {}})
+    # Namespace connector
+    m.AddConnector("conn12", {"map": ["module1", "module2"]})
+    # URL connector
+    m.AddConnector("conn23", {"url": "url12", "map": ["module2", "module3"]})
+    c = m.ConstructSnakefileConfig()
+    # Verify config
+    assert c["module1"].get("param1", None) == "value1"
+    assert c["module2"]["input_namespace"] == c["module1"]["output_namespace"]
+    assert c["conn23"]["input_namespace"] == c["module2"]["output_namespace"]
+    assert c["conn23"]["output_namespace"] == c["module3"]["input_namespace"]
+
+
+@pytest.mark.skip(reason="Not implemented")
 def test_BuildSnakefileConfig():
     # m = Model()
     # m.BuildSnakefileConfig()
     ...
 
 
+@pytest.mark.skip(reason="Not implemented")
 def test_SaveWorkflow():
     # m = Model()
     # m.SaveWorkflow()
@@ -105,10 +159,27 @@ def test_AddModule_MultipleInputNamespaces():
             assert getattr(m.nodes[0], key) == module[key]
 
 
-def test_AddConnector():
-    # m = Model()
-    # m.AddConnector()
-    ...
+def test_AddConnector_Module():
+    # Module connector - Connector module added
+    m = Model()
+    m.AddModule("module1", {})
+    m.AddModule("module2", {})
+    conn = m.AddConnector("conn12", {"url": "url12", "map": ["module1", "module2"]})
+    # Verify connector assigned correctly
+    assert conn.name == "conn12"
+    assert conn.nodetype == "connector"
+    assert conn.map == ["module1", "module2"]
+
+
+def test_AddConnector_Namespace():
+    # Namespace connector - no Connector module added
+    m = Model()
+    module1 = m.AddModule("module1", {})
+    module2 = m.AddModule("module2", {})
+    m.AddConnector("conn12", {"map": ["module1", "module2"]})
+    # Verify module namespaces connect appropriately
+    assert module1.output_namespace == "module1"
+    assert module2.input_namespace == "module1"
 
 
 def test_GetNodeByName():

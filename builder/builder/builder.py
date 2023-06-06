@@ -3,6 +3,7 @@ import json
 import pathlib
 import shutil
 from typing import List
+from typing import Tuple
 
 import yaml
 
@@ -91,7 +92,7 @@ class Model:
     def BuildSnakefile(
         self,
         configfile: str = "config/config.yaml",
-    ):
+    ) -> str:
         """Builds the workflow Snakefile (links modules)"""
         s = ""
         if configfile:
@@ -116,12 +117,12 @@ class Model:
             s += "\n"
         return s
 
-    def BuildSnakefileConfig(self):
+    def BuildSnakefileConfig(self) -> str:
         """Builds the workflow configuration as YAML"""
         c = self.ConstructSnakefileConfig()
         return yaml.dump(c)
 
-    def ConstructSnakefileConfig(self):
+    def ConstructSnakefileConfig(self) -> dict:
         """Builds the workflow configuration as a dictionary"""
         c = {}
         for node in self.nodes:
@@ -150,7 +151,7 @@ class Model:
             c[node.rulename] = cnode
         return c
 
-    def SaveWorkflow(self):
+    def SaveWorkflow(self) -> None:
         """Saves the workflow to the build directory"""
         pathlib.Path("build/config").mkdir(parents=True, exist_ok=True)
         pathlib.Path("build/workflow").mkdir(parents=True, exist_ok=True)
@@ -159,7 +160,7 @@ class Model:
         with open("build/config/config.yaml", "w") as file:
             file.write(self.BuildSnakefileConfig())
 
-    def WrangleName(self, basename: str, subname: str = ""):
+    def WrangleName(self, basename: str, subname: str = "") -> str:
         """Wrangles a valid and unique rule name"""
         rulename = self.WrangleRuleName(basename)
         name = f"{rulename}"
@@ -172,11 +173,11 @@ class Model:
             offset += 1
         return wrangledName
 
-    def WrangledNameList(self):
+    def WrangledNameList(self) -> List[str]:
         """Returns a list of all wrangled names"""
         return [n.output_namespace for n in self.nodes]
 
-    def WrangleRuleName(self, name: str):
+    def WrangleRuleName(self, name: str) -> str:
         """Wrangles a valid rulename (separate from the human readable name)"""
         return (
             name.replace(" ", "_")
@@ -187,7 +188,7 @@ class Model:
             .lower()
         )
 
-    def AddModule(self, name: str, module: dict) -> Node:
+    def AddModule(self, name: str, module: dict) -> Module:
         """Adds a module to the workflow"""
         kwargs = module.copy()
         if "rulename" not in kwargs:
@@ -197,7 +198,7 @@ class Model:
         node.output_namespace = self.WrangleName(node.name)
         return node
 
-    def AddConnector(self, name, connector) -> Node | None:
+    def AddConnector(self, name, connector) -> Connector | None:
         """Adds a connector to the workflow"""
         if connector.get("url", None):
             # url specified - add node
@@ -286,7 +287,7 @@ def YAMLToConfig(content: str) -> str:
     return c
 
 
-def BuildFromFile(filename: str):
+def BuildFromFile(filename: str) -> None:
     """Builds a workflow from a JSON specification file"""
     try:
         with open(filename, "r") as file:
@@ -300,7 +301,7 @@ def BuildFromFile(filename: str):
     BuildFromJSON(config)
 
 
-def BuildFromJSON(config: dict, singlefile: bool = False):
+def BuildFromJSON(config: dict, singlefile: bool = False) -> Tuple[str | bytes, Model]:
     """Builds a workflow from a JSON specification
 
     Returns a tuple of the workflow and the workflow model object.
