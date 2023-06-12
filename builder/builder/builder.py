@@ -16,18 +16,18 @@ class Node:
         name: str,
         rulename: str,
         nodetype: str = "module",
-        url="",
+        url: str | dict = "",
         params={},
         input_namespace: str | dict = "",
         output_namespace: str = "",
     ):
-        """Initialise a Node object, the parent class for Modules, Connector, etc.
+        """Initialise a Node object, the parent class for Modules
 
         Args:
             name (str): Name of the node
             rulename (str): Name of the rule
             nodetype (str): Type of node (module, connector, etc.)
-            url (str): URL of the Snakefile
+            url (str|dict): URL of the Snakefile
             params (dict): Parameters for the Snakefile
             input_namespace (str): Input namespace
             output_namespace (str): Output namespace
@@ -61,25 +61,6 @@ class Module(Node):
             kwargs: See Node class for kwargs
         """
         super().__init__(name, **kwargs)
-
-
-class Connector(Node):
-    """Connector class for use with the workflow Model"""
-
-    def __init__(self, name: str, kwargs: dict) -> None:
-        """Initialise a Module object
-
-        Args:
-            name (str): Name of the module
-            kwargs: See Node class for kwargs
-        """
-        kwargs["nodetype"] = "connector"
-        self.map: List[str] = kwargs.pop("map", "")
-        super().__init__(name, **kwargs)
-
-    def GetMapping(self) -> List[str]:
-        """Returns the mapping"""
-        return self.map
 
 
 class Model:
@@ -198,36 +179,32 @@ class Model:
         node.output_namespace = self.WrangleName(node.name)
         return node
 
-    def AddConnector(self, name, connector) -> Connector | None:
-        """Adds a connector to the workflow"""
-        if connector.get("url", None):
-            # url specified - add node
-            kwargs = connector.copy()
-            if "rulename" not in kwargs:
-                kwargs["rulename"] = self.WrangleRuleName(name)
-            node = Connector(name, kwargs)
-            self.nodes.append(node)
-            node_in = self.GetNodeByName(node.GetMapping()[0])
-            node_out = self.GetNodeByName(node.GetMapping()[1])
-            node.input_namespace = node_in.GetOutputNamespace() if node_in else ""
-            node.output_namespace = node_out.GetInputNamespace() if node_out else ""
-            return node
+    def AddConnector(self, name, connector) -> None:
+        """Adds a connection between modules"""
+        mapping = connector.get("map", None)
+        node_to = self.GetNodeByName(mapping[1])
+        if not node_to:
+            raise ValueError(
+                "No matching node found for connector source: "
+                "Requested '" + mapping[1] + "'"
+            )
+        if isinstance(mapping[0], dict):
+            node_to.input_namespace = {}
+            for k, v in mapping[0].items():
+                incoming_node = self.GetNodeByName(v)
+                if not incoming_node:
+                    raise ValueError(
+                        "No matching node found for connector source: " + v
+                    )
+                node_to.input_namespace[k] = incoming_node.output_namespace
         else:
-            # no url specified - join namespaces
-            mapping = connector.get("map", None)
-            node_to = self.GetNodeByName(mapping[1])
-            if not node_to:
-                raise ValueError("No matching node found for connector source")
-            if isinstance(mapping[0], dict):
-                node_to.input_namespace = {}
-                for k, v in mapping[0].items():
-                    node_to.input_namespace[k] = self.GetNodeByName(v).output_namespace
-            else:
-                node_from = self.GetNodeByName(mapping[0])
-                if not node_from:
-                    raise ValueError("No matching node found for connector destination")
-                node_to.input_namespace = node_from.output_namespace
-            return None
+            node_from = self.GetNodeByName(mapping[0])
+            if not node_from:
+                raise ValueError(
+                    "No matching node found for connector destination: " + mapping[0]
+                )
+            node_to.input_namespace = node_from.output_namespace
+        return None
 
     def GetNodeByName(self, name: str) -> Node | None:
         """Returns a node object by name"""
@@ -240,21 +217,25 @@ class Model:
         """Returns true if the given node is a terminus"""
         # Check for onward connections from the given node
         for n in self.nodes:
-            # Check Connector 'map' attribute for onward connections
-            if isinstance(n, Connector):
-                nodes_from = getattr(n, "map", None)
-                if not isinstance(nodes_from, list):
-                    nodes_from = [nodes_from]
-                if node.name in nodes_from:
-                    return False
-            # Check module input namespaces for onward connections
-            if isinstance(n, Module):
-                nodes_in = n.input_namespace
-                if isinstance(nodes_in, str):
-                    nodes_in = {"in": nodes_in}
-                if node.name in nodes_in.values():
-                    return False
+            nodes_in = n.input_namespace
+            if isinstance(nodes_in, str):
+                nodes_in = {"in": nodes_in}
+            if node.name in nodes_in.values():
+                return False
         return True
+
+    def ExpandModule(self, name: str):
+        """Expands a module into its constituent part"""
+        # TODO:
+        # Read module spec (Snakefile, configfile) from source
+        # Delete module from Model
+        # Add new nodes to Model, preserving connections
+        # (ensure consistency of input and output namespaces at parent level)
+        ...
+
+    def GetModuleNames(self) -> List[str]:
+        """Returns a list of all module names"""
+        return [n.name for n in self.nodes]
 
 
 def YAMLToConfig(content: str) -> str:
@@ -301,7 +282,10 @@ def BuildFromFile(filename: str) -> None:
     BuildFromJSON(config)
 
 
-def BuildFromJSON(config: dict, singlefile: bool = False) -> Tuple[str | bytes, Model]:
+def BuildFromJSON(
+    config: dict,
+    singlefile: bool = False,
+) -> Tuple[str | bytes, Model]:
     """Builds a workflow from a JSON specification
 
     Returns a tuple of the workflow and the workflow model object.

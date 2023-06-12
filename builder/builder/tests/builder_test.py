@@ -2,6 +2,8 @@ import pytest
 
 from builder.builder import Model
 from builder.builder import YAMLToConfig
+from builder.ImportWorkflow import ImportWorkflowDir
+from builder.ImportWorkflow import ParseFunctionSignature
 
 
 def test_BuildSnakefile():
@@ -10,8 +12,7 @@ def test_BuildSnakefile():
     m.AddModule("module1", {"url": "url1"})
     m.AddModule("module2", {"url": "url2"})
     m.AddModule("module3", {"url": "url3"})
-    m.AddConnector("conn12", {"url": "url12", "map": ["module1", "module2"]})
-    m.AddConnector("conn23", {"map": ["module2", "module3"]})  # No url
+    m.AddConnector("conn23", {"map": ["module2", "module3"]})
     # Verify Snakefile
     target_snakefile = """configfile: "config/config.yaml"
 
@@ -33,12 +34,6 @@ module module3:
     config: config["module3"]
 use rule * from module3 as module3_*
 
-module conn12:
-    snakefile:
-        "url12"
-    config: config["conn12"]
-use rule * from conn12 as conn12_*
-
 """
     assert m.BuildSnakefile() == target_snakefile
 
@@ -50,14 +45,10 @@ def test_ConstructSnakefileConfig():
     m.AddModule("module3", {"url": "url2", "input_namespace": "in3", "params": {}})
     # Namespace connector
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
-    # URL connector
-    m.AddConnector("conn23", {"url": "url12", "map": ["module2", "module3"]})
     c = m.ConstructSnakefileConfig()
     # Verify config
     assert c["module1"].get("param1", None) == "value1"
     assert c["module2"]["input_namespace"] == c["module1"]["output_namespace"]
-    assert c["conn23"]["input_namespace"] == c["module2"]["output_namespace"]
-    assert c["conn23"]["output_namespace"] == c["module3"]["input_namespace"]
 
 
 @pytest.mark.skip(reason="Not implemented")
@@ -159,20 +150,8 @@ def test_AddModule_MultipleInputNamespaces():
             assert getattr(m.nodes[0], key) == module[key]
 
 
-def test_AddConnector_Module():
-    # Module connector - Connector module added
-    m = Model()
-    m.AddModule("module1", {})
-    m.AddModule("module2", {})
-    conn = m.AddConnector("conn12", {"url": "url12", "map": ["module1", "module2"]})
-    # Verify connector assigned correctly
-    assert conn.name == "conn12"
-    assert conn.nodetype == "connector"
-    assert conn.map == ["module1", "module2"]
-
-
-def test_AddConnector_Namespace():
-    # Namespace connector - no Connector module added
+def test_AddConnector():
+    # Namespace connector
     m = Model()
     module1 = m.AddModule("module1", {})
     module2 = m.AddModule("module2", {})
@@ -216,3 +195,35 @@ config["modules"]["name1"]="first"
 config["modules"]["name2"]="second"
 """
     assert YAMLToConfig(content) == target
+
+
+def test_ImportWorkflow_ImportWorkflowDir() -> None:
+    m = ImportWorkflowDir(
+        "builder/tests/workflow_import_test/",
+        levels=-1,
+    )
+    assert len(m.nodes) == 3
+
+    assert m.nodes[0].name == "module1"
+    # assert m.nodes[0].url = "snakefile1"
+    assert m.nodes[0].output_namespace == "module1"
+
+    assert m.nodes[1].name == "module2"
+    # assert isinstance(m.nodes[1].url, dict)
+    # assert m.nodes[1].url.get("function", None) == "calling_function"
+    # assert m.nodes[1].url.get("args", []) == ["arg1", "arg2"]
+    # assert m.nodes[1].url.get("kwargs", {}) == {"kwarg1": "kwval1", "kwarg2": "kwval2"}
+    assert m.nodes[1].input_namespace == "module1"
+    assert m.nodes[1].output_namespace == "module2"
+
+    assert m.nodes[2].name == "module3"
+    # assert m.nodes[2].url = "snakefile3"
+    assert m.nodes[2].input_namespace == {"in1": "module1", "in2": "module2"}
+
+
+def test_ParesFunctionSignature():
+    c = 'fcn("pos1", 2, kw1="val3", kw2=4)'
+    name, args, kwargs = ParseFunctionSignature(c)
+    assert name == "fcn"
+    assert args == ("pos1", 2)
+    assert kwargs == {"kw1": "val3", "kw2": 4}

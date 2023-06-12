@@ -1,0 +1,30 @@
+configfile : "config/config.yaml"
+
+module module1:
+    snakefile:
+        "snakefile1"
+    config:
+        config["module1"]
+
+use rule * from module1 as module1_*
+
+module module2:
+    snakefile:
+        calling_fcn(
+            "arg1",
+            "arg2",
+            kwarg1="kwval1",
+            kwarg2="kwval2",
+        )
+    config:
+        config["module2"]
+
+use rule * from module2 as module2_*
+
+module module3:
+    snakefile:
+        "snakefile3"
+    config:
+        config["module3"]
+
+use rule * from module3 as module3_*

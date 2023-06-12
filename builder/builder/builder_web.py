@@ -3,6 +3,7 @@ from os.path import abspath
 from os.path import isdir
 from os.path import join
 from typing import List
+from typing import Tuple
 
 import requests
 import yaml
@@ -154,7 +155,6 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                     f"{module_type['name']}/"
                     f"{workflow['name']}/config/config.yaml"
                 )
-                print(url_config)
                 r_config = requests.get(url_config)
                 if r_config.status_code != 200:
                     raise Exception(
@@ -241,6 +241,58 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
         )
 
     return modules
+
+
+def GetWorkflowFiles(
+    load_command: str,
+) -> Tuple[str, str]:
+    """Read workflow and config files
+
+    Args:
+        load_command: command used to load the module in the Snakemake file
+    """
+    # Determine if workflow is local or remote
+    if load_command[0] in ["'", '"']:
+        return GetWorkflowFilesLocal(load_command)
+    else:
+        return GetWorkflowFilesRemote(load_command)
+
+
+def GetWorkflowFilesLocal(
+    load_command: str,
+) -> Tuple[str, str]:
+    """Read workflow and config files from local directory
+
+    Args:
+        load_command: command used to load the module in the Snakemake file
+    """
+    # Isolate string containing workflow directory
+    workflow_dir = eval(load_command)
+    if isinstance(workflow_dir, tuple):  # account for trailing comma
+        workflow_dir = workflow_dir[0]
+    workflow_file = abspath(join(workflow_dir, "workflow/Snakefile"))
+    config_file = abspath(join(workflow_dir, "config/config.yaml"))
+    # Read files as strings
+    with open(workflow_file, "r") as file:
+        workflow_str = file.read()
+    with open(config_file, "r") as file:
+        config_str = file.read()
+
+    return workflow_str, config_str
+
+
+def GetWorkflowFilesRemote(
+    load_command: str,
+) -> Tuple[str, str]:
+    """Read workflow and config files from remote source
+
+    Args:
+        load_command: command used to load the module in the Snakemake file
+    """
+    raise Exception(
+        "Only loading from local sources (load_command contains a string) "
+        "is currently supported."
+    )
 
 
 def FormatName(name: str) -> str:

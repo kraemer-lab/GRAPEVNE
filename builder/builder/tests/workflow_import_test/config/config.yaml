@@ -1,0 +1,9 @@
+module1:
+  output_namespace: "module1"
+module2:
+  input_namespace: "module1"
+  output_namespace: "module2"
+module3:
+  input_namespace:
+    "in1": "module1"
+    "in2": "module2"
