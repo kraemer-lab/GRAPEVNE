@@ -1,6 +1,7 @@
 name: Pytest-builder
 
 on:
+  workflow_call:
   push:
     branches: [main]
     paths:

@@ -1,6 +1,7 @@
 name: Pytest-backend
 
 on:
+  workflow_call:
   push:
     branches: [main]
     paths:

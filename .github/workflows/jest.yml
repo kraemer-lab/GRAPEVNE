@@ -1,6 +1,7 @@
 name: Jest
 
 on:
+  workflow_call:
   push:
     branches: ["main"]
     paths:
