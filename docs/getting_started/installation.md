@@ -19,11 +19,3 @@ repos
 ```
 
 Phyloflow should now be able to find the local modules.
-
-## Modules
-
-Details on module construction will follow.
-
-# Tutorial
-
-We are actively working on the tutorial... check back soon...
