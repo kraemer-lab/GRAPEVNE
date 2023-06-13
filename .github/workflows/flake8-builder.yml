@@ -2,12 +2,12 @@ name: Flake8-builder
 
 on:
   workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/flake8-builder.yml"
-      - "builder/**"
-      - "!builder/README.md"
+#  push:
+#    branches: [main]
+#    paths:
+#      - ".github/workflows/flake8-builder.yml"
+#      - "builder/**"
+#      - "!builder/README.md"
 
 jobs:
   ci:
