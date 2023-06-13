@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  server:
+    build: nodemapper/
+    command: ./run.sh
+    ports:
+      - 5001:5001
+  client:
+    build: .
+    command: /app/backend/run.sh
+    network_mode: host
+    depends_on:
+      - server

@@ -1,6 +1,7 @@
 name: Flake8-backend
 
 on:
+  workflow_call:
   push:
     branches: [main]
     paths:

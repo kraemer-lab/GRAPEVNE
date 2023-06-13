@@ -1,6 +1,7 @@
 name: Flake8-builder
 
 on:
+  workflow_call:
   push:
     branches: [main]
     paths:

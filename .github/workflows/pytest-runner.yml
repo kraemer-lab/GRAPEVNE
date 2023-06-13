@@ -1,6 +1,7 @@
 name: Pytest-runner
 
 on:
+  workflow_call:
   push:
     branches: [main]
     paths:
