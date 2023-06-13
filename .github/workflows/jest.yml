@@ -2,15 +2,15 @@ name: Jest
 
 on:
   workflow_call:
-  push:
-    branches: ["main"]
-    paths:
-      - ".github/workflows/jest.yml"
-      - "nodemapper/**"
-      - "!nodemapper/README.md"
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: ["main"]
+#  push:
+#    branches: ["main"]
+#    paths:
+#      - ".github/workflows/jest.yml"
+#      - "nodemapper/**"
+#      - "!nodemapper/README.md"
+#  pull_request:
+#    # The branches below must be a subset of the branches above
+#    branches: ["main"]
 
 jobs:
   eslint:

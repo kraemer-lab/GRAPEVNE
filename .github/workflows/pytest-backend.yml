@@ -2,12 +2,12 @@ name: Pytest-backend
 
 on:
   workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/pytest-backend.yml"
-      - "backend/**"
-      - "!backend/README.md"
+#  push:
+#    branches: [main]
+#    paths:
+#      - ".github/workflows/pytest-backend.yml"
+#      - "backend/**"
+#      - "!backend/README.md"
 
 jobs:
   ci:

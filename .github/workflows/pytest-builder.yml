@@ -2,12 +2,12 @@ name: Pytest-builder
 
 on:
   workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/pytest-builder.yml"
-      - "builder/**"
-      - "!builder/README.md"
+#  push:
+#    branches: [main]
+#    paths:
+#      - ".github/workflows/pytest-builder.yml"
+#      - "builder/**"
+#      - "!builder/README.md"
 
 jobs:
   ci:

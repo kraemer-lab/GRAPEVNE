@@ -1,3 +1,5 @@
+name: phyloflow
+
 on:
   pull_request:
     branches:
@@ -7,25 +9,18 @@ on:
       - main
 
 jobs:
-  # Nodemapper
   es-lint:
     uses: ./.github/workflows/eslint.yml
   jest:
     uses: ./.github/workflows/jest.yml
-
-  # Backend
   flake8-backend:
     uses: ./.github/workflows/flake8-backend.yml
   pytest-backend:
     uses: ./.github/workflows/pytest-backend.yml
-
-  # Builder
   flake8-builder:
     uses: ./.github/workflows/flake8-builder.yml
   pytest-builder:
     uses: ./.github/workflows/pytest-builder.yml
-
-  # Runner
   flake8-runner:
     uses: ./.github/workflows/flake8-runner.yml
   pytest-runner:

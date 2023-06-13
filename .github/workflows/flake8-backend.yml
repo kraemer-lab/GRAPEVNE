@@ -2,12 +2,12 @@ name: Flake8-backend
 
 on:
   workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/flake8-backend.yml"
-      - "backend/**"
-      - "!backend/README.md"
+#  push:
+#    branches: [main]
+#    paths:
+#      - ".github/workflows/flake8-backend.yml"
+#      - "backend/**"
+#      - "!backend/README.md"
 
 jobs:
   ci:

@@ -2,12 +2,12 @@ name: Flake8-runner
 
 on:
   workflow_call:
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/flake8-runner.yml"
-      - "runner/**"
-      - "!runner/README.md"
+#  push:
+#    branches: [main]
+#    paths:
+#      - ".github/workflows/flake8-runner.yml"
+#      - "runner/**"
+#      - "!runner/README.md"
 
 jobs:
   ci:
