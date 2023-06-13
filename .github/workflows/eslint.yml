@@ -10,6 +10,7 @@
 name: ESLint
 
 on:
+  workflow_call:
   push:
     branches: ["main"]
     paths:
