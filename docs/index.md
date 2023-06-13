@@ -17,7 +17,9 @@ Background
 caption: Getting started
 maxdepth: 1
 ---
-getting_started/index
+getting_started/installation
+getting_started/modules
+getting_started/tutorial
 ```
 
 ```{toctree}
