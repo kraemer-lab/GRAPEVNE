@@ -1,14 +1,9 @@
 # PhyloFlow
 
-### **Documentation (work-in-progress): [ReadTheDocs](https://phyloflow.readthedocs.io)**
+[![phyloflow](https://github.com/jsbrittain/phyloflow/actions/workflows/phyloflow.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/phyloflow.yml)
 
-Interactive environment for building and validating phylogenetic data processing workflows built around [Snakemake](https://snakemake.github.io/).
+Interactive environment for building and validating data processing workflows, with a focus on phylogenetic analysis, built around the [Snakemake](https://snakemake.github.io/) workflow manager.
 
-Status: **concept / prototyping**
+**Documentation**: [ReadTheDocs](https://phyloflow.readthedocs.io) (*work-in-progress*)
 
-Build status:
-
-- [nodemapper](nodemapper) (interface): [![ESLint](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/eslint.yml) [![Jest](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/jest.yml)
-- [builder](builder) (library): [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-builder.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-builder.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-builder.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-builder.yml)
-- [runner](runner) (library): [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-runner.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-runner.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-runner.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-runner.yml)
-- [backend](backend): [![Flake8](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-backend.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/flake8-backend.yml) [![Pytest](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-backend.yml/badge.svg)](https://github.com/jsbrittain/phyloflow/actions/workflows/pytest-backend.yml)
+**Status**: concept / prototyping
