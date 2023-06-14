@@ -83,17 +83,11 @@ class Model:
             s += f"module {node.rulename}:\n"
             s += "    snakefile:\n"
             if isinstance(node.url, str):
-                # Load from local file
-                s += f'        "{node.url}"\n'
+                s += f'        config["{node.rulename}"]["snakefile"]\n'
             else:
-                # Load from github
-                s += f'        {node.url["function"]}(\n'
-                for arg in node.url["args"]:
-                    s += f'            "{arg}",\n'
-                for k, v in node.url["kwargs"].items():
-                    s += f'            {k}="{v}",\n'
-                s += "        )\n"
-            s += f'    config: config["{node.rulename}"]\n'
+                s += f'        eval(config["{node.rulename}"]["snakefile"])\n'
+            s += "    config:\n"
+            s += f'        config["{node.rulename}"]["config"]\n'
             s += f"use rule * from {node.rulename} as {node.rulename}_*\n"
             s += "\n"
         return s
@@ -105,7 +99,7 @@ class Model:
 
     def ConstructSnakefileConfig(self) -> dict:
         """Builds the workflow configuration as a dictionary"""
-        c = {}
+        c: dict = {}
         for node in self.nodes:
             cnode = node.params.copy()
 
@@ -129,7 +123,22 @@ class Model:
             cnode["output_namespace"] = node.output_namespace
 
             # Save
-            c[node.rulename] = cnode
+            c[node.rulename] = {}
+            c[node.rulename]["config"] = cnode
+            # Add snakefile definition
+            s = ""
+            if isinstance(node.url, str):
+                # Load from local file
+                s += f'        "{node.url}"\n'
+            else:
+                # Load from github
+                s += f'        {node.url["function"]}(\n'
+                for arg in node.url["args"]:
+                    s += f'            "{arg}",\n'
+                for k, v in node.url["kwargs"].items():
+                    s += f'            {k}="{v}",\n'
+                s += "        )\n"
+            c[node.rulename]["snakefile"] = node.url
         return c
 
     def SaveWorkflow(self) -> None:

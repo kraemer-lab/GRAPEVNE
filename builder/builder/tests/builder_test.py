@@ -18,20 +18,23 @@ def test_BuildSnakefile():
 
 module module1:
     snakefile:
-        "url1"
-    config: config["module1"]
+        config["module1"]["snakefile"]
+    config:
+        config["module1"]["config"]
 use rule * from module1 as module1_*
 
 module module2:
     snakefile:
-        "url2"
-    config: config["module2"]
+        config["module2"]["snakefile"]
+    config:
+        config["module2"]["config"]
 use rule * from module2 as module2_*
 
 module module3:
     snakefile:
-        "url3"
-    config: config["module3"]
+        config["module3"]["snakefile"]
+    config:
+        config["module3"]["config"]
 use rule * from module3 as module3_*
 
 """
@@ -47,8 +50,11 @@ def test_ConstructSnakefileConfig():
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
     c = m.ConstructSnakefileConfig()
     # Verify config
-    assert c["module1"].get("param1", None) == "value1"
-    assert c["module2"]["input_namespace"] == c["module1"]["output_namespace"]
+    assert c["module1"]["config"].get("param1", None) == "value1"
+    assert (
+        c["module2"]["config"]["input_namespace"]
+        == c["module1"]["config"]["output_namespace"]
+    )
 
 
 @pytest.mark.skip(reason="Not implemented")
