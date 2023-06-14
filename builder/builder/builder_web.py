@@ -271,10 +271,13 @@ def GetWorkflowFilesLocal(
     if isinstance(workflow_dir, tuple):  # account for trailing comma
         workflow_dir = workflow_dir[0]
     workflow_file = abspath(join(workflow_dir, "workflow/Snakefile"))
-    config_file = abspath(join(workflow_dir, "config/config.yaml"))
-    # Read files as strings
     with open(workflow_file, "r") as file:
         workflow_str = file.read()
+    # Parse workflow for configfile directive
+
+    # Import config file (if specified)
+    configfile = "config/config.yaml"
+    config_file = abspath(join(workflow_dir, configfile))
     with open(config_file, "r") as file:
         config_str = file.read()
 

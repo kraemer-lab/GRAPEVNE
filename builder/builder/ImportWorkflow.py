@@ -55,11 +55,6 @@ def ParseConfigDict(config: dict) -> List[str]:
     return modules
 
 
-def ExtractWorkflowParams(content: str) -> dict:
-    # TODO: Return dict indexed by [name][param, eg. "url"]
-    return {}
-
-
 def ParseFunctionSignature(signature: str):
     def f(*args, **kwargs):
         return args, kwargs
