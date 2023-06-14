@@ -3,13 +3,14 @@ module1:
   config:
     output_namespace: "module1"
 module2:
-  snakefile: |-
-    calling_fcn(
-        "arg1",
-        "arg2",
-        kwarg1="kwval1",
-        kwarg2="kwval2",
-    )
+  snakefile:
+    function: "calling_fcn"
+    args:
+      - "arg1"
+      - "arg2"
+    kwargs:
+      kwarg1: "kwval1"
+      kwarg2: "kwval2"
   config:
     input_namespace: "module1"
     output_namespace: "module2"

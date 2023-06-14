@@ -32,7 +32,7 @@ def ImportWorkflowDir(
         # Retain namespace mapping
         node.input_namespace = config.get("input_namespace", node.input_namespace)
         node.output_namespace = config.get("output_namespace", node.output_namespace)
-        node.snakefile = workflow_config.get("snakefile", node.snakefile)
+        node.snakefile = workflow_config[name].get("snakefile", node.snakefile)
 
     # Expand modules as required to the specified level
     level = 0
