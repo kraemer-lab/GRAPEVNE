@@ -16,7 +16,7 @@ class Node:
         name: str,
         rulename: str,
         nodetype: str = "module",
-        url: str | dict = "",
+        snakefile: str | dict = "",
         params={},
         input_namespace: str | dict = "",
         output_namespace: str = "",
@@ -27,7 +27,7 @@ class Node:
             name (str): Name of the node
             rulename (str): Name of the rule
             nodetype (str): Type of node (module, connector, etc.)
-            url (str|dict): URL of the Snakefile
+            snakefile (str|dict): str location or dict representing function call
             params (dict): Parameters for the Snakefile
             input_namespace (str): Input namespace
             output_namespace (str): Output namespace
@@ -36,7 +36,7 @@ class Node:
         self.name = name
         self.rulename = rulename
         self.nodetype = nodetype
-        self.url = url
+        self.snakefile = snakefile
         self.params = params if params else {}
         self.input_namespace = input_namespace
         self.output_namespace = output_namespace
@@ -82,10 +82,16 @@ class Model:
         for node in self.nodes:
             s += f"module {node.rulename}:\n"
             s += "    snakefile:\n"
-            if isinstance(node.url, str):
+            if isinstance(node.snakefile, str):
+                # String denoted a local file
                 s += f'        config["{node.rulename}"]["snakefile"]\n'
             else:
-                s += f'        eval(config["{node.rulename}"]["snakefile"])\n'
+                # Dynamic evaluation of function specified in config file
+                s += "        eval(\n"
+                s += f'            f\'{{config["{node.rulename}"]["snakefile"]["function"]}}\'\n'
+                s += f'            \'(*config["{node.rulename}"]["snakefile"]["args"],\'\n'
+                s += f'            \'**config["{node.rulename}"]["snakefile"]["kwargs"])\'\n'
+                s += "        )\n"
             s += "    config:\n"
             s += f'        config["{node.rulename}"]["config"]\n'
             s += f"use rule * from {node.rulename} as {node.rulename}_*\n"
@@ -123,22 +129,10 @@ class Model:
             cnode["output_namespace"] = node.output_namespace
 
             # Save
-            c[node.rulename] = {}
-            c[node.rulename]["config"] = cnode
-            # Add snakefile definition
-            s = ""
-            if isinstance(node.url, str):
-                # Load from local file
-                s += f'        "{node.url}"\n'
-            else:
-                # Load from github
-                s += f'        {node.url["function"]}(\n'
-                for arg in node.url["args"]:
-                    s += f'            "{arg}",\n'
-                for k, v in node.url["kwargs"].items():
-                    s += f'            {k}="{v}",\n'
-                s += "        )\n"
-            c[node.rulename]["snakefile"] = node.url
+            c[node.rulename] = {
+                "config": cnode,
+                "snakefile": node.snakefile,
+            }
         return c
 
     def SaveWorkflow(self) -> None:

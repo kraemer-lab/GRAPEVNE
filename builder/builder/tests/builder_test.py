@@ -9,9 +9,9 @@ from builder.ImportWorkflow import ParseFunctionSignature
 def test_BuildSnakefile():
     m = Model()
     # Add modules
-    m.AddModule("module1", {"url": "url1"})
-    m.AddModule("module2", {"url": "url2"})
-    m.AddModule("module3", {"url": "url3"})
+    m.AddModule("module1", {"snakefile": "snakefile1"})
+    m.AddModule("module2", {"snakefile": "snakefile2"})
+    m.AddModule("module3", {"snakefile": "snakefile3"})
     m.AddConnector("conn23", {"map": ["module2", "module3"]})
     # Verify Snakefile
     target_snakefile = """configfile: "config/config.yaml"
@@ -43,9 +43,13 @@ use rule * from module3 as module3_*
 
 def test_ConstructSnakefileConfig():
     m = Model()
-    m.AddModule("module1", {"url": "url1", "params": {"param1": "value1"}})
-    m.AddModule("module2", {"url": "url2", "input_namespace": "in3", "params": {}})
-    m.AddModule("module3", {"url": "url2", "input_namespace": "in3", "params": {}})
+    m.AddModule("module1", {"snakefile": "snakefile1", "params": {"param1": "value1"}})
+    m.AddModule(
+        "module2", {"snakefile": "snakefile2", "input_namespace": "in3", "params": {}}
+    )
+    m.AddModule(
+        "module3", {"snakefile": "snakefile2", "input_namespace": "in3", "params": {}}
+    )
     # Namespace connector
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
     c = m.ConstructSnakefileConfig()
@@ -111,7 +115,7 @@ def test_AddModule_SingleInputNamespace():
     module = {
         "rulename": "rulename1",
         "nodetype": "moduletype1",
-        "url": "url1",
+        "snakefile": "snakefile1",
         "params": {
             "param1": "value1",
         },
@@ -135,7 +139,7 @@ def test_AddModule_MultipleInputNamespaces():
     module = {
         "rulename": "rulename2",
         "nodetype": "moduletype2",
-        "url": "url2",
+        "snakefile": "snakefile2",
         "params": {
             "param2": "value2",
         },
@@ -211,19 +215,19 @@ def test_ImportWorkflow_ImportWorkflowDir() -> None:
     assert len(m.nodes) == 3
 
     assert m.nodes[0].name == "module1"
-    # assert m.nodes[0].url = "snakefile1"
+    # assert m.nodes[0].snakefile = "snakefile1"
     assert m.nodes[0].output_namespace == "module1"
 
     assert m.nodes[1].name == "module2"
-    # assert isinstance(m.nodes[1].url, dict)
-    # assert m.nodes[1].url.get("function", None) == "calling_function"
-    # assert m.nodes[1].url.get("args", []) == ["arg1", "arg2"]
-    # assert m.nodes[1].url.get("kwargs", {}) == {"kwarg1": "kwval1", "kwarg2": "kwval2"}
+    # assert isinstance(m.nodes[1].snakefile, dict)
+    # assert m.nodes[1].snakefile.get("function", None) == "calling_function"
+    # assert m.nodes[1].snakefile.get("args", []) == ["arg1", "arg2"]
+    # assert m.nodes[1].snakefile.get("kwargs", {}) == {"kwarg1": "kwval1", "kwarg2": "kwval2"}
     assert m.nodes[1].input_namespace == "module1"
     assert m.nodes[1].output_namespace == "module2"
 
     assert m.nodes[2].name == "module3"
-    # assert m.nodes[2].url = "snakefile3"
+    # assert m.nodes[2].snakefile = "snakefile3"
     assert m.nodes[2].input_namespace == {"in1": "module1", "in2": "module2"}
 
 
