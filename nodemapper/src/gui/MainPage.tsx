@@ -22,7 +22,7 @@ const MenuChoiceRender: React.FC<MenuChoiceRenderProps> = (
 function MainPage() {
   const [menuChoice, setMenuChoice] = useState(0);
 
-  return (
+  /*return (
     <>
       <div
         style={{
@@ -53,11 +53,21 @@ function MainPage() {
             <button className="btn" onClick={() => setMenuChoice(0)}>
               BUILDER
             </button>
-            <button className="btn" onClick={() => setMenuChoice(1)}>
+            <button className="btn" onClick={() => setMenuChoice(1)} disabled>
               RUNNER
             </button>
           </div>
-        </div>
+        </div>*/
+  return (
+    <>
+      <div
+        style={{
+          display: "flex",
+          height: "100%",
+          width: "100%",
+          flexFlow: "column",
+        }}
+      >
         <div className="body" style={{ flex: "1 1 auto" }}>
           <MenuChoiceRender selection={menuChoice} />
         </div>

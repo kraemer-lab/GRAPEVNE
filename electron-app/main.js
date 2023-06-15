@@ -1,6 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const { getMsg } = require("/Users/jsb/repos/jsbrittain/phyloflow/builderjs");
+const {
+  GetModulesList,
+} = require("/Users/jsb/repos/jsbrittain/phyloflow/builderjs");
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -10,6 +12,7 @@ const createWindow = () => {
       preload: path.join(__dirname, "preload.js"),
     },
   });
+  win.webContents.openDevTools();
 
   ipcMain.on("set-title", (event, title) => {
     const webContents = event.sender;
@@ -26,9 +29,20 @@ const createWindow = () => {
   }
 };
 
-app.whenReady().then(() => {
-  createWindow();
+const handleGetRemoteModules = async (event, query) => {
+  console.log(query["data"]["content"]["url"]);
+  modules = GetModulesList(query["data"]["content"]["url"]);
+  console.log(modules);
+  return {
+    query: "builder/get-remote-modules",
+    body: GetModulesList(query["data"]["content"]["url"]),
+  };
+};
 
+app.whenReady().then(() => {
+  ipcMain.handle("builder/get-remote-modules", handleGetRemoteModules);
+
+  createWindow();
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });

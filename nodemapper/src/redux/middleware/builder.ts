@@ -9,6 +9,7 @@ import { builderSubmitQuery } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
+import { builderUpdateModulesList } from "redux/actions";
 
 // TODO: Replace with webpack proxy (problems getting this to work)
 const API_ENDPOINT = "http://127.0.0.1:5000/api";
@@ -18,6 +19,8 @@ const API_ENDPOINT = "http://127.0.0.1:5000/api";
 // as a workaround. Remove this in favour of a proper typescript-compatible
 // interface. This may require modification to the electron code.
 declare const window: any;
+const builderAPI = window.builderAPI;
+const backend = "electron"; // flask | electron
 
 export function builderMiddleware({ getState, dispatch }) {
   return function (next) {
@@ -41,8 +44,12 @@ export function builderMiddleware({ getState, dispatch }) {
           NodeDeselected(dispatch);
           break;
         case "builder/get-remote-modules":
-          GetRemoteModules(dispatch, dispatch, getState().builder.repo);
-          window.builderAPI.setTitle("Caching remote modules...");
+          GetRemoteModules(
+            dispatch,
+            dispatch,
+            dispatch,
+            getState().builder.repo
+          );
           break;
         case "builder/update-modules-list":
           UpdateModulesList(dispatch);
@@ -77,10 +84,21 @@ function CompileToJSON() {
     query: "builder/compile-to-json",
     data: {
       format: "Snakefile",
-      content: JSON.stringify(app.GetModuleListJSON()),
+      content: app.GetModuleListJSON(),
     },
   };
-  SubmitQueryExpectZip(query);
+  switch (backend as string) {
+    case "flask":
+      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+      SubmitQueryExpectZip(query);
+      break;
+    case "electron":
+      // TODO: Implement build process on nodejs backend
+      console.warn("Build process not currently implemented in electron");
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
 }
 
 function Redraw() {
@@ -156,9 +174,10 @@ function NodeDeselected(dispatch: TNodeDeselectedDispatch) {
   dispatch(builderUpdateNodeInfo(""));
 }
 
-function GetRemoteModules(
+async function GetRemoteModules(
   dispatchSubmitQuery: TPayloadRecord,
   dispatchUpdateStatusText: TPayloadString,
+  dispatch: any,
   repo: string
 ) {
   // Get list of remote modules
@@ -170,12 +189,25 @@ function GetRemoteModules(
     query: "builder/get-remote-modules",
     data: {
       format: "Snakefile",
-      content: JSON.stringify({
+      content: {
         url: repo,
-      }),
+      },
     },
   };
-  dispatchSubmitQuery(builderSubmitQuery(query));
+  let response: Record<string, undefined>;
+  switch (backend as string) {
+    case "flask":
+      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+      dispatchSubmitQuery(builderSubmitQuery(query));
+      break;
+    case "electron":
+      console.log("Sending query: ", query);
+      response = await builderAPI.GetRemoteModules(query);
+      dispatch(builderUpdateModulesList(response["body"]));
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
 }
 
 function UpdateModulesList(dispatch: TPayloadString) {
