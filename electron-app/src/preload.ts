@@ -1,6 +1,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("builderAPI", {
-  GetRemoteModules: (query) =>
+  GetRemoteModules: (query: any) =>
     ipcRenderer.invoke("builder/get-remote-modules", query),
 });

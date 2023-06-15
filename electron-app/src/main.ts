@@ -14,14 +14,6 @@ const createWindow = () => {
   });
   win.webContents.openDevTools();
 
-  ipcMain.on("set-title", (event, title) => {
-    const webContents = event.sender;
-    const win = BrowserWindow.fromWebContents(webContents);
-    // Ignore provided title and instead retrieve from external module as a test
-    title = getMsg();
-    win.setTitle(title);
-  });
-
   if (app.isPackaged) {
     win.loadFile("index.html"); //prod
   } else {
@@ -29,15 +21,14 @@ const createWindow = () => {
   }
 };
 
-const handleGetRemoteModules = async (event, query) => {
+async function handleGetRemoteModules(event: any, query: any) {
   console.log(query["data"]["content"]["url"]);
-  modules = GetModulesList(query["data"]["content"]["url"]);
-  console.log(modules);
+  const modules = GetModulesList(query["data"]["content"]["url"]);
   return {
     query: "builder/get-remote-modules",
     body: GetModulesList(query["data"]["content"]["url"]),
   };
-};
+}
 
 app.whenReady().then(() => {
   ipcMain.handle("builder/get-remote-modules", handleGetRemoteModules);

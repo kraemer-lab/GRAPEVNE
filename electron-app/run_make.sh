@@ -8,7 +8,14 @@ yarn
 yarn build
 popd
 
+# compile builderjs
+pushd ../builderjs
+yarn build
+popd
+
+# compile PhyloFlow
 yarn
+yarn build
 yarn make
 
 # Run the app
