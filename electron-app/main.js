@@ -1,5 +1,6 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
+const { getMsg } = require("/Users/jsb/repos/jsbrittain/phyloflow/builderjs");
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -8,6 +9,14 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
+  });
+
+  ipcMain.on("set-title", (event, title) => {
+    const webContents = event.sender;
+    const win = BrowserWindow.fromWebContents(webContents);
+    // Ignore provided title and instead retrieve from external module as a test
+    title = getMsg();
+    win.setTitle(title);
   });
 
   if (app.isPackaged) {

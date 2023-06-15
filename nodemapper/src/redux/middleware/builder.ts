@@ -13,6 +13,12 @@ import { builderUpdateStatusText } from "redux/actions";
 // TODO: Replace with webpack proxy (problems getting this to work)
 const API_ENDPOINT = "http://127.0.0.1:5000/api";
 
+// TODO
+// This line permits any function declarations from the window.builderAPI
+// as a workaround. Remove this in favour of a proper typescript-compatible
+// interface. This may require modification to the electron code.
+declare const window: any;
+
 export function builderMiddleware({ getState, dispatch }) {
   return function (next) {
     return function (action) {
@@ -36,6 +42,7 @@ export function builderMiddleware({ getState, dispatch }) {
           break;
         case "builder/get-remote-modules":
           GetRemoteModules(dispatch, dispatch, getState().builder.repo);
+          window.builderAPI.setTitle("Caching remote modules...");
           break;
         case "builder/update-modules-list":
           UpdateModulesList(dispatch);
