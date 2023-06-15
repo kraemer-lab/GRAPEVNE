@@ -22,7 +22,6 @@ const createWindow = () => {
 };
 
 async function handleGetRemoteModules(event: any, query: any) {
-  console.log(query["data"]["content"]["url"]);
   const modules = GetModulesList(query["data"]["content"]["url"]);
   return {
     query: "builder/get-remote-modules",

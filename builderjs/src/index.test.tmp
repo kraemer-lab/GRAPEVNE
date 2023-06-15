@@ -1,8 +1,0 @@
-import { GetLocalModules } from "./index";
-//const { GetLocalModules } = require(".");
-
-test('Placeholder', () => {
-    expect(true).toBe(true);
-});
-
-console.log(GetLocalModules("../../snakeshack"));
