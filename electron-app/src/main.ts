@@ -2,7 +2,7 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const {
   GetModulesList,
-} = require("/Users/jsb/repos/jsbrittain/phyloflow/builderjs");
+} = require("/Users/jsb/repos/jsbrittain/phyloflow/builderjs/dist");
 
 const createWindow = () => {
   const win = new BrowserWindow({
