@@ -3,13 +3,16 @@ import path from "path";
 import fs from "fs";
 import axios from "axios";
 
-const GetModulesList = (url: Record<string, any>) => {
+const GetModulesList = async (url: Record<string, unknown>) => {
   console.log("GetModulesList", url);
   switch (url["type"]) {
     case "github":
-      return GetRemoteModulesGithub(url["repo"], url["listing_type"]);
+      return GetRemoteModulesGithub(
+        url["repo"] as string,
+        url["listing_type"] as string
+      );
     case "local":
-      return GetLocalModules(url["repo"]);
+      return GetLocalModules(url["repo"] as string);
     default:
       throw new Error("Invalid url type.");
   }
@@ -21,7 +24,9 @@ const GetFolders = (root_folder: string): Array<string> =>
     .filter((f: any) => f.isDirectory())
     .map((f: any) => f.name);
 
-const GetLocalModules = (root_folder: string): Array<Record<string, any>> => {
+const GetLocalModules = (
+  root_folder: string
+): Array<Record<string, unknown>> => {
   // static return for now
   const path_base = path.join(path.resolve(root_folder), "workflows");
 
@@ -60,7 +65,7 @@ const GetLocalModules = (root_folder: string): Array<Record<string, any>> => {
         try {
           params = yaml.load(fs.readFileSync(config_file, "utf8")) as Record<
             string,
-            any
+            unknown
           >;
         } catch (err) {
           console.log("No (or invalid YAML) config file found.");
@@ -79,10 +84,10 @@ const GetLocalModules = (root_folder: string): Array<Record<string, any>> => {
   return modules;
 };
 
-const GetRemoteModulesGithub = (
+const GetRemoteModulesGithub = async (
   repo: string,
   listing_type: string
-): Array<Record<string, any>> => {
+): Promise<Record<string, unknown>[]> => {
   switch (listing_type) {
     case "DirectoryListing":
       return GetRemoteModulesGithubDirectoryListing(repo);
@@ -93,109 +98,114 @@ const GetRemoteModulesGithub = (
   }
 };
 
-const GetRemoteModulesGithubDirectoryListing = (
+const GetRemoteModulesGithubDirectoryListing = async (
   repo: string
-): Array<Record<string, any>> => {
-  const url_github: string = "https://api.github.com/repos";
+): Promise<Record<string, unknown>[]> => {
+  const url_github = "https://api.github.com/repos";
   const url_base: string = path.join(url_github, repo, "contents/workflows");
   const branch = "main";
-  const modules: Array<Record<string, any>> = [];
+  const modules: Array<Record<string, unknown>> = [];
 
   async function get(url: string) {
     const response = await axios.get(url);
     return await response.data;
   }
 
-  get(url_base).then((data) => {
-    data
-      .filter((org: any) => org["type"] == "dir")
-      .map((org: any) => org["name"])
-      .forEach((org: any) => {
-        // First-level (organisation) listing
-        const url_org = path.join(url_base, org);
-        get(url_org).then((data) => {
-          data
-            .filter((module_type: any) => module_type["type"] == "dir")
-            .map((module_type: any) => module_type["name"])
-            .forEach((module_type: any) => {
-              // Second-level (module type) listing
-              const url_workflow = path.join(url_org, module_type);
-              get(url_workflow).then((data) => {
-                data
-                  .filter((workflow: any) => workflow["type"] == "dir")
-                  .map((workflow: any) => workflow["name"])
-                  .forEach((workflow: any) => {
-                    // Third-level (module/workflow) listing
-                    const url_workflow = path.join(
-                      repo,
-                      "workflows",
-                      org,
-                      module_type,
-                      workflow,
-                      "workflow/Snakefile"
-                    );
-                    const url_config = path.join(
-                      "https://raw.githubusercontent.com",
-                      repo,
-                      branch,
-                      "workflows",
-                      org,
-                      module_type,
-                      workflow,
-                      "config/config.yaml"
-                    );
-                    let params = {};
-                    get(url_config)
-                      .then((data) => {
-                        params = yaml.load(data) as Record<string, any>;
-                      })
-                      .catch((err) => {
-                        console.log("No (or invalid YAML) config file found.");
-                      })
-                      .finally(() => {
-                        const module = {
-                          name: "(" + org + ") " + FormatName(workflow),
-                          type: module_type.slice(0, -1), // remove plural
-                          config: {
-                            url: {
-                              function: "github",
-                              args: [repo],
-                              kwargs: {
-                                path: path.join(
-                                  "workflows",
-                                  org,
-                                  module_type,
-                                  workflow,
-                                  "workflow/Snakefile"
-                                ),
-                                branch: branch,
-                              },
-                            },
-                            params: params,
-                          },
-                        };
-                        console.log(module);
-                        modules.push(module);
-                      }); // end get(url_config)
-                  }); // end forEach workflow
-              }); // end get(url_workflow)
-            }); // end forEach module_type
-        }); // end get(url_org)
-      }); // end forEach org
-  }); // end get(url_base)
+  // First-level (organisation) listing
+  const orgs = await get(url_base).then((data) => {
+    return data
+      .filter((org: Record<string, unknown>) => org["type"] == "dir")
+      .map((org: Record<string, unknown>) => org["name"]);
+  });
+  for (const org of orgs) {
+    const url_org = path.join(url_base, org);
+    const module_types = await get(url_org).then((data) => {
+      return data
+        .filter(
+          (module_type: Record<string, unknown>) => module_type["type"] == "dir"
+        )
+        .map((module_type: Record<string, unknown>) => module_type["name"])
+        .reverse();
+    });
+
+    // Second-level (module type) listing
+    for (const module_type of module_types) {
+      const url_workflow = path.join(url_org, module_type);
+      const workflows = await get(url_workflow).then((data) => {
+        return data
+          .filter(
+            (workflow: Record<string, unknown>) => workflow["type"] == "dir"
+          )
+          .map((workflow: Record<string, unknown>) => workflow["name"]);
+      });
+
+      // Third-level (module/workflow) listing
+      for (const workflow of workflows) {
+        const url_workflow = path.join(
+          repo,
+          "workflows",
+          org,
+          module_type,
+          workflow,
+          "workflow/Snakefile"
+        );
+        const url_config = path.join(
+          "https://raw.githubusercontent.com",
+          repo,
+          branch,
+          "workflows",
+          org,
+          module_type,
+          workflow,
+          "config/config.yaml"
+        );
+
+        const params = await get(url_config)
+          .then((data) => {
+            return yaml.load(data) as Record<string, unknown>;
+          })
+          .catch(() => {
+            console.log("No (or invalid YAML) config file found.");
+            return {};
+          });
+        const module = {
+          name: "(" + org + ") " + FormatName(workflow),
+          type: module_type.slice(0, -1), // remove plural
+          config: {
+            url: {
+              function: "github",
+              args: [repo],
+              kwargs: {
+                path: path.join(
+                  "workflows",
+                  org,
+                  module_type,
+                  workflow,
+                  "workflow/Snakefile"
+                ),
+                branch: branch,
+              },
+            },
+            params: params,
+          },
+        };
+        modules.push(module);
+      }
+    }
+  }
   return modules;
 };
 
-const GetRemoteModulesGithubBranchListing = (
+const GetRemoteModulesGithubBranchListing = async (
   repo: string
-): Array<Record<string, any>> => {
+): Promise<Record<string, unknown>[]> => {
   // static return for now
   const modules = [
     {
       name: "(Test) Branch Listing",
       type: "module",
       config: {
-        url: "some url",
+        url: repo,
         params: {},
       },
     },

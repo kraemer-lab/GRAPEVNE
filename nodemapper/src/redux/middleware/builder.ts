@@ -203,6 +203,7 @@ async function GetRemoteModules(
     case "electron":
       console.log("Sending query: ", query);
       response = await builderAPI.GetRemoteModules(query);
+      console.log("Response: ", response);
       dispatch(builderUpdateModulesList(response["body"]));
       break;
     default:
