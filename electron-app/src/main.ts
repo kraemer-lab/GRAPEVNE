@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 
-const builderjs = require("/Users/jsb/repos/jsbrittain/phyloflow/builderjs/dist");
+const builderjs = require("/Users/jsb/repos/jsbrittain/phyloflow/builderjs");
 
 async function builderhGetRemoteModules(event: any, query: any) {
   const modules = await builderjs.GetModulesList(
