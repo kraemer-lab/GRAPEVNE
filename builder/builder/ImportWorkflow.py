@@ -8,7 +8,6 @@ from builder.builder_web import GetWorkflowFiles
 
 def ImportWorkflowDir(
     workflow_dir: str,
-    levels: int = -1,
 ) -> Model:
     """Import linked modules snakemake workflow as Model object
 
@@ -34,13 +33,10 @@ def ImportWorkflowDir(
         node.output_namespace = config.get("output_namespace", node.output_namespace)
         node.snakefile = workflow_config[name].get("snakefile", node.snakefile)
 
-    # Expand modules as required to the specified level
-    level = 0
-    if level < levels:
-        modules = m.GetModuleNames()
-        for name in modules:
-            m.ExpandModule(name)
-        level += 1
+    # Expand modules
+    modules = m.GetModuleNames()
+    for name in modules:
+        m.ExpandModule(name)
 
     return m
 

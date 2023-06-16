@@ -1,10 +1,12 @@
 import argparse
 import json
 import pathlib
+import re
 import shutil
 from typing import List
 from typing import Tuple
 
+import requests
 import yaml
 
 
@@ -16,7 +18,7 @@ class Node:
         name: str,
         rulename: str,
         nodetype: str = "module",
-        snakefile: str | dict = "",
+        snakefile: str | dict = "",  # str | {function: str, args: List, kwargs: dict}
         params={},
         input_namespace: str | dict = "",
         output_namespace: str = "",
@@ -61,6 +63,52 @@ class Module(Node):
             kwargs: See Node class for kwargs
         """
         super().__init__(name, **kwargs)
+
+    def _GetConfigFileinfo(self) -> str | dict:
+        """Returns the config filename, or an equivalent dict for remote files"""
+        workflow_filename = "workflow/Snakefile"
+        config_filename = "config/config.yaml"
+        if isinstance(self.snakefile, str):
+            # Local file
+            filename = self.snakefile
+            filename.replace(workflow_filename, config_filename)
+            return filename
+        if isinstance(self.snakefile, dict):
+            # Remote file
+            c = self.snakefile.copy()
+            c["kwargs"]["path"] = c["kwargs"]["path"].replace(
+                workflow_filename, config_filename
+            )
+            return c
+        raise ValueError("Invalid snakefile type")
+
+    def _ReadFile(self, fileinfo: str | dict) -> str:
+        """Helper function that reads a file, either local or remote"""
+        if isinstance(fileinfo, str):
+            # Local file
+            with open(fileinfo, "r") as file:
+                contents = file.read()
+            return contents
+        if isinstance(fileinfo, dict):
+            # Remote file
+            if fileinfo.get("function", None) not in ["github"]:
+                raise ValueError(
+                    "Only github function is currently supported for remote files"
+                )
+            url_github: str = "https://raw.githubusercontent.com"
+            repo = fileinfo["args"][0]
+            branch = fileinfo.get("kwargs", {}).get("branch", "main")
+            path = fileinfo.get("kwargs", {}).get("path", "")
+            url: str = f"{url_github}/{repo}/{branch}/{path}"
+            workflow_file = requests.get(url).text
+            return workflow_file
+        raise ValueError("Invalid snakefile type")
+
+    def ReadWorkflowFile(self):
+        return self._ReadFile(self.snakefile)
+
+    def ReadConfigFile(self):
+        return yaml.safe_load(self._ReadFile(self._GetConfigFileinfo()))
 
 
 class Model:
@@ -229,12 +277,44 @@ class Model:
 
     def ExpandModule(self, name: str):
         """Expands a module into its constituent part"""
-        # TODO:
+        # Identify node
+        node = self.GetNodeByName(name)
+        if not node:
+            raise ValueError("No matching node found for name: " + name)
+        if not isinstance(node, Module):
+            raise ValueError("Node is not a module: " + name)
         # Read module spec (Snakefile, configfile) from source
-        # Delete module from Model
-        # Add new nodes to Model, preserving connections
-        # (ensure consistency of input and output namespaces at parent level)
-        ...
+        workflow_contents = node.ReadWorkflowFile()
+        modules_list = re.findall("^module (.*):", workflow_contents, re.MULTILINE)
+        config = node.ReadConfigFile()
+        # Narrow list of modules to those with valid PhyloFlow entries in config
+        modules_list = [
+            m
+            for m in modules_list
+            if (m in config)  # PhyloFlow config entry requirements here
+        ]
+        if not modules_list:
+            # No valid modules found, return original node
+            return node
+        print("Attempting to expand module", node.name, "into", modules_list)
+
+        # Create new Model based on new nodes
+        new_nodes: List[Node] = []
+        for n in modules_list:
+            node = self.AddModule(n, config[n].get("config"))
+            new_nodes.append(node)
+            config["new_rulename"] = node.rulename  # record new rulename
+
+        # Ensure namespace consistency between new nodes after insertion
+
+        # Preserve connections to/from parent nodes
+
+        # Remove expanded node from model
+        self.nodes.remove(node)
+        del node
+
+        # Return new nodes
+        return new_nodes
 
     def GetModuleNames(self) -> List[str]:
         """Returns a list of all module names"""
