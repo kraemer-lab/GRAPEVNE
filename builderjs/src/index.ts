@@ -1,2 +1,2 @@
-export * from "./builder_web";
+export * from "./web";
 export * from "./builder";
