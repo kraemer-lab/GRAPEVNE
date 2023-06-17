@@ -50,12 +50,17 @@ def test_ConstructSnakefileConfig():
     )
     # Namespace connector
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
+    m.AddConnector("conn23", {"map": ["module2", "module3"]})
     c = m.ConstructSnakefileConfig()
     # Verify config
     assert c["module1"]["config"].get("param1", None) == "value1"
     assert (
         c["module2"]["config"]["input_namespace"]
         == c["module1"]["config"]["output_namespace"]
+    )
+    assert (
+        c["module3"]["config"]["input_namespace"]
+        == c["module2"]["config"]["output_namespace"]
     )
 
 
@@ -111,7 +116,7 @@ def test_AddModule_SingleInputNamespace():
     m = Model()
     name = "module1"
     module = {
-        "rulename": "rulename1",
+        "rulename": "module1",
         "nodetype": "moduletype1",
         "snakefile": "snakefile1",
         "params": {
@@ -135,7 +140,7 @@ def test_AddModule_MultipleInputNamespaces():
     m = Model()
     name = "module2"
     module = {
-        "rulename": "rulename2",
+        "rulename": "module2",
         "nodetype": "moduletype2",
         "snakefile": "snakefile2",
         "params": {
@@ -158,6 +163,15 @@ def test_AddModule_MultipleInputNamespaces():
             assert getattr(m.nodes[0], key) == module[key]
 
 
+def test_AddModule_DuplicateName():
+    m = Model()
+    m.AddModule("module", {})
+    m.AddModule("module", {})
+    m.AddModule("module", {})
+    assert len(m.nodes) == 3
+    assert len(set([n.rulename for n in m.nodes])) == 3
+
+
 def test_AddConnector():
     # Namespace connector
     m = Model()
@@ -165,8 +179,7 @@ def test_AddConnector():
     module2 = m.AddModule("module2", {})
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
     # Verify module namespaces connect appropriately
-    assert module1.output_namespace == "module1"
-    assert module2.input_namespace == "module1"
+    assert module1.output_namespace == module2.input_namespace
 
 
 def test_GetNodeByName():

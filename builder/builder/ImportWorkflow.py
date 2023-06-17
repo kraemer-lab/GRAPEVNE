@@ -1,3 +1,4 @@
+import re
 from typing import List
 
 import yaml
@@ -17,7 +18,7 @@ def ImportWorkflowDir(
     """
     workflow_str, config_str = GetWorkflowFiles(f"'{workflow_dir}'")
     workflow_config = yaml.safe_load(config_str)
-    modules = ParseConfigDict(config=workflow_config)
+    modules = re.findall("^module (.*):", workflow_str, re.MULTILINE)
 
     # Build model
     m = Model()
@@ -34,21 +35,17 @@ def ImportWorkflowDir(
         node.snakefile = workflow_config[name].get("snakefile", node.snakefile)
 
     # Expand modules
-    modules = m.GetModuleNames()
-    for name in modules:
-        m.ExpandModule(name)
+    module_list: List[str] = []
+    while (modules := m.GetModuleNames()) != module_list:
+        module_list = modules
+        for name in modules:
+            m.ExpandModule(name)
+
+    print(m.GetModuleNames())
+    print(m.ExposeOrhpanInputs())
+    print(m.ExposeOrphanOutputs())
 
     return m
-
-
-def ParseConfigDict(config: dict) -> List[str]:
-    modules = []
-    for k, v in config.items():
-        vc = v["config"]
-        if isinstance(vc, dict):
-            if "input_namespace" in vc.keys() or "output_namespace" in vc.keys():
-                modules.append(k)
-    return modules
 
 
 def ParseFunctionSignature(signature: str):
