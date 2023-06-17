@@ -151,14 +151,14 @@ class Model:
         c = self.ConstructSnakefileConfig()
         return yaml.dump(c)
 
-    def ExposeOrhpanInputs(self) -> str | dict[str, str]:
+    def ExposeOrphanInputs(self) -> str | dict[str, str]:
         """Find orphan inputs and return as a valid input_namespace"""
         module_input_namespace: dict[str, str] = {}
         all_output_namespaces = self.GetRuleNames()
         for node in self.nodes:
             if isinstance(node.input_namespace, str):
                 if node.input_namespace not in all_output_namespaces:
-                    module_input_namespace[node.name] = node.rulename
+                    module_input_namespace[node.rulename] = node.rulename
             elif isinstance(node.input_namespace, dict):
                 for k, v in node.input_namespace.items():
                     if v not in all_output_namespaces:
@@ -170,7 +170,24 @@ class Model:
             return list(module_input_namespace.values())[0]
         return module_input_namespace
 
-    def ExposeOrphanOutputs(self):
+    def ExposeOrphanInputsList(self) -> List[str]:
+        """Find orphan inputs and return as a valid input_namespace"""
+        orphans: List[str] = []
+        all_output_namespaces = self.GetRuleNames()
+        for node in self.nodes:
+            if isinstance(node.input_namespace, str):
+                if node.input_namespace not in all_output_namespaces:
+                    orphans.append(node.rulename)
+            elif isinstance(node.input_namespace, dict):
+                for k, v in node.input_namespace.items():
+                    if v not in all_output_namespaces:
+                        # namespace should be unique to avoid clashes
+                        orphans.append(v)
+            else:
+                raise ValueError("Invalid input_namespace type")
+        return orphans
+
+    def ExposeOrphanOutputs(self) -> List[str]:
         """Find orphan output and return as a valid output_namespace"""
         module_output_namespaces: List[str] = []
         all_input_namespaces = self.GetInputNamespaces()
@@ -182,7 +199,7 @@ class Model:
     def ConstructSnakefileConfig(self) -> dict:
         """Builds the workflow configuration as a dictionary"""
         c: dict = {}
-        c["input_namespace"] = self.ExposeOrhpanInputs()
+        c["input_namespace"] = self.ExposeOrphanInputs()
         module_output_namespaces = self.ExposeOrphanOutputs()
         # only a single output_namespace is currently supported
         if len(module_output_namespaces) == 0:
@@ -276,7 +293,6 @@ class Model:
             kwargs["rulename"] = self.WrangleName(name)
         node = Module(name, kwargs)
         self.nodes.append(node)
-        node.name = node.rulename  # ensure name and rulename coaslesce
         node.output_namespace = node.rulename
         return node
 
@@ -349,8 +365,8 @@ class Model:
             return node
 
         # Keep record of orphan namespaces before expansion
-        orphan_inputs_prior = self.ExposeOrhpanInputs()
-        orphan_outputs_prior = self.ExposeOrphanOutputs()
+        orphan_inputs_prior = set(self.ExposeOrphanInputsList())
+        orphan_outputs_prior = set(self.ExposeOrphanOutputs())
 
         # Add new nodes
         rulemapping = {}
@@ -396,7 +412,9 @@ class Model:
                 raise ValueError("Namespace type not recognised")
 
         # Find orphan inputs and outputs from new node network
-        new_orphan_inputs = set(self.ExposeOrhpanInputs()) - set(orphan_inputs_prior)
+        new_orphan_inputs = set(self.ExposeOrphanInputsList()) - set(
+            orphan_inputs_prior
+        )
         new_orphan_outputs = set(self.ExposeOrphanOutputs()) - set(orphan_outputs_prior)
         assert len(new_orphan_outputs) == 1, "More than one new orphan output found"
 
@@ -438,7 +456,7 @@ class Model:
         return new_nodes
 
     def GetModuleNames(self) -> List[str]:
-        return [n.name for n in self.nodes if isinstance(n, Module)]
+        return [n.rulename for n in self.nodes if isinstance(n, Module)]
 
     def GetInputNamespaces(self) -> List[str]:
         input_namespaces: List[str] = []

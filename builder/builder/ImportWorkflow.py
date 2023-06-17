@@ -42,7 +42,7 @@ def ImportWorkflowDir(
             m.ExpandModule(name)
 
     print(m.GetModuleNames())
-    print(m.ExposeOrhpanInputs())
+    print(m.ExposeOrphanInputs())
     print(m.ExposeOrphanOutputs())
 
     return m
