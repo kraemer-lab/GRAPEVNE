@@ -120,10 +120,10 @@ def test_AddModule_SingleInputNamespace():
         "nodetype": "moduletype1",
         "snakefile": "snakefile1",
         "params": {
+            "input_namespace": "input_namespace1",
+            "output_namespace": "output_namespace1",
             "param1": "value1",
         },
-        "input_namespace": "input_namespace1",
-        "output_namespace": "output_namespace1",
     }
     m.AddModule(name, module)
     # Verify module assigned correctly
@@ -145,12 +145,12 @@ def test_AddModule_MultipleInputNamespaces():
         "snakefile": "snakefile2",
         "params": {
             "param2": "value2",
+            "input_namespace": {
+                "in2a": "input_namespace2a",
+                "in2b": "input_namespace2b",
+            },
+            "output_namespace": "output_namespace2",
         },
-        "input_namespace": {
-            "in2a": "input_namespace2a",
-            "in2b": "input_namespace2b",
-        },
-        "output_namespace": "output_namespace2",
     }
     m.AddModule(name, module)
     # Verify module assigned correctly
