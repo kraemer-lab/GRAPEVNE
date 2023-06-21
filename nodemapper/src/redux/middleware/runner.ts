@@ -16,6 +16,15 @@ import { runnerUpdateStatusText } from "redux/actions";
 
 const API_ENDPOINT = globals.getApiEndpoint();
 
+// TODO
+// This line permits any function declarations from the window.builderAPI
+// as a workaround. Remove this in favour of a proper typescript-compatible
+// interface. This may require modification to the electron code.
+declare const window: any;
+
+const runnerAPI = window.runnerAPI;
+const backend = globals.getBackend();
+
 export function runnerMiddleware({ getState, dispatch }) {
   return function (next) {
     return function (action) {
@@ -105,7 +114,7 @@ const SelectNone = () => {
 };
 
 const ImportSnakefile = (dispatch): void => {
-  QueryAndLoadTextFile((content, filename) => {
+  QueryAndLoadTextFile(async (content, filename) => {
     const query: Record<string, unknown> = {
       query: "runner/tokenize",
       data: {
@@ -116,12 +125,23 @@ const ImportSnakefile = (dispatch): void => {
     const callback = (content: Record<string, unknown>) => {
       RebuildNodeMap(content, dispatch);
     };
-    SubmitQuery(query, dispatch, callback);
+    switch (backend) {
+      case "web":
+        SubmitQuery(query, dispatch, callback);
+        break;
+      case "electron":
+        callback(
+          (await runnerAPI.TokenizeLoad(query)) as Record<string, unknown>
+        );
+        break;
+      default:
+        console.error("Unknown backend: ", backend);
+    }
     dispatch(displayUpdateNodeInfo(""));
   });
 };
 
-const LoadSnakefile = (action, dispatch): void => {
+const LoadSnakefile = async (action, dispatch): Promise<void> => {
   dispatch(runnerUpdateStatusText("Loading Snakefile..."));
   const query: Record<string, unknown> = {
     query: "runner/tokenize_load",
@@ -133,11 +153,22 @@ const LoadSnakefile = (action, dispatch): void => {
   const callback = (content: Record<string, unknown>) => {
     RebuildNodeMap(content, dispatch);
   };
-  SubmitQuery(query, dispatch, callback);
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback(
+        (await runnerAPI.TokenizeLoad(query)) as Record<string, unknown>
+      );
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
   dispatch(displayUpdateNodeInfo(""));
 };
 
-const LaunchSnakefile = (dispatch, folderinfo: string): void => {
+const LaunchSnakefile = async (dispatch, folderinfo: string): Promise<void> => {
   const query: Record<string, unknown> = {
     query: "runner/launch",
     data: {
@@ -148,11 +179,20 @@ const LaunchSnakefile = (dispatch, folderinfo: string): void => {
   const callback = (content: Record<string, unknown>) => {
     console.info("Launch response: ", content["body"]);
   };
-  SubmitQuery(query, dispatch, callback);
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback((await runnerAPI.Launch(query)) as Record<string, unknown>);
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
   setTimeout(() => dispatch(runnerQueryJobStatus()), 5000);
 };
 
-const QueryJobStatus = (dispatch, folderinfo: string): void => {
+const QueryJobStatus = async (dispatch, folderinfo: string): Promise<void> => {
   const query: Record<string, unknown> = {
     query: "runner/jobstatus",
     data: {
@@ -163,11 +203,20 @@ const QueryJobStatus = (dispatch, folderinfo: string): void => {
   const callback = (content: Record<string, unknown>) => {
     dispatch(runnerStoreJobStatus(content["body"] as string));
   };
-  SubmitQuery(query, dispatch, callback);
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback((await runnerAPI.JobStatus(query)) as Record<string, unknown>);
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
   setTimeout(() => dispatch(runnerQueryJobStatus()), 1000);
 };
 
-const BuildSnakefile = (dispatch, serial: string): void => {
+const BuildSnakefile = async (dispatch, serial: string): Promise<void> => {
   const query: Record<string, unknown> = {
     query: "runner/build",
     data: {
@@ -190,10 +239,19 @@ const BuildSnakefile = (dispatch, serial: string): void => {
     element.click();
     document.body.removeChild(element);
   };
-  SubmitQuery(query, dispatch, callback);
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback((await runnerAPI.Build(query)) as Record<string, unknown>);
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
 };
 
-const LintSnakefile = (dispatch, serial: string): void => {
+const LintSnakefile = async (dispatch, serial: string): Promise<void> => {
   const query: Record<string, unknown> = {
     query: "runner/lint",
     data: {
@@ -204,10 +262,19 @@ const LintSnakefile = (dispatch, serial: string): void => {
   const callback = (content: Record<string, unknown>) => {
     dispatch(runnerStoreLint(content["body"] as string));
   };
-  SubmitQuery(query, dispatch, callback);
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback((await runnerAPI.Lint(query)) as Record<string, unknown>);
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
 };
 
-const LoadWorkflow = (dispatch, folderinfo: string): void => {
+const LoadWorkflow = async (dispatch, folderinfo: string): Promise<void> => {
   dispatch(runnerUpdateStatusText("Loading Workflow..."));
   const query: Record<string, unknown> = {
     query: "runner/loadworkflow",
@@ -219,10 +286,21 @@ const LoadWorkflow = (dispatch, folderinfo: string): void => {
   const callback = (content: Record<string, unknown>) => {
     RebuildNodeMap(content, dispatch);
   };
-  SubmitQuery(query, dispatch, callback);
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback(
+        (await runnerAPI.LoadWorkflow(query)) as Record<string, unknown>
+      );
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
 };
 
-const DeleteResults = (dispatch, folderinfo: string): void => {
+const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
   dispatch(runnerUpdateStatusText("Deleting Results..."));
   const query: Record<string, unknown> = {
     query: "runner/deleteresults",
@@ -235,7 +313,18 @@ const DeleteResults = (dispatch, folderinfo: string): void => {
     // Refresh folder list
     dispatch(displayGetFolderInfo());
   };
-  SubmitQuery(query, dispatch, callback);
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback(
+        (await runnerAPI.LoadWorkflow(query)) as Record<string, unknown>
+      );
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -3,5 +3,5 @@ export const getApiEndpoint = () => {
 };
 
 export const getBackend = () => {
-  return "web"; // "electron"; // web | electron
+  return "electron"; // web | electron
 };

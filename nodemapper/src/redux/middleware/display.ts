@@ -7,6 +7,16 @@ import { displayStoreFolderInfo } from "redux/actions";
 
 const API_ENDPOINT = globals.getApiEndpoint();
 
+// TODO
+// This line permits any function declarations from the window.builderAPI
+// as a workaround. Remove this in favour of a proper typescript-compatible
+// interface. This may require modification to the electron code.
+declare const window: any;
+
+const displayAPI = window.displayAPI;
+const runnerAPI = window.runnerAPI;
+const backend = globals.getBackend();
+
 export function displayMiddleware({ getState, dispatch }) {
   return function (next) {
     return function (action) {
@@ -45,17 +55,30 @@ const ZoomToFit = () => {
   runner.ZoomToFit();
 };
 
-const GetFolderInfo = (dispatch, getState) => {
+const GetFolderInfo = async (dispatch, getState) => {
   const query: Record<string, unknown> = {
     query: "display/folderinfo",
     data: {
       content: JSON.parse(getState().display.folderinfo).foldername,
     },
   };
-  SubmitQuery(query, dispatch);
+  const callback = (content) => {
+    // Read folder contents into state
+    dispatch(displayStoreFolderInfo(content["body"]));
+  };
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback((await displayAPI.FolderInfo(query)) as Record<string, unknown>);
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
 };
 
-const DeleteResults = (dispatch, getState) => {
+const DeleteResults = async (dispatch, getState) => {
   const query: Record<string, unknown> = {
     query: "runner/deleteresults",
     data: {
@@ -63,15 +86,29 @@ const DeleteResults = (dispatch, getState) => {
       content: JSON.parse(getState().display.folderinfo).foldername,
     },
   };
-  SubmitQuery(query, dispatch);
+  const callback = (content) => {
+    throw new Error("Delete Results not yet implemented");
+  };
+  switch (backend) {
+    case "web":
+      SubmitQuery(query, dispatch, callback);
+      break;
+    case "electron":
+      callback(
+        (await runnerAPI.DeleteResults(query)) as Record<string, unknown>
+      );
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // Utility functions
 ///////////////////////////////////////////////////////////////////////////////
 
-function SubmitQuery(query: Record<string, unknown>, dispatch) {
-  // POST request handler [refactor out of this function later]
+function SubmitQuery(query: Record<string, unknown>, dispatch, callback) {
+  // POST request handler
 
   async function postRequest() {
     const postRequestOptions = {
@@ -89,7 +126,7 @@ function SubmitQuery(query: Record<string, unknown>, dispatch) {
         throw response;
       })
       .then((data) => {
-        if (data !== null) processResponse(data);
+        if (data !== null) processResponse(data, callback);
         console.info("Got response: ", data);
       })
       .catch((error) => {
@@ -97,26 +134,9 @@ function SubmitQuery(query: Record<string, unknown>, dispatch) {
       });
   }
 
-  function processResponse(content: JSON) {
+  function processResponse(content: JSON, callback) {
     console.log("Process response: ", content);
-    switch (content["query"]) {
-      case "display/folderinfo": {
-        // Read folder contents into state
-        dispatch(displayStoreFolderInfo(content["body"]));
-        break;
-      }
-      case "runner/deleteresults": {
-        // TODO: Implement
-        throw new Error("Delete Results not yet implemented");
-        break;
-      }
-      default:
-        console.error(
-          "Error interpreting server response (query: ",
-          content["query"],
-          ")"
-        );
-    }
+    callback(content);
   }
 
   // Received query request (POST to backend server)...

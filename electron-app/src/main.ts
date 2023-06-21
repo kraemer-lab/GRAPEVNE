@@ -4,7 +4,7 @@ const path = require("path");
 
 const builderjs = require("builderjs");
 
-const use_nodejs = true; // use nodejs implementation (where available)
+const use_nodejs = false;
 
 // General query processing interface for Python scripts (replacement for Flask)
 async function ProcessQuery(
