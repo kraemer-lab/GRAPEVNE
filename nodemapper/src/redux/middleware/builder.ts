@@ -186,11 +186,7 @@ function NodeDeselected(dispatch: TNodeDeselectedDispatch) {
   dispatch(builderUpdateNodeInfo(""));
 }
 
-async function GetRemoteModules(
-  dispatchSubmitQuery: TPayloadRecord,
-  dispatchString: TPayloadString,
-  repo: string
-) {
+async function GetRemoteModules(dispatchString: TPayloadString, repo: string) {
   // Get list of remote modules
   dispatchString(builderUpdateStatusText("Loading remote modules..."));
   const app = BuilderEngine.Instance;
@@ -207,7 +203,7 @@ async function GetRemoteModules(
   switch (backend as string) {
     case "web":
       query["data"]["content"] = JSON.stringify(query["data"]["content"]);
-      dispatchSubmitQuery(builderSubmitQuery(query));
+      SubmitQuery(query, dispatchString);
       break;
     case "electron":
       console.log("Sending query: ", query);
