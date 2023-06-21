@@ -21,7 +21,7 @@ const API_ENDPOINT = "http://127.0.0.1:5000/api";
 declare const window: any;
 
 const builderAPI = window.builderAPI;
-const backend = "electron"; // web | electron
+const backend = "web"; // "electron"; // web | electron
 
 export function builderMiddleware({ getState, dispatch }) {
   return function (next) {

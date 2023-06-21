@@ -30,10 +30,6 @@ const runnerReducer = createReducer(runnerStateInit, (builder) => {
       // Business logic
       console.info("[Reducer] " + action.type);
     })
-    .addCase(actions.runnerSubmitQuery, (state, action) => {
-      state.query = action.payload;
-      console.info("[Reducer] " + action.type);
-    })
     .addCase(actions.runnerImportSnakefile, (state, action) => {
       console.info("[Reducer] " + action.type);
     })

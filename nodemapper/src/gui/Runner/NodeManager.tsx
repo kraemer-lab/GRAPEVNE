@@ -1,6 +1,8 @@
-import React from "react";
 import "isomorphic-fetch";
+
+import React from "react";
 import RunnerEngine from "./RunnerEngine";
+
 import { BodyWidget } from "./BodyWidget";
 import { DiagramModel } from "@projectstorm/react-diagrams";
 import { useAppSelector } from "redux/store/hooks";
@@ -59,99 +61,6 @@ function NodeManager() {
   React.useEffect(() => {
     JobStatusUpdate();
   }, [jobstatus]);
-
-  // POST request handler [refactor out of this function later]
-  const query = useAppSelector((state) => state.runner.query);
-  async function postRequest() {
-    const postRequestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json;charset=UTF-8" },
-      body: JSON.stringify(query),
-    };
-    console.info("Sending query: ", query);
-    fetch(API_ENDPOINT + "/post", postRequestOptions)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        dispatch(runnerUpdateStatusText("Error: " + response.statusText));
-        throw response;
-      })
-      .then((data) => {
-        if (data !== null) processResponse(data);
-        console.info("Got response: ", data);
-      })
-      .catch((error) => {
-        console.error("Error during query: ", error);
-      });
-  }
-
-  function processResponse(content: JSON) {
-    console.log("Process response: ", content);
-    dispatch(runnerUpdateStatusText(""));
-    switch (content["query"]) {
-      case "runner/build": {
-        // Download returned content as file
-        const filename = "Snakefile";
-        const element = document.createElement("a");
-        element.setAttribute(
-          "href",
-          "data:text/plain;charset=utf-8," + encodeURIComponent(content["body"])
-        );
-        element.setAttribute("download", filename);
-        element.style.display = "none";
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-        break;
-      }
-      case "runner/launch": {
-        console.info("Launch response: ", content["body"]);
-        break;
-      }
-      case "runner/lint": {
-        // Update the held linter message
-        dispatch(runnerStoreLint(content["body"]));
-        break;
-      }
-      case "runner/jobstatus": {
-        dispatch(runnerStoreJobStatus(content["body"]));
-        break;
-      }
-      case "runner/loadworkflow":
-      case "runner/tokenize":
-      case "runner/tokenize_load": {
-        // Rebuild map from returned (segmented) representation
-        nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content["body"]));
-        dispatch(runnerStoreMap(content["body"]));
-        UpdateActionListeners();
-        // Submit query to automatically lint file
-        dispatch(runnerLintSnakefile());
-        break;
-      }
-      case "display/folderinfo": {
-        // Read folder contents into state
-        dispatch(displayStoreFolderInfo(content["body"]));
-        break;
-      }
-      case "runner/deleteresults": {
-        // Refresh folder list
-        dispatch(displayGetFolderInfo());
-        break;
-      }
-      default:
-        console.error(
-          "Error interpreting server response (query: ",
-          content["query"],
-          ")"
-        );
-    }
-  }
-
-  // Received query request (POST to backend server)...
-  React.useEffect(() => {
-    if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
-  }, [query]);
 
   return (
     <div id="nodemanager" style={{ width: "100%", height: "100%" }}>

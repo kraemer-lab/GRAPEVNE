@@ -1,12 +1,15 @@
 import React from "react";
-import { useEffect, useState } from "react";
-import { ReactSlidingPane } from "react-sliding-pane";
-import { useAppSelector, useAppDispatch } from "redux/store/hooks";
+
+import { useEffect } from "react";
+import { useState } from "react";
+import { useAppSelector } from "redux/store/hooks";
+import { useAppDispatch } from "redux/store/hooks";
+
 import { displayGetFolderInfo } from "redux/actions/display";
 import { displaySetFolder } from "redux/actions/display";
 import { displaySetFilename } from "redux/actions/display";
+
 import { runnerLoadSnakefile } from "redux/actions/runner";
-import { runnerSubmitQuery } from "redux/actions/runner";
 
 import "./FolderContents.css";
 
