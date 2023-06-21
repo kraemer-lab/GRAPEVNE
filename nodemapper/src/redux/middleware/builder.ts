@@ -198,17 +198,17 @@ async function GetRemoteModules(dispatchString: TPayloadString, repo: string) {
       },
     },
   };
+  const callback = (content: string) => {
+    dispatchString(builderUpdateModulesList(content["body"]));
+  };
   let response: Record<string, undefined>;
   switch (backend as string) {
     case "web":
       query["data"]["content"] = JSON.stringify(query["data"]["content"]);
-      SubmitQuery(query, dispatchString);
+      SubmitQuery(query, dispatchString, callback);
       break;
     case "electron":
-      console.log("Sending query: ", query);
-      response = await builderAPI.GetRemoteModules(query);
-      console.log("Response: ", response);
-      dispatchString(builderUpdateModulesList(response["body"]));
+      callback((await builderAPI.GetRemoteModules(query)) as string);
       break;
     default:
       console.error("Unknown backend: ", backend);
@@ -326,7 +326,7 @@ async function postRequestCheckNodeDependencies(
     });
 }
 
-const SubmitQuery = (query: Record<string, any>, dispatch) => {
+const SubmitQuery = (query: Record<string, unknown>, dispatch, callback) => {
   // POST request handler
   async function postRequest() {
     const postRequestOptions = {
@@ -345,7 +345,7 @@ const SubmitQuery = (query: Record<string, any>, dispatch) => {
       })
       .then((data) => {
         if (data !== null) {
-          processResponse(data);
+          processResponse(data, callback);
         }
         console.info("Got response: ", data);
       })
@@ -354,21 +354,10 @@ const SubmitQuery = (query: Record<string, any>, dispatch) => {
       });
   }
 
-  function processResponse(content: JSON) {
+  function processResponse(content: JSON, callback) {
     console.log("Process response: ", content);
     dispatch(builderUpdateStatusText(""));
-    switch (content["query"]) {
-      case "builder/get-remote-modules": {
-        dispatch(builderUpdateModulesList(content["body"]));
-        break;
-      }
-      default:
-        console.error(
-          "Error interpreting server response (query: ",
-          content["query"],
-          ")"
-        );
-    }
+    callback(content);
   }
 
   // Received query request
