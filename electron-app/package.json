@@ -28,6 +28,7 @@
     "axios": "^1.4.0",
     "builderjs": "file:../builderjs",
     "electron-squirrel-startup": "^1.0.0",
+    "python-shell": "^5.0.0",
     "ts-loader": "^9.4.3",
     "typescript": "^5.1.3"
   }
