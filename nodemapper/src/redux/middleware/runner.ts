@@ -1,8 +1,7 @@
 import RunnerEngine from "gui/Runner/RunnerEngine";
+import * as globals from "redux/globals";
 
-import { displayOpenSettings } from "redux/actions";
 import { displayGetFolderInfo } from "redux/actions";
-import { displayCloseSettings } from "redux/actions";
 import { displayUpdateNodeInfo } from "redux/actions";
 import { displayStoreFolderInfo } from "redux/actions";
 
@@ -15,9 +14,7 @@ import { runnerQueryJobStatus } from "redux/actions";
 import { runnerStoreJobStatus } from "redux/actions";
 import { runnerUpdateStatusText } from "redux/actions";
 
-// TODO: Replace with webpack proxy (problems getting this to work)
-// only relevant for web-service backend (e.g. flask)
-const API_ENDPOINT = "http://127.0.0.1:5000/api";
+const API_ENDPOINT = globals.getApiEndpoint();
 
 export function runnerMiddleware({ getState, dispatch }) {
   return function (next) {
@@ -27,7 +24,7 @@ export function runnerMiddleware({ getState, dispatch }) {
       console.log("Middleware: ", action);
       switch (action.type) {
         case "runner/node-selected":
-          NodeSelected(action, dispatch, getState);
+          NodeSelected(action, dispatch, getState().display.graph_is_moveable);
           break;
         case "runner/node-deselected":
           NodeDeselected(dispatch);
@@ -42,19 +39,22 @@ export function runnerMiddleware({ getState, dispatch }) {
           LoadSnakefile(action, dispatch);
           break;
         case "runner/launch-snakefile":
-          LaunchSnakefile(dispatch, getState);
+          LaunchSnakefile(dispatch, getState().display.folderinfo);
           break;
         case "runner/query-job-status":
-          QueryJobStatus(dispatch, getState);
+          QueryJobStatus(dispatch, getState().display.folderinfo);
           break;
         case "runner/build-snakefile":
-          BuildSnakefile(dispatch, getState);
+          BuildSnakefile(dispatch, getState().runner.serialize);
           break;
         case "runner/lint-snakefile":
-          LintSnakefile(dispatch, getState);
+          LintSnakefile(dispatch, getState().runner.serialize);
           break;
         case "runner/load-workflow":
-          LoadWorkflow(dispatch, getState);
+          LoadWorkflow(dispatch, getState().display.folderinfo);
+          break;
+        case "runner/delete-results":
+          DeleteResults(dispatch, getState().display.folderinfo);
           break;
         default:
           break;
@@ -68,8 +68,7 @@ export function runnerMiddleware({ getState, dispatch }) {
 // Middleware
 ///////////////////////////////////////////////////////////////////////////////
 
-const NodeSelected = (action, dispatch, getState) => {
-  const graph_is_moveable = getState().display.graph_is_moveable;
+const NodeSelected = (action, dispatch, graph_is_moveable: boolean): void => {
   if (!graph_is_moveable) {
     const runner = RunnerEngine.Instance;
     const node = runner.getNodeById(action.payload.id);
@@ -92,13 +91,11 @@ const NodeSelected = (action, dispatch, getState) => {
       };
     }
     dispatch(displayUpdateNodeInfo(JSON.stringify(payload)));
-    dispatch(displayOpenSettings());
   }
 };
 
-const NodeDeselected = (dispatch) => {
+const NodeDeselected = (dispatch): void => {
   dispatch(displayUpdateNodeInfo(""));
-  dispatch(displayCloseSettings());
 };
 
 const SelectNone = () => {
@@ -107,7 +104,7 @@ const SelectNone = () => {
   runner.NodesSelectNone();
 };
 
-const ImportSnakefile = (dispatch) => {
+const ImportSnakefile = (dispatch): void => {
   QueryAndLoadTextFile((content, filename) => {
     const query: Record<string, unknown> = {
       query: "runner/tokenize",
@@ -116,12 +113,15 @@ const ImportSnakefile = (dispatch) => {
         content: content,
       },
     };
-    SubmitQuery(query, dispatch);
+    const callback = (content: Record<string, unknown>) => {
+      RebuildNodeMap(content, dispatch);
+    };
+    SubmitQuery(query, dispatch, callback);
     dispatch(displayUpdateNodeInfo(""));
   });
 };
 
-const LoadSnakefile = (action, dispatch) => {
+const LoadSnakefile = (action, dispatch): void => {
   dispatch(runnerUpdateStatusText("Loading Snakefile..."));
   const query: Record<string, unknown> = {
     query: "runner/tokenize_load",
@@ -130,73 +130,141 @@ const LoadSnakefile = (action, dispatch) => {
       content: action.payload,
     },
   };
-  SubmitQuery(query, dispatch);
+  const callback = (content: Record<string, unknown>) => {
+    RebuildNodeMap(content, dispatch);
+  };
+  SubmitQuery(query, dispatch, callback);
   dispatch(displayUpdateNodeInfo(""));
 };
 
-const LaunchSnakefile = (dispatch, getState) => {
+const LaunchSnakefile = (dispatch, folderinfo: string): void => {
   const query: Record<string, unknown> = {
     query: "runner/launch",
     data: {
       format: "Snakefile",
-      content: JSON.parse(getState().display.folderinfo).foldername,
+      content: JSON.parse(folderinfo).foldername,
     },
   };
-  SubmitQuery(query, dispatch);
+  const callback = (content: Record<string, unknown>) => {
+    console.info("Launch response: ", content["body"]);
+  };
+  SubmitQuery(query, dispatch, callback);
   setTimeout(() => dispatch(runnerQueryJobStatus()), 5000);
 };
 
-const QueryJobStatus = (dispatch, getState) => {
+const QueryJobStatus = (dispatch, folderinfo: string): void => {
   const query: Record<string, unknown> = {
     query: "runner/jobstatus",
     data: {
       format: "Snakefile",
-      content: JSON.parse(getState().display.folderinfo).foldername,
+      content: JSON.parse(folderinfo).foldername,
     },
   };
-  SubmitQuery(query, dispatch);
+  const callback = (content: Record<string, unknown>) => {
+    dispatch(runnerStoreJobStatus(content["body"] as string));
+  };
+  SubmitQuery(query, dispatch, callback);
   setTimeout(() => dispatch(runnerQueryJobStatus()), 1000);
 };
 
-const BuildSnakefile = (dispatch, getState) => {
+const BuildSnakefile = (dispatch, serial: string): void => {
   const query: Record<string, unknown> = {
     query: "runner/build",
     data: {
       format: "Snakefile",
-      content: getState().runner.serialize,
+      content: serial,
     },
   };
-  SubmitQuery(query, dispatch);
+  const callback = (content: Record<string, unknown>) => {
+    // Download returned content as file
+    const filename = "Snakefile";
+    const element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," +
+        encodeURIComponent(content["body"] as string)
+    );
+    element.setAttribute("download", filename);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+  SubmitQuery(query, dispatch, callback);
 };
 
-const LintSnakefile = (dispatch, getState) => {
+const LintSnakefile = (dispatch, serial: string): void => {
   const query: Record<string, unknown> = {
     query: "runner/lint",
     data: {
       format: "Snakefile",
-      content: getState().runner.serialize,
+      content: serial,
     },
   };
-  SubmitQuery(query, dispatch);
+  const callback = (content: Record<string, unknown>) => {
+    dispatch(runnerStoreLint(content["body"] as string));
+  };
+  SubmitQuery(query, dispatch, callback);
 };
 
-const LoadWorkflow = (dispatch, getState) => {
+const LoadWorkflow = (dispatch, folderinfo: string): void => {
   dispatch(runnerUpdateStatusText("Loading Workflow..."));
   const query: Record<string, unknown> = {
     query: "runner/loadworkflow",
     data: {
       format: "Snakefile",
-      content: JSON.parse(getState().display.folderinfo).foldername,
+      content: JSON.parse(folderinfo).foldername,
     },
   };
-  SubmitQuery(query, dispatch);
+  const callback = (content: Record<string, unknown>) => {
+    RebuildNodeMap(content, dispatch);
+  };
+  SubmitQuery(query, dispatch, callback);
+};
+
+const DeleteResults = (dispatch, folderinfo: string): void => {
+  dispatch(runnerUpdateStatusText("Deleting Results..."));
+  const query: Record<string, unknown> = {
+    query: "runner/deleteresults",
+    data: {
+      format: "Snakefile",
+      content: JSON.parse(folderinfo).foldername,
+    },
+  };
+  const callback = (content: Record<string, unknown>) => {
+    // Refresh folder list
+    dispatch(displayGetFolderInfo());
+  };
+  SubmitQuery(query, dispatch, callback);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // Utility functions
 ///////////////////////////////////////////////////////////////////////////////
 
-function QueryAndLoadTextFile(onLoad: (result, filename: string) => void) {
+const RebuildNodeMap = (content: Record<string, any>, dispatch): void => {
+  // Rebuild map from returned (segmented) representation
+  const nodeMapEngine = RunnerEngine.Instance;
+  nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content["body"]));
+  dispatch(runnerStoreMap(content["body"]));
+  nodeMapEngine.AddSelectionListeners(
+    (x) => {
+      dispatch(runnerNodeSelected(x));
+    },
+    (x) => {
+      dispatch(runnerNodeDeselected(x));
+    },
+    (x) => {
+      return;
+    }
+  );
+  // Submit query to automatically lint file
+  dispatch(runnerLintSnakefile());
+};
+
+function QueryAndLoadTextFile(
+  onLoad: (result, filename: string) => void
+): void {
   // eslint-disable-line @typescript-eslint/ban-types
   // Opens a file dialog, then executes readerEvent
   const input = document.createElement("input");
@@ -211,9 +279,12 @@ function QueryAndLoadTextFile(onLoad: (result, filename: string) => void) {
   input.click();
 }
 
-function SubmitQuery(query: Record<string, unknown>, dispatch) {
-  // POST request handler [refactor out of this function later]
-
+function SubmitQuery(
+  query: Record<string, unknown>,
+  dispatch,
+  callback: (content: Record<string, unknown>) => void
+): void {
+  // POST request handler
   async function postRequest() {
     const postRequestOptions = {
       method: "POST",
@@ -230,7 +301,7 @@ function SubmitQuery(query: Record<string, unknown>, dispatch) {
         throw response;
       })
       .then((data) => {
-        if (data !== null) processResponse(data);
+        if (data !== null) processResponse(data, callback);
         console.info("Got response: ", data);
       })
       .catch((error) => {
@@ -238,77 +309,10 @@ function SubmitQuery(query: Record<string, unknown>, dispatch) {
       });
   }
 
-  function processResponse(content: JSON) {
+  function processResponse(content: Record<string, unknown>, callback) {
     console.log("Process response: ", content);
     dispatch(runnerUpdateStatusText(""));
-    switch (content["query"]) {
-      case "runner/build": {
-        // Download returned content as file
-        const filename = "Snakefile";
-        const element = document.createElement("a");
-        element.setAttribute(
-          "href",
-          "data:text/plain;charset=utf-8," + encodeURIComponent(content["body"])
-        );
-        element.setAttribute("download", filename);
-        element.style.display = "none";
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-        break;
-      }
-      case "runner/launch": {
-        console.info("Launch response: ", content["body"]);
-        break;
-      }
-      case "runner/lint": {
-        // Update the held linter message
-        dispatch(runnerStoreLint(content["body"]));
-        break;
-      }
-      case "runner/jobstatus": {
-        dispatch(runnerStoreJobStatus(content["body"]));
-        break;
-      }
-      case "runner/loadworkflow":
-      case "runner/tokenize":
-      case "runner/tokenize_load": {
-        // Rebuild map from returned (segmented) representation
-        const nodeMapEngine = RunnerEngine.Instance;
-        nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content["body"]));
-        dispatch(runnerStoreMap(content["body"]));
-        nodeMapEngine.AddSelectionListeners(
-          (x) => {
-            dispatch(runnerNodeSelected(x));
-          },
-          (x) => {
-            dispatch(runnerNodeDeselected(x));
-          },
-          (x) => {
-            return;
-          }
-        );
-        // Submit query to automatically lint file
-        dispatch(runnerLintSnakefile());
-        break;
-      }
-      case "display/folderinfo": {
-        // Read folder contents into state
-        dispatch(displayStoreFolderInfo(content["body"]));
-        break;
-      }
-      case "runner/deleteresults": {
-        // Refresh folder list
-        dispatch(displayGetFolderInfo());
-        break;
-      }
-      default:
-        console.error(
-          "Error interpreting server response (query: ",
-          content["query"],
-          ")"
-        );
-    }
+    callback(content);
   }
 
   // Received query request (POST to backend server)...

@@ -22,9 +22,6 @@ import { runnerUpdateStatusText } from "redux/actions";
 
 import "./NodeManager.css";
 
-// TODO: Replace with webpack proxy (problems getting this to work)
-const API_ENDPOINT = "http://127.0.0.1:5000/api";
-
 function NodeManager() {
   // Link to singleton instance of runner graph engine
   const nodeMapEngine = RunnerEngine.Instance;

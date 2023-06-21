@@ -4,6 +4,6 @@
 
 Interactive environment for building and validating data processing workflows, with a focus on phylogenetic analysis, built around the [Snakemake](https://snakemake.github.io/) workflow manager.
 
-**Documentation**: [ReadTheDocs](https://phyloflow.readthedocs.io) (*work-in-progress*)
+**Documentation**: [ReadTheDocs](https://phyloflow.readthedocs.io) (_work-in-progress_)
 
 **Status**: concept / prototyping

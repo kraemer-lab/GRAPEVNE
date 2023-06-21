@@ -1,11 +1,11 @@
+import RunnerEngine from "gui/Runner/RunnerEngine";
+import * as globals from "redux/globals";
+
 import { runnerSelectNone } from "redux/actions";
 import { runnerUpdateStatusText } from "redux/actions";
 import { displayStoreFolderInfo } from "redux/actions";
-import RunnerEngine from "gui/Runner/RunnerEngine";
 
-// TODO: Replace with webpack proxy (problems getting this to work)
-// only relevant for web-service backend (e.g. flask)
-const API_ENDPOINT = "http://127.0.0.1:5000/api";
+const API_ENDPOINT = globals.getApiEndpoint();
 
 export function displayMiddleware({ getState, dispatch }) {
   return function (next) {

@@ -1,4 +1,5 @@
 import BuilderEngine from "gui/Builder/BuilderEngine";
+import * as globals from "redux/globals";
 
 import { DefaultPortModel } from "NodeMap";
 import { DefaultLinkModel } from "NodeMap";
@@ -10,9 +11,7 @@ import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 
-// TODO: Replace with webpack proxy (problems getting this to work)
-// only relevant for web-service backend (e.g. flask)
-const API_ENDPOINT = "http://127.0.0.1:5000/api";
+const API_ENDPOINT = globals.getApiEndpoint();
 
 // TODO
 // This line permits any function declarations from the window.builderAPI
@@ -21,7 +20,7 @@ const API_ENDPOINT = "http://127.0.0.1:5000/api";
 declare const window: any;
 
 const builderAPI = window.builderAPI;
-const backend = "web"; // "electron"; // web | electron
+const backend = globals.getBackend();
 
 export function builderMiddleware({ getState, dispatch }) {
   return function (next) {

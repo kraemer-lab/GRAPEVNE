@@ -2,7 +2,7 @@ import { createAction } from "@reduxjs/toolkit";
 
 export const runnerAddNode = createAction("runner/add-node");
 export const runnerStoreMap = createAction("runner/store-map");
-export const runnerStoreLint = createAction("runner/store-lint");
+export const runnerStoreLint = createAction<string>("runner/store-lint");
 export const runnerSelectNone = createAction("runner/select-none");
 export const runnerViewSettings = createAction("runner/view-settings");
 export const runnerLoadWorkflow = createAction("runner/load-workflow");
@@ -24,5 +24,5 @@ export const runnerNodeSelected = createAction<Record<string, any> | undefined>(
   "runner/node-selected"
 );
 export const runnerNodeDeselected = createAction<
-  Record<string, any> | undefined
->("runner/node-deselected"); // eslint-disable-line @typescript-eslint/no-explicit-any
+  Record<string, any> | undefined // eslint-disable-line @typescript-eslint/no-explicit-any
+>("runner/node-deselected");
