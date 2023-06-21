@@ -9,6 +9,7 @@ import { displayUpdateNodeInfo } from "redux/actions";
 
 import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
+import { builderImportModule } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
 import { builderSetRepositoryTarget } from "redux/actions";
@@ -58,6 +59,11 @@ function Header() {
   // Load modules from repository
   const btnGetModuleList = () => {
     dispatch(builderGetRemoteModules());
+  };
+
+  const btnImportModule = () => {
+    //dispatch(builderImportModule());
+    console.error("Import of individual modules not currently implemented.");
   };
 
   const selectRepositoryTarget = (target) => {
@@ -119,6 +125,11 @@ function Header() {
         <button className="btn" onClick={btnArrange}>
           ARRANGE
         </button>
+        {/*
+          <button className="btn" onClick={btnImportModule}>
+            IMPORT MODULE
+          </button>
+        */}
         <button className="btn" onClick={btnGetModuleList}>
           GET MODULE LIST
         </button>

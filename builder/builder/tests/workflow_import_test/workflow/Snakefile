@@ -1,0 +1,25 @@
+configfile : "config/config.yaml"
+
+module module1:
+    snakefile:
+        config["module1"]["snakefile"]
+    config:
+        config["module1"]["config"]
+
+use rule * from module1 as module1_*
+
+module module2:
+    snakefile:
+        eval(config["module2"]["snakefile"])
+    config:
+        config["module2"]["config"]
+
+use rule * from module2 as module2_*
+
+module module3:
+    snakefile:
+        config["module3"]["snakefile"]
+    config:
+        config["module3"]["config"]
+
+use rule * from module3 as module3_*

@@ -5,7 +5,6 @@ import { DefaultLinkModel } from "NodeMap";
 import { DefaultNodeModel } from "NodeMap";
 
 import { builderRedraw } from "redux/actions";
-import { builderSubmitQuery } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
@@ -46,10 +45,13 @@ export function builderMiddleware({ getState, dispatch }) {
           NodeDeselected(dispatch);
           break;
         case "builder/get-remote-modules":
-          GetRemoteModules(dispatch, dispatch, getState().builder.repo);
+          GetRemoteModules(dispatch, getState().builder.repo);
           break;
         case "builder/update-modules-list":
           UpdateModulesList(dispatch);
+          break;
+        case "builder/import-module":
+          ImportModule();
           break;
         default:
           break;
@@ -223,6 +225,10 @@ function UpdateModulesList(dispatch: TPayloadString) {
   dispatch(builderUpdateStatusText(""));
 }
 
+function ImportModule() {
+  // Query user for config file and import module
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // POST request handlers
 ///////////////////////////////////////////////////////////////////////////////
@@ -324,3 +330,52 @@ async function postRequestCheckNodeDependencies(
       console.error("Error during query: ", error);
     });
 }
+
+const SubmitQuery = (query: Record<string, any>, dispatch) => {
+  // POST request handler
+  async function postRequest() {
+    const postRequestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json;charset=UTF-8" },
+      body: JSON.stringify(query),
+    };
+    console.info("Sending query: ", query);
+    fetch(API_ENDPOINT + "/post", postRequestOptions)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        dispatch(builderUpdateStatusText("Error: " + response.statusText));
+        throw response;
+      })
+      .then((data) => {
+        if (data !== null) {
+          processResponse(data);
+        }
+        console.info("Got response: ", data);
+      })
+      .catch((error) => {
+        console.error("Error during query: ", error);
+      });
+  }
+
+  function processResponse(content: JSON) {
+    console.log("Process response: ", content);
+    dispatch(builderUpdateStatusText(""));
+    switch (content["query"]) {
+      case "builder/get-remote-modules": {
+        dispatch(builderUpdateModulesList(content["body"]));
+        break;
+      }
+      default:
+        console.error(
+          "Error interpreting server response (query: ",
+          content["query"],
+          ")"
+        );
+    }
+  }
+
+  // Received query request
+  if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
+};

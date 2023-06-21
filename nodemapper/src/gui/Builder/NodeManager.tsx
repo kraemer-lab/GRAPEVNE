@@ -32,56 +32,6 @@ function NodeManager() {
     }
   );
 
-  // POST request handler [refactor out of this function later]
-  const query = useAppSelector((state) => state.builder.query);
-  async function postRequest() {
-    const postRequestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json;charset=UTF-8" },
-      body: JSON.stringify(query),
-    };
-    console.info("Sending query: ", query);
-    fetch(API_ENDPOINT + "/post", postRequestOptions)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        dispatch(builderUpdateStatusText("Error: " + response.statusText));
-        throw response;
-      })
-      .then((data) => {
-        if (data !== null) {
-          processResponse(data);
-        }
-        console.info("Got response: ", data);
-      })
-      .catch((error) => {
-        console.error("Error during query: ", error);
-      });
-  }
-
-  function processResponse(content: JSON) {
-    console.log("Process response: ", content);
-    dispatch(builderUpdateStatusText(""));
-    switch (content["query"]) {
-      case "builder/get-remote-modules": {
-        dispatch(builderUpdateModulesList(content["body"]));
-        break;
-      }
-      default:
-        console.error(
-          "Error interpreting server response (query: ",
-          content["query"],
-          ")"
-        );
-    }
-  }
-
-  // Received query request (POST to backend server)...
-  React.useEffect(() => {
-    if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
-  }, [query]);
-
   return <BodyWidget engine={engine} />;
 }
 

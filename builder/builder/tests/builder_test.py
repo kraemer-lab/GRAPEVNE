@@ -7,37 +7,33 @@ from builder.builder import YAMLToConfig
 def test_BuildSnakefile():
     m = Model()
     # Add modules
-    m.AddModule("module1", {"url": "url1"})
-    m.AddModule("module2", {"url": "url2"})
-    m.AddModule("module3", {"url": "url3"})
-    m.AddConnector("conn12", {"url": "url12", "map": ["module1", "module2"]})
-    m.AddConnector("conn23", {"map": ["module2", "module3"]})  # No url
+    m.AddModule("module1", {"snakefile": "snakefile1"})
+    m.AddModule("module2", {"snakefile": "snakefile2"})
+    m.AddModule("module3", {"snakefile": "snakefile3"})
+    m.AddConnector("conn23", {"map": ["module2", "module3"]})
     # Verify Snakefile
     target_snakefile = """configfile: "config/config.yaml"
 
 module module1:
     snakefile:
-        "url1"
-    config: config["module1"]
+        config["module1"]["snakefile"]
+    config:
+        config["module1"]["config"]
 use rule * from module1 as module1_*
 
 module module2:
     snakefile:
-        "url2"
-    config: config["module2"]
+        config["module2"]["snakefile"]
+    config:
+        config["module2"]["config"]
 use rule * from module2 as module2_*
 
 module module3:
     snakefile:
-        "url3"
-    config: config["module3"]
+        config["module3"]["snakefile"]
+    config:
+        config["module3"]["config"]
 use rule * from module3 as module3_*
-
-module conn12:
-    snakefile:
-        "url12"
-    config: config["conn12"]
-use rule * from conn12 as conn12_*
 
 """
     assert m.BuildSnakefile() == target_snakefile
@@ -45,19 +41,27 @@ use rule * from conn12 as conn12_*
 
 def test_ConstructSnakefileConfig():
     m = Model()
-    m.AddModule("module1", {"url": "url1", "params": {"param1": "value1"}})
-    m.AddModule("module2", {"url": "url2", "input_namespace": "in3", "params": {}})
-    m.AddModule("module3", {"url": "url2", "input_namespace": "in3", "params": {}})
+    m.AddModule("module1", {"snakefile": "snakefile1", "params": {"param1": "value1"}})
+    m.AddModule(
+        "module2", {"snakefile": "snakefile2", "input_namespace": "in3", "params": {}}
+    )
+    m.AddModule(
+        "module3", {"snakefile": "snakefile2", "input_namespace": "in3", "params": {}}
+    )
     # Namespace connector
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
-    # URL connector
-    m.AddConnector("conn23", {"url": "url12", "map": ["module2", "module3"]})
+    m.AddConnector("conn23", {"map": ["module2", "module3"]})
     c = m.ConstructSnakefileConfig()
     # Verify config
-    assert c["module1"].get("param1", None) == "value1"
-    assert c["module2"]["input_namespace"] == c["module1"]["output_namespace"]
-    assert c["conn23"]["input_namespace"] == c["module2"]["output_namespace"]
-    assert c["conn23"]["output_namespace"] == c["module3"]["input_namespace"]
+    assert c["module1"]["config"].get("param1", None) == "value1"
+    assert (
+        c["module2"]["config"]["input_namespace"]
+        == c["module1"]["config"]["output_namespace"]
+    )
+    assert (
+        c["module3"]["config"]["input_namespace"]
+        == c["module2"]["config"]["output_namespace"]
+    )
 
 
 @pytest.mark.skip(reason="Not implemented")
@@ -112,14 +116,14 @@ def test_AddModule_SingleInputNamespace():
     m = Model()
     name = "module1"
     module = {
-        "rulename": "rulename1",
+        "rulename": "module1",
         "nodetype": "moduletype1",
-        "url": "url1",
+        "snakefile": "snakefile1",
         "params": {
+            "input_namespace": "input_namespace1",
+            "output_namespace": "output_namespace1",
             "param1": "value1",
         },
-        "input_namespace": "input_namespace1",
-        "output_namespace": "output_namespace1",
     }
     m.AddModule(name, module)
     # Verify module assigned correctly
@@ -136,17 +140,17 @@ def test_AddModule_MultipleInputNamespaces():
     m = Model()
     name = "module2"
     module = {
-        "rulename": "rulename2",
+        "rulename": "module2",
         "nodetype": "moduletype2",
-        "url": "url2",
+        "snakefile": "snakefile2",
         "params": {
             "param2": "value2",
+            "input_namespace": {
+                "in2a": "input_namespace2a",
+                "in2b": "input_namespace2b",
+            },
+            "output_namespace": "output_namespace2",
         },
-        "input_namespace": {
-            "in2a": "input_namespace2a",
-            "in2b": "input_namespace2b",
-        },
-        "output_namespace": "output_namespace2",
     }
     m.AddModule(name, module)
     # Verify module assigned correctly
@@ -159,27 +163,23 @@ def test_AddModule_MultipleInputNamespaces():
             assert getattr(m.nodes[0], key) == module[key]
 
 
-def test_AddConnector_Module():
-    # Module connector - Connector module added
+def test_AddModule_DuplicateName():
     m = Model()
-    m.AddModule("module1", {})
-    m.AddModule("module2", {})
-    conn = m.AddConnector("conn12", {"url": "url12", "map": ["module1", "module2"]})
-    # Verify connector assigned correctly
-    assert conn.name == "conn12"
-    assert conn.nodetype == "connector"
-    assert conn.map == ["module1", "module2"]
+    m.AddModule("module", {})
+    m.AddModule("module", {})
+    m.AddModule("module", {})
+    assert len(m.nodes) == 3
+    assert len(set([n.rulename for n in m.nodes])) == 3
 
 
-def test_AddConnector_Namespace():
-    # Namespace connector - no Connector module added
+def test_AddConnector():
+    # Namespace connector
     m = Model()
     module1 = m.AddModule("module1", {})
     module2 = m.AddModule("module2", {})
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
     # Verify module namespaces connect appropriately
-    assert module1.output_namespace == "module1"
-    assert module2.input_namespace == "module1"
+    assert module1.output_namespace == module2.input_namespace
 
 
 def test_GetNodeByName():

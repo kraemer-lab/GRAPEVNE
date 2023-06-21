@@ -2,7 +2,6 @@ import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "../actions";
 
 interface IBuilderState {
-  query: Record<string, string>;
   repo: Record<string, string>;
   modules_list: string;
   statustext: string;
@@ -11,7 +10,6 @@ interface IBuilderState {
 
 // State
 const builderStateInit: IBuilderState = {
-  query: {},
   repo: {
     // (TODO: replace with proper settings menu)
     type: "local",
@@ -39,10 +37,6 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderRedraw, (state, action) => {
-      console.info("[Reducer] " + action.type);
-    })
-    .addCase(actions.builderSubmitQuery, (state, action) => {
-      state.query = action.payload as Record<string, string>;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderAddLink, (state, action) => {
