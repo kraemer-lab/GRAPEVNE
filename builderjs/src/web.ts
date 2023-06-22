@@ -271,3 +271,9 @@ export {
   GetModulesList,
   GetRemoteModulesGithubDirectoryListing,
 };
+module.exports = {
+  GetLocalModules,
+  GetModulesList,
+  GetRemoteModulesGithubDirectoryListing,
+};
+export default module.exports;
