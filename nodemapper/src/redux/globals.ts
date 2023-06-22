@@ -3,5 +3,8 @@ export const getApiEndpoint = () => {
 };
 
 export const getBackend = () => {
-  return "electron"; // web | electron
+  // The backend was originally written using a Flask-based REST server.
+  // The REST server is being migrated to an Electron-based application.
+  // However, both backends are still supported for now.
+  return "electron"; // rest | electron
 };

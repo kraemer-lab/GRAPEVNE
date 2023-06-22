@@ -262,7 +262,24 @@ class Model:
         return node
 
     def AddConnector(self, name, connector) -> None:
-        """Adds a connection between modules"""
+        """Adds a connection between modules
+
+        Connectors map all inputs to a module. If the first element of
+        connector is a string then only a single input_namespace need be
+        considered. If the first element is a dictionary then key-value pairs
+        represent the input_namespaces / ports, and their associated input
+        modules.
+
+        Example: Connect the output of module2 to the single input on module1
+            connector = [ "module2", "module1" ]
+
+        Example: Connect the output of module2 to the named input on module1
+            connector = [ {"input1": "module2"}, "module1" ]
+
+        Args:
+            name (str): Name of the connector
+            connector (list): Connector definition
+        """
         mapping = connector.get("map", None)
         node_to = self.GetNodeByName(mapping[1])
         if not node_to:
@@ -292,7 +309,15 @@ class Model:
         """Returns a node object by name"""
         name = name.casefold()
         for node in self.nodes:
-            if node.rulename == name:
+            if node.name.casefold() == name:
+                return node
+        return None
+
+    def GetNodeByRuleName(self, rulename: str) -> Node | None:
+        """Returns a node object by name"""
+        rulename = rulename.casefold()
+        for node in self.nodes:
+            if node.rulename == rulename:
                 return node
         return None
 
@@ -313,16 +338,16 @@ class Model:
         module_input_namespace: dict = {}
         all_output_namespaces = self.GetRuleNames()
         for node in self.nodes:
+            ref_rulename = "$" + node.rulename
             if isinstance(node.input_namespace, str):
                 if node.input_namespace not in all_output_namespaces:
-                    module_input_namespace["_" + node.rulename] = node.input_namespace
+                    module_input_namespace[ref_rulename] = node.input_namespace
             elif isinstance(node.input_namespace, dict):
+                module_input_namespace[ref_rulename] = {}
                 for k, v in node.input_namespace.items():
                     if v not in all_output_namespaces:
                         # namespace should be unique to avoid clashes
-                        module_input_namespace["_" + node.rulename][
-                            k
-                        ] = self.WrangleName(k)
+                        module_input_namespace[ref_rulename][k] = self.WrangleName(k)
             elif node.input_namespace is None:
                 pass
             else:
@@ -360,14 +385,14 @@ class Model:
                 module_output_namespaces.append(node.rulename)
         return module_output_namespaces
 
-    def ExpandModule(self, name: str):
+    def ExpandModule(self, rulename: str):
         """Expands a module into its constituent part"""
         # Identify node
-        node = self.GetNodeByName(name)
+        node = self.GetNodeByRuleName(rulename)
         if not node:
-            raise ValueError("No matching node found for name: " + name)
+            raise ValueError("No matching node found for rulename: " + rulename)
         if not isinstance(node, Module):
-            raise ValueError("Node is not a module: " + name)
+            raise ValueError("Node is not a module: " + rulename)
         # Read module spec (Snakefile, configfile) from source
         workflow_contents = node.ReadWorkflowFile()
         modules_list = re.findall("^module (.*):", workflow_contents, re.MULTILINE)
@@ -443,7 +468,7 @@ class Model:
             # Now orphan inputs - source module
             node.input_namespace = None
         elif isinstance(node.input_namespace, str):
-            orphan_node = self.GetNodeByName(list(new_orphan_inputs)[0])
+            orphan_node = self.GetNodeRuleByName(list(new_orphan_inputs)[0])
             if orphan_node:
                 orphan_node.input_namespace = node.input_namespace
             else:

@@ -28,13 +28,11 @@ def post(request):
             with open("workflow.json", "w") as f:  # dump config file to disk for debug
                 json.dump(js, f, indent=4)
             memory_zip, _ = builder.BuildFromJSON(js)
-            return {}
-            # TODO:
-            # return Response(
-            #     base64.b64encode(memory_zip),
-            #     mimetype="application/zip",
-            #     headers={"Content-Disposition": "attachment;filename=workflow.zip"},
-            # )
+            # Binary return is not used in our (temporary) python-nodejs
+            # interface for electron. Instead the zip file is read back
+            # off the disk and forwarded by nodejs.
+            return None
+            # return base64.b64encode(memory_zip)
         case "builder/get-remote-modules":
             js = data["content"]
             data = {

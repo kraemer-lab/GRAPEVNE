@@ -65,7 +65,7 @@ def GetLocalModules(path: str) -> List[dict]:
                         "name": f"({org}) {FormatName(workflow)}",
                         "type": module_type[:-1],  # remove plural
                         "config": {
-                            "url": abspath(url_workflow),
+                            "snakefile": abspath(url_workflow),
                             "params": params,
                         },
                     }
@@ -166,7 +166,7 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                         "name": f"({org['name']}) {FormatName(workflow['name'])}",
                         "type": module_type["name"][:-1],  # remove plural
                         "config": {
-                            "url": {
+                            "snakefile": {
                                 "function": "github",
                                 "args": [repo],
                                 "kwargs": {
@@ -227,7 +227,7 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
                 "name": branch["name"],
                 "type": module_types[module_type],
                 "config": {
-                    "url": {
+                    "snakefile": {
                         "function": "github",
                         "args": [repo],
                         "kwargs": {

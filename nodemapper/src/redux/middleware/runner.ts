@@ -126,7 +126,7 @@ const ImportSnakefile = (dispatch): void => {
       RebuildNodeMap(content, dispatch);
     };
     switch (backend) {
-      case "web":
+      case "rest":
         SubmitQuery(query, dispatch, callback);
         break;
       case "electron":
@@ -154,7 +154,7 @@ const LoadSnakefile = async (action, dispatch): Promise<void> => {
     RebuildNodeMap(content, dispatch);
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
@@ -180,7 +180,7 @@ const LaunchSnakefile = async (dispatch, folderinfo: string): Promise<void> => {
     console.info("Launch response: ", content["body"]);
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
@@ -204,7 +204,7 @@ const QueryJobStatus = async (dispatch, folderinfo: string): Promise<void> => {
     dispatch(runnerStoreJobStatus(content["body"] as string));
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
@@ -240,7 +240,7 @@ const BuildSnakefile = async (dispatch, serial: string): Promise<void> => {
     document.body.removeChild(element);
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
@@ -263,7 +263,7 @@ const LintSnakefile = async (dispatch, serial: string): Promise<void> => {
     dispatch(runnerStoreLint(content["body"] as string));
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
@@ -287,7 +287,7 @@ const LoadWorkflow = async (dispatch, folderinfo: string): Promise<void> => {
     RebuildNodeMap(content, dispatch);
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
@@ -314,7 +314,7 @@ const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
     dispatch(displayGetFolderInfo());
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":

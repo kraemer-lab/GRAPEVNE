@@ -29,7 +29,8 @@ yarn build
 popd
 
 # compile PhyloFlow
-rm -rf dist out node_modules
+rm -rf dist out
+#rm -rf node_modules  # deep clean
 yarn
 yarn build
 yarn make

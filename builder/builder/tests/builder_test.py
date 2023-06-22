@@ -172,7 +172,7 @@ def test_AddModule_DuplicateName():
     assert len(set([n.rulename for n in m.nodes])) == 3
 
 
-def test_AddConnector():
+def test_AddConnector_SingleInput():
     # Namespace connector
     m = Model()
     module1 = m.AddModule("module1", {})
@@ -180,6 +180,38 @@ def test_AddConnector():
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
     # Verify module namespaces connect appropriately
     assert module1.output_namespace == module2.input_namespace
+
+
+def test_AddConnector_MultiInput():
+    # Namespace connector
+    m = Model()
+    module1 = m.AddModule(
+        "module1",
+        {
+            "snakefile": "snakefile1",
+            "params": {
+                "input_namespace": "in1",
+                "output_namespace": "out1",
+            },
+        },
+    )
+    module2 = m.AddModule(
+        "module2",
+        {
+            "snakefile": "snakefile2",
+            "params": {
+                "input_namespace": {
+                    "in2a": "input2_A",
+                    "in2b": "input2_B",
+                },
+                "output_namespace": "out2",
+            },
+        },
+    )
+    # Connect the single output from module1 to the first input of module2
+    m.AddConnector("conn12", {"map": [{"in2a": "module1"}, "module2"]})
+    # Verify module namespaces connect appropriately
+    assert module1.output_namespace == module2.input_namespace["in2a"]
 
 
 def test_GetNodeByName():

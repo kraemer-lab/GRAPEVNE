@@ -5,4 +5,5 @@ cd "$(dirname "$0")"
 
 yarn
 yarn lint
+yarn madge
 yarn test

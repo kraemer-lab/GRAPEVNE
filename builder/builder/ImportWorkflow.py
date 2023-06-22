@@ -22,28 +22,24 @@ def ImportWorkflowDir(
 
     # Build model
     m = Model()
-    for name in modules:
+    for rulename in modules:
         # Namespaces are not ordinary parameters
-        config = workflow_config[name]["config"]
+        config = workflow_config[rulename]["config"]
         c = config.copy()
         c.pop("input_namespace", None)
         c.pop("output_namespace", None)
-        node = m.AddModule(name, {"params": c})
+        node = m.AddModule(rulename, {"params": c})
         # Retain namespace mapping
         node.input_namespace = config.get("input_namespace", node.input_namespace)
         node.output_namespace = config.get("output_namespace", node.output_namespace)
-        node.snakefile = workflow_config[name].get("snakefile", node.snakefile)
+        node.snakefile = workflow_config[rulename].get("snakefile", node.snakefile)
 
     # Expand modules
     module_list: List[str] = []
     while (modules := m.GetModuleNames()) != module_list:
         module_list = modules
-        for name in modules:
-            m.ExpandModule(name)
-
-    print(m.GetModuleNames())
-    print(m.ExposeOrphanInputs())
-    print(m.ExposeOrphanOutputs())
+        for rulename in modules:
+            m.ExpandModule(rulename)
 
     return m
 

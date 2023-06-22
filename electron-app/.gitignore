@@ -3,3 +3,6 @@ out
 node_modules
 dist
 coverage
+workflow.json
+build.zip
+build

@@ -76,7 +76,7 @@ interface IPayloadString {
 }
 type TPayloadString = (action: IPayloadString) => void;
 
-function CompileToJSON() {
+const CompileToJSON = async () => {
   const app = BuilderEngine.Instance;
   const query: Record<string, unknown> = {
     query: "builder/compile-to-json",
@@ -85,19 +85,32 @@ function CompileToJSON() {
       content: app.GetModuleListJSON(),
     },
   };
+  const callback = (result) => {
+    // Download returned content as file
+    const filename = "build.zip";
+    const element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:application/zip;base64," + encodeURIComponent(result)
+    );
+    element.setAttribute("download", filename);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
   switch (backend as string) {
-    case "web":
+    case "rest":
       query["data"]["content"] = JSON.stringify(query["data"]["content"]);
-      SubmitQueryExpectZip(query);
+      SubmitQueryExpectZip(query, callback);
       break;
     case "electron":
-      // TODO: Implement build process on nodejs backend
-      console.warn("Build process not currently implemented in electron");
+      callback(await builderAPI.CompileToJson(query));
       break;
     default:
       console.error("Unknown backend: ", backend);
   }
-}
+};
 
 function Redraw() {
   const app = BuilderEngine.Instance;
@@ -136,7 +149,7 @@ function AddLink(action: IPayloadLink, dispatch: TPayloadString) {
     },
   };
   switch (backend as string) {
-    case "web":
+    case "rest":
       query["data"]["content"] = JSON.stringify(query["data"]["content"]);
       postRequestCheckNodeDependencies(query, node, dispatch);
       break;
@@ -203,7 +216,7 @@ async function GetRemoteModules(dispatchString: TPayloadString, repo: string) {
   };
   let response: Record<string, undefined>;
   switch (backend as string) {
-    case "web":
+    case "rest":
       query["data"]["content"] = JSON.stringify(query["data"]["content"]);
       SubmitQuery(query, dispatchString, callback);
       break;
@@ -228,7 +241,10 @@ function ImportModule() {
 // POST request handlers
 ///////////////////////////////////////////////////////////////////////////////
 
-function SubmitQueryExpectZip(query: Record<string, unknown>) {
+function SubmitQueryExpectZip(
+  query: Record<string, unknown>,
+  callback: (content: unknown) => void
+) {
   // POST request handler
   async function postZIPRequest() {
     const postRequestOptions = {
@@ -268,18 +284,7 @@ function SubmitQueryExpectZip(query: Record<string, unknown>) {
         }).text()
       )
       .then((result) => {
-        // Download returned content as file
-        const filename = "workflow";
-        const element = document.createElement("a");
-        element.setAttribute(
-          "href",
-          "data:application/zip;base64," + encodeURIComponent(result)
-        );
-        element.setAttribute("download", filename);
-        element.style.display = "none";
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
+        callback(result);
       });
   }
   postZIPRequest();

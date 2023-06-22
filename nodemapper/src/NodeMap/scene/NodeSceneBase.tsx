@@ -99,6 +99,7 @@ class NodeSceneBase {
   }
 
   getNodeInputNodes(node: DefaultNodeModel) {
+    // Returns a dictionary of input port names and the nodes they are connected
     const nodes = {};
     node.getInPorts().forEach((port: DefaultPortModel) => {
       // Links return a dictionary, indexed by connected node
@@ -136,7 +137,9 @@ class NodeSceneBase {
     return this.getModuleListJSONFromNodes(nodes);
   }
 
-  getModuleListJSONFromNodes(nodes, add_connector = false) {
+  getModuleListJSONFromNodes(nodes) {
+    // Input provides a list of target nodes to generate workflow modules and
+    // connectors from.
     const js = [];
 
     // Add nodes
@@ -144,28 +147,29 @@ class NodeSceneBase {
       js.push(this.getNodeUserConfig(node));
     });
 
-    // Add connectors (for first node only)
-    const node: DefaultNodeModel = nodes[0];
-    const map = [null, null];
-    map[0] = this.getNodeInputNodes(node);
-    if (node.getInPorts().length > 0) {
-      if (node.getInPorts().length == 1) {
-        // If singleton, return string instead of list
-        map[0] = map[0][Object.keys(map[0])[0]];
+    // Add connectors
+    nodes.forEach((node: DefaultNodeModel) => {
+      const map = [null, null];
+      map[0] = this.getNodeInputNodes(node);
+      if (node.getInPorts().length > 0) {
+        if (node.getInPorts().length == 1) {
+          // If singleton, return string instead of list
+          map[0] = map[0][Object.keys(map[0])[0]];
+        }
+        // Add connector
+        if (map[0] !== null && map[0] !== undefined) {
+          map[1] = this.getNodeUserConfig(node).name;
+          const conn = {
+            name: "Join [" + map[1] + "]",
+            type: "connector",
+            config: {
+              map: map,
+            },
+          };
+          js.push(conn);
+        }
       }
-      // Add connector
-      if (map[0] !== null) {
-        map[1] = this.getNodeUserConfig(node).name;
-        const conn = {
-          name: "Join [" + map[1] + "]",
-          type: "connector",
-          config: {
-            map: map,
-          },
-        };
-        js.push(conn);
-      }
-    }
+    });
     return js;
   }
 }

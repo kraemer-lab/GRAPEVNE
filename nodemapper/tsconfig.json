@@ -9,6 +9,5 @@
     "module": "CommonJS",
     "baseUrl": "src"
   },
-  "include": ["src"],
-  "exclude": ["src/**/*.test.tsx"]
+  "include": ["src"]
 }

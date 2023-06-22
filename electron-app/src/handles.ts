@@ -1,4 +1,5 @@
 import builderjs from "builderjs";
+import fs from "fs";
 import { PythonShell, Options } from "python-shell";
 
 const use_nodejs = false;
@@ -6,18 +7,20 @@ const use_nodejs = false;
 // General query processing interface for Python scripts (replacement for Flask)
 export async function ProcessQuery(
   event: any,
-  query: any
+  query: Record<string, unknown>,
+  mode = "json" // json, text, binary
 ): Promise<Record<string, any>> {
-  const options: Options = {
-    mode: "json",
+  const options = {
+    mode: mode,
     pythonPath: "python",
     pythonOptions: ["-u"], // get print results in real-time
     scriptPath: "./src/python",
     args: [JSON.stringify(query)],
-  };
+  } as Options;
   return await PythonShell.run("backend.py", options).then(function (
     results: any
   ) {
+    console.log("results: %j", results);
     return results.pop();
   });
 }
@@ -28,10 +31,6 @@ export async function display_FolderInfo(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -58,14 +57,18 @@ export async function builder_CompileToJson(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*const js = BuildFromJSON(query["data"]["content"])
-    return {
-      query: "builder/compile-to-json",
-      body: {},
-    };*/
   } else {
     // python version
-    return await ProcessQuery(event, query);
+    // Note: Instead of returning the zip file as a base64 string from Python
+    //       (as was the procedure in the REST implementation), we instead rely
+    //       on Python saving the zip file to disk, then reading it back in.
+
+    // ensure any previous zip file is deleted before sending query
+    await fs.unlink("./build.zip", (err: unknown) => {
+      console.warn(err);
+    });
+    await ProcessQuery(event, query, "text");
+    return fs.readFileSync("./build.zip", { encoding: "base64" });
   }
 }
 
@@ -73,10 +76,6 @@ export async function runner_Build(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -87,10 +86,6 @@ export async function runner_DeleteResults(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -101,10 +96,6 @@ export async function runner_Lint(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -115,10 +106,6 @@ export async function runner_LoadWorkflow(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -129,10 +116,6 @@ export async function runner_Tokenize(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -143,10 +126,6 @@ export async function runner_TokenizeLoad(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -157,10 +136,6 @@ export async function runner_JobStatus(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -171,10 +146,6 @@ export async function runner_Launch(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
@@ -185,10 +156,6 @@ export async function runner_CheckNodeDependencies(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
-    /*return {
-      query: "runner/check-node-dependencies",
-      body: {},
-    };*/
   } else {
     // python version
     return await ProcessQuery(event, query);
