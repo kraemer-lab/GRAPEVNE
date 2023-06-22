@@ -1,6 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
-const handles = require("./handles");
-const path = require("path");
+import { app, BrowserWindow, ipcMain } from "electron";
+import handles from "./handles";
+import path from "path";
 
 const createWindow = () => {
   const win = new BrowserWindow({

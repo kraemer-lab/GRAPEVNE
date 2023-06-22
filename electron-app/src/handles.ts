@@ -1,14 +1,14 @@
-const builderjs = require("builderjs");
-const { PythonShell } = require("python-shell");
+import builderjs from "builderjs";
+import { PythonShell, Options } from "python-shell";
 
 const use_nodejs = false;
 
 // General query processing interface for Python scripts (replacement for Flask)
-async function ProcessQuery(
+export async function ProcessQuery(
   event: any,
   query: any
 ): Promise<Record<string, any>> {
-  let options = {
+  const options: Options = {
     mode: "json",
     pythonPath: "python",
     pythonOptions: ["-u"], // get print results in real-time
@@ -24,7 +24,7 @@ async function ProcessQuery(
 
 // Query handlers (migrating from python-shell to nodejs)
 
-async function display_FolderInfo(event: any, query: any) {
+export async function display_FolderInfo(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -38,7 +38,7 @@ async function display_FolderInfo(event: any, query: any) {
   }
 }
 
-async function builder_GetRemoteModules(event: any, query: any) {
+export async function builder_GetRemoteModules(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     const modules = await builderjs.GetModulesList(
@@ -54,7 +54,7 @@ async function builder_GetRemoteModules(event: any, query: any) {
   }
 }
 
-async function builder_CompileToJson(event: any, query: any) {
+export async function builder_CompileToJson(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -69,7 +69,7 @@ async function builder_CompileToJson(event: any, query: any) {
   }
 }
 
-async function runner_Build(event: any, query: any) {
+export async function runner_Build(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -83,7 +83,7 @@ async function runner_Build(event: any, query: any) {
   }
 }
 
-async function runner_DeleteResults(event: any, query: any) {
+export async function runner_DeleteResults(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -97,7 +97,7 @@ async function runner_DeleteResults(event: any, query: any) {
   }
 }
 
-async function runner_Lint(event: any, query: any) {
+export async function runner_Lint(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -111,7 +111,7 @@ async function runner_Lint(event: any, query: any) {
   }
 }
 
-async function runner_LoadWorkflow(event: any, query: any) {
+export async function runner_LoadWorkflow(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -125,7 +125,7 @@ async function runner_LoadWorkflow(event: any, query: any) {
   }
 }
 
-async function runner_Tokenize(event: any, query: any) {
+export async function runner_Tokenize(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -139,7 +139,7 @@ async function runner_Tokenize(event: any, query: any) {
   }
 }
 
-async function runner_TokenizeLoad(event: any, query: any) {
+export async function runner_TokenizeLoad(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -153,7 +153,7 @@ async function runner_TokenizeLoad(event: any, query: any) {
   }
 }
 
-async function runner_JobStatus(event: any, query: any) {
+export async function runner_JobStatus(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -167,7 +167,7 @@ async function runner_JobStatus(event: any, query: any) {
   }
 }
 
-async function runner_Launch(event: any, query: any) {
+export async function runner_Launch(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -181,7 +181,7 @@ async function runner_Launch(event: any, query: any) {
   }
 }
 
-async function runner_CheckNodeDependencies(event: any, query: any) {
+export async function runner_CheckNodeDependencies(event: any, query: any) {
   if (use_nodejs) {
     // nodejs version
     throw new Error("Not yet implemented");
@@ -207,3 +207,4 @@ exports.runner_TokenizeLoad = runner_TokenizeLoad;
 exports.runner_JobStatus = runner_JobStatus;
 exports.runner_Launch = runner_Launch;
 exports.runner_CheckNodeDependencies = runner_CheckNodeDependencies;
+export default exports;
