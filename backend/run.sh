@@ -12,7 +12,7 @@ if [ ! -d "venv" ]; then
 	python3 -m pip install -r requirements.txt
 fi
 
-. venv/bin/activate
+source venv/bin/activate
 
 # Ensure we are loading the latest local libraries
 python -m pip install -e ../runner

@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 
+# Builds and launches the electron app in production mode
+#  - Business logic resides in Python, so this script launches the app
+#    in a virtual environment to communicates with the relevant Python
+#    packages
+#  - Business logic should be ported from Python to nodejs to remove these
+#    dependencies from the app
+
 set -eoux pipefail
+
+# activate virtual environment
+if [ ! -d "venv" ]; then
+	python3 -m venv venv
+	python3 -m pip install --upgrade pip
+	python3 -m pip install -r requirements.txt
+fi
+source venv/bin/activate
 
 # Ensure nodemapper up-to-date
 pushd ../nodemapper
