@@ -5,6 +5,7 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "electron-forge start",
+    "lint": "eslint src/ --ext .ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "electron-forge package",
@@ -19,8 +20,10 @@
     "@electron-forge/maker-squirrel": "^6.1.1",
     "@electron-forge/maker-zip": "^6.1.1",
     "@types/node": "^20.3.1",
+    "@typescript-eslint/eslint-plugin": "^5.60.0",
+    "@typescript-eslint/parser": "^5.60.0",
     "electron": "^25.1.1",
-    "eslint": "^8.42.0",
+    "eslint": "^8.43.0",
     "fork-ts-checker-webpack-plugin": "^8.0.0"
   },
   "dependencies": {

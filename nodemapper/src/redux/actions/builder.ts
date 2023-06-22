@@ -35,9 +35,9 @@ export const builderAddLink = createAction<Record<string, any> | undefined>( // 
 );
 
 export const builderNodeSelected = createAction<
-  Record<string, any> | undefined
->("builder/node-selected"); // eslint-disable-line @typescript-eslint/no-explicit-any
+  Record<string, any> | undefined // eslint-disable-line @typescript-eslint/no-explicit-any
+>("builder/node-selected");
 
 export const builderNodeDeselected = createAction<
-  Record<string, any> | undefined
->("builder/node-deselected"); // eslint-disable-line @typescript-eslint/no-explicit-any
+  Record<string, any> | undefined // eslint-disable-line @typescript-eslint/no-explicit-any
+>("builder/node-deselected");

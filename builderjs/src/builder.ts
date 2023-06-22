@@ -1,7 +1,7 @@
 import yaml from "js-yaml";
 
-const get = (object: Object, key: string, default_value: any) => {
-  var result = object[key as keyof typeof object];
+const get = (object: any, key: string, default_value: any) => {
+  const result = object[key as keyof typeof object];
   return typeof result !== "undefined" ? result : default_value;
 };
 
@@ -19,11 +19,11 @@ class Node {
   constructor(
     name: string,
     rulename: string,
-    nodetype: string = "module",
-    snakefile: string = "",
+    nodetype = "module",
+    snakefile = "",
     params: any = {},
     input_namespace: string | object = "",
-    output_namespace: string = ""
+    output_namespace = ""
   ) {
     /* Initialise a Node object, the parent class for Modules, Connector, etc.
      *
@@ -73,12 +73,12 @@ class Model {
     this.nodes = [];
   }
 
-  BuildSnakefile(configfile: string = "config/config.yaml"): string {
+  BuildSnakefile(configfile = "config/config.yaml"): string {
     // Build the Snakefile from the nodes
     let s = "";
     if (configfile !== "") s += `configfile: "${configfile}"\n\n`;
     // Add the modules
-    for (let node of this.nodes) {
+    for (const node of this.nodes) {
       s += `module ${node.rulename}:\n`;
       s += `  snakefile:\n`;
       if (typeof node.snakefile === "string") {
@@ -104,8 +104,8 @@ class Model {
   }
 
   ConstructSnakefileConfig() {
-    let c: Record<string, any> = {};
-    for (let node of this.nodes) {
+    const c: Record<string, any> = {};
+    for (const node of this.nodes) {
       const cnode = node.params.clone();
 
       // Input namespace
@@ -119,7 +119,7 @@ class Model {
       else {
         if (typeof node["input_namespace"] === "object")
           node["input_namespace"] = {};
-        for (let key in node.input_namespace as Object[]) {
+        for (const key in node.input_namespace as any[]) {
           if (get(node.input_namespace, key, null) !== null)
             cnode.input_namespace[key] =
               node.input_namespace[key as keyof typeof node.input_namespace];
@@ -144,9 +144,9 @@ class Model {
     // TODO: Save workflow
   }
 
-  WrangleName(basename: string, subname: string = ""): string {
+  WrangleName(basename: string, subname = ""): string {
     // Wrangle a name
-    let rulename = this.WrangleRuleName(basename);
+    const rulename = this.WrangleRuleName(basename);
     let name = rulename;
     if (subname !== "") name += `_${subname}`;
     // TODO: Check back over this
@@ -183,7 +183,7 @@ class Model {
 
   AddConnector(name: string, connector: Record<string, any>) {
     // Add a connector between modules
-    const mapping: Object[] = get(connector, "map", []);
+    const mapping: any[] = get(connector, "map", []);
     const node_to = this.GetNodeByName(mapping[1] as string);
     if (node_to === null)
       throw `Node ${mapping[1]} not found when attempting to connect modules`;
@@ -194,8 +194,8 @@ class Model {
       node_to.input_namespace = node_from.output_namespace;
     } else {
       node_to.input_namespace = {};
-      let ins: Record<string, string> = {};
-      for (let key in mapping[0]) {
+      const ins: Record<string, string> = {};
+      for (const key in mapping[0]) {
         const val = mapping[0][
           key as keyof typeof mapping[0]
         ] as unknown as string;
@@ -209,7 +209,7 @@ class Model {
   }
 
   GetNodeByName(name: string): Node | null {
-    for (let node of this.nodes) {
+    for (const node of this.nodes) {
       if (node.name === name) return node;
     }
     return null;
@@ -217,7 +217,7 @@ class Model {
 
   NodeIsTerminus(node: Node): boolean {
     // Check if a node is a terminus
-    for (let n of this.nodes) {
+    for (const n of this.nodes) {
       let nodes_in: object | string = n.input_namespace;
       if (typeof nodes_in === "string") nodes_in = { in: nodes_in };
       if (Object.values(nodes_in).includes(node.name)) return false;
@@ -244,7 +244,7 @@ export const YAMLToConfig = (content: string): string => {
 
   // TODO
 
-  let c = "";
+  const c = "";
   return c;
 };
 
@@ -254,8 +254,8 @@ export const BuildFromFile = async (filename: string): Promise<Model> => {
 };
 
 export const BuildFromJSON = async (
-  config: Object,
-  singlefile: boolean = false
+  config: Object, // eslint-disable-line @typescript-eslint/ban-types
+  singlefile = false
 ): Promise<[string, Model]> => {
   const m = new Model();
 
