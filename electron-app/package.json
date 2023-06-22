@@ -7,7 +7,7 @@
     "start": "electron-forge start",
     "lint": "eslint src/ --ext .ts",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest ./src",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -19,12 +19,18 @@
     "@electron-forge/maker-rpm": "^6.1.1",
     "@electron-forge/maker-squirrel": "^6.1.1",
     "@electron-forge/maker-zip": "^6.1.1",
+    "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
     "@typescript-eslint/eslint-plugin": "^5.60.0",
     "@typescript-eslint/parser": "^5.60.0",
+    "babel-jest": "^29.5.0",
     "electron": "^25.1.1",
     "eslint": "^8.43.0",
-    "fork-ts-checker-webpack-plugin": "^8.0.0"
+    "fork-ts-checker-webpack-plugin": "^8.0.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1"
   },
   "dependencies": {
     "@types/electron": "^1.6.10",
