@@ -9,10 +9,18 @@ on:
       - main
 
 jobs:
-  es-lint:
-    uses: ./.github/workflows/eslint.yml
-  jest:
-    uses: ./.github/workflows/jest.yml
+  es-lint-nodemapper:
+    uses: ./.github/workflows/eslint-nodemapper.yml
+  jest-nodemapper:
+    uses: ./.github/workflows/jest-nodemapper.yml
+  es-lint-builderjs:
+    uses: ./.github/workflows/eslint-builderjs.yml
+  jest-builderjs:
+    uses: ./.github/workflows/jest-builderjs.yml
+  es-lint-electron-app:
+    uses: ./.github/workflows/eslint-electron-app.yml
+  jest-electron-app:
+    uses: ./.github/workflows/jest-electron-app.yml
   flake8-backend:
     uses: ./.github/workflows/flake8-backend.yml
   pytest-backend:

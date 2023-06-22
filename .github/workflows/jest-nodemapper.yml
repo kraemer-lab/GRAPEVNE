@@ -1,4 +1,4 @@
-name: Jest
+name: Jest-nodemapper
 
 on:
   workflow_call:

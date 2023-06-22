@@ -1,0 +1,31 @@
+name: Jest-builderjs
+
+on:
+  workflow_call:
+#  push:
+#    branches: ["main"]
+#    paths:
+#      - ".github/workflows/jest.yml"
+#      - "nodemapper/**"
+#      - "!nodemapper/README.md"
+#  pull_request:
+#    # The branches below must be a subset of the branches above
+#    branches: ["main"]
+
+jobs:
+  eslint:
+    name: Run jest scanning
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: builderjs
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Jest
+        run: |
+          npm install jest
+
+      - name: Run Jest
+        run: npx jest src/
