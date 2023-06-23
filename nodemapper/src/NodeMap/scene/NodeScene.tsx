@@ -1,7 +1,173 @@
-import { DiagramModel } from "@projectstorm/react-diagrams";
-import NodeSceneBase from "./NodeSceneBase";
+import { Component } from "react";
+import { StrictMode } from "react";
+import { useRef } from "react";
+import { useState } from "react";
+import { createRoot } from "react-dom/client";
 
-class NodeScene extends NodeSceneBase {
+import createEngine from "@projectstorm/react-diagrams";
+import { DiagramModel } from "@projectstorm/react-diagrams";
+import { DiagramEngine } from "@projectstorm/react-diagrams";
+import { DagreEngine } from "@projectstorm/react-diagrams";
+
+import { DefaultNodeModel } from "NodeMap";
+import { DefaultPortModel } from "NodeMap";
+import { DefaultLinkModel } from "NodeMap";
+
+class NodeScene {
+  engine: DiagramEngine;
+  nodelist = {};
+
+  constructor() {
+    this.InitializeScene();
+  }
+
+  addNode(
+    name: string,
+    color: string,
+    pos: Array<number>,
+    config: JSON = {} as JSON
+  ): DefaultNodeModel {
+    const config_str = JSON.stringify(config);
+    const node = new DefaultNodeModel(name, color, config_str);
+    node.setPosition(pos[0], pos[1]);
+    this.engine.getModel().addNode(node);
+    return node;
+  }
+
+  addLink(
+    port_from: DefaultPortModel,
+    port_to: DefaultPortModel
+  ): DefaultLinkModel {
+    const link = new DefaultLinkModel();
+    link.setSourcePort(port_from);
+    link.setTargetPort(port_to);
+    this.engine.getModel().addLink(link);
+    return link;
+  }
+
+  getNodeUserConfig(node): Record<string, unknown> {
+    return JSON.parse(node.options.extras);
+  }
+
+  isNodeTypeRule(node): boolean {
+    return this.getNodeUserConfig(node).type == "rule";
+  }
+
+  getNodeName(node): string {
+    return this.getNodeUserConfig(node).name as string;
+  }
+
+  InitializeScene(): void {
+    // Initialise Node drawing engine and specify starting layout
+    this.engine = createEngine();
+    const model = new DiagramModel();
+    this.engine.setModel(model);
+  }
+
+  distributeModel(model): void {
+    const dagre_engine = new DagreEngine({
+      graph: {
+        rankdir: "UD",
+        rankSep: 50,
+        marginx: 100,
+        marginy: 50,
+      },
+    });
+    dagre_engine.redistribute(model);
+    this.engine.repaintCanvas();
+  }
+
+  clearModel(): void {
+    const model = new DiagramModel();
+    this.engine.setModel(model);
+  }
+
+  loadModel(str): void {
+    const model = new DiagramModel();
+    model.deserializeModel(JSON.parse(str), this.engine);
+    this.engine.setModel(model);
+  }
+
+  serializeModel(): string {
+    return JSON.stringify(this.engine.getModel().serialize());
+  }
+
+  getNodeInputNodes(node: DefaultNodeModel): Record<string, string> {
+    // Returns a dictionary of input port names and the nodes they are connected
+    const nodes: Record<string, string> = {};
+    node.getInPorts().forEach((port: DefaultPortModel) => {
+      // Links return a dictionary, indexed by connected node
+      if (Object.keys(port.getLinks()).length > 0) {
+        if (Object.keys(port.getLinks()).length > 1)
+          throw new Error("Input port has more than one link" + node);
+        const link = port.getLinks()[Object.keys(port.getLinks())[0]];
+        const node_from =
+          link.getTargetPort().getNode() == node
+            ? link.getSourcePort().getNode()
+            : link.getTargetPort().getNode();
+        const input_port_config = this.getNodeUserConfig(node_from);
+        nodes[port.getName()] = input_port_config.name as string;
+      }
+    });
+    return nodes;
+  }
+
+  getModuleListJSON(): Record<string, unknown>[] {
+    return this.getModuleListJSONFromNodes(this.engine.getModel().getNodes());
+  }
+
+  getModuleListJSONFromNodeNames(
+    nodenames: string[]
+  ): Record<string, unknown>[] {
+    const nodes = nodenames.map((name) => {
+      let node = null;
+      for (const n of this.engine.getModel().getNodes()) {
+        if (this.getNodeName(n) === name) {
+          node = n;
+          break;
+        }
+      }
+      return node;
+    });
+    return this.getModuleListJSONFromNodes(nodes);
+  }
+
+  getModuleListJSONFromNodes(nodes): Record<string, unknown>[] {
+    // Input provides a list of target nodes to generate workflow modules and
+    // connectors from.
+    const js = [];
+
+    // Add nodes
+    nodes.forEach((node: DefaultNodeModel) => {
+      js.push(this.getNodeUserConfig(node));
+    });
+
+    // Add connectors
+    nodes.forEach((node: DefaultNodeModel) => {
+      const map = [null, null];
+      map[0] = this.getNodeInputNodes(node);
+      if (node.getInPorts().length > 0) {
+        if (node.getInPorts().length == 1) {
+          // If singleton, return string instead of list
+          map[0] = map[0][Object.keys(map[0])[0]];
+        }
+        // Add connector
+        if (map[0] !== null && map[0] !== undefined) {
+          map[1] = this.getNodeUserConfig(node).name;
+          const conn = {
+            name: "Join [" + map[1] + "]",
+            type: "connector",
+            config: {
+              map: map,
+            },
+          };
+          js.push(conn);
+        }
+      }
+    });
+    return js;
+  }
+
   buildMapWithSnippets(data: JSON) {
     const model = new DiagramModel();
     this.engine.setModel(model);
