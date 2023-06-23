@@ -6,6 +6,7 @@ interface IBuilderState {
   modules_list: string;
   statustext: string;
   nodeinfo: string;
+  can_selected_expand: boolean;
 }
 
 // State
@@ -22,6 +23,7 @@ const builderStateInit: IBuilderState = {
   modules_list: "[]",
   statustext: "",
   nodeinfo: "",
+  can_selected_expand: false,
 };
 
 // Nodemap

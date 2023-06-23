@@ -1,0 +1,39 @@
+[
+  {
+    "id": "idcode",
+    "name": "sleep1input_test1",
+    "type": "module",
+    "config": {
+      "snakefile": "builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile",
+      "params": {
+        "input_filename": "mark",
+        "input_namespace": "in",
+        "output_filename": "mark",
+        "output_namespace": "out",
+        "sleeptime": 0
+      }
+    }
+  },
+  {
+    "id": "idcode",
+    "name": "sleep1input_test2",
+    "type": "module",
+    "config": {
+      "snakefile": "builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile",
+      "params": {
+        "input_filename": "mark",
+        "input_namespace": "in",
+        "output_filename": "mark",
+        "output_namespace": "out",
+        "sleeptime": 0
+      }
+    }
+  },
+  {
+    "name": "Join [Sleep1input-to-Sleep1input]",
+    "type": "connector",
+    "config": {
+      "map": ["sleep1input_test1", "sleep1input_test2"]
+    }
+  }
+]

@@ -1,5 +1,4 @@
 import re
-from typing import List
 
 import yaml
 
@@ -35,11 +34,7 @@ def ImportWorkflowDir(
         node.snakefile = workflow_config[rulename].get("snakefile", node.snakefile)
 
     # Expand modules
-    module_list: List[str] = []
-    while (modules := m.GetModuleNames()) != module_list:
-        module_list = modules
-        for rulename in modules:
-            m.ExpandModule(rulename)
+    m.ExpandAllModules()
 
     return m
 

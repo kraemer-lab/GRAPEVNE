@@ -1,0 +1,5 @@
+input_namespace: "in"
+input_filename: "mark"
+output_namespace: "out"
+output_filename: "mark"
+sleeptime: 0

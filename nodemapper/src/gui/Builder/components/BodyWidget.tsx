@@ -85,6 +85,8 @@ export const BodyWidget = (props: BodyWidgetProps) => {
       if (data.type !== "source") {
         input_namespace["In"] = "In";
       }
+    } else if (data.config.params.input_namespace === null) {
+      // Null input namespace specified - no input ports
     } else if (typeof data.config.params.input_namespace === "object") {
       // Where the input namespace is an object (probably a dictionary)
       input_namespace = Object.keys(data.config.params.input_namespace);

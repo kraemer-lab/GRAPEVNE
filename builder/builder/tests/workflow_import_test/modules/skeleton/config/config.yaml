@@ -1,0 +1,16 @@
+module1:
+  snakefile: builder/tests/workflow_import_test/modules/source/workflow/Snakefile
+  config:
+    output_namespace: "module1"
+module2:
+  snakefile: builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile
+  config:
+    input_namespace: "module1"
+    output_namespace: "module2"
+module3:
+  snakefile: builder/tests/workflow_import_test/modules/sleep2inputs/workflow/Snakefile
+  config:
+    input_namespace:
+      "in1": "module1"
+      "in2": "module2"
+    output_namespace: "module3"

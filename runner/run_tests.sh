@@ -13,3 +13,6 @@ fi
 
 flake8
 pytest
+
+# mypy --strict runner
+# mypy runner

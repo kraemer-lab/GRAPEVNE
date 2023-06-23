@@ -385,6 +385,14 @@ class Model:
                 module_output_namespaces.append(node.rulename)
         return module_output_namespaces
 
+    def ExpandAllModules(self) -> None:
+        """Expand all modules recursively"""
+        module_list: List[str] = []
+        while (modules := self.GetModuleNames()) != module_list:
+            module_list = modules
+            for rulename in modules:
+                self.ExpandModule(rulename)
+
     def ExpandModule(self, rulename: str):
         """Expands a module into its constituent part"""
         # Identify node
@@ -461,14 +469,18 @@ class Model:
             orphan_inputs_prior
         )
         new_orphan_outputs = set(self.ExposeOrphanOutputs()) - set(orphan_outputs_prior)
-        assert len(new_orphan_outputs) == 1, "More than one new orphan output found"
+        print(set(self.ExposeOrphanOutputs()))
+        print(set(orphan_outputs_prior))
+        assert (
+            len(new_orphan_outputs) == 1
+        ), "More than one new orphan output found: " + str(new_orphan_outputs)
 
         # Preserve incoming connections to parent node
         if len(new_orphan_inputs) == 0:
             # Now orphan inputs - source module
             node.input_namespace = None
         elif isinstance(node.input_namespace, str):
-            orphan_node = self.GetNodeRuleByName(list(new_orphan_inputs)[0])
+            orphan_node = self.GetNodeByRuleName(list(new_orphan_inputs)[0])
             if orphan_node:
                 orphan_node.input_namespace = node.input_namespace
             else:
@@ -476,7 +488,9 @@ class Model:
                     "No matching node found for name: " + list(new_orphan_inputs)[0]
                 )
         elif isinstance(node.input_namespace, dict):
-            raise ValueError("Input dictionary namespaces not supported yet")
+            # raise ValueError("Input dictionary namespaces not supported yet")
+            print("Input dictionary namespaces not supported yet")
+            print("Continuing for debug purposes...")
         elif node.input_namespace is None:
             # Module is a Source and (no incoming connections)
             pass
@@ -559,7 +573,7 @@ def YAMLToConfig(content: str) -> str:
     return c
 
 
-def BuildFromFile(filename: str) -> None:
+def BuildFromFile(filename: str, **kwargs) -> Tuple[str | bytes, Model]:
     """Builds a workflow from a JSON specification file"""
     try:
         with open(filename, "r") as file:
@@ -570,12 +584,13 @@ def BuildFromFile(filename: str) -> None:
     except json.decoder.JSONDecodeError:
         print(f"Invalid JSON file: {filename}")
         exit(1)
-    BuildFromJSON(config)
+    return BuildFromJSON(config, **kwargs)
 
 
 def BuildFromJSON(
     config: dict,
     singlefile: bool = False,
+    expand: bool = True,
 ) -> Tuple[str | bytes, Model]:
     """Builds a workflow from a JSON specification
 
@@ -600,6 +615,8 @@ def BuildFromJSON(
                     item["name"],
                     item["config"],
                 )
+    if expand:
+        m.ExpandAllModules()
     if singlefile:
         # Return composite string
         return (

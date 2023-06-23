@@ -20,6 +20,7 @@ const API_ENDPOINT = globals.getApiEndpoint();
 declare const window: any;
 
 const builderAPI = window.builderAPI;
+const runnerAPI = window.runnerAPI;
 const backend = globals.getBackend();
 
 export function builderMiddleware({ getState, dispatch }) {
@@ -120,7 +121,7 @@ function Redraw() {
 interface IPayloadLink {
   payload: DefaultLinkModel; // Non-serialisable object; consider alternatives
 }
-function AddLink(action: IPayloadLink, dispatch: TPayloadString) {
+const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
   // Determine which is the input (vs output) port (ordering is drag-dependent)
   const app = BuilderEngine.Instance;
   const link = action.payload;
@@ -148,21 +149,33 @@ function AddLink(action: IPayloadLink, dispatch: TPayloadString) {
       content: JSON.stringify(jsDeps),
     },
   };
+  const callback = (data: Record<string, unknown>) => {
+    dispatch(builderUpdateStatusText(""));
+    console.log(data);
+    switch (data["body"]["status"]) {
+      case "ok":
+        node.getOptions().color = "rgb(0,192,255)";
+        break;
+      case "missing":
+        node.getOptions().color = "red";
+        break;
+      default:
+        console.error("Unexpected response: ", data["body"]);
+    }
+    dispatch(builderRedraw());
+  };
   switch (backend as string) {
     case "rest":
       query["data"]["content"] = JSON.stringify(query["data"]["content"]);
-      postRequestCheckNodeDependencies(query, node, dispatch);
+      postRequestCheckNodeDependencies(query, dispatch, callback);
       break;
     case "electron":
-      // TODO: Implement build process on nodejs backend
-      console.warn(
-        "Check node dependencies not currently implemented in electron"
-      );
+      callback(await runnerAPI.CheckNodeDependencies(query));
       break;
     default:
       console.error("Unknown backend: ", backend);
   }
-}
+};
 
 function NodeSelected(action: IPayloadRecord, dispatch: TPayloadString) {
   const builder = BuilderEngine.Instance;
@@ -292,8 +305,8 @@ function SubmitQueryExpectZip(
 
 async function postRequestCheckNodeDependencies(
   query: Record<string, unknown>,
-  node: DefaultNodeModel,
-  dispatch: TPayloadString
+  dispatch: TPayloadString,
+  callback: (data: Record<string, unknown>) => void
 ) {
   const postRequestOptions = {
     method: "POST",
@@ -313,18 +326,7 @@ async function postRequestCheckNodeDependencies(
     })
     .then((data) => {
       console.info("Got response: ", data);
-      dispatch(builderUpdateStatusText(""));
-      switch (data["body"]["status"]) {
-        case "ok":
-          node.getOptions().color = "rgb(0,192,255)";
-          break;
-        case "missing":
-          node.getOptions().color = "red";
-          break;
-        default:
-          console.error("Unexpected response: ", data["body"]);
-      }
-      dispatch(builderRedraw());
+      callback(data);
     })
     .catch((error) => {
       console.error("Error during query: ", error);

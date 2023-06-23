@@ -265,7 +265,7 @@ def CheckNodeDependencies(jsDeps: dict) -> dict:
     # Determine unresolved dependencies (and their source namespaces)
     target_namespaces = set([f"results/{n}" for n in input_namespaces])
     missing_deps = set(
-        GetMissingFileDependencies_FromContents(build, target_namespaces)
+        GetMissingFileDependencies_FromContents(build, list(target_namespaces))
     )
     unresolved_dep_sources = set(
         s.split("/")[1] for s in missing_deps if s.startswith("results/")

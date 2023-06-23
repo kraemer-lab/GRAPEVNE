@@ -1,0 +1,9 @@
+input_namespace:
+  "in1": "input1"
+  "in2": "input2"
+input_filename:
+  "in1": "mark"
+  "in2": "mark"
+output_namespace: "out"
+output_filename: "mark"
+sleeptime: 0
