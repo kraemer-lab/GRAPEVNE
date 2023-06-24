@@ -10,6 +10,7 @@ from typing import List
 from typing import Tuple
 
 from builder.builder import BuildFromJSON
+from builder.builder import YAMLToConfig
 from runner.TokenizeFile import TokenizeFile
 
 
@@ -325,7 +326,7 @@ def GetFileAndWorkingDirectory(filename: str) -> Tuple[str, str]:
 
 
 def GetMissingFileDependencies_FromContents(
-    content: str, target_namespaces: List[str] = []
+    content: Tuple[dict, str] | str, target_namespaces: List[str] = []
 ) -> List[str]:
     """Get missing file dependencies from snakemake
 
@@ -336,8 +337,12 @@ def GetMissingFileDependencies_FromContents(
     If target_namespaces is provided, return as soon as any target dependencies
     are found.
     """
+    if isinstance(content, tuple):
+        content_str: str = YAMLToConfig(content[0]) + "\n" + content[1]
+    else:
+        content_str = content
     deps = []
-    with IsolatedTempFile(content) as snakefile:
+    with IsolatedTempFile(content_str) as snakefile:
         path = os.path.dirname(os.path.abspath(snakefile))
         while file_list := GetMissingFileDependencies_FromFile(snakefile):
             deps.extend(file_list)

@@ -1,0 +1,43 @@
+input_namespace:
+  $sleep1input_test1: in
+output_namespace: sleep1input_test2_1
+sleep1input_test1:
+  config:
+    input_filename: mark
+    input_namespace: in
+    output_filename: mark
+    output_namespace: sleep1input_test1
+    sleeptime: 0
+  name: sleep1input_test1
+  snakefile: builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile
+  type: module
+sleep1input_test1_1:
+  config:
+    input_filename: mark
+    input_namespace: sleep1input_test2
+    output_filename: mark
+    output_namespace: sleep1input_test1_1
+    sleeptime: 0
+  name: sleep1input_test1
+  snakefile: builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile
+  type: module
+sleep1input_test2:
+  config:
+    input_filename: mark
+    input_namespace: sleep1input_test1
+    output_filename: mark
+    output_namespace: sleep1input_test2
+    sleeptime: 0
+  name: sleep1input_test2
+  snakefile: builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile
+  type: module
+sleep1input_test2_1:
+  config:
+    input_filename: mark
+    input_namespace: sleep1input_test1_1
+    output_filename: mark
+    output_namespace: sleep1input_test2_1
+    sleeptime: 0
+  name: sleep1input_test2
+  snakefile: builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile
+  type: module

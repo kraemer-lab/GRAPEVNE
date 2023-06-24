@@ -229,10 +229,12 @@ class Model:
         name = f"{rulename}"
         if subname:
             name = f"{name}_{subname}"
-        offset = 0
+        offset = 1
         wrangledName = name
         while wrangledName in self.WrangledNameList():
-            wrangledName = f"{name}_{hash(name + str(offset)) % (2**31)}"
+            # NOTE: hash is not deterministic across runs
+            # wrangledName = f"{name}_{hash(name + str(offset)) % (2**31)}"
+            wrangledName = f"{name}_{str(offset)}"
             offset += 1
         return wrangledName
 
@@ -416,8 +418,8 @@ class Model:
             return node
 
         # Keep record of orphan namespaces before expansion
-        orphan_inputs_prior = set(self.ExposeOrphanInputsList())
-        orphan_outputs_prior = set(self.ExposeOrphanOutputs())
+        orphan_inputs_prior = self.ExposeOrphanInputsList()
+        orphan_outputs_prior = self.ExposeOrphanOutputs()
 
         # Add new nodes
         rulemapping = {}
@@ -465,12 +467,14 @@ class Model:
                 raise ValueError("Namespace type not recognised")
 
         # Find orphan inputs and outputs from new node network
-        new_orphan_inputs = set(self.ExposeOrphanInputsList()) - set(
-            orphan_inputs_prior
+        # Sort to prevent reording of nodes that afffect rule name wrangling
+        #  (important for testing)
+        new_orphan_inputs = sorted(
+            list(set(self.ExposeOrphanInputsList()) - set(orphan_inputs_prior))
         )
-        new_orphan_outputs = set(self.ExposeOrphanOutputs()) - set(orphan_outputs_prior)
-        print(set(self.ExposeOrphanOutputs()))
-        print(set(orphan_outputs_prior))
+        new_orphan_outputs = sorted(
+            list(set(self.ExposeOrphanOutputs()) - set(orphan_outputs_prior))
+        )
         assert (
             len(new_orphan_outputs) == 1
         ), "More than one new orphan output found: " + str(new_orphan_outputs)
@@ -573,7 +577,7 @@ def YAMLToConfig(content: str) -> str:
     return c
 
 
-def BuildFromFile(filename: str, **kwargs) -> Tuple[str | bytes, Model]:
+def BuildFromFile(filename: str, **kwargs) -> Tuple[Tuple[str, str] | bytes, Model]:
     """Builds a workflow from a JSON specification file"""
     try:
         with open(filename, "r") as file:
@@ -591,11 +595,11 @@ def BuildFromJSON(
     config: dict,
     singlefile: bool = False,
     expand: bool = True,
-) -> Tuple[str | bytes, Model]:
+) -> Tuple[Tuple[str, str] | bytes, Model]:
     """Builds a workflow from a JSON specification
 
     Returns a tuple of the workflow and the workflow model object.
-    With singlefile=True the workflow is a self-contained string.
+    With singlefile=True the workflow is a tuple of (config, snakefile) strings
     With singlefile=False the workflow is a (zipped) directory structure.
     """
     m = Model()
@@ -619,11 +623,7 @@ def BuildFromJSON(
         m.ExpandAllModules()
     if singlefile:
         # Return composite string
-        return (
-            YAMLToConfig(m.BuildSnakefileConfig())
-            + "\n"
-            + m.BuildSnakefile(configfile="")
-        ), m
+        return ((m.BuildSnakefileConfig(), m.BuildSnakefile())), m
     else:
         # Create (zipped) workflow and return as binary object
         m.SaveWorkflow()

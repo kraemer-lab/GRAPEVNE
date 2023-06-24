@@ -1,0 +1,29 @@
+configfile: "config/config.yaml"
+
+module sleep1input_test1:
+    snakefile:
+        config["sleep1input_test1"]["snakefile"]
+    config:
+        config["sleep1input_test1"]["config"]
+use rule * from sleep1input_test1 as sleep1input_test1_*
+
+module sleep1input_test2:
+    snakefile:
+        config["sleep1input_test2"]["snakefile"]
+    config:
+        config["sleep1input_test2"]["config"]
+use rule * from sleep1input_test2 as sleep1input_test2_*
+
+module sleep1input_test1_1:
+    snakefile:
+        config["sleep1input_test1_1"]["snakefile"]
+    config:
+        config["sleep1input_test1_1"]["config"]
+use rule * from sleep1input_test1_1 as sleep1input_test1_1_*
+
+module sleep1input_test2_1:
+    snakefile:
+        config["sleep1input_test2_1"]["snakefile"]
+    config:
+        config["sleep1input_test2_1"]["config"]
+use rule * from sleep1input_test2_1 as sleep1input_test2_1_*

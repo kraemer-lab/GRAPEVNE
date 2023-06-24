@@ -1,4 +1,8 @@
+from typing import List
+from typing import Tuple
+
 import pytest
+import yaml
 
 from builder import builder
 
@@ -8,23 +12,26 @@ workflow_folder = "builder/tests/workflow_import_test"
 @pytest.mark.parametrize(
     "name",
     [
-        "connect_source_sleep1input",
-        "connect_sleep1input_sleep1input",
+        (["source", "sleep1input"], "srcsleep1in"),
+        (["sleep1input", "sleep1input"], "c2sleep1in"),
+        (["c2sleep1in", "c2sleep1in"], "c2c2sleep1in"),
     ],
 )
-def test_Connect_Source_to_Sleep1Input(name: str):
-    stub = f"{workflow_folder}/workflow_imports/{name}"
-    c, m = builder.BuildFromFile(
-        f"{stub}.json",
+def test_Workflow_Imports(name: Tuple[List[str], str]):
+    modules, module_out = name
+    build, m = builder.BuildFromFile(
+        f"{workflow_folder}/workflow_imports/connect_{modules[0]}_{modules[1]}.json",
         singlefile=True,
         expand=True,
     )
-    # Drop trailing newline (code formatter removes it from comparison file)
-    c = c[:-1]
-    with open(f"{stub}_expected.txt") as file:
-        expected = file.read()
-    assert c == expected
-
-
-def test_Connect_Sleep1Input_to_Sleep1Input():
-    pass
+    configfile: str = str(build[0])
+    snakefile: str = str(build[1])
+    # Remove last newline (test files stripped by syntax formatter)
+    snakefile = snakefile[:-1]
+    configfileYAML = yaml.safe_load(configfile)
+    with open(f"{workflow_folder}/modules/{module_out}/config/config.yaml") as file:
+        configfileYAML_expected = yaml.safe_load(file.read())
+    for key in ["input_namespace", "output_namespace"]:
+        assert configfileYAML[key] == configfileYAML_expected[key]
+    with open(f"{workflow_folder}/modules/{module_out}/workflow/Snakefile") as file:
+        assert str(snakefile) == file.read()
