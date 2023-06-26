@@ -36,4 +36,4 @@ yarn build
 yarn make
 
 # Run the app
-out/PhyloFlow-darwin-arm64/PhyloFlow.app/Contents/MacOS/PhyloFlow
+out/PhyloFlow-*/PhyloFlow.app/Contents/MacOS/PhyloFlow

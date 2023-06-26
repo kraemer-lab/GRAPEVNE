@@ -1,10 +1,9 @@
-input_namespace:
-  sleep1input_test1$: in
+input_namespace: null
 output_namespace: sleep1input_test2
 sleep1input_test1:
   config:
     input_filename: mark
-    input_namespace: in
+    input_namespace: source_test
     output_filename: mark
     output_namespace: sleep1input_test1
     sleeptime: 0
@@ -20,4 +19,12 @@ sleep1input_test2:
     sleeptime: 0
   name: sleep1input_test2
   snakefile: builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile
+  type: module
+source_test:
+  config:
+    input_namespace: null
+    output_filename: mark
+    output_namespace: source_test
+  name: source_test
+  snakefile: builder/tests/workflow_import_test/modules/source/workflow/Snakefile
   type: module

@@ -1,5 +1,5 @@
 input_namespace:
-  $sleep1input_test1: in
+  sleep1input_test1$: in
 output_namespace: sleep1input_test2_1
 sleep1input_test1:
   config:

@@ -130,9 +130,10 @@ class Model:
         """Builds the workflow Snakefile (links modules)"""
         s = ""
         if configfile:
-            s = f'configfile: "{configfile}"\n\n'
+            s = f'configfile: "{configfile}"\n'
         # Build Snakefile
         for node in self.nodes:
+            s += "\n"
             s += f"module {node.rulename}:\n"
             s += "    snakefile:\n"
             if isinstance(node.snakefile, str):
@@ -148,7 +149,6 @@ class Model:
             s += "    config:\n"
             s += f'        config["{node.rulename}"]["config"]\n'
             s += f"use rule * from {node.rulename} as {node.rulename}_*\n"
-            s += "\n"
         return s
 
     def BuildSnakefileConfig(self) -> str:
@@ -290,7 +290,9 @@ class Model:
                 "Requested '" + mapping[1] + "'"
             )
         if isinstance(mapping[0], dict):
-            node_to.input_namespace = {}
+            assert isinstance(
+                node_to.input_namespace, dict
+            ), "Connector mapping is a dictionary but the destination node does not have a dictionary input namespace"
             for k, v in mapping[0].items():
                 incoming_node = self.GetNodeByName(v)
                 if not incoming_node:
@@ -340,7 +342,7 @@ class Model:
         module_input_namespace: dict = {}
         all_output_namespaces = self.GetRuleNames()
         for node in self.nodes:
-            ref_rulename = "$" + node.rulename
+            ref_rulename = node.rulename + "$"
             if isinstance(node.input_namespace, str):
                 if node.input_namespace not in all_output_namespaces:
                     module_input_namespace[ref_rulename] = node.input_namespace
@@ -349,7 +351,9 @@ class Model:
                 for k, v in node.input_namespace.items():
                     if v not in all_output_namespaces:
                         # namespace should be unique to avoid clashes
-                        module_input_namespace[ref_rulename][k] = self.WrangleName(k)
+                        module_input_namespace[ref_rulename + k] = self.WrangleName(v)
+                if not module_input_namespace[ref_rulename]:
+                    del module_input_namespace[ref_rulename]
             elif node.input_namespace is None:
                 pass
             else:
@@ -476,7 +480,7 @@ class Model:
             list(set(self.ExposeOrphanOutputs()) - set(orphan_outputs_prior))
         )
         assert (
-            len(new_orphan_outputs) == 1
+            len(new_orphan_outputs) <= 1
         ), "More than one new orphan output found: " + str(new_orphan_outputs)
 
         # Preserve incoming connections to parent node

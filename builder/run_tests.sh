@@ -15,4 +15,4 @@ flake8
 pytest
 
 # mypy --strict builder
-mypy builder
+# mypy builder

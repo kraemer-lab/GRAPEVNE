@@ -34,7 +34,6 @@ module module3:
     config:
         config["module3"]["config"]
 use rule * from module3 as module3_*
-
 """
     assert m.BuildSnakefile() == target_snakefile
 
