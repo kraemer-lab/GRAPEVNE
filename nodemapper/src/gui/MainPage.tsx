@@ -4,6 +4,8 @@ import Builder from "./Builder/Builder";
 
 import { useState } from "react";
 
+import "./Buttons.css";
+
 interface MenuChoiceRenderProps {
   selection: number;
 }
@@ -29,6 +31,7 @@ function MainPage() {
           display: "flex",
           height: "100%",
           width: "100%",
+          background: "#3d3d3d",
           flexFlow: "column",
         }}
       >
@@ -47,6 +50,7 @@ function MainPage() {
             style={{
               fontSize: 18,
               marginLeft: 0,
+              color: "#fff",
             }}
           >
             PhyloFlow
@@ -58,7 +62,7 @@ function MainPage() {
             </button>
           </div>
         </div>
-        <div className="body" style={{ flex: "1 1 auto" }}>
+        <div className="body" style={{ flex: "1 1 auto", overflowY: "auto" }}>
           <MenuChoiceRender selection={menuChoice} />
         </div>
       </div>

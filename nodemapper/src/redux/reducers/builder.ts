@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "../actions";
 
 interface IBuilderState {
-  repo: Record<string, string>;
+  repo: string;
   modules_list: string;
   statustext: string;
   nodeinfo: string;
@@ -11,7 +11,7 @@ interface IBuilderState {
 
 // State
 const builderStateInit: IBuilderState = {
-  repo: {
+  repo: JSON.stringify({
     // (TODO: replace with proper settings menu)
     type: "local",
     listing_type: "DirectoryListing",
@@ -19,7 +19,7 @@ const builderStateInit: IBuilderState = {
     //type: "github",
     //listing_type: "DirectoryListing", //'BranchListing',
     //repo: "jsbrittain/snakeshack",
-  },
+  }),
   modules_list: "[]",
   statustext: "",
   nodeinfo: "",
@@ -70,7 +70,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetRepositoryTarget, (state, action) => {
-      state.repo = action.payload as Record<string, string>;
+      state.repo = JSON.stringify(action.payload);
       console.info("[Reducer] " + action.type);
     });
 });

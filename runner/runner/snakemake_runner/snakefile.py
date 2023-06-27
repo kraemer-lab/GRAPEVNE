@@ -338,6 +338,12 @@ def GetMissingFileDependencies_FromContents(
     are found.
     """
     if isinstance(content, tuple):
+        # Flattern config and Snakemake files together
+        workflow_lines = content[1].split("\n")
+        workflow_lines = [
+            line for line in workflow_lines if not line.startswith("configfile:")
+        ]
+        content = (content[0], "\n".join(workflow_lines))
         content_str: str = YAMLToConfig(content[0]) + "\n" + content[1]
     else:
         content_str = content

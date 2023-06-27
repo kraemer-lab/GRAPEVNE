@@ -6,6 +6,7 @@ export const Tray = styled.div`
   background: rgb(20, 20, 20);
   flex-grow: 0;
   flex-shrink: 0;
+  overflowy: auto;
 `;
 
 interface ItemProps {

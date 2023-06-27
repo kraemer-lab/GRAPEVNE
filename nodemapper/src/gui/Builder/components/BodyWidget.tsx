@@ -36,6 +36,7 @@ const Content = styled.div`
   display: flex;
   flex-grow: 1;
   height: 100%;
+  overflow: clip;
 `;
 
 const Layer = styled.div`
@@ -137,7 +138,9 @@ export const BodyWidget = (props: BodyWidgetProps) => {
     <>
       <Body>
         <Content>
-          <TrayWidget>{trayitems}</TrayWidget>
+          <div style={{ background: "rgb(20, 20, 20)", overflowY: "auto" }}>
+            <TrayWidget>{trayitems}</TrayWidget>
+          </div>
           <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
             <GridCanvasWidget>
               <CanvasWidget engine={props.engine} />

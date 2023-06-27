@@ -21,13 +21,39 @@ const StatusBar: React.FC = () => {
     setStatus(statustext);
   }, [statustext]);
   return (
-    <div className="status-bar" style={{ fontSize: 14 }}>
+    <div className="status-bar" style={{ fontSize: 14, color: "#fff" }}>
       {status}
     </div>
   );
 };
 
-function Header() {
+const RepoOptions: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const repoSettings = JSON.parse(
+    useAppSelector((state) => state.builder.repo)
+  );
+  const [repoURL, setRepoURL] = useState(repoSettings.repo);
+
+  const handleChange = (url) => {
+    const repo_settings = { ...repoSettings };
+    repo_settings.repo = url;
+    dispatch(builderSetRepositoryTarget(repo_settings));
+  };
+
+  React.useEffect(() => {
+    setRepoURL(repoSettings.repo);
+  }, [repoSettings]);
+
+  return (
+    <input
+      type="text"
+      value={repoURL}
+      onChange={(e) => handleChange(e.target.value)}
+    />
+  );
+};
+
+const Header = () => {
   const dispatch = useAppDispatch();
 
   // Load nodemap from file
@@ -141,10 +167,11 @@ function Header() {
           <option value="DirectoryListing">Directory Listing (Github)</option>
           <option value="BranchListing">Branch Listing (Github)</option>
         </select>
+        <RepoOptions />
         <StatusBar />
       </div>
     </>
   );
-}
+};
 
 export default Header;

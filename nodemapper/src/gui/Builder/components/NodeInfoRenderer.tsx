@@ -28,6 +28,7 @@ const NodeInfoRenderer = (props) => {
     return (
       <div
         style={{
+          background: "#333333",
           display: "flex",
           width: "33%",
           height: "100%",
@@ -51,7 +52,12 @@ const NodeInfoRenderer = (props) => {
             <ExpandButton />
           </div>
         </div>
-        <div style={{ flex: "1 1 auto" }}>
+        <div
+          style={{
+            flex: "1 1 auto",
+            overflowY: "auto",
+          }}
+        >
           <NodeInfo />
         </div>
       </div>

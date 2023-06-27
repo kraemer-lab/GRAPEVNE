@@ -16,7 +16,7 @@ function Builder() {
         <div style={{ flex: "0 1 auto" }}>
           <Header />
         </div>
-        <div style={{ flex: "1 1 auto" }}>
+        <div style={{ flex: "1 1 auto", overflowY: "auto" }}>
           <NodeManager />
         </div>
       </div>

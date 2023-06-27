@@ -45,7 +45,7 @@ export function builderMiddleware({ getState, dispatch }) {
           NodeDeselected(dispatch);
           break;
         case "builder/get-remote-modules":
-          GetRemoteModules(dispatch, getState().builder.repo);
+          GetRemoteModules(dispatch, JSON.parse(getState().builder.repo));
           break;
         case "builder/update-modules-list":
           UpdateModulesList(dispatch);
