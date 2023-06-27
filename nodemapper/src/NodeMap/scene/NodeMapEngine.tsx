@@ -1,5 +1,6 @@
 import NodeScene from "./NodeScene";
 
+import { keys } from "lodash";
 import { NodeModel } from "@projectstorm/react-diagrams";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
@@ -92,6 +93,17 @@ export default class NodeMapEngine {
     return returnNode;
   }
 
+  public getNodeByName(name: string): NodeModel {
+    let returnNode = null;
+    this.engine
+      .getModel()
+      .getNodes()
+      .forEach((item) => {
+        if (this.getProperty(item, "name") === name) returnNode = item;
+      });
+    return returnNode;
+  }
+
   public getNodePropertiesAsJSON(node: NodeModel): Record<string, undefined> {
     return JSON.parse(node.getOptions().extras);
   }
@@ -161,5 +173,218 @@ export default class NodeMapEngine {
         },
       });
     });
+  }
+
+  public AddNodeToGraph(
+    data: Record<string, unknown>,
+    point,
+    color,
+    uniquenames = true
+  ): DefaultNodeModel {
+    const nodesCount = keys(this.engine.getModel().getNodes()).length;
+
+    let node: DefaultNodeModel = null;
+    let node_name = data.name as string;
+    if (uniquenames) node_name += "_" + (nodesCount + 1);
+    node = new DefaultNodeModel(
+      node_name,
+      color,
+      JSON.stringify({
+        id: "idcode", // TODO
+        name: node_name,
+        type: data.type,
+        config: data.config,
+      })
+    );
+    // Determine number (and names of input ports)
+    let input_namespace = {};
+    const params = (data.config as Record<string, any>).params;
+    if (params.input_namespace === undefined) {
+      // No input namespace specified - use default unless source
+      if (data.type !== "source") {
+        input_namespace["In"] = "In";
+      }
+    } else if (params.input_namespace === null) {
+      // Null input namespace specified - no input ports
+    } else if (typeof params.input_namespace === "object") {
+      // Where the input namespace is an object (probably a dictionary)
+      input_namespace = Object.keys(params.input_namespace);
+    } else {
+      // Where the input namespace is not an object (probably a string)
+      input_namespace["In"] = "In";
+    }
+    // Add input ports
+    for (const key in input_namespace) {
+      node.addInPort(input_namespace[key]);
+    }
+    // Add output port (if applicable)
+    switch (data.type) {
+      case "source":
+      case "module":
+      case "connector":
+        node.addOutPort("Out");
+        break;
+    }
+    node.setPosition(point);
+    this.engine.getModel().addNode(node);
+    this.engine.repaintCanvas();
+    return node;
+  }
+
+  public ExpandNodeByName(name: string): DefaultNodeModel[] {
+    const node = this.getNodeByName(name);
+    if (!node) return null;
+    const json = this.getNodePropertiesAsJSON(node);
+    if (!json.config) return null;
+    if (!json.config["params"]) return null;
+    const modules = json.config["params"] as Record<string, unknown>;
+    const newnodes: DefaultNodeModel[] = [] as DefaultNodeModel[];
+    let offset = 0.0;
+    for (const item in modules) {
+      if (modules[item]["config"] === undefined) continue;
+      const params = modules[item]["config"] as Record<string, unknown>;
+      const config: Record<string, unknown> = {};
+      for (const key in modules[item] as Record<string, unknown>) {
+        if (key === "name") continue;
+        if (key === "type") continue;
+        if (key === "config") {
+          config["params"] = modules[item][key];
+        } else {
+          config[key] = modules[item][key];
+        }
+      }
+      const data = {
+        name: item,
+        type: (modules[item] as Record<string, unknown>).type,
+        config: config,
+      };
+      const newpoint = node.getPosition().clone();
+      newpoint.x += offset;
+      newpoint.y += offset;
+      offset += 5.0;
+      // Call AddNodeToGraph with uniquenames = false to prevent node renaming
+      // (at least until after the graph is expanded)
+      const newnode = this.AddNodeToGraph(
+        data,
+        newpoint,
+        "rgb(192,255,255)",
+        false
+      );
+      newnodes.push(newnode);
+    }
+
+    // Connect sub-graph based on namespaces
+    newnodes.forEach((node_from) => {
+      const config = this.getNodePropertiesAsJSON(node_from)[
+        "config"
+      ] as Record<string, unknown>;
+      const params = config["params"];
+      const output_namespace = params["output_namespace"];
+      newnodes.forEach((node_to) => {
+        const config = this.getNodePropertiesAsJSON(node_to)[
+          "config"
+        ] as Record<string, unknown>;
+        const params = config["params"];
+        const input_namespace = params["input_namespace"];
+        if (typeof input_namespace === "string") {
+          // string = single input port
+          if (output_namespace === input_namespace) {
+            const link = new DefaultLinkModel();
+            link.setSourcePort(node_from.getPort("Out"));
+            link.setTargetPort(node_to.getPort("In"));
+            this.engine.getModel().addLink(link);
+          }
+        } else {
+          // record = multiple input ports
+          for (const key in input_namespace) {
+            if (output_namespace === input_namespace[key]) {
+              const link = new DefaultLinkModel();
+              link.setSourcePort(node_from.getPort("Out"));
+              link.setTargetPort(node_to.getPort(key));
+              this.engine.getModel().addLink(link);
+            }
+          }
+        }
+      });
+    });
+
+    // Map input connections to sub-graph
+    const ports = this.nodeScene.getNodeInputNodes(node as DefaultNodeModel);
+    for (const port_label in ports) {
+      const node_name = ports[port_label];
+      const node_from = this.getNodeByName(node_name);
+      if (!node_from) continue;
+      // Lookup target port in sub-graph
+      const port_name_list = port_label.split("$");
+      const targetnode_name = port_name_list[0];
+      let port_name = "";
+      if (port_name_list.length == 1) {
+        port_name = "In";
+      } else if (port_name_list.length == 2) {
+        if (port_name_list[1] === "") {
+          port_name = "In";
+        } else {
+          port_name = port_name_list[1];
+        }
+      } else {
+        throw new Error("Recursive port naming not yet supported.");
+      }
+      const target_node = this.getNodeByName(targetnode_name);
+      const target_port = target_node.getPort(port_name);
+      // Create link
+      const link = new DefaultLinkModel();
+      link.setSourcePort(node_from.getPort("Out"));
+      link.setTargetPort(target_port);
+      this.engine.getModel().addLink(link);
+    }
+
+    // Map output connections from sub-graph
+    const config = this.getNodePropertiesAsJSON(node)["config"] as Record<
+      string,
+      unknown
+    >;
+    const output_namespace = config["params"]["output_namespace"];
+    const target_node_and_port = this.nodeScene.getNodeOutputNodes(
+      node as DefaultNodeModel
+    );
+    for (let i = 0; i < target_node_and_port.length; i++) {
+      const target_node = target_node_and_port[i][0];
+      const target_port = target_node_and_port[i][1];
+      // Lookup output port in sub-graph
+      newnodes.forEach((node_from) => {
+        const config = this.getNodePropertiesAsJSON(node_from)[
+          "config"
+        ] as Record<string, unknown>;
+        const namespace = config["params"]["output_namespace"];
+        if (namespace == output_namespace) {
+          const source_port = node_from.getPort("Out");
+          const link = new DefaultLinkModel();
+          link.setSourcePort(source_port);
+          link.setTargetPort(target_port);
+          this.engine.getModel().addLink(link);
+        }
+      });
+    }
+
+    // Delete expanded node (be sure to delete links first)
+    const links = this.engine.getModel().getLinks();
+    links.forEach((link) => {
+      if (
+        link.getSourcePort().getParent() === node ||
+        link.getTargetPort().getParent() === node
+      ) {
+        link.getSourcePort().removeLink(link);
+        link.getTargetPort().removeLink(link);
+        this.engine.getModel().removeLink(link);
+      }
+    });
+    this.engine.getModel().removeNode(node);
+
+    // TODO: Ensure unique names (subgraph was expanded without renaming so may
+    //       clash with existing nodes)
+
+    // Redraw and return new nodes
+    this.engine.repaintCanvas();
+    return newnodes;
   }
 }

@@ -23,7 +23,7 @@ const builderStateInit: IBuilderState = {
   modules_list: "[]",
   statustext: "",
   nodeinfo: "",
-  can_selected_expand: false,
+  can_selected_expand: true,
 };
 
 // Nodemap

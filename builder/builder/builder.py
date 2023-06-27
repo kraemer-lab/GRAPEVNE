@@ -254,6 +254,9 @@ class Model:
         )
 
     def AddModule(self, name: str, module: dict) -> Module:
+        print("=== Add module")
+        print(name)
+        print(module)
         """Adds a module to the workflow"""
         kwargs = module.copy()
         if "rulename" not in kwargs:
@@ -611,6 +614,8 @@ def BuildFromJSON(
     for item in config:
         match item["type"].casefold():
             case "module" | "source" | "terminal":
+                print("=== Add module (call)")
+                print(item)
                 m.AddModule(
                     item["name"],
                     item["config"],

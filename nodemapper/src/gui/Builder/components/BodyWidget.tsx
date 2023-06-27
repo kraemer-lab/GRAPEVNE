@@ -63,54 +63,12 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   ));
 
   const onWidgetDrag_Drop = (event: React.DragEvent<HTMLDivElement>) => {
-    const engine = props.engine;
+    const app = BuilderEngine.Instance;
+    const engine = app.engine;
     const data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
-    const nodesCount = keys(engine.getModel().getNodes()).length;
-
-    let node: DefaultNodeModel = null;
-    const node_name = data.name + (nodesCount + 1);
-    node = new DefaultNodeModel(
-      node_name,
-      BuilderEngine.GetModuleTypeColor(data.type),
-      JSON.stringify({
-        id: "idcode", // TODO
-        name: node_name,
-        type: data.type,
-        config: data.config,
-      })
-    );
-    // Determine number (and names of input ports)
-    let input_namespace = {};
-    if (data.config.params.input_namespace === undefined) {
-      // No input namespace specified - use default unless source
-      if (data.type !== "source") {
-        input_namespace["In"] = "In";
-      }
-    } else if (data.config.params.input_namespace === null) {
-      // Null input namespace specified - no input ports
-    } else if (typeof data.config.params.input_namespace === "object") {
-      // Where the input namespace is an object (probably a dictionary)
-      input_namespace = Object.keys(data.config.params.input_namespace);
-    } else {
-      // Where the input namespace is not an object (probably a string)
-      input_namespace["In"] = "In";
-    }
-    // Add input ports
-    for (const key in input_namespace) {
-      node.addInPort(input_namespace[key]);
-    }
-    // Add output port (if applicable)
-    switch (data.type) {
-      case "source":
-      case "module":
-      case "connector":
-        node.addOutPort("Out");
-        break;
-    }
     const point = engine.getRelativeMousePoint(event);
-    node.setPosition(point);
-    engine.getModel().addNode(node);
-    engine.repaintCanvas();
+    const color = BuilderEngine.GetModuleTypeColor(data.type as string);
+    const node = app.AddNodeToGraph(data, point, color);
     // Broadcast new node (cannot call react hooks from non-react functions)
     setNewnode(node);
   };

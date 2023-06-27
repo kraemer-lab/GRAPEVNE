@@ -98,8 +98,9 @@ class NodeScene {
     node.getInPorts().forEach((port: DefaultPortModel) => {
       // Links return a dictionary, indexed by connected node
       if (Object.keys(port.getLinks()).length > 0) {
-        if (Object.keys(port.getLinks()).length > 1)
+        if (Object.keys(port.getLinks()).length > 1) {
           throw new Error("Input port has more than one link" + node);
+        }
         const link = port.getLinks()[Object.keys(port.getLinks())[0]];
         const node_from =
           link.getTargetPort().getNode() == node
@@ -107,6 +108,36 @@ class NodeScene {
             : link.getTargetPort().getNode();
         const input_port_config = this.getNodeUserConfig(node_from);
         nodes[port.getName()] = input_port_config.name as string;
+      }
+    });
+    return nodes;
+  }
+
+  getNodeOutputNodes(
+    node: DefaultNodeModel
+  ): [DefaultNodeModel, DefaultPortModel][] {
+    // Returns a dictionary of input port names and the nodes they are connected
+    const nodes: [DefaultNodeModel, DefaultPortModel][] = [];
+    const out_ports = node.getOutPorts();
+    if (out_ports.length > 1)
+      throw new Error("Node has more than one output port!");
+    out_ports.forEach((port: DefaultPortModel) => {
+      // Links return a dictionary, indexed by connected node
+      if (Object.keys(port.getLinks()).length > 0) {
+        const links = port.getLinks();
+        for (const key in port.getLinks()) {
+          const link = port.getLinks()[key];
+          const port_to =
+            link.getTargetPort().getNode() == node
+              ? link.getSourcePort()
+              : link.getTargetPort();
+          const node_to = port_to.getNode();
+          const output_port_config = this.getNodeUserConfig(node_to);
+          nodes.push([
+            node_to as DefaultNodeModel,
+            port_to as DefaultPortModel,
+          ]);
+        }
       }
     });
     return nodes;

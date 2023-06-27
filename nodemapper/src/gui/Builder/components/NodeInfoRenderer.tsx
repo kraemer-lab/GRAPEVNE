@@ -1,15 +1,58 @@
 import React from "react";
 import NodeInfo from "./NodeInfo";
+import BuilderEngine from "../BuilderEngine";
+import { NodeModel } from "@projectstorm/react-diagrams";
+import { DefaultNodeModel } from "NodeMap";
+import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
+import { builderNodeSelected } from "redux/actions";
+import { builderNodeDeselected } from "redux/actions";
 
-const ExpandButton = (props) => {
+interface IPayload {
+  id: string;
+}
+
+interface ExpandProps {
+  nodeinfo: Record<string, unknown>;
+}
+
+const ExpandButton = (props: ExpandProps) => {
+  const [newnodes, setNewNodes] = React.useState<NodeModel[]>(null);
+  const dispatch = useAppDispatch();
+
   const showExpand = useAppSelector(
     (state) => state.builder.can_selected_expand
   );
 
   const btnExpand = () => {
-    console.log("Expand");
+    // Expand the selected node into it's constituent modules
+    const app = BuilderEngine.Instance;
+    const engine = app.engine;
+    const newnodes = app.ExpandNodeByName(props.nodeinfo.name as string);
+    setNewNodes(newnodes);
   };
+
+  React.useEffect(() => {
+    console.log(newnodes);
+    if (newnodes) {
+      // Add event listeners
+      newnodes.forEach((newnode) => {
+        console.log(newnode.getOptions().id);
+        newnode.registerListener({
+          selectionChanged: (e) => {
+            const payload: IPayload = {
+              id: newnode.getOptions().id,
+            };
+            if (e.isSelected) {
+              dispatch(builderNodeSelected(payload));
+            } else {
+              dispatch(builderNodeDeselected(payload));
+            }
+          },
+        });
+      });
+    }
+  }, [newnodes]);
 
   if (showExpand) {
     return (
@@ -49,7 +92,7 @@ const NodeInfoRenderer = (props) => {
         >
           <div>Node Info</div>
           <div>
-            <ExpandButton />
+            <ExpandButton nodeinfo={JSON.parse(nodeinfo)} />
           </div>
         </div>
         <div
