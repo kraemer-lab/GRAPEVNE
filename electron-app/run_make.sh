@@ -14,8 +14,10 @@ if [ ! -d "venv" ]; then
 	python3 -m venv venv
 fi
 source venv/bin/activate
-python3 -m pip install --upgrade pip
-python3 -m pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python -m pip install -e ../builder
+python -m pip install -e ../runner
 
 # Ensure nodemapper up-to-date
 pushd ../nodemapper

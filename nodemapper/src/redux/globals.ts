@@ -6,5 +6,5 @@ export const getBackend = () => {
   // The backend was originally written using a Flask-based REST server.
   // The REST server is being migrated to an Electron-based application.
   // However, both backends are still supported for now.
-  return "rest"; //electron"; // rest | electron
+  return "rest"; // | electron
 };

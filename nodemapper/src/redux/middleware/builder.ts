@@ -166,7 +166,7 @@ const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
   };
   switch (backend as string) {
     case "rest":
-      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+      // query["data"]["content"] = JSON.stringify(query["data"]["content"]);
       postRequestCheckNodeDependencies(query, dispatch, callback);
       break;
     case "electron":

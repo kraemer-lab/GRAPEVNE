@@ -32,7 +32,11 @@ function SidePaneContentComponent() {
       <textarea
         id="codesnippet"
         {...{ rows: 15 }}
-        style={{ width: "100%" }}
+        style={{
+          width: "100%",
+          background: "#555555",
+          borderColor: "#333333",
+        }}
         value={codesnippet}
         onChange={() => {}} // eslint-disable-line @typescript-eslint/no-empty-function
       />

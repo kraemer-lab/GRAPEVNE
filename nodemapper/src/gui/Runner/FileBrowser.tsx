@@ -22,7 +22,9 @@ function FileBrowser() {
             </th>
             <th>
               <div style={{ textAlign: "right" }}>
-                <button onClick={btnLoadWorkflow}>LOAD</button>
+                <button className="btn" onClick={btnLoadWorkflow}>
+                  LOAD
+                </button>
               </div>
             </th>
           </tr>

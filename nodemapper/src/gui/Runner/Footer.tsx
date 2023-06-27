@@ -41,7 +41,11 @@ function Footer() {
           <textarea
             id="linter"
             {...{ rows: 6 }}
-            style={{ width: "65%" }}
+            style={{
+              width: "65%",
+              background: "#555555",
+              borderColor: "#333333",
+            }}
             value={body}
             onChange={() => {}} // eslint-disable-line @typescript-eslint/no-empty-function
           />

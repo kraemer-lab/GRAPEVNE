@@ -7,9 +7,9 @@
   text-decoration: none;
   display: inline-block;
   font-size: 12px;
-  color: black;
+  background: #555555;
 }
 .button:hover {
-  background-color: white;
+  background: #777777;
   color: black;
 }
