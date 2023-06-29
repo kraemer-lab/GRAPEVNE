@@ -7,4 +7,5 @@ export const getBackend = () => {
   // The REST server is being migrated to an Electron-based application.
   // However, both backends are still supported for now.
   return "rest"; // | electron
+  //return "electron";
 };

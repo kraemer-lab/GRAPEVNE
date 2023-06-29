@@ -40,12 +40,12 @@ use rule * from module3 as module3_*
 
 def test_ConstructSnakefileConfig():
     m = Model()
-    m.AddModule("module1", {"snakefile": "snakefile1", "params": {"param1": "value1"}})
+    m.AddModule("module1", {"snakefile": "snakefile1", "config": {"param1": "value1"}})
     m.AddModule(
-        "module2", {"snakefile": "snakefile2", "input_namespace": "in3", "params": {}}
+        "module2", {"snakefile": "snakefile2", "input_namespace": "in3", "config": {}}
     )
     m.AddModule(
-        "module3", {"snakefile": "snakefile2", "input_namespace": "in3", "params": {}}
+        "module3", {"snakefile": "snakefile2", "input_namespace": "in3", "config": {}}
     )
     # Namespace connector
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
@@ -118,7 +118,7 @@ def test_AddModule_SingleInputNamespace():
         "rulename": "module1",
         "nodetype": "moduletype1",
         "snakefile": "snakefile1",
-        "params": {
+        "config": {
             "input_namespace": "input_namespace1",
             "output_namespace": "output_namespace1",
             "param1": "value1",
@@ -142,7 +142,7 @@ def test_AddModule_MultipleInputNamespaces():
         "rulename": "module2",
         "nodetype": "moduletype2",
         "snakefile": "snakefile2",
-        "params": {
+        "config": {
             "param2": "value2",
             "input_namespace": {
                 "in2a": "input_namespace2a",
@@ -188,7 +188,7 @@ def test_AddConnector_MultiInput():
         "module1",
         {
             "snakefile": "snakefile1",
-            "params": {
+            "config": {
                 "input_namespace": "in1",
                 "output_namespace": "out1",
             },
@@ -198,7 +198,7 @@ def test_AddConnector_MultiInput():
         "module2",
         {
             "snakefile": "snakefile2",
-            "params": {
+            "config": {
                 "input_namespace": {
                     "in2a": "input2_A",
                     "in2b": "input2_B",

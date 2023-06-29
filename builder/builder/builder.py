@@ -21,7 +21,7 @@ class Node:
         rulename: str,
         nodetype: str,
         snakefile: str | dict = "",  # str | {function: str, args: List, kwargs: dict}
-        params={},
+        config={},
         input_namespace: Namespace = "",
         output_namespace: str = "",
     ):
@@ -32,7 +32,7 @@ class Node:
             rulename (str): Name of the rule
             nodetype (str): Type of node (module, connector, etc.)
             snakefile (str|dict): str location or dict representing function call
-            params (dict): Parameters for the Snakefile
+            config (dict): Configuration (parameters) for the Snakefile
             input_namespace (str): Input namespace
             output_namespace (str): Output namespace
         """
@@ -41,7 +41,7 @@ class Node:
         self.rulename = rulename
         self.nodetype = nodetype
         self.snakefile = snakefile
-        self.params = params
+        self.config = config
         self.input_namespace = input_namespace
         self.output_namespace = output_namespace
 
@@ -65,8 +65,8 @@ class Module(Node):
             kwargs: See Node class for kwargs
         """
         kwargs["nodetype"] = kwargs.get("nodetype", "module")
-        kwargs["params"] = kwargs.get("params", {})
-        kwargs["input_namespace"] = kwargs["params"].get("input_namespace", None)
+        kwargs["config"] = kwargs.get("config", {})
+        kwargs["input_namespace"] = kwargs["config"].get("input_namespace", None)
         super().__init__(name, **kwargs)
 
     def _GetConfigFileinfo(self) -> str | dict:
@@ -181,7 +181,7 @@ class Model:
             print("Continuing for debug purposes...")
         # Add configurations for each module
         for node in self.nodes:
-            cnode = node.params.copy()
+            cnode = node.config.copy()
 
             # Input namespace
             if node.input_namespace:
@@ -432,7 +432,7 @@ class Model:
         rulemapping = {}
         new_nodes: List[Node] = []
         for n in modules_list:
-            new_node = self.AddModule(n, {"params": config[n].get("config", {})})
+            new_node = self.AddModule(n, {"config": config[n].get("config", {})})
             # Retain namespace mapping
             new_node.input_namespace = config[n]["config"].get(
                 "input_namespace", new_node.input_namespace

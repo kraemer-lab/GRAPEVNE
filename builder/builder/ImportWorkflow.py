@@ -27,7 +27,7 @@ def ImportWorkflowDir(
         c = config.copy()
         c.pop("input_namespace", None)
         c.pop("output_namespace", None)
-        node = m.AddModule(rulename, {"params": c})
+        node = m.AddModule(rulename, {"config": c})
         # Retain namespace mapping
         node.input_namespace = config.get("input_namespace", node.input_namespace)
         node.output_namespace = config.get("output_namespace", node.output_namespace)
