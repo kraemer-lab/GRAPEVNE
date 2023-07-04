@@ -25,7 +25,7 @@
           "branch": "main"
         }
       },
-      "params": {
+      "config": {
         "args": 3
       }
     }
@@ -42,7 +42,7 @@
           "branch": "main"
         }
       },
-      "params": {
+      "config": {
         "args": 3
       }
     }
@@ -59,7 +59,7 @@
           "branch": "main"
         }
       },
-      "params": {
+      "config": {
         "args": 3
       }
     }

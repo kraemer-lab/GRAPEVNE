@@ -40,7 +40,7 @@ test("getNodeUserConfig", () => {
       name: "Node",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: "in",
           output_namespace: "out",
         },
@@ -104,7 +104,7 @@ test("getNodeInputNodes ()", () => {
       name: "test_name_1",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: "in1",
           output_namespace: "out1",
         },
@@ -122,7 +122,7 @@ test("getNodeInputNodes ()", () => {
       name: "test_name_1",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: "in1",
           output_namespace: "out1",
         },
@@ -157,7 +157,7 @@ test("getModuleListJSON (connect output to single input)", () => {
       name: "Node 1",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: "in1",
           output_namespace: "out1",
         },
@@ -176,7 +176,7 @@ test("getModuleListJSON (connect output to single input)", () => {
       name: "Node 2",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: "in2",
           output_namespace: "out2",
         },
@@ -193,14 +193,13 @@ test("getModuleListJSON (connect output to single input)", () => {
   nodeScene.engine.getModel().addAll(node1, node2, link12);
 
   const js: Record<string, unknown>[] = nodeScene.getModuleListJSON();
-  console.log(js);
   const expected = [
     {
       id: "idcode",
       name: "Node 1",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: "in1",
           output_namespace: "out1",
         },
@@ -211,7 +210,7 @@ test("getModuleListJSON (connect output to single input)", () => {
       name: "Node 2",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: "in2",
           output_namespace: "out2",
         },
@@ -240,7 +239,7 @@ test("getModuleListJSON (connect output to one of a pair of inputs)", () => {
       name: "Node 1",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: "in1",
           output_namespace: "out1",
         },
@@ -259,7 +258,7 @@ test("getModuleListJSON (connect output to one of a pair of inputs)", () => {
       name: "Node 2",
       type: "module",
       config: {
-        params: {
+        config: {
           input_namespace: {
             in2A_key: "in2A_value",
             in2B_key: "in2B_value",
@@ -280,11 +279,10 @@ test("getModuleListJSON (connect output to one of a pair of inputs)", () => {
   nodeScene.engine.getModel().addAll(node1, node2, link12);
 
   const js: Record<string, unknown>[] = nodeScene.getModuleListJSON();
-  console.log(js);
   const expected = [
     {
       config: {
-        params: {
+        config: {
           input_namespace: "in1",
           output_namespace: "out1",
         },
@@ -295,7 +293,7 @@ test("getModuleListJSON (connect output to one of a pair of inputs)", () => {
     },
     {
       config: {
-        params: {
+        config: {
           input_namespace: {
             in2A_key: "in2A_value",
             in2B_key: "in2B_value",

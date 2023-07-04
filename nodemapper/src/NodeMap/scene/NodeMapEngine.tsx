@@ -198,7 +198,7 @@ export default class NodeMapEngine {
     );
     // Determine number (and names of input ports)
     let input_namespace = {};
-    const params = (data.config as Record<string, any>).params;
+    const params = (data.config as Record<string, any>).config;
     if (params.input_namespace === undefined) {
       // No input namespace specified - use default unless source
       if (data.type !== "source") {
@@ -236,11 +236,12 @@ export default class NodeMapEngine {
     if (!node) return null;
     const json = this.getNodePropertiesAsJSON(node);
     if (!json.config) return null;
-    if (!json.config["params"]) return null;
-    const modules = json.config["params"] as Record<string, unknown>;
+    if (!json.config["config"]) return null;
+    const modules = json.config["config"] as Record<string, unknown>;
     const newnodes: DefaultNodeModel[] = [] as DefaultNodeModel[];
     let offset = 0.0;
     for (const item in modules) {
+      if (modules[item] === null || modules[item] === undefined) continue;
       if (modules[item]["config"] === undefined) continue;
       const params = modules[item]["config"] as Record<string, unknown>;
       const config: Record<string, unknown> = {};
@@ -248,7 +249,7 @@ export default class NodeMapEngine {
         if (key === "name") continue;
         if (key === "type") continue;
         if (key === "config") {
-          config["params"] = modules[item][key];
+          config["config"] = modules[item][key];
         } else {
           config[key] = modules[item][key];
         }
@@ -278,13 +279,13 @@ export default class NodeMapEngine {
       const config = this.getNodePropertiesAsJSON(node_from)[
         "config"
       ] as Record<string, unknown>;
-      const params = config["params"];
+      const params = config["config"];
       const output_namespace = params["output_namespace"];
       newnodes.forEach((node_to) => {
         const config = this.getNodePropertiesAsJSON(node_to)[
           "config"
         ] as Record<string, unknown>;
-        const params = config["params"];
+        const params = config["config"];
         const input_namespace = params["input_namespace"];
         if (typeof input_namespace === "string") {
           // string = single input port
@@ -343,7 +344,7 @@ export default class NodeMapEngine {
       string,
       unknown
     >;
-    const output_namespace = config["params"]["output_namespace"];
+    const output_namespace = config["config"]["output_namespace"];
     const target_node_and_port = this.nodeScene.getNodeOutputNodes(
       node as DefaultNodeModel
     );
@@ -355,7 +356,7 @@ export default class NodeMapEngine {
         const config = this.getNodePropertiesAsJSON(node_from)[
           "config"
         ] as Record<string, unknown>;
-        const namespace = config["params"]["output_namespace"];
+        const namespace = config["config"]["output_namespace"];
         if (namespace == output_namespace) {
           const source_port = node_from.getPort("Out");
           const link = new DefaultLinkModel();

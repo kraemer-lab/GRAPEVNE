@@ -54,10 +54,10 @@ def GetLocalModules(path: str) -> List[dict]:
                 config_file = (
                     f"{path_base}/{org}/{module_type}/{workflow}/config/config.yaml"
                 )
-                params = {}
+                config = {}
                 try:
                     with open(config_file, "r") as file:
-                        params = yaml.safe_load(file)
+                        config = yaml.safe_load(file)
                 except FileNotFoundError:
                     print(f"Config file not found - assuming blank: {file}")
                 modules.append(
@@ -66,7 +66,7 @@ def GetLocalModules(path: str) -> List[dict]:
                         "type": module_type[:-1],  # remove plural
                         "config": {
                             "snakefile": abspath(url_workflow),
-                            "params": params,
+                            "config": config,
                         },
                     }
                 )
@@ -160,7 +160,7 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                     raise Exception(
                         "Github API request failed (getting workflow config file)."
                     )
-                params = yaml.safe_load(r_config.text)
+                config = yaml.safe_load(r_config.text)
                 modules.append(
                     {
                         "name": f"({org['name']}) {FormatName(workflow['name'])}",
@@ -177,7 +177,7 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                                     "branch": branch,
                                 },
                             },
-                            "params": params,
+                            "config": config,
                         },
                     }
                 )
@@ -221,7 +221,7 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
         r_config = requests.get(url_config)
         if r_config.status_code != 200:
             raise Exception("Github API request failed (getting workflow config file).")
-        params = yaml.safe_load(r_config.text)
+        config = yaml.safe_load(r_config.text)
         modules.append(
             {
                 "name": branch["name"],
@@ -235,7 +235,7 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
                             "branch": branch["name"],
                         },
                     },
-                    "params": params,
+                    "config": config,
                 },
             }
         )

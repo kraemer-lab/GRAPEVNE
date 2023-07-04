@@ -4,7 +4,7 @@
     "type": "Module",
     "config": {
       "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/GetGISAID/workflow/Snakefile",
-      "params": {}
+      "config": {}
     }
   },
   {
@@ -20,7 +20,7 @@
     "type": "Module",
     "config": {
       "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/GISAID_metadata/workflow/Snakefile",
-      "params": {}
+      "config": {}
     }
   },
   {
@@ -28,7 +28,7 @@
     "type": "Module",
     "config": {
       "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/GetOWID/workflow/Snakefile",
-      "params": {}
+      "config": {}
     }
   },
   {
@@ -44,7 +44,7 @@
     "type": "Module",
     "config": {
       "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/OWIDCaseData/workflow/Snakefile",
-      "params": {}
+      "config": {}
     }
   },
   {
@@ -60,7 +60,7 @@
     "type": "Module",
     "config": {
       "url": "../../../../../snakeshack/workflows/OxfordPhyloGenetics/modules/CaseIncidence/workflow/Snakefile",
-      "params": {}
+      "config": {}
     }
   }
 ]
