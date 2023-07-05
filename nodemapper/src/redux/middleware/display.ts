@@ -67,7 +67,7 @@ const GetFolderInfo = async (dispatch, getState) => {
     dispatch(displayStoreFolderInfo(content["body"]));
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
@@ -90,7 +90,7 @@ const DeleteResults = async (dispatch, getState) => {
     throw new Error("Delete Results not yet implemented");
   };
   switch (backend) {
-    case "web":
+    case "rest":
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":

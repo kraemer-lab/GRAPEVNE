@@ -315,6 +315,7 @@ const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
   };
   switch (backend) {
     case "rest":
+      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
