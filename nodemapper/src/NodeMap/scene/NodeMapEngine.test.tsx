@@ -121,57 +121,53 @@ test("AddNodeToGraph", () => {
   expect(nodelist[2].name).toMatch(/^test_name3/);
 });
 
-test("ExpandNodeByName", () => {
+test("ExpandNodeByName (simple connections) [1-3-1]", () => {
   // Construct a graph with one multi-module node receiving input from a simple
   // node and outputting to a simple node.
   const engine = new NodeMapEngine();
   const node1 = add_one_node(engine);
-  const node2 = add_one_node_custom_config(
-    engine,
-    {
-      name: "test_name2", // graph node properties
+  const node2 = add_one_node_custom_config(engine, {
+    name: "test_name2", // graph node properties
+    type: "module",
+    config: {
+      name: "test_name2", // workflow properties
       type: "module",
+      snakefile: "test_snakefile2",
       config: {
-        name: "test_name2", // workflow properties
-        type: "module",
-        snakefile: "test_snakefile2",
-        config: {
-          // config(params) for workflow
-          input_namespace: {
-            test_name2a$: "in2a",
-          }, // input to sub_module1
-          output_namespace: "out2c",
-          // module encapsulates three sub-modules
-          // (ensure sub-module namespaces connect to each other)
-          test_name2a: node_data_workflow(
-            "test_id2a",
-            "test_name2a",
-            "module",
-            "test_snakefile2a",
-            "in2a",
-            "out2a"
-          ),
-          test_name2b: node_data_workflow(
-            "test_id2b",
-            "test_name2b",
-            "module",
-            "test_snakefile2b",
-            "out2a",
-            "out2b"
-          ),
-          test_name2c: node_data_workflow(
-            "test_id2c",
-            "test_name2c",
-            "module",
-            "test_snakefile2c",
-            "out2b",
-            "out2c"
-          ),
-        },
+        // config(params) for workflow
+        input_namespace: {
+          test_name2a$: "in2a",
+        }, // input to sub_module1
+        output_namespace: "out2c",
+        // module encapsulates three sub-modules
+        // (ensure sub-module namespaces connect to each other)
+        test_name2a: node_data_workflow(
+          "test_id2a",
+          "test_name2a",
+          "module",
+          "test_snakefile2a",
+          "in2a",
+          "out2a"
+        ),
+        test_name2b: node_data_workflow(
+          "test_id2b",
+          "test_name2b",
+          "module",
+          "test_snakefile2b",
+          "out2a",
+          "out2b"
+        ),
+        test_name2c: node_data_workflow(
+          "test_id2c",
+          "test_name2c",
+          "module",
+          "test_snakefile2c",
+          "out2b",
+          "out2c"
+        ),
       },
     },
-    false
-  );
+  });
   const node3 = add_one_node(engine);
   const link12 = engine.nodeScene.addLink(
     node1.getPort("Out") as DefaultPortModel,
@@ -182,10 +178,170 @@ test("ExpandNodeByName", () => {
     node3.getPort("In") as DefaultPortModel
   );
   expect(engine.engine.getModel().getNodes()).toHaveLength(3);
-  // Expand multi-module node
+  // expand multi-module node
   const name = node2.getOptions().name; // name may be wrangled
   engine.ExpandNodeByName(name);
-  expect(engine.engine.getModel().getNodes()).toHaveLength(5);
+
+  // check that module has been expanded and original node has been removed
+  const nodelist = engine.engine.getModel().getNodes();
+  expect(nodelist).toHaveLength(5);
+  expect(nodelist[0].getOptions()["name"]).toMatch(/^test_name1/); // names may be wrangled
+  expect(nodelist[1].getOptions()["name"]).toMatch(/^test_name3/);
+  expect(nodelist[2].getOptions()["name"]).toMatch(/^test_name2a/); // expanded modules
+  expect(nodelist[3].getOptions()["name"]).toMatch(/^test_name2b/);
+  expect(nodelist[4].getOptions()["name"]).toMatch(/^test_name2c/);
+  // check source node to expanded module link (1 -> 2a)
+  let links = nodelist[0].getPort("Out").getLinks();
+  expect(Object.keys(links)).toHaveLength(1);
+  let link = links[Object.keys(links)[0]];
+  expect(link.getSourcePort().getNode().getOptions()["name"]).toMatch(
+    /^test_name1/
+  );
+  expect(link.getTargetPort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2a/
+  );
+  // check expanded inter-module links (2a -> 2b)
+  links = nodelist[2].getPort("Out").getLinks();
+  expect(Object.keys(links)).toHaveLength(1);
+  link = links[Object.keys(links)[0]];
+  expect(link.getSourcePort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2a/
+  );
+  expect(link.getTargetPort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2b/
+  );
+  // check expanded inter-module links (2b -> 2c)
+  links = nodelist[3].getPort("Out").getLinks();
+  expect(Object.keys(links)).toHaveLength(1);
+  link = links[Object.keys(links)[0]];
+  expect(link.getSourcePort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2b/
+  );
+  expect(link.getTargetPort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2c/
+  );
+  // check sub-module link to target node (2c -> 3)
+  links = nodelist[4].getPort("Out").getLinks();
+  expect(Object.keys(links)).toHaveLength(1);
+  link = links[Object.keys(links)[0]];
+  expect(link.getSourcePort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2c/
+  );
+  expect(link.getTargetPort().getNode().getOptions()["name"]).toMatch(
+    /^test_name3/
+  );
+});
+
+test("ExpandNodeByName (named connections) [1-3-1]", () => {
+  // Construct a graph with one multi-module node receiving input from a simple
+  // node and outputting to a simple node. Sub-modules have multiple input
+  // connections.
+  const engine = new NodeMapEngine();
+  const node1 = add_one_node(engine);
+  const node2 = add_one_node_custom_config(engine, {
+    name: "test_name2", // graph node properties
+    type: "module",
+    config: {
+      name: "test_name2", // workflow properties
+      type: "module",
+      snakefile: "test_snakefile2",
+      config: {
+        // config(params) for workflow
+        input_namespace: {
+          test_name2a$in2a: "in",
+        }, // input to sub_module1
+        output_namespace: "out2c",
+        // module encapsulates three sub-modules
+        // (ensure sub-module namespaces connect to each other)
+        test_name2a: node_data_workflow(
+          "test_id2a",
+          "test_name2a",
+          "module",
+          "test_snakefile2a",
+          { in2a: "in", in2a2: "dud" },
+          "out2a"
+        ),
+        test_name2b: node_data_workflow(
+          "test_id2b",
+          "test_name2b",
+          "module",
+          "test_snakefile2b",
+          { in2b: "out2a", in2b2: "dud" },
+          "out2b"
+        ),
+        test_name2c: node_data_workflow(
+          "test_id2c",
+          "test_name2c",
+          "module",
+          "test_snakefile2c",
+          { in2c: "out2b", in2c2: "dud" },
+          "out2c"
+        ),
+      },
+    },
+  });
+  const node3 = add_one_node(engine);
+  const link12 = engine.nodeScene.addLink(
+    node1.getPort("Out") as DefaultPortModel,
+    node2.getPort("test_name2a$in2a") as DefaultPortModel
+  );
+  const link23 = engine.nodeScene.addLink(
+    node2.getPort("Out") as DefaultPortModel,
+    node3.getPort("In") as DefaultPortModel
+  );
+  expect(engine.engine.getModel().getNodes()).toHaveLength(3);
+  // expand multi-module node
+  const name = node2.getOptions().name; // name may be wrangled
+  engine.ExpandNodeByName(name);
+
+  // check that module has been expanded and original node has been removed
+  const nodelist = engine.engine.getModel().getNodes();
+  expect(nodelist).toHaveLength(5);
+  expect(nodelist[0].getOptions()["name"]).toMatch(/^test_name1/); // names may be wrangled
+  expect(nodelist[1].getOptions()["name"]).toMatch(/^test_name3/);
+  expect(nodelist[2].getOptions()["name"]).toMatch(/^test_name2a/); // expanded modules
+  expect(nodelist[3].getOptions()["name"]).toMatch(/^test_name2b/);
+  expect(nodelist[4].getOptions()["name"]).toMatch(/^test_name2c/);
+  // check source node to expanded module link (1 -> 2a)
+  let links = nodelist[0].getPort("Out").getLinks();
+  expect(Object.keys(links)).toHaveLength(1);
+  let link = links[Object.keys(links)[0]];
+  expect(link.getSourcePort().getNode().getOptions()["name"]).toMatch(
+    /^test_name1/
+  );
+  expect(link.getTargetPort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2a/
+  );
+  // check expanded inter-module links (2a -> 2b)
+  links = nodelist[2].getPort("Out").getLinks();
+  expect(Object.keys(links)).toHaveLength(1);
+  link = links[Object.keys(links)[0]];
+  expect(link.getSourcePort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2a/
+  );
+  expect(link.getTargetPort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2b/
+  );
+  // check expanded inter-module links (2b -> 2c)
+  links = nodelist[3].getPort("Out").getLinks();
+  expect(Object.keys(links)).toHaveLength(1);
+  link = links[Object.keys(links)[0]];
+  expect(link.getSourcePort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2b/
+  );
+  expect(link.getTargetPort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2c/
+  );
+  // check sub-module link to target node (2c -> 3)
+  links = nodelist[4].getPort("Out").getLinks();
+  expect(Object.keys(links)).toHaveLength(1);
+  link = links[Object.keys(links)[0]];
+  expect(link.getSourcePort().getNode().getOptions()["name"]).toMatch(
+    /^test_name2c/
+  );
+  expect(link.getTargetPort().getNode().getOptions()["name"]).toMatch(
+    /^test_name3/
+  );
 });
 
 // Utility functions
@@ -267,7 +423,7 @@ const node_data_workflow = (
   name = "test_name",
   type = "test_type",
   snakefile = "test_snakefile",
-  input_namespace = "test_input_namespace",
+  input_namespace: string | Record<string, any> = "test_input_namespace",
   output_namespace = "test_output_namespace"
 ) => {
   return {
