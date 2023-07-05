@@ -33,11 +33,9 @@ const ExpandButton = (props: ExpandProps) => {
   };
 
   React.useEffect(() => {
-    console.log(newnodes);
     if (newnodes) {
       // Add event listeners
       newnodes.forEach((newnode) => {
-        console.log(newnode.getOptions().id);
         newnode.registerListener({
           selectionChanged: (e) => {
             const payload: IPayload = {

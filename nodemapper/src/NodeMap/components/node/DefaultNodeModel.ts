@@ -17,6 +17,7 @@ export interface DefaultNodeModelOptions extends BasePositionModelOptions {
 
 export interface DefaultNodeModelGenerics extends NodeModelGenerics {
   OPTIONS: DefaultNodeModelOptions;
+  setOptions: (options: DefaultNodeModelOptions) => void;
 }
 
 export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
@@ -142,5 +143,9 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
 
   getOptions() {
     return this.options;
+  }
+
+  setOptions(options: DefaultNodeModelOptions) {
+    this.options = options;
   }
 }

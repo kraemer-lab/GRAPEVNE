@@ -44,6 +44,13 @@ export function builderMiddleware({ getState, dispatch }) {
         case "builder/node-deselected":
           NodeDeselected(dispatch);
           break;
+        case "builder/update-node-info-key":
+          UpdateNodeInfoKey(
+            action,
+            dispatch,
+            JSON.parse(getState().builder.nodeinfo)
+          );
+          break;
         case "builder/get-remote-modules":
           GetRemoteModules(dispatch, JSON.parse(getState().builder.repo));
           break;
@@ -199,6 +206,8 @@ function NodeSelected(action: IPayloadRecord, dispatch: TPayloadString) {
       code: JSON.stringify(json.config, null, 2),
     };
   }
+  console.log("Middleware: NodeSelected");
+  console.log(payload);
   dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
 }
 
@@ -209,6 +218,31 @@ type TNodeDeselectedDispatch = (action: INodeDeselectedDispatch) => void;
 
 function NodeDeselected(dispatch: TNodeDeselectedDispatch) {
   dispatch(builderUpdateNodeInfo(""));
+}
+
+function UpdateNodeInfoKey(action: IPayloadRecord, dispatch, nodeinfo): void {
+  // Update field for node
+  console.log("Middleware: UpdateNodeInfoKey");
+  const builder = BuilderEngine.Instance;
+  const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
+  console.log(nodeinfo.id);
+  if (node !== null) {
+    const workflow = builder.nodeScene.getNodeWorkflow(node);
+    const keys = action.payload.keys as string[];
+
+    const indexInto = (obj, indexlist, value) => {
+      if (indexlist.length == 1) {
+        obj[indexlist[0]] = value;
+      } else {
+        return indexInto(obj[indexlist[0]], indexlist.slice(1), value);
+      }
+    };
+    indexInto(workflow, keys, action.payload.value);
+    builder.nodeScene.setNodeWorkflow(node, workflow);
+    //dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+  } else {
+    console.log("Node not found: ", nodeinfo);
+  }
 }
 
 async function GetRemoteModules(dispatchString: TPayloadString, repo: string) {

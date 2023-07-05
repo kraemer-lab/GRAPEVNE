@@ -32,29 +32,83 @@ test.skip("addLink", () => {
   )*/
 });
 
-test("getNodeUserConfig", () => {
+test("getNodeUserProperties", () => {
   const nodeScene = new NodeScene();
-  const userconfig = JSON.parse(
-    JSON.stringify({
-      id: "idcode",
-      name: "Node",
-      type: "module",
+  const d = _AddStandardNode(nodeScene);
+  const config = nodeScene.getNodeUserProperties(d.node);
+  expect(config).toEqual(d.userconfig);
+});
+
+test("setNodeUserProperties", () => {
+  const nodeScene = new NodeScene();
+  const d = _AddStandardNode(nodeScene);
+  let config = nodeScene.getNodeUserProperties(d.node);
+  expect(config).toEqual(d.userconfig);
+  const userconfig_new = {
+    id: "idcode_new",
+    name: "Node_new",
+    type: "module",
+    config: {
+      name: "test_node_new",
+      snakefile: "snakefile_new",
       config: {
-        config: {
-          input_namespace: "in",
-          output_namespace: "out",
-        },
+        input_namespace: "in_new",
+        output_namespace: "out_new",
+        sleeptime: 2.0,
       },
-    })
-  );
-  const node = nodeScene.addNode(
-    "Node", // name
-    "rgb(255,0,0)", // color
-    [0, 0], // pos
-    userconfig // config
-  );
-  const config = nodeScene.getNodeUserConfig(node);
-  expect(config).toEqual(userconfig);
+    },
+  };
+  nodeScene.setNodeUserProperties(d.node, userconfig_new);
+  config = nodeScene.getNodeUserProperties(d.node);
+  expect(config).toEqual(userconfig_new);
+});
+
+test("getNodeWorkflow", () => {
+  const nodeScene = new NodeScene();
+  const d = _AddStandardNode(nodeScene);
+  const config = nodeScene.getNodeWorkflow(d.node);
+  expect(config).toEqual(d.workflow);
+});
+
+test("setNodeWorkflow", () => {
+  const nodeScene = new NodeScene();
+  const d = _AddStandardNode(nodeScene);
+  let workflow = nodeScene.getNodeWorkflow(d.node);
+  expect(workflow).toEqual(d.workflow);
+  const workflow_new = {
+    name: "test_node_new",
+    snakefile: "snakefile_new",
+    config: {
+      input_namespace: "in_new",
+      output_namespace: "out_new",
+      sleeptime: 2.0,
+    },
+  };
+  nodeScene.setNodeWorkflow(d.node, workflow_new);
+  workflow = nodeScene.getNodeWorkflow(d.node);
+  expect(workflow).toEqual(workflow_new);
+});
+
+test("getNodeWorkflowParams", () => {
+  const nodeScene = new NodeScene();
+  const d = _AddStandardNode(nodeScene);
+  const config = nodeScene.getNodeWorkflowParams(d.node);
+  expect(config).toEqual(d.workflowParams);
+});
+
+test("setNodeWorkflowParams", () => {
+  const nodeScene = new NodeScene();
+  const d = _AddStandardNode(nodeScene);
+  let workflowParams = nodeScene.getNodeWorkflowParams(d.node);
+  expect(workflowParams).toEqual(d.workflowParams);
+  const workflowParams_new = {
+    input_namespace: "in_new",
+    output_namespace: "out_new",
+    sleeptime: 2.0,
+  };
+  nodeScene.setNodeWorkflowParams(d.node, workflowParams_new);
+  workflowParams = nodeScene.getNodeWorkflowParams(d.node);
+  expect(workflowParams).toEqual(workflowParams_new);
 });
 
 test.skip("isNodeTypeRule", () => {
@@ -328,3 +382,38 @@ test.skip("buildMapWithSnippets", () => {
 test.skip("markNodesWithoutConnectionsAsComplete", () => {
   //markNodesWithoutConnectionsAsComplete(data);
 });
+
+/*
+ * Utility functions
+ */
+
+const _AddStandardNode = (nodeScene: NodeScene) => {
+  const workflowParams = {
+    input_namespace: "in",
+    output_namespace: "out",
+    sleeptime: 1.0,
+  };
+  const workflow = {
+    name: "test_node",
+    snakefile: "snakefile",
+    config: workflowParams,
+  };
+  const userconfig = {
+    id: "idcode",
+    name: "Node",
+    type: "module",
+    config: workflow,
+  };
+  const node = nodeScene.addNode(
+    "Node", // name
+    "rgb(255,0,0)", // color
+    [0, 0], // pos
+    JSON.parse(JSON.stringify(userconfig)) // config
+  );
+  return {
+    userconfig: userconfig,
+    workflow: workflow,
+    workflowParams: workflowParams,
+    node: node,
+  };
+};

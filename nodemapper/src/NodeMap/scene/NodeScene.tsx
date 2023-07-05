@@ -45,16 +45,57 @@ class NodeScene {
     return link;
   }
 
-  getNodeUserConfig(node): Record<string, unknown> {
-    return JSON.parse(node.options.extras);
+  getNodeUserProperties(node: DefaultNodeModel): Record<string, unknown> {
+    return JSON.parse(node.getOptions().extras);
   }
 
-  isNodeTypeRule(node): boolean {
-    return this.getNodeUserConfig(node).type == "rule";
+  setNodeUserProperties(
+    node: DefaultNodeModel,
+    properties: Record<string, unknown>
+  ): void {
+    const opts = node.getOptions();
+    opts.extras = JSON.stringify(properties);
+    node.setOptions(opts);
   }
 
-  getNodeName(node): string {
-    return this.getNodeUserConfig(node).name as string;
+  getNodeWorkflow(node: DefaultNodeModel): Record<string, unknown> {
+    const userConfig = this.getNodeUserProperties(node);
+    return userConfig["config"] as Record<string, unknown>;
+  }
+
+  setNodeWorkflow(
+    node: DefaultNodeModel,
+    workflow: string | Record<string, unknown>
+  ): void {
+    const opts = node.getOptions();
+    const userProperties = JSON.parse(opts.extras);
+    userProperties["config"] = workflow;
+    opts.extras = JSON.stringify(userProperties);
+    node.setOptions(opts);
+  }
+
+  getNodeWorkflowParams(node: DefaultNodeModel): Record<string, unknown> {
+    const workflowParams = this.getNodeWorkflow(node);
+    return workflowParams["config"] as Record<string, unknown>;
+  }
+
+  setNodeWorkflowParams(
+    node: DefaultNodeModel,
+    workflowParams: string | Record<string, unknown>
+  ): void {
+    const opts = node.getOptions();
+    const userProperties = JSON.parse(opts.extras);
+    userProperties["config"]["config"] = workflowParams;
+    opts.extras = JSON.stringify(userProperties);
+    node.setOptions(opts);
+  }
+
+  isNodeTypeRule(node: DefaultNodeModel): boolean {
+    return this.getNodeUserProperties(node).type == "rule";
+  }
+
+  getNodeName(node: DefaultNodeModel): string {
+    return this.getNodeUserProperties(node).name as string;
   }
 
   InitializeScene(): void {
@@ -106,7 +147,9 @@ class NodeScene {
           link.getTargetPort().getNode() == node
             ? link.getSourcePort().getNode()
             : link.getTargetPort().getNode();
-        const input_port_config = this.getNodeUserConfig(node_from);
+        const input_port_config = this.getNodeUserProperties(
+          node_from as DefaultNodeModel
+        );
         nodes[port.getName()] = input_port_config.name as string;
       }
     });
@@ -132,7 +175,9 @@ class NodeScene {
               ? link.getSourcePort()
               : link.getTargetPort();
           const node_to = port_to.getNode();
-          const output_port_config = this.getNodeUserConfig(node_to);
+          const output_port_config = this.getNodeUserProperties(
+            node_to as DefaultNodeModel
+          );
           nodes.push([
             node_to as DefaultNodeModel,
             port_to as DefaultPortModel,
@@ -153,7 +198,7 @@ class NodeScene {
     const nodes = nodenames.map((name) => {
       let node = null;
       for (const n of this.engine.getModel().getNodes()) {
-        if (this.getNodeName(n) === name) {
+        if (this.getNodeName(n as DefaultNodeModel) === name) {
           node = n;
           break;
         }
@@ -170,7 +215,7 @@ class NodeScene {
 
     // Add nodes
     nodes.forEach((node: DefaultNodeModel) => {
-      js.push(this.getNodeUserConfig(node));
+      js.push(this.getNodeUserProperties(node));
     });
 
     // Add connectors
@@ -184,7 +229,7 @@ class NodeScene {
         }
         // Add connector
         if (map[0] !== null && map[0] !== undefined) {
-          map[1] = this.getNodeUserConfig(node).name;
+          map[1] = this.getNodeUserProperties(node).name;
           const conn = {
             name: "Join [" + map[1] + "]",
             type: "connector",

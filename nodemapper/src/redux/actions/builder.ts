@@ -26,6 +26,10 @@ export const builderUpdateNodeInfo = createAction<string>(
   "builder/update-node-info"
 );
 
+export const builderUpdateNodeInfoKey = createAction<
+  Record<string, string[] | string>
+>("builder/update-node-info-key");
+
 export const builderSetRepositoryTarget = createAction<Record<string, any>>( // eslint-disable-line @typescript-eslint/no-explicit-any
   "builder/set-repository-target"
 );

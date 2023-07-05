@@ -1,3 +1,4 @@
+import BuilderEngine from "gui/Builder/BuilderEngine";
 import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "../actions";
 
@@ -67,6 +68,9 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderUpdateNodeInfo, (state, action) => {
       state.nodeinfo = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderUpdateNodeInfoKey, (state, action) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetRepositoryTarget, (state, action) => {
