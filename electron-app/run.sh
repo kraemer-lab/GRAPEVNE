@@ -1,14 +1,6 @@
 #!/usr/bin/env bash
 
-# Launches the electron app in development mode
-#  - Connects to frontend server running on localhost:5001
-#  - The front-end can be configured to connect to nodejs (through electron),
-#    or to communicate with a REST API running on localhost:5000
-#  - Backend business logic resides in Python, so this script launches the app
-#    in a virtual environment to communicates with the relevant Python
-#    packages
-#  - Business logic should be ported from Python to nodejs to remove these
-#    dependencies from the app
+# Launches the electron app
 
 set -eoux pipefail
 
@@ -20,12 +12,4 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 
-# compile builderjs
-pushd ../builderjs
-yarn build
-popd
-
-# compile and run
-yarn
-yarn build
-yarn start
+out/PhyloFlow-*/PhyloFlow.app/Contents/MacOS/PhyloFlow
