@@ -27,6 +27,7 @@ popd
 
 # compile builderjs
 pushd ../builderjs
+yarn
 yarn build
 popd
 
