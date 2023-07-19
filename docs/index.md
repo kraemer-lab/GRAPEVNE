@@ -1,12 +1,16 @@
 # GRAPEVNE
 
-**GRAPEVNE is currently in a prototyping stage and is subject to major
-revisions**
+*Gr*aphical *A*nalytical *P*ipelin*e* De*v*elopme*n*t *E*nvironment
+
 
 GRAPEVNE is an interactive environment for building and validating data
 processing workflows built around [Snakemake](https://snakemake.github.io/).
-It is focussed on solving phylogenetic problems, but supports a broad range of
-use-cases.
+The grapevine is a symbol of growth, development, and productivity, highlighting
+the software's ability to help users grow and develop their analytical pipelines.
+It was originally focussed on solving phylogenetic problems, but has developed
+to support broad range of use-cases.
+
+**GRAPEVNE is currently a prototype and is subject to major revisions**
 
 ```{toctree}
 ---
