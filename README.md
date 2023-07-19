@@ -2,7 +2,7 @@
 
 [![GRAPEVNE](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml/badge.svg)](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml)
 
-**GR**aphical **A**nalytical **P**ipeline d**EV**elopme**N**t **E**vironment
+Graphical Analytical Pipeline Development Environment
 
 An interactive environment for building and validating data processing workflows,
 built around the [Snakemake](https://snakemake.github.io/) workflow manager.
