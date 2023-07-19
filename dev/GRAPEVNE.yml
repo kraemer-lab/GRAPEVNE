@@ -1,7 +1,7 @@
 # /Users/jsb/.config/tmuxinator/GRAPEVNE.yml
 
 name: GRAPEVNE
-root: ~/repos/jsbrittain/GRAPEVNE/
+root: ~/repos/kraemer-lab/GRAPEVNE/
 
 # Optional tmux socket
 # socket_name: foo
@@ -46,18 +46,18 @@ root: ~/repos/jsbrittain/GRAPEVNE/
 
 windows:
   - backend-srv:
-      root: ~/repos/jsbrittain/GRAPEVNE/backend/
+      root: ~/repos/kraemer-lab/GRAPEVNE/backend/
       panes:
         - ./run.sh
   - backend-src:
-      root: ~/repos/jsbrittain/GRAPEVNE/backend/
+      root: ~/repos/kraemer-lab/GRAPEVNE/backend/
       panes:
         - vim .
   - nodemapper-srv:
-      root: ~/repos/jsbrittain/GRAPEVNE/nodemapper/
+      root: ~/repos/kraemer-lab/GRAPEVNE/nodemapper/
       panes:
         - ./run.sh
   - nodemapper-src:
-      root: ~/repos/jsbrittain/GRAPEVNE/nodemapper/src/gui/
+      root: ~/repos/kraemer-lab/GRAPEVNE/nodemapper/src/gui/
       panes:
         - vim .

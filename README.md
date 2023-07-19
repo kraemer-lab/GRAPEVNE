@@ -1,6 +1,6 @@
 # GRAPEVNE
 
-[![GRAPEVNE](https://github.com/jsbrittain/GRAPEVNE/actions/workflows/GRAPEVNE.yml/badge.svg)](https://github.com/jsbrittain/GRAPEVNE/actions/workflows/GRAPEVNE.yml)
+[![GRAPEVNE](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml/badge.svg)](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml)
 
 **GR**aphical **A**nalytical **P**ipeline d**EV**elopme**N**t **E**vironment
 

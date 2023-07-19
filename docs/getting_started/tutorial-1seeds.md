@@ -2,7 +2,7 @@
 
 This analysis requires us to provide a list of seeds to analyse. We can find this
 list in the file
-[`ex_input/seeds.txt`](https://raw.githubusercontent.com/jsbrittain/vocpl/master/ex_input/seeds.txt)
+[`ex_input/seeds.txt`](https://raw.githubusercontent.com/joetsui1994/vocpl/master/ex_input/seeds.txt)
 of the [vocpl](https://github.com/joetsui1994/vocpl) repository.
 This file contains the following two entries:
 
@@ -37,7 +37,7 @@ Let us begin by first creating a repository of modules to store our analysis in.
 Create a folder `GRAPEVNE-tutorial` (or any other name) and the following
 directory structure for our workflow (`vocpl`), and first module (`provide_seeds`)
 populating it with two files: the
-[`seeds.txt`](https://raw.githubusercontent.com/jsbrittain/vocpl/master/ex_input/seeds.txt)
+[`seeds.txt`](https://raw.githubusercontent.com/joetsui1994/vocpl/master/ex_input/seeds.txt)
 file from the repository (place it in the folder `resources`) and a new empty
 file called `Snakemake` (place it in the folder `workflow`). Your directory
 structure should look like this:
