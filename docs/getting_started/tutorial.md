@@ -13,5 +13,7 @@ tutorial-0intro
 tutorial-1seeds
 tutorial-2alignment
 tutorial-3inputs
-tutorial-4checkpoints
+tutorial-4challenge
+tutorial-5checkpoints
+tutorial-6pipeline
 ```

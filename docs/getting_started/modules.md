@@ -69,9 +69,9 @@ to another (an admittedly reductionist example, but a useful one nonetheless):
 ```python
 rule copy_file:
     input:
-        "from_folder/input_file.txt"
+        "in/input_file.txt"
     output:
-        "to_folder/output_file.txt"
+        "out/output_file.txt"
     shell:
         "cp {input} {output}"
 ```
@@ -89,13 +89,13 @@ configfile: "config/config.yaml"
 rule copy_file:
     input:
         expand(
-            "{from_folder}/input_file.txt",
-            from_folder=config["input_namespace"]
+            "{indir}/input_file.txt",
+            indir=config["input_namespace"]
         )
     output:
         expand(
-            "{to_folder}/output_file.txt",
-            to_folder=config["output_namespace"]
+            "{outdir}/output_file.txt",
+            outdir=config["output_namespace"]
         )
     shell:
         "cp {input} {output}
@@ -110,20 +110,51 @@ testing your Modules in Snakemake [e.g. `snakemake --lint`]).
 A basic `config.yaml` file would look like this:
 
 ```yaml
-input_namespace: "a_folder_to_read_from"
-output_namespace: "a_folder_to_write_to"
+input_namespace: "in"
+output_namespace: "out"
 ```
 
-Input namespaces (_but not output namespaces_) can also support multiple entries,
-for example when providing multiple inputs to a Module. Within the config file
-this would be indicated by a namespace reference, and an associated default value,
-for example:
+The actual values ("in" and "out" of the namespaces) will be overwritten when
+the modules form part of a large graph, but it is good practise to give them
+easily discernable names in order to test your modules (providing unique names
+for each is also important to prevent file name clashes).
+
+Note that an `input_namespace` of `null` has the special meaning that the module
+take _no inputs_ (the module might provide database or file access, for instance).
+This is not the same as a blank namespace (`""`), which simply indicates that
+the namespace has no default value.
+
+Input namespaces (_but not output namespaces_) can support multiple entries,
+allowing multiple connections to the module. Within the config file
+this would be specified as a namespace dictonary, where the keys (e.g.
+"input_1") provide a user-friendly name to indicate the type of input,
+while the value (e.g. "input_1") acts like a normal namespace and is overwritten
+during the workflow build process. For example:
 
 ```yaml
 input_namespace:
-  - example_input_1: "example_default_location_1"
-  - example_input_2: "example_default_location_2"
+  - example_input_1: "input_1"
+  - example_input_2: "input_2"
 ```
 
 Since the `input_namespace` is now a list, these entries can be accessed in the
-Snakefile as (for example) `config["input_namespace"]["example_input_1"]`.
+Snakefile as (for example) `config["input_namespace"]["input_1"]`.
+
+Output namespaces consist of exactly one value, although you are free to organise
+the contents within that namespace/folder in any way you see fit. As such you
+could organise your data into subfolders. If you wanted to pass one such folder
+to another node in your pipeline, this can be accomplished by making use of
+one of the many Utility modules that are designed to support workflow
+construction. In this case, a 'selection' module would allow you to 'select'
+one sub-folder and pass that as the input to another node. This process can be
+repeated to separate parallel analysis streams in a manual or automatic fashion.
+
+```{note}
+Remember that Snakefiles are essentially Python documents, allowing you
+to write python code, import modules, etc. A basic convenience would be to
+create an alias at the beginning of the file (immediately after `configfile`)
+defining, for example,
+`in1=config["input_namespace"]["example_input_1"]`, then make use of that alias
+(`in1`) instead of writing the full `config` location out each time. As you can
+see, this becomes particularly useful when dealing with multiple input namespaces.
+```
