@@ -1,6 +1,6 @@
 # nodemapper
 
-Graphical front-end to phyloflow.
+Graphical front-end to GRAPEVNE.
 
 ```
 yarn start

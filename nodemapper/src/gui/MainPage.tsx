@@ -54,7 +54,7 @@ function MainPage() {
               color: "#fff",
             }}
           >
-            PhyloFlow
+            GRAPEVNE
             <button className="btn" onClick={() => setMenuChoice(0)}>
               BUILDER
             </button>

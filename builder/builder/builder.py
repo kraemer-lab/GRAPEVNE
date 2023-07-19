@@ -414,11 +414,11 @@ class Model:
         workflow_contents = node.ReadWorkflowFile()
         modules_list = re.findall("^module (.*):", workflow_contents, re.MULTILINE)
         config = node.ReadConfigFile()
-        # Narrow list of modules to those with valid PhyloFlow entries in config
+        # Narrow list of modules to those with valid GRAPEVNE entries in config
         modules_list = [
             m
             for m in modules_list
-            if (m in config)  # PhyloFlow config entry requirements here
+            if (m in config)  # GRAPEVNE config entry requirements here
         ]
         if not modules_list:
             # No valid modules found, return original node

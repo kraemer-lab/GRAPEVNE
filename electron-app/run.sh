@@ -12,4 +12,4 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 
-out/PhyloFlow-*/PhyloFlow.app/Contents/MacOS/PhyloFlow
+out/GRAPEVNE-*/GRAPEVNE.app/Contents/MacOS/GRAPEVNE

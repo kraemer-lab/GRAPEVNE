@@ -22,7 +22,7 @@ the file from its location into our pipeline.
 
 We will start by writing a vanilla Snakemake rule to copy the `seeds.txt` file
 from its source folder to a destination folder. After this, we will modify the
-rule to make it compliant as a Phyloflow module.
+rule to make it compliant as a GRAPEVNE module.
 
 To perform a simple copy operation in Snakemake we need to write a rule that
 provides (as a minimum):
@@ -34,7 +34,7 @@ provides (as a minimum):
 ## Vanilla Snakemake version
 
 Let us begin by first creating a repository of modules to store our analysis in.
-Create a folder `phyloflow-tutorial` (or any other name) and the following
+Create a folder `GRAPEVNE-tutorial` (or any other name) and the following
 directory structure for our workflow (`vocpl`), and first module (`provide_seeds`)
 populating it with two files: the
 [`seeds.txt`](https://raw.githubusercontent.com/jsbrittain/vocpl/master/ex_input/seeds.txt)
@@ -43,7 +43,7 @@ file called `Snakemake` (place it in the folder `workflow`). Your directory
 structure should look like this:
 
 ```
-phyloflow-tutorial
+GRAPEVNE-tutorial
 └── workflows
     └── vocpl
         └── sources
@@ -121,16 +121,16 @@ provide_seeds
     └── Snakefile
 ```
 
-## Make `provide_seeds` Phyloflow-compliant
+## Make `provide_seeds` GRAPEVNE-compliant
 
-To make `provide_seeds` compliant with Phyloflow, we simply have to constrain
-the input and output folders that are referenced in the rule so that phyloflow
+To make `provide_seeds` compliant with GRAPEVNE, we simply have to constrain
+the input and output folders that are referenced in the rule so that GRAPEVNE
 can redirect them later. That's it.
 
-Phyloflow makes use of input and output `namespaces`, which can be thought of
+GRAPEVNE makes use of input and output `namespaces`, which can be thought of
 as regular folders. Since our rule has no inputs (it is a 'source' module
 since we always want to read from `resources/seeds.txt`)
-we really only need to worry about where the file is being copied to. Phyloflow
+we really only need to worry about where the file is being copied to. GRAPEVNE
 alters the input and output namespaces through a Snakefile's config file, so
 let's first create that, then populate it. Create a folder names `config` in
 `provide_seeds`, then create a blank file called `config.yaml` inside that
@@ -150,7 +150,7 @@ input_namespace: null
 output_namespace: "out"
 ```
 
-Setting `input_namespace` to `null` is a special convention used by Phyloflow
+Setting `input_namespace` to `null` is a special convention used by GRAPEVNE
 to indicate that there are no inputs to the module. The actual name used for
 the `output_namespace` (`"out"` in this case) is immaterial as it will be
 overwritten during any build process, but `"out"` provides a stable convention
@@ -184,11 +184,11 @@ created exactly as before.
 
 **Your Snakemake workflow runs exactly the same as before, but now you have
 exposed the [input and] output namespaces, permitting them to be changed in the
-Phyloflow editor**
+GRAPEVNE editor**
 
 ## A note on distributing files with modules
 
-As a last step before we load our new module into the Phyloflow Builder, note
+As a last step before we load our new module into the GRAPEVNE Builder, note
 that our rule reads the seeds file from `"resources/seeds.txt"`. This will cause
 Snakemake to look in the `resources` folder _of whichever folder you launch
 snakemake from_. You might want this behaviour, if you are providing the files
@@ -224,20 +224,20 @@ In-case you were wondering about the folder layout, throughout this
 process we have followed the Snakemake guidelines for
 [Distribution and Reproducibility](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html)
 in our folder structure. These are recommended reading before building any
-modules for Phyloflow.
+modules for GRAPEVNE.
 
 This simple example has provided a lot of insight. We now have a general
 understanding of Snakemake rules, how their folders are structured for
 distribution and reproducilibity, how to add a configuration file (that
-Phyloflow will use to build workflow graphs), and why it is important to
+GRAPEVNE will use to build workflow graphs), and why it is important to
 provide the full path to files when distributing data.
 
-## Visualising the module in Phyloflow Builder
+## Visualising the module in GRAPEVNE Builder
 
 Before we move on to the next step (building the Subsample alignment module),
-let's visualise our `provide_seeds` module in the Phyloflow Builder. Launch
-`phyloflow`, ensure `Local filesystem` is selected from the repository drop-down
-box, enter your repository location ("_...path to phyloflow-tutorial..._") and click
+let's visualise our `provide_seeds` module in the GRAPEVNE Builder. Launch
+`GRAPEVNE`, ensure `Local filesystem` is selected from the repository drop-down
+box, enter your repository location ("_...path to GRAPEVNE-tutorial..._") and click
 `GET MODULES LIST`. You should see `provide_seeds` appear in the list on the
 left of the screen. Drag it into the main area and click on it to see all
 available properties. The module is fairly minimal as it contains only the

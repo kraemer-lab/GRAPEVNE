@@ -30,7 +30,7 @@ pushd ../builderjs
 yarn build
 popd
 
-# compile PhyloFlow
+# compile GRAPEVNE
 rm -rf dist out
 #rm -rf node_modules  # deep clean
 yarn
@@ -38,4 +38,4 @@ yarn build
 yarn make
 
 # Run the app
-out/PhyloFlow-*/PhyloFlow.app/Contents/MacOS/PhyloFlow
+out/GRAPEVNE-*/GRAPEVNE.app/Contents/MacOS/GRAPEVNE

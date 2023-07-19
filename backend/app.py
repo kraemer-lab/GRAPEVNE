@@ -122,4 +122,4 @@ def post():
 @app.route("/")
 def main() -> str:
     """Returns a simple message to indicate that the server is running."""
-    return "<p>Phyloflow flask server is running</p>"
+    return "<p>GRAPEVNE flask server is running</p>"

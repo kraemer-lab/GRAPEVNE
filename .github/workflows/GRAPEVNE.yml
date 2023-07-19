@@ -1,4 +1,4 @@
-name: phyloflow
+name: GRAPEVNE
 
 on:
   pull_request:

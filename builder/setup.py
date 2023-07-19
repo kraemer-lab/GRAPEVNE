@@ -5,7 +5,7 @@ from setuptools import setup
 setup(
     name="builder",
     version="0.1",
-    description="phyloflow builder",
+    description="GRAPEVNE builder",
     packages=["builder"],
     zip_safe=False,
 )

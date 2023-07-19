@@ -13,7 +13,6 @@
     "test": "jest src/",
     "madge": "madge --circular src/"
   },
-  "homepage": "https://jsbrittain.github.io/phyloflow",
   "eslintConfig": {
     "extends": "react-app",
     "rules": {

@@ -1,6 +1,6 @@
 # Modules
 
-PhyloFlow works by connecting 'Modules' together. These modules are standard
+GRAPEVNE works by connecting 'Modules' together. These modules are standard
 Snakemake workflows that conform to some additional requirements.
 
 - Modules are self-contained Snakemake workflows, complete with all of the files
@@ -8,7 +8,7 @@ Snakemake workflows that conform to some additional requirements.
 - Modules are organised in a standard directory structure, consistent with
   [Snakemake best-practises](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html)
   and [WorkflowHub](https://workflowhub.eu/) requirements.
-- Modules can be launched directly through Snakemake, independent of PhyloFlow.
+- Modules can be launched directly through Snakemake, independent of GRAPEVNE.
 
 Modules also conforms to certain standards, and can contain meta-data, that allow them to be
 easily reused, interfaced with one another, and connected together in a
@@ -23,7 +23,7 @@ Modules specify `namespaces` (which can be thought of as folders) that allow
 them to be dynamically interfaced with one another. They can also contain
 meta-data that extends their functionality.
 
-## Are my existing Snakemake workflows useable as PhyloFlow Modules?
+## Are my existing Snakemake workflows useable as GRAPEVNE Modules?
 
 Mostly. In order to allow dynamic connectivity, modules require input and output
 locations to conform to specific configuration keys (which you may subsequently
@@ -47,7 +47,7 @@ There are two approaches to importing existing workflows:
 A Module is Snakemake workflow that conforms to
 [Snakemake's best-practise workflow layout](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
 
-In addition, the following parameters are configured and provided by PhyloFlow,
+In addition, the following parameters are configured and provided by GRAPEVNE,
 and should be referenced in place of their existing values within the Snakefile.
 
 - `input_namespace`
@@ -76,10 +76,10 @@ rule copy_file:
         "cp {input} {output}"
 ```
 
-then we can make this Snakefile compatible with PhyloFlow Modules by making
+then we can make this Snakefile compatible with GRAPEVNE Modules by making
 two changes:
 
-1. Add a configuration file that PhyloFlow will use to provide the namespace
+1. Add a configuration file that GRAPEVNE will use to provide the namespace
    information, and
 2. reference the input and output namespaces within your rules.
 
@@ -102,8 +102,8 @@ rule copy_file:
 ```
 
 The config file can contain other parameters that you may wish to view
-and modify within the PhyloFlow builder, but a basic file would simply provide
-default values for the namespaces (these are actually overwritten by PhyloFlow,
+and modify within the GRAPEVNE builder, but a basic file would simply provide
+default values for the namespaces (these are actually overwritten by GRAPEVNE,
 but defaults ensure that the namespaces do not clash when you are developing /
 testing your Modules in Snakemake [e.g. `snakemake --lint`]).
 

@@ -1,7 +1,7 @@
-# /Users/jsb/.config/tmuxinator/phyloflow.yml
+# /Users/jsb/.config/tmuxinator/GRAPEVNE.yml
 
-name: phyloflow
-root: ~/repos/jsbrittain/phyloflow/
+name: GRAPEVNE
+root: ~/repos/jsbrittain/GRAPEVNE/
 
 # Optional tmux socket
 # socket_name: foo
@@ -46,18 +46,18 @@ root: ~/repos/jsbrittain/phyloflow/
 
 windows:
   - backend-srv:
-      root: ~/repos/jsbrittain/phyloflow/backend/
+      root: ~/repos/jsbrittain/GRAPEVNE/backend/
       panes:
         - ./run.sh
   - backend-src:
-      root: ~/repos/jsbrittain/phyloflow/backend/
+      root: ~/repos/jsbrittain/GRAPEVNE/backend/
       panes:
         - vim .
   - nodemapper-srv:
-      root: ~/repos/jsbrittain/phyloflow/nodemapper/
+      root: ~/repos/jsbrittain/GRAPEVNE/nodemapper/
       panes:
         - ./run.sh
   - nodemapper-src:
-      root: ~/repos/jsbrittain/phyloflow/nodemapper/src/gui/
+      root: ~/repos/jsbrittain/GRAPEVNE/nodemapper/src/gui/
       panes:
         - vim .

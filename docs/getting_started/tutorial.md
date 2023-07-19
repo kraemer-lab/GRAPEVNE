@@ -1,8 +1,8 @@
 # Workflow tutorial
 
-This tutorial explains how to build modules and connect them for use in phyloflow.
+This tutorial explains how to build modules and connect them for use in GRAPEVNE.
 If you are instead only interested in using existing modules then see our
-[Phyloflow Builder](builder.md) guide.
+[GRAPEVNE Builder](builder.md) guide.
 
 ```{toctree}
 ---

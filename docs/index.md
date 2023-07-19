@@ -1,9 +1,9 @@
-# PhyloFlow
+# GRAPEVNE
 
-**PhyloFlow is currently in a prototyping stage and is subject to major
+**GRAPEVNE is currently in a prototyping stage and is subject to major
 revisions**
 
-PhyloFlow is an interactive environment for building and validating data
+GRAPEVNE is an interactive environment for building and validating data
 processing workflows built around [Snakemake](https://snakemake.github.io/).
 It is focussed on solving phylogenetic problems, but supports a broad range of
 use-cases.

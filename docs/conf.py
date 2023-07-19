@@ -5,7 +5,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = "PhyloFlow"
+project = "GRAPEVNE"
 copyright = "2023, John Brittain"
 author = "John Brittain"
 

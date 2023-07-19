@@ -1,3 +1,3 @@
 #/usr/share/env bash
 
-tmuxinator start phyloflow
+tmuxinator start GRAPEVNE

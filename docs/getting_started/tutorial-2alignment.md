@@ -90,14 +90,14 @@ from the configuration file (`config["params"]["n_random"]`). We define both
 for convenience, with each specifying the output filename `subsample_ids.tsv`
 and `subsample_metadata.tsv` to be deposited in the folder `"results/{outdir}"`.
 Note that `outdir` refers to `config["output_namespace"]` here, so this is the
-destination folder as (will be) provided by Phyloflow.
+destination folder as (will be) provided by GRAPEVNE.
 The resource file `master_metadata` (again, named for convenience) is specified
 with `srcdir` since we are providing the file with our analysis (see the previous
 tutorial step if this is unclear). It is worth taking a moment to
 ensure that you are comfortable with this rule before continuing.
 
 We have now not only converted this 3 line instruction into a valid Snakemake
-rule, but at the same time made it Phyloflow compliant simply by specifying
+rule, but at the same time made it GRAPEVNE compliant simply by specifying
 `input_namespace` and `output_namespace` in the configuration, and ensuring that
 all relevant input and output folders reference them in the Snakefile. Instead
 of building out the particulars of this rule further, let us combine

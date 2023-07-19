@@ -1,7 +1,7 @@
 {
-  "name": "PhyloFlow",
+  "name": "GRAPEVNE",
   "version": "0.1.0",
-  "description": "PhyloFlow electron app",
+  "description": "GRAPEVNE electron app",
   "main": "dist/main.js",
   "scripts": {
     "start": "electron-forge start",
