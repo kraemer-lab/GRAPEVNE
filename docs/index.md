@@ -1,8 +1,12 @@
 # PhyloFlow
 
-**PhyloFlow is currently in a prototyping stage and is subject to major revisions**
+**PhyloFlow is currently in a prototyping stage and is subject to major
+revisions**
 
-PhyloFlow is an interactive environment for building and validating data processing workflows built around [Snakemake](https://snakemake.github.io/). It is focussed on solving phylogenetic problems, but supports a broad range of use-cases.
+PhyloFlow is an interactive environment for building and validating data
+processing workflows built around [Snakemake](https://snakemake.github.io/).
+It is focussed on solving phylogenetic problems, but supports a broad range of
+use-cases.
 
 ```{toctree}
 ---
@@ -20,6 +24,7 @@ maxdepth: 1
 getting_started/installation
 getting_started/modules
 getting_started/tutorial
+getting_started/builder
 ```
 
 ```{toctree}
