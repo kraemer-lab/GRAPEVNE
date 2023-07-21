@@ -4,12 +4,14 @@ import pathlib
 import re
 import shutil
 from typing import List
+from typing import Optional
 from typing import Tuple
+from typing import Union
 
 import requests
 import yaml
 
-Namespace = str | None | dict
+Namespace = Union[str, None, dict]
 
 
 class Node:
@@ -20,7 +22,9 @@ class Node:
         name: str,
         rulename: str,
         nodetype: str,
-        snakefile: str | dict = "",  # str | {function: str, args: List, kwargs: dict}
+        snakefile: Union[
+            str, dict
+        ] = "",  # str | {function: str, args: List, kwargs: dict}
         config={},
         input_namespace: Namespace = "",
         output_namespace: str = "",
@@ -69,7 +73,7 @@ class Module(Node):
         kwargs["input_namespace"] = kwargs["config"].get("input_namespace", None)
         super().__init__(name, **kwargs)
 
-    def _GetConfigFileinfo(self) -> str | dict:
+    def _GetConfigFileinfo(self) -> Union[str, dict]:
         """Returns the config filename, or an equivalent dict for remote files"""
         workflow_filename = "workflow/Snakefile"
         config_filename = "config/config.yaml"
@@ -87,7 +91,7 @@ class Module(Node):
             return c
         raise ValueError("Invalid snakefile type")
 
-    def _ReadFile(self, fileinfo: str | dict) -> str:
+    def _ReadFile(self, fileinfo: Union[str, dict]) -> str:
         """Helper function that reads a file, either local or remote"""
         if isinstance(fileinfo, str):
             # Local file
@@ -312,7 +316,7 @@ class Model:
             node_to.input_namespace = node_from.output_namespace
         return None
 
-    def GetNodeByName(self, name: str) -> Node | None:
+    def GetNodeByName(self, name: str) -> Optional[Node]:
         """Returns a node object by name"""
         name = name.casefold()
         for node in self.nodes:
@@ -320,7 +324,7 @@ class Model:
                 return node
         return None
 
-    def GetNodeByRuleName(self, rulename: str) -> Node | None:
+    def GetNodeByRuleName(self, rulename: str) -> Optional[Node]:
         """Returns a node object by name"""
         rulename = rulename.casefold()
         for node in self.nodes:
@@ -584,7 +588,9 @@ def YAMLToConfig(content: str) -> str:
     return c
 
 
-def BuildFromFile(filename: str, **kwargs) -> Tuple[Tuple[str, str] | bytes, Model]:
+def BuildFromFile(
+    filename: str, **kwargs
+) -> Tuple[Union[Tuple[str, str], bytes], Model]:
     """Builds a workflow from a JSON specification file"""
     try:
         with open(filename, "r") as file:
@@ -602,7 +608,7 @@ def BuildFromJSON(
     config: dict,
     singlefile: bool = False,
     expand: bool = True,
-) -> Tuple[Tuple[str, str] | bytes, Model]:
+) -> Tuple[Union[Tuple[str, str], bytes], Model]:
     """Builds a workflow from a JSON specification
 
     Returns a tuple of the workflow and the workflow model object.
@@ -612,22 +618,20 @@ def BuildFromJSON(
     m = Model()
     # Add modules first to ensure all namespaces are defined before connectors
     for item in config:
-        match item["type"].casefold():
-            case "module" | "source" | "terminal":
-                print("=== Add module (call)")
-                print(item)
-                m.AddModule(
-                    item["name"],
-                    item["config"],
-                )
+        if item["type"].casefold() in ["module", "source", "terminal"]:
+            print("=== Add module (call)")
+            print(item)
+            m.AddModule(
+                item["name"],
+                item["config"],
+            )
     # Add connectors
     for item in config:
-        match item["type"].casefold():
-            case "connector":
-                m.AddConnector(
-                    item["name"],
-                    item["config"],
-                )
+        if item["type"].casefold() in ["connector"]:
+            m.AddConnector(
+                item["name"],
+                item["config"],
+            )
     if expand:
         m.ExpandAllModules()
     if singlefile:

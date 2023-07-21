@@ -8,15 +8,16 @@ pushd $SCRIPT_DIR
 # Setup venv as needed
 if [ ! -d "venv" ]; then
 	python3 -m venv venv
-	python3 -m pip install --upgrade pip
-	python3 -m pip install -r requirements.txt
+    source venv/bin/activate
+	python -m pip install --upgrade pip
+	python-m pip install -r requirements.txt
+else
+    source venv/bin/activate
 fi
-
-source venv/bin/activate
 
 # Ensure we are loading the latest local libraries
 python -m pip install -e ../runner
 python -m pip install -e ../builder
-flask --app app.py --debug run
+python -m flask --app app.py --debug run
 
 popd
