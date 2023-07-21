@@ -14,87 +14,88 @@ def post(request):
     request_js = json.loads(request)
     query = request_js["query"]
     data = request_js["data"]
-    match query:
-        # File system queries
-        case "display/folderinfo":
-            data = {
-                "query": query,
-                "body": json.dumps(filesystem.GetFolderItems(data)),
-            }
 
-        # Builder queries
-        case "builder/compile-to-json":
-            js = data["content"]
-            with open("workflow.json", "w") as f:  # dump config file to disk for debug
-                json.dump(js, f, indent=4)
-            memory_zip, _ = builder.BuildFromJSON(js)
-            # Binary return is not used in our (temporary) python-nodejs
-            # interface for electron. Instead the zip file is read back
-            # off the disk and forwarded by nodejs.
-            return None
-            # return base64.b64encode(memory_zip)
-        case "builder/get-remote-modules":
-            js = data["content"]
-            data = {
-                "query": query,
-                "body": builder.GetModulesList(js["url"]),
-            }
+    # File system queries
+    if query == "display/folderinfo":
+        data = {
+            "query": query,
+            "body": json.dumps(filesystem.GetFolderItems(data)),
+        }
 
-        # Runner queries
-        case "runner/build":
-            data = {
-                "query": query,
-                "body": runner.Build(data),
-            }
-        case "runner/deleteresults":
-            data = {
-                "query": query,
-                "body": json.dumps(runner.DeleteAllOutput(data)),
-            }
-        case "runner/lint":
-            data = {
-                "query": query,
-                "body": json.dumps(runner.LintContents(data)),
-            }
-        case "runner/loadworkflow":
-            data = {
-                "query": query,
-                "body": json.dumps(runner.LoadWorkflow(data)),
-            }
-        case "runner/tokenize":
-            data = {
-                "query": query,
-                "body": json.dumps(runner.Tokenize(data)),
-            }
-        case "runner/tokenize_load":
-            try:
-                # Try full-tokenize (may fail if dependencies not present)
-                body = runner.FullTokenizeFromFile(data)
-            except BaseException:
-                # ...then try in-situ tokenization
-                body = runner.TokenizeFromFile(data)
-            data = {
-                "query": query,
-                "body": json.dumps(body),
-            }
-        case "runner/jobstatus":
-            data = {
-                "query": query,
-                "body": json.dumps(runner.TokenizeFromFile(data)),
-            }
-        case "runner/launch":
-            data = {
-                "query": query,
-                "body": json.dumps(runner.Launch(data)),
-            }
-        case "runner/check-node-dependencies":
-            data = {
-                "query": query,
-                "body": runner.CheckNodeDependencies(data),
-            }
+    # Builder queries
+    elif query == "builder/compile-to-json":
+        js = data["content"]
+        with open("workflow.json", "w") as f:  # dump config file to disk for debug
+            json.dump(js, f, indent=4)
+        memory_zip, _ = builder.BuildFromJSON(js)
+        # Binary return is not used in our (temporary) python-nodejs
+        # interface for electron. Instead the zip file is read back
+        # off the disk and forwarded by nodejs.
+        return None
+        # return base64.b64encode(memory_zip)
+    elif query == "builder/get-remote-modules":
+        js = data["content"]
+        data = {
+            "query": query,
+            "body": builder.GetModulesList(js["url"]),
+        }
 
-        case _:
-            raise NotImplementedError(f"Unknown query: {query}")
+    # Runner queries
+    elif query == "runner/build":
+        data = {
+            "query": query,
+            "body": runner.Build(data),
+        }
+    elif query == "runner/deleteresults":
+        data = {
+            "query": query,
+            "body": json.dumps(runner.DeleteAllOutput(data)),
+        }
+    elif query == "runner/lint":
+        data = {
+            "query": query,
+            "body": json.dumps(runner.LintContents(data)),
+        }
+    elif query == "runner/loadworkflow":
+        data = {
+            "query": query,
+            "body": json.dumps(runner.LoadWorkflow(data)),
+        }
+    elif query == "runner/tokenize":
+        data = {
+            "query": query,
+            "body": json.dumps(runner.Tokenize(data)),
+        }
+    elif query == "runner/tokenize_load":
+        try:
+            # Try full-tokenize (may fail if dependencies not present)
+            body = runner.FullTokenizeFromFile(data)
+        except BaseException:
+            # ...then try in-situ tokenization
+            body = runner.TokenizeFromFile(data)
+        data = {
+            "query": query,
+            "body": json.dumps(body),
+        }
+    elif query == "runner/jobstatus":
+        data = {
+            "query": query,
+            "body": json.dumps(runner.TokenizeFromFile(data)),
+        }
+    elif query == "runner/launch":
+        data = {
+            "query": query,
+            "body": json.dumps(runner.Launch(data)),
+        }
+    elif query == "runner/check-node-dependencies":
+        data = {
+            "query": query,
+            "body": runner.CheckNodeDependencies(data),
+        }
+
+    else:
+        raise NotImplementedError(f"Unknown query: {query}")
+
     return json.dumps(data)
 
 

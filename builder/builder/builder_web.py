@@ -11,13 +11,12 @@ import yaml
 
 def GetModulesList(url: dict) -> List[dict]:
     """Get modules list from url"""
-    match url["type"]:
-        case "github":
-            return GetRemoteModulesGithub(url["repo"], url["listing_type"])
-        case "local":
-            return GetLocalModules(url["repo"])
-        case _:
-            raise Exception("Invalid url type.")
+    if url["type"] == "github":
+        return GetRemoteModulesGithub(url["repo"], url["listing_type"])
+    elif url["type"] == "local":
+        return GetLocalModules(url["repo"])
+    else:
+        raise Exception("Invalid url type.")
 
 
 def GetLocalModules(path: str) -> List[dict]:
@@ -90,13 +89,12 @@ def GetRemoteModulesGithub(
         List of modules
     """
 
-    match listing_type:
-        case "DirectoryListing":
-            return GetRemoteModulesGithubDirectoryListing(repo)
-        case "BranchListing":
-            return GetRemoteModulesGithubBranchListing(repo)
-        case _:
-            raise Exception("Invalid Github listing type.")
+    if listing_type == "DirectoryListing":
+        return GetRemoteModulesGithubDirectoryListing(repo)
+    elif listing_type == "BranchListing":
+        return GetRemoteModulesGithubBranchListing(repo)
+    else:
+        raise Exception("Invalid Github listing type.")
 
 
 def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:

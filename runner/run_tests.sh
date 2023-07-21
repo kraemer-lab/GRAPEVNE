@@ -3,16 +3,18 @@
 set -euox pipefail
 
 cd "$(dirname "$0")"
-if [ -d "venv" ]; then
-    source venv/bin/activate
-else
+if [ ! -d "venv" ]; then
     python3 -m venv venv
     source venv/bin/activate
-    pip install -r requirements.txt
+    python -m pip install --upgrade pip
+    python -m pip install -r requirements.txt
+    python -m pip install -r requirements-dev.txt
+else
+    source venv/bin/activate
 fi
 
-flake8
-pytest
+python -m flake8
+python -m pytest
 
 # mypy --strict runner
 # mypy runner

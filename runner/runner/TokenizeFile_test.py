@@ -86,7 +86,8 @@ def test_GetContentOfIndentBlock():
     linenumber = [4]
     indent = [1]
     expected_list = ["    level3:\n        level3_item\n"]
-    for line, indent, expected in zip(linenumber, indent, expected_list, strict=True):
+    # can introduce zip(..., strict=True) once python 3.10 is the min version
+    for line, indent, expected in zip(linenumber, indent, expected_list):
         assert tf.GetContentOfIndentBlock(line, indent) == expected
 
 

@@ -7,7 +7,9 @@ import tempfile
 from pathlib import Path
 from typing import Dict
 from typing import List
+from typing import Optional
 from typing import Tuple
+from typing import Union
 
 from builder.builder import BuildFromJSON
 from builder.builder import YAMLToConfig
@@ -70,7 +72,7 @@ def Lint(snakefile: str) -> dict:
     return json.loads("\n".join(sl))
 
 
-def LintContents(content: str, tempdir: str | None = None) -> dict:
+def LintContents(content: str, tempdir: Optional[str] = None) -> dict:
     """Lint Snakefile contents using the snakemake library, returns JSON"""
     with IsolatedTempFile(content) as snakefile:
         lint_return = Lint(snakefile)
@@ -205,16 +207,15 @@ def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
         words = content.split()
         if not words:
             continue
-        match words[0]:
-            case "rule":
-                blocktype = "rule"
-                name = words[1].replace(":", "")
-            case "module":
-                blocktype = "module"
-                name = words[1].replace(":", "")
-            case _:
-                blocktype = "config"
-                name = "config"
+        if words[0] == "rule":
+            blocktype = "rule"
+            name = words[1].replace(":", "")
+        elif words[0] == "module":
+            blocktype = "module"
+            name = words[1].replace(":", "")
+        else:
+            blocktype = "config"
+            name = "config"
         # construct dictionary for block and add to list
         block = {
             "id": block_index,
@@ -326,7 +327,7 @@ def GetFileAndWorkingDirectory(filename: str) -> Tuple[str, str]:
 
 
 def GetMissingFileDependencies_FromContents(
-    content: Tuple[dict, str] | str, target_namespaces: List[str] = []
+    content: Union[Tuple[dict, str], str], target_namespaces: List[str] = []
 ) -> List[str]:
     """Get missing file dependencies from snakemake
 

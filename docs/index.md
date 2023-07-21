@@ -2,7 +2,6 @@
 
 *Gr*aphical *A*nalytical *P*ipelin*e* De*v*elopme*n*t *E*nvironment
 
-
 GRAPEVNE is an interactive environment for building and validating data
 processing workflows built around [Snakemake](https://snakemake.github.io/).
 The grapevine is a symbol of growth, development, and productivity, highlighting
