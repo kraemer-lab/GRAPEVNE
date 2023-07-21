@@ -39,4 +39,4 @@ yarn build
 yarn make
 
 # Run the app
-out/GRAPEVNE-*/GRAPEVNE.app/Contents/MacOS/GRAPEVNE
+./run.sh

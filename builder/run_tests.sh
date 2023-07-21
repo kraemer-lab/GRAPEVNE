@@ -8,11 +8,13 @@ if [ -d "venv" ]; then
 else
     python3 -m venv venv
     source venv/bin/activate
-    pip install -r requirements.txt
+    python -m pip install --upgrade pip
+    python -m pip install -r requirements.txt
+    python -m pip install -r requirements-dev.txt
 fi
 
-flake8
-pytest
+python -m flake8
+python -m pytest
 
 # mypy --strict builder
 # mypy builder
