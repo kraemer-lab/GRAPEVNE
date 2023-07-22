@@ -5,13 +5,16 @@ module.exports = {
   packagerConfig: {},
   rebuildConfig: {},
   makers: [
-    {
-      name: "@electron-forge/maker-squirrel",
-      config: {},
-    },
+
+    // zip distributable of binary
     {
       name: "@electron-forge/maker-zip",
-      platforms: ["darwin"],
+    },
+
+    // Installers
+    /*{
+      name: "@electron-forge/maker-squirrel",
+      config: {},
     },
     {
       name: "@electron-forge/maker-deb",
@@ -20,6 +23,19 @@ module.exports = {
     {
       name: "@electron-forge/maker-rpm",
       config: {},
+    },*/
+
+  ],
+  publishers: [
+    {
+      name: "@electron-forge/publisher-github",
+      config: {
+        repository: {
+          owner: "kraemer-lab",
+          name: "GRAPEVNE"
+        },
+        draft: true
+      },
     },
   ],
   hooks: {

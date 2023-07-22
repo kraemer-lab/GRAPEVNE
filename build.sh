@@ -6,6 +6,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 pushd $SCRIPT_DIR
 
 cd $SCRIPT_DIR/electron-app
-./run_make.sh
+./run_build.sh
+./run.sh
 
 popd
