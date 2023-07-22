@@ -5,7 +5,7 @@ to one another and built to snakemake workflows (that can themselves be imported
 back into the builder). This permits the construction of hierarchical pipelines.
 
 The GRAPEVNE builder is distributed for download as a binary executable via
-(github Release)[https://github.com/kraemer-lab/GRAPEVNE].
+[github Release](https://github.com/kraemer-lab/GRAPEVNE).
 
 The GRAPEVNE Builder uses `electron` to encapsulate a typescript/Redux-React
 front-end, with a Python backend. The Python backend is first compiled to
