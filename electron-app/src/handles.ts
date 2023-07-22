@@ -1,8 +1,10 @@
 import builderjs from "builderjs";
 import fs from "fs";
-import { PythonShell, Options } from "python-shell";
+import path from "path";
+import * as child from "child_process";
 
 const use_nodejs = false;
+const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
 
 // General query processing interface for Python scripts (replacement for Flask)
 export async function ProcessQuery(
@@ -10,18 +12,59 @@ export async function ProcessQuery(
   query: Record<string, unknown>,
   mode = "json" // json, text, binary
 ): Promise<Record<string, any>> {
-  const options = {
-    mode: mode,
-    pythonPath: "python",
-    pythonOptions: ["-u"], // get print results in real-time
-    scriptPath: "./src/python",
-    args: [JSON.stringify(query)],
-  } as Options;
-  return await PythonShell.run("backend.py", options).then(function (
-    results: any
-  ) {
-    console.log("results: %j", results);
-    return results.pop();
+  return new Promise((resolve, reject) => {
+    const args = [JSON.stringify(query)];
+    let stdout = "";  // collate return data
+    let stderr = "";  // collate error data
+
+    console.log(`open [${pythonPath}]: ${args}`);
+    const proc = child.spawn(pythonPath, args);
+    
+    // backend process closes; either successfully (stdout return)
+    // or with an error (stderr return)
+    proc.on('close', () => {
+      console.log(`close: ${stdout}`);
+      if (stdout === "")
+        // Empty return, most likely a failure in python
+        resolve({
+          query: "error",
+          data: {
+            code: 1,
+            stdout: stdout,
+            stderr: stderr,
+          }
+        });
+      else
+        // Normal return route
+        resolve(JSON.parse(stdout));
+    });
+
+    // the backend will only fail under exceptional circumstances;
+    // most python related errors are relayed as stderr messages
+    proc.on('error', (code: number) => {
+      console.log(`error: ${code}`);
+      reject({
+        query: "error",
+        data: {
+          code: code,
+          stdout: stdout,
+          stderr: stderr,
+        }
+      });
+    });
+    
+    // collate stdout data
+    proc.stdout.on('data', function(data: string) {
+      console.log(`stdout: ${data}`);
+      stdout += data;
+    });
+
+    // collate stderr data
+    proc.stderr.on('data', function(data: string) {
+      console.log(`stderr: ${data}`);
+      stderr += data;
+    });
+
   });
 }
 

@@ -31,7 +31,10 @@ def post(request):
         # Binary return is not used in our (temporary) python-nodejs
         # interface for electron. Instead the zip file is read back
         # off the disk and forwarded by nodejs.
-        return None
+        data = {
+            "query": query,
+            "body": "",
+        }
         # return base64.b64encode(memory_zip)
     elif query == "builder/get-remote-modules":
         js = data["content"]
