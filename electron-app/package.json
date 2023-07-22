@@ -1,6 +1,6 @@
 {
   "name": "GRAPEVNE",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "GRAPEVNE electron app",
   "main": "dist/main.js",
   "scripts": {
@@ -9,9 +9,10 @@
     "build": "tsc",
     "test": "jest ./src",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
   },
-  "author": "",
+  "author": "kraemer-lab",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.22.5",
@@ -20,6 +21,7 @@
     "@electron-forge/maker-rpm": "^6.1.1",
     "@electron-forge/maker-squirrel": "^6.1.1",
     "@electron-forge/maker-zip": "^6.1.1",
+    "@electron-forge/publisher-github": "^6.2.1",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.1",
     "@typescript-eslint/eslint-plugin": "^5.60.0",

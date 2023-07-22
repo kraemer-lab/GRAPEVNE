@@ -12,31 +12,8 @@ set -eoux pipefail
 # clean distributables
 rm -rf dist out
 
-# activate virtual environment
-if [ ! -d "venv" ]; then
-	python3 -m venv venv
-fi
-source venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip install ../builder
-python -m pip install ../runner
-
-# compile python code to binary for deployment
-python -m pip install pyinstaller
-python -m PyInstaller src/python/backend.py --onefile --hidden-import ../builder
-
-# Ensure nodemapper up-to-date
-pushd ../nodemapper
-yarn
-yarn build
-popd
-
-# compile builderjs
-pushd ../builderjs
-yarn
-yarn build
-popd
+# compile build dependencies
+./run_build_deps.sh
 
 # compile GRAPEVNE
 #rm -rf node_modules  # deep clean
