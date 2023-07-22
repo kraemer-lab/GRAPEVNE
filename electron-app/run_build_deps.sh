@@ -6,6 +6,7 @@ set -eoux pipefail
 if [ ! -d "venv" ]; then
 	python3 -m venv venv
 fi
+RUNNER_OS=${RUNNER_OS:-$(uname)}
 if [[ "$RUNNER_OS" == "Windows" ]]; then
     venv/Scripts/Activate.bat
 else
