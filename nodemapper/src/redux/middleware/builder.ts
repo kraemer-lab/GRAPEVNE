@@ -1,3 +1,4 @@
+import React from "react";
 import BuilderEngine from "gui/Builder/BuilderEngine";
 import * as globals from "redux/globals";
 
@@ -7,6 +8,7 @@ import { DefaultNodeModel } from "NodeMap";
 
 import { builderRedraw } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
+import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
@@ -39,7 +41,7 @@ export function builderMiddleware({ getState, dispatch }) {
           AddLink(action, dispatch);
           break;
         case "builder/node-selected":
-          NodeSelected(action, dispatch);
+          NodeSelected(action, dispatch, getState);
           break;
         case "builder/node-deselected":
           NodeDeselected(dispatch);
@@ -184,7 +186,15 @@ const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
   }
 };
 
-function NodeSelected(action: IPayloadRecord, dispatch: TPayloadString) {
+async function NodeSelected(action: IPayloadRecord, dispatch: TPayloadString, getState) {
+  // Deselect any nodes first and wait for the state to update
+  if (getState().builder.nodeinfo !== "") {
+    const deselect = async () => {
+      return dispatch(builderNodeDeselected(""));
+    }
+    await deselect();
+  }
+  // Select the node
   const builder = BuilderEngine.Instance;
   const id = (action.payload as Record<string, string>).id;
   const node = builder.getNodeById(id);
@@ -206,8 +216,6 @@ function NodeSelected(action: IPayloadRecord, dispatch: TPayloadString) {
       code: JSON.stringify(json.config, null, 2),
     };
   }
-  console.log("Middleware: NodeSelected");
-  console.log(payload);
   dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
 }
 

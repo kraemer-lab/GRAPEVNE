@@ -26,8 +26,8 @@ maxdepth: 1
 ---
 getting_started/installation
 getting_started/modules
-getting_started/tutorial
 getting_started/builder
+getting_started/tutorial
 ```
 
 ```{toctree}
