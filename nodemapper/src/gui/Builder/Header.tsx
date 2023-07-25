@@ -38,12 +38,9 @@ const RepoOptions: React.FC = () => {
   const handleChange = (url) => {
     const repo_settings = { ...repoSettings };
     repo_settings.repo = url;
+    setRepoURL(url);
     dispatch(builderSetRepositoryTarget(repo_settings));
   };
-
-  React.useEffect(() => {
-    setRepoURL(repoSettings.repo);
-  }, [repoSettings]);
 
   return (
     <input
