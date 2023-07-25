@@ -1,13 +1,14 @@
 import React from "react";
 import styled from "@emotion/styled";
+
+import { keys } from "lodash";
 import { NodeModel } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-diagrams";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
-import NodeInfoRenderer from "./NodeInfoRenderer";
 import BuilderEngine from "../BuilderEngine";
+import NodeInfoRenderer from "./NodeInfoRenderer";
 
-import { keys } from "lodash";
 import { TrayWidget } from "./TrayWidget";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
@@ -49,7 +50,10 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
 };
 
 export const BodyWidget = (props: BodyWidgetProps) => {
-  let modules = useAppSelector((state) => state.builder.modules_list);
+  const modules = useAppSelector((state) => state.builder.modules_list);
+  let modules_list = modules; // create a mutable copy
+  
+  const [filterSelection, setFilterSelection] = React.useState("");
   const [newnode, setNewnode] = React.useState<NodeModel>(null);
   const dispatch = useAppDispatch();
 
@@ -73,23 +77,51 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   }, [newnode]);
 
   // Check for a valid module list
-  if (modules === undefined) {
+  if (modules_list === undefined) {
     console.log(
-      "ALERT: Modules failed to load - check that the repository name is correct and is reachable"
+      "ALERT: Modules failed to load - check that the repository name is " +
+      "correct and is reachable"
     );
     // Need a mechanism to queue messages back to the user (status bar is
     //  overwritten at the end of this render process)
-    modules = "[]";
+    modules_list = "[]";
   }
+  
+  const updateTrayItems = (filter_org: string) =>
+    JSON.parse(modules_list)
+      .filter((m) =>
+        m["name"].startsWith(filter_org) ||
+        filter_org === "(all)")
+      .map((m) => (
+        <TrayItemWidget
+          key={m["name"]}
+          model={m}
+          name={m["name"]}
+          color={BuilderEngine.GetModuleTypeColor(m["type"])}
+        />
+      ));
+  
+  const [trayitems, setTrayitems] = React.useState(updateTrayItems("(all)"));
+  React.useEffect(() => {
+    setFilterSelection("(all)");
+    setTrayitems(updateTrayItems("(all)"));
+  }, [modules]);
 
-  const trayitems = JSON.parse(modules).map((m) => (
-    <TrayItemWidget
-      key={m["name"]}
-      model={m}
-      name={m["name"]}
-      color={BuilderEngine.GetModuleTypeColor(m["type"])}
-    />
-  ));
+  const onChangeOrgList = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setFilterSelection(event.target.value);
+    setTrayitems(updateTrayItems(event.target.value));
+  }
+  
+  // Extract unique organisations from the module names for a filter list
+  const organisaton_list = JSON.parse(modules_list)
+    .map((m) => m["name"].match(/\((.*?)\)/)[0])  // extract organisation name
+    .filter((v, i, a) => a.indexOf(v) === i)  // remove duplicates
+    .sort();  // sort alphabetically
+  organisaton_list.unshift("(all)");  // add "(all)" to the top of the list
+  const organisaton_list_options = organisaton_list
+    .map((m) => (
+      <option key={m} value={m}>{m}</option>
+    ));
 
   const onWidgetDrag_Drop = (event: React.DragEvent<HTMLDivElement>) => {
     const app = BuilderEngine.Instance;
@@ -103,20 +135,37 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   };
 
   return (
-    <>
-      <Body>
-        <Content>
-          <div style={{ background: "rgb(20, 20, 20)", overflowY: "auto" }}>
-            <TrayWidget>{trayitems}</TrayWidget>
-          </div>
-          <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
-            <GridCanvasWidget>
-              <CanvasWidget engine={props.engine} />
-            </GridCanvasWidget>
-          </Layer>
-          <NodeInfoRenderer />
-        </Content>
-      </Body>
-    </>
+    <Body>
+      <Content>
+        <div
+          style={{
+            background: "rgb(20, 20, 20)",
+            overflowY: "auto"
+          }}
+        >
+          <select
+            name="orglist"
+            id="orglist"
+            value={filterSelection}
+            style={{ width: "100%" }}
+            onChange={onChangeOrgList}
+          >
+            {organisaton_list_options}
+          </select>
+          <TrayWidget>{trayitems}</TrayWidget>
+        </div>
+        <Layer
+          onDrop={onWidgetDrag_Drop}
+          onDragOver={onWidgetDrag_DragOver}
+        >
+          <GridCanvasWidget>
+            <CanvasWidget
+              engine={props.engine}
+            />
+          </GridCanvasWidget>
+        </Layer>
+        <NodeInfoRenderer />
+      </Content>
+    </Body>
   );
 };
