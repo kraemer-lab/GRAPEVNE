@@ -49,9 +49,36 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
 };
 
 export const BodyWidget = (props: BodyWidgetProps) => {
-  const modules = useAppSelector((state) => state.builder.modules_list);
+  let modules = useAppSelector((state) => state.builder.modules_list);
   const [newnode, setNewnode] = React.useState<NodeModel>(null);
   const dispatch = useAppDispatch();
+  
+  // Register listener for new node
+  React.useEffect(() => {
+    if (newnode) {
+      newnode.registerListener({
+        selectionChanged: (e) => {
+          const payload: IPayload = {
+            id: newnode.getOptions().id,
+          };
+          if (e.isSelected) {
+            dispatch(builderNodeSelected(payload));
+          } else {
+            dispatch(builderNodeDeselected(payload));
+          }
+        },
+      });
+      setNewnode(null);
+    }
+  }, [newnode]);
+
+  // Check for a valid module list
+  if (modules === undefined) {
+    console.log("ALERT: Modules failed to load - check that the repository name is correct and is reachable");
+    // Need a mechanism to queue messages back to the user (status bar is
+    //  overwritten at the end of this render process)
+    modules = "[]";
+  }
 
   const trayitems = JSON.parse(modules).map((m) => (
     <TrayItemWidget
@@ -72,25 +99,6 @@ export const BodyWidget = (props: BodyWidgetProps) => {
     // Broadcast new node (cannot call react hooks from non-react functions)
     setNewnode(node);
   };
-
-  // Register listener for new node
-  React.useEffect(() => {
-    if (newnode) {
-      newnode.registerListener({
-        selectionChanged: (e) => {
-          const payload: IPayload = {
-            id: newnode.getOptions().id,
-          };
-          if (e.isSelected) {
-            dispatch(builderNodeSelected(payload));
-          } else {
-            dispatch(builderNodeDeselected(payload));
-          }
-        },
-      });
-      setNewnode(null);
-    }
-  }, [newnode]);
 
   return (
     <>
