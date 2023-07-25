@@ -2,7 +2,7 @@
 
 ## Quickstart
 
-*The first pre-release builds will be available Q3 2023*
+_The first pre-release builds will be available Q3 2023_
 
 Download the latest version of GRAPVEVNE for your system from
 [github releases](https://github.com/kraemer-lab/GRAPEVNE/releases).
@@ -43,9 +43,11 @@ Dependencies:
 - [yarn](https://yarnpkg.com/) package manager
 
 To build locally, clone the GRAPEVNE repository:
+
 ```
 git clone git@github.com:kraemer-lab/GRAPEVNE.git -b main
 ```
+
 then run `build.sh` from the command line. This will generate the GRAPEVNE Builder
 app and will attempt to launch it (if running on an Apple Mac). If the app does
 not launch you will find the relevant build in `electron-app/out`, in an

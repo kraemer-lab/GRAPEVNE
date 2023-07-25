@@ -3,7 +3,7 @@ import Header from "./Header";
 import MainPanel from "./MainPanel";
 
 // Layout for main window, including sliding-pane support
-function Runner() {
+const Runner = () => {
   return (
     <>
       <div className="header">
@@ -15,6 +15,6 @@ function Runner() {
       </div>
     </>
   );
-}
+};
 
 export default Runner;

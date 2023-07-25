@@ -17,9 +17,9 @@ const displayAPI = window.displayAPI;
 const runnerAPI = window.runnerAPI;
 const backend = globals.getBackend();
 
-export function displayMiddleware({ getState, dispatch }) {
-  return function (next) {
-    return function (action) {
+export const displayMiddleware = ({ getState, dispatch }) => {
+  return (next) => {
+    return (action) => {
       console.debug(action);
       switch (action.type) {
         case "display/close-settings":
@@ -40,7 +40,7 @@ export function displayMiddleware({ getState, dispatch }) {
       return next(action);
     };
   };
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // Middleware
@@ -107,10 +107,10 @@ const DeleteResults = async (dispatch, getState) => {
 // Utility functions
 ///////////////////////////////////////////////////////////////////////////////
 
-function SubmitQuery(query: Record<string, unknown>, dispatch, callback) {
+const SubmitQuery = (query: Record<string, unknown>, dispatch, callback) => {
   // POST request handler
 
-  async function postRequest() {
+  const postRequest = async () => {
     const postRequestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json;charset=UTF-8" },
@@ -132,13 +132,13 @@ function SubmitQuery(query: Record<string, unknown>, dispatch, callback) {
       .catch((error) => {
         console.error("Error during query: ", error);
       });
-  }
+  };
 
-  function processResponse(content: JSON, callback) {
+  const processResponse = (content: JSON, callback) => {
     console.log("Process response: ", content);
     callback(content);
-  }
+  };
 
   // Received query request (POST to backend server)...
   if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
-}
+};

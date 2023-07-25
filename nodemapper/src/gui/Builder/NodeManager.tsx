@@ -10,7 +10,7 @@ import { builderGetRemoteModules } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 
-function NodeManager() {
+const NodeManager = () => {
   // Link to singleton instance
   const app = BuilderEngine.Instance;
   const engine = app.engine;
@@ -30,6 +30,6 @@ function NodeManager() {
   );
 
   return <BodyWidget engine={engine} />;
-}
+};
 
 export default NodeManager;

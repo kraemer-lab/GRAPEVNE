@@ -14,15 +14,15 @@ export async function ProcessQuery(
 ): Promise<Record<string, any>> {
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
-    let stdout = "";  // collate return data
-    let stderr = "";  // collate error data
+    let stdout = ""; // collate return data
+    let stderr = ""; // collate error data
 
     console.log(`open [${pythonPath}]: ${args}`);
     const proc = child.spawn(pythonPath, args);
-    
+
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
-    proc.on('close', () => {
+    proc.on("close", () => {
       console.log(`close: ${stdout}`);
       if (stdout === "")
         // Empty return, most likely a failure in python
@@ -32,16 +32,15 @@ export async function ProcessQuery(
             code: 1,
             stdout: stdout,
             stderr: stderr,
-          }
+          },
         });
-      else
-        // Normal return route
-        resolve(JSON.parse(stdout));
+      // Normal return route
+      else resolve(JSON.parse(stdout));
     });
 
     // the backend will only fail under exceptional circumstances;
     // most python related errors are relayed as stderr messages
-    proc.on('error', (code: number) => {
+    proc.on("error", (code: number) => {
       console.log(`error: ${code}`);
       reject({
         query: "error",
@@ -49,22 +48,21 @@ export async function ProcessQuery(
           code: code,
           stdout: stdout,
           stderr: stderr,
-        }
+        },
       });
     });
-    
+
     // collate stdout data
-    proc.stdout.on('data', function(data: string) {
+    proc.stdout.on("data", function (data: string) {
       console.log(`stdout: ${data}`);
       stdout += data;
     });
 
     // collate stderr data
-    proc.stderr.on('data', function(data: string) {
+    proc.stderr.on("data", function (data: string) {
       console.log(`stderr: ${data}`);
       stderr += data;
     });
-
   });
 }
 

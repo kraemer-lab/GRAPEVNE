@@ -4,7 +4,7 @@ import Footer from "./Footer";
 
 import "./MainBody.css";
 
-function MainBody() {
+const MainBody = () => {
   return (
     <>
       <div className="split top">
@@ -16,6 +16,6 @@ function MainBody() {
       </div>
     </>
   );
-}
+};
 
 export default MainBody;

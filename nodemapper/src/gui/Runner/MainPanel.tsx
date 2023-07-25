@@ -5,7 +5,7 @@ import FileBrowser from "./FileBrowser";
 
 import "./MainPanel.css";
 
-function MainPanel() {
+const MainPanel = () => {
   return (
     <>
       <div className="split left">
@@ -18,6 +18,6 @@ function MainPanel() {
       </div>
     </>
   );
-}
+};
 
 export default MainPanel;

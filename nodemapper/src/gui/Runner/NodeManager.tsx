@@ -22,7 +22,7 @@ import { runnerUpdateStatusText } from "redux/actions";
 
 import "./NodeManager.css";
 
-function NodeManager() {
+const NodeManager = () => {
   // Link to singleton instance of runner graph engine
   const nodeMapEngine = RunnerEngine.Instance;
   const engine = nodeMapEngine.engine;
@@ -48,13 +48,13 @@ function NodeManager() {
   // Job status changes
   const jobstatus = useAppSelector((state) => state.runner.jobstatus);
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-  async function JobStatusUpdate() {
+  const JobStatusUpdate = async () => {
     if (jobstatus !== "" && nodeMapEngine.engine != null) {
       nodeMapEngine.MarkNodesWithoutConnectionsAsComplete(
         JSON.parse(jobstatus)
       );
     }
-  }
+  };
   React.useEffect(() => {
     JobStatusUpdate();
   }, [jobstatus]);
@@ -64,6 +64,6 @@ function NodeManager() {
       <BodyWidget engine={engine} />
     </div>
   );
-}
+};
 
 export default NodeManager;

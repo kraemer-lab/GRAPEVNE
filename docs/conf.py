@@ -6,8 +6,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "GRAPEVNE"
-copyright = "2023, John Brittain"
-author = "John Brittain"
+copyright = "2023, kraemer-lab"
+author = "kraemer-lab"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -29,6 +29,7 @@ exclude_patterns = [
     "Thumbs.db",
     ".DS_Store",
     "venv",
+    "README.md",
 ]
 
 

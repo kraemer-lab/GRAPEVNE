@@ -52,7 +52,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   let modules = useAppSelector((state) => state.builder.modules_list);
   const [newnode, setNewnode] = React.useState<NodeModel>(null);
   const dispatch = useAppDispatch();
-  
+
   // Register listener for new node
   React.useEffect(() => {
     if (newnode) {
@@ -74,7 +74,9 @@ export const BodyWidget = (props: BodyWidgetProps) => {
 
   // Check for a valid module list
   if (modules === undefined) {
-    console.log("ALERT: Modules failed to load - check that the repository name is correct and is reachable");
+    console.log(
+      "ALERT: Modules failed to load - check that the repository name is correct and is reachable"
+    );
     // Need a mechanism to queue messages back to the user (status bar is
     //  overwritten at the end of this render process)
     modules = "[]";

@@ -4,7 +4,7 @@ import MainPage from "./MainPage";
 import { StrictMode } from "react";
 
 // Layout for main window, including sliding-pane support
-export default function App() {
+const App = () => {
   return (
     <StrictMode>
       <div style={{ height: "100vh" }}>
@@ -12,4 +12,6 @@ export default function App() {
       </div>
     </StrictMode>
   );
-}
+};
+
+export default App;

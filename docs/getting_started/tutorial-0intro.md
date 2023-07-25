@@ -18,7 +18,7 @@ Briefly, the vocpl workflow consists of the following steps:
 3. Genome alignment (nextalign)
 4. Maximum Likelihood Tree estimation
 5. Sequence reconstruction (treetime)
-6. DTA.
+6. Discrete trait analysis
 
 ```{graphviz}
 :name: vocpl.workflow
@@ -34,7 +34,7 @@ digraph G {
     n3 [label="Genome alignment"];
     n4 [label="Tree estimation"];
     n5 [label="Sequence reconstruction"];
-    n6 [label="DTA"];
+    n6 [label="Discrete Trait Analysis"];
     n1 -> n2 -> n3 -> n4 -> n5 -> n6
 }
 ```

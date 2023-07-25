@@ -6,26 +6,14 @@ import { displayUpdateNodeInfo } from "redux/actions/display";
 
 import "./SidePaneContent.css";
 
-function SidePaneContentComponent() {
+const SidePaneContentComponent = () => {
   const nodeinfo = useAppSelector((state) => state.display.nodeinfo);
-  const dispatch = useAppDispatch();
 
-  const updateCodeSnippet = () => {
-    // TODO: sort out payload
-    const payload = "";
-    dispatch(displayUpdateNodeInfo(payload));
-  };
-
-  const [codesnippet, setCodesnippet] = useState("");
-
-  useEffect(() => {
-    if (nodeinfo === "") {
-      setCodesnippet("");
-    } else {
-      const json = JSON.parse(nodeinfo);
-      setCodesnippet(json.code);
-    }
-  }, [nodeinfo]);
+  let codesnippet = "";
+  if (nodeinfo !== "") {
+    const json = JSON.parse(nodeinfo);
+    codesnippet = json.code;
+  }
 
   return (
     <div>
@@ -34,20 +22,15 @@ function SidePaneContentComponent() {
         {...{ rows: 15 }}
         style={{
           width: "100%",
+          color: "#cccccc",
           background: "#555555",
           borderColor: "#333333",
         }}
         value={codesnippet}
-        onChange={() => {}} // eslint-disable-line @typescript-eslint/no-empty-function
+        readOnly
       />
-      {/*<button
-      className="btn"
-      style={{padding: "10px", float: "right"}}
-      onClick={updateCodeSnippet}
-      disabled={true}
-    >SAVE</button>*/}
     </div>
   );
-}
+};
 
 export default SidePaneContentComponent;
