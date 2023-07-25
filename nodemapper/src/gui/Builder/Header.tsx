@@ -11,6 +11,7 @@ import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderImportModule } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
+import { builderNodeDeselected } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
 import { builderSetRepositoryTarget } from "redux/actions";
 
@@ -69,7 +70,8 @@ const Header = () => {
   // Load nodemap from file
   const btnClearScene = () => {
     BuilderEngine.Instance.ClearScene();
-    dispatch(displayUpdateNodeInfo(""));
+    //dispatch(displayUpdateNodeInfo(""));
+    dispatch(builderNodeDeselected(""));
   };
 
   // Build - compile config to workflow zip and download

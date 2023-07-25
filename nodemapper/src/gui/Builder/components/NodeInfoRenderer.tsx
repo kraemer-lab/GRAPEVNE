@@ -49,6 +49,8 @@ const ExpandButton = (props: ExpandProps) => {
           },
         });
       });
+      // Ensure the expanded node is deselected (and no longer editable)
+      dispatch(builderNodeDeselected(""));
     }
   }, [newnodes]);
 
@@ -88,7 +90,7 @@ const NodeInfoRenderer = (props) => {
             justifyContent: "space-between",
           }}
         >
-          <div>Node Info</div>
+          <div>{JSON.parse(nodeinfo).name}</div>
           <div>
             <ExpandButton nodeinfo={JSON.parse(nodeinfo)} />
           </div>
