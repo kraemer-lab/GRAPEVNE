@@ -28,4 +28,4 @@ jobs:
       - name: install dependencies
         working-directory: ./electron-app
         run: |
-          ./run_build.sh
+          ./build.sh

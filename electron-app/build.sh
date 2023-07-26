@@ -13,7 +13,7 @@ set -eoux pipefail
 rm -rf dist out
 
 # compile build dependencies
-./run_build_deps.sh
+./build_deps.sh
 
 # compile GRAPEVNE
 #rm -rf node_modules  # deep clean

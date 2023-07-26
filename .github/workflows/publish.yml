@@ -34,7 +34,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
-          ./run_build_deps.sh
+          ./build_deps.sh
           yarn
           yarn build
           yarn run publish
