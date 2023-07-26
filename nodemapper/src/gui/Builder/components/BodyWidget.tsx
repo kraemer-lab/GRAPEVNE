@@ -52,7 +52,7 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
 export const BodyWidget = (props: BodyWidgetProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
   let modules_list = modules; // create a mutable copy
-  
+
   const [filterSelection, setFilterSelection] = React.useState("");
   const [newnode, setNewnode] = React.useState<NodeModel>(null);
   const dispatch = useAppDispatch();
@@ -80,18 +80,16 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   if (modules_list === undefined) {
     console.log(
       "ALERT: Modules failed to load - check that the repository name is " +
-      "correct and is reachable"
+        "correct and is reachable"
     );
     // Need a mechanism to queue messages back to the user (status bar is
     //  overwritten at the end of this render process)
     modules_list = "[]";
   }
-  
+
   const updateTrayItems = (filter_org: string) =>
     JSON.parse(modules_list)
-      .filter((m) =>
-        m["name"].startsWith(filter_org) ||
-        filter_org === "(all)")
+      .filter((m) => m["name"].startsWith(filter_org) || filter_org === "(all)")
       .map((m) => (
         <TrayItemWidget
           key={m["name"]}
@@ -100,7 +98,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
           color={BuilderEngine.GetModuleTypeColor(m["type"])}
         />
       ));
-  
+
   const [trayitems, setTrayitems] = React.useState(updateTrayItems("(all)"));
   React.useEffect(() => {
     setFilterSelection("(all)");
@@ -110,18 +108,19 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   const onChangeOrgList = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setFilterSelection(event.target.value);
     setTrayitems(updateTrayItems(event.target.value));
-  }
-  
+  };
+
   // Extract unique organisations from the module names for a filter list
   const organisaton_list = JSON.parse(modules_list)
-    .map((m) => m["name"].match(/\((.*?)\)/)[0])  // extract organisation name
-    .filter((v, i, a) => a.indexOf(v) === i)  // remove duplicates
-    .sort();  // sort alphabetically
-  organisaton_list.unshift("(all)");  // add "(all)" to the top of the list
-  const organisaton_list_options = organisaton_list
-    .map((m) => (
-      <option key={m} value={m}>{m}</option>
-    ));
+    .map((m) => m["name"].match(/\((.*?)\)/)[0]) // extract organisation name
+    .filter((v, i, a) => a.indexOf(v) === i) // remove duplicates
+    .sort(); // sort alphabetically
+  organisaton_list.unshift("(all)"); // add "(all)" to the top of the list
+  const organisaton_list_options = organisaton_list.map((m) => (
+    <option key={m} value={m}>
+      {m}
+    </option>
+  ));
 
   const onWidgetDrag_Drop = (event: React.DragEvent<HTMLDivElement>) => {
     const app = BuilderEngine.Instance;
@@ -140,7 +139,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
         <div
           style={{
             background: "rgb(20, 20, 20)",
-            overflowY: "auto"
+            overflowY: "auto",
           }}
         >
           <select
@@ -154,14 +153,9 @@ export const BodyWidget = (props: BodyWidgetProps) => {
           </select>
           <TrayWidget>{trayitems}</TrayWidget>
         </div>
-        <Layer
-          onDrop={onWidgetDrag_Drop}
-          onDragOver={onWidgetDrag_DragOver}
-        >
+        <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
           <GridCanvasWidget>
-            <CanvasWidget
-              engine={props.engine}
-            />
+            <CanvasWidget engine={props.engine} />
           </GridCanvasWidget>
         </Layer>
         <NodeInfoRenderer />

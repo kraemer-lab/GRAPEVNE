@@ -647,6 +647,12 @@ def BuildFromJSON(
         return contents, m
 
 
+def BuildAndRun(*args, **kwargs):
+    print("Build and run...")
+    print(args)
+    print(kwargs)
+
+
 if __name__ == "__main__":
     """Builds a workflow given a JSON specification file"""
     parser = argparse.ArgumentParser()

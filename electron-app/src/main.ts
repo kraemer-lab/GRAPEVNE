@@ -29,6 +29,7 @@ app.whenReady().then(() => {
     handles.builder_GetRemoteModules
   );
   ipcMain.handle("builder/compile-to-json", handles.builder_CompileToJson);
+  ipcMain.handle("builder/build-and-run", handles.builder_BuildAndRun);
 
   // Runner
   ipcMain.handle("runner/build", handles.runner_Build);

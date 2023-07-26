@@ -6,6 +6,8 @@ export const builderSaveNodemap = createAction("builder/save-nodemap");
 
 export const builderCompileToJson = createAction("builder/compile-to-json");
 
+export const builderBuildAndRun = createAction("builder/build-and-run");
+
 export const builderRedraw = createAction("builder/redraw");
 
 export const builderGetRemoteModules = createAction(

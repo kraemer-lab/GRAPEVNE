@@ -34,6 +34,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case "builder/compile-to-json":
           CompileToJSON();
           break;
+        case "builder/build-and-run":
+          BuildAndRun(dispatch);
+          break;
         case "builder/redraw":
           Redraw();
           break;
@@ -116,6 +119,31 @@ const CompileToJSON = async () => {
       break;
     case "electron":
       callback(await builderAPI.CompileToJson(query));
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
+};
+
+const BuildAndRun = async (dispatchString: TPayloadString) => {
+  const app = BuilderEngine.Instance;
+  const query: Record<string, unknown> = {
+    query: "builder/build-and-run",
+    data: {
+      format: "Snakefile",
+      content: app.GetModuleListJSON(),
+    },
+  };
+  const callback = (result) => {
+    console.log(result);
+  };
+  switch (backend as string) {
+    case "rest":
+      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+      SubmitQuery(query, dispatchString, callback);
+      break;
+    case "electron":
+      callback(await builderAPI.BuildAndRun(query));
       break;
     default:
       console.error("Unknown backend: ", backend);

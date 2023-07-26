@@ -5,7 +5,6 @@
   - `builder`: Python library of build-related routines
   - `runner`: Python library of run-related routines (launches `snakemake`)
 - `backend`: Backend server if running the front-end in network mode
-- `builderjs`: a (partial) typescript implementation of `builder`, originally intended to replace `builder`, but likely to be removed in the future.
 
 ## Packaging
 

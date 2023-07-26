@@ -36,6 +36,12 @@ def post(request):
             "body": "",
         }
         # return base64.b64encode(memory_zip)
+    elif query == "builder/build-and-run":
+        js = data["content"]
+        data = {
+            "query": query,
+            "body": builder.BuildAndRun(js),
+        }
     elif query == "builder/get-remote-modules":
         js = data["content"]
         data = {

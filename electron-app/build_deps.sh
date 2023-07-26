@@ -26,9 +26,3 @@ pushd ../nodemapper
 yarn
 yarn build
 popd
-
-# compile builderjs
-pushd ../builderjs
-yarn
-yarn build
-popd
