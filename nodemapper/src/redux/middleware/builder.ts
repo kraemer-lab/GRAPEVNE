@@ -334,8 +334,9 @@ const UpdateNodeInfoName = (
   const builder = BuilderEngine.Instance;
   const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
   if (node !== null) {
-    builder.nodeScene.setNodeName(node, action.payload);
-    node.setName(action.payload);
+    const name = builder.EnsureUniqueName(action.payload);
+    builder.nodeScene.setNodeName(node, name);
+    node.setName(name);
     builder.engine.repaintCanvas();
   } else {
     console.log("Node not found: ", nodeinfo);
