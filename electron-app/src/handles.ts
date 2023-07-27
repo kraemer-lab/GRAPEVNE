@@ -91,6 +91,10 @@ export async function builder_BuildAndRun(event: any, query: any) {
   return await ProcessQuery(event, query);
 }
 
+export async function builder_CleanBuildFolder(event: any, query: any) {
+  return await ProcessQuery(event, query);
+}
+
 export async function runner_Build(event: any, query: any) {
   return await ProcessQuery(event, query);
 }

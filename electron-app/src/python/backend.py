@@ -9,6 +9,10 @@ import builder
 import runner
 
 
+default_build_path = "workflows/build"
+default_testbuild_path = "workflows/testbuild"
+
+
 def post(request):
     """Handles POST requests from the frontend."""
     request_js = json.loads(request)
@@ -27,20 +31,40 @@ def post(request):
         js = data["content"]
         with open("workflow.json", "w") as f:  # dump config file to disk for debug
             json.dump(js, f, indent=4)
-        memory_zip, _ = builder.BuildFromJSON(js)
-        # Binary return is not used in our (temporary) python-nodejs
-        # interface for electron. Instead the zip file is read back
-        # off the disk and forwarded by nodejs.
+        memory_zip, _ = builder.BuildFromJSON(js, build_path=default_build_path)
+        # Binary return is not used when passing the information over stdout.
+        # Instead, the zip file is read back off the disk and forwarded by
+        # electron / nodejs.
         data = {
             "query": query,
             "body": "",
         }
-        # return base64.b64encode(memory_zip)
     elif query == "builder/build-and-run":
+        # First, build the workflow
         js = data["content"]
+        with open("workflow.json", "w") as f:  # dump config file to disk for debug
+            json.dump(js, f, indent=4)
+        build_path = default_testbuild_path
+        memory_zip, _ = builder.BuildFromJSON(
+            js,
+            build_path=build_path,
+            clean_build=False,  # Do not overwrite existing build
+        )
+        # Second, launch the workflow in a window
         data = {
             "query": query,
-            "body": builder.BuildAndRun(js),
+            "body": runner.Launch(
+                {
+                    "format": data["format"],
+                    "content": build_path,
+                },
+                terminal=True
+            ),
+        }
+    elif query == "builder/clean-build-folder":
+        data = {
+            "query": query,
+            "body": builder.CleanBuildFolder(default_testbuild_path)
         }
     elif query == "builder/get-remote-modules":
         js = data["content"]

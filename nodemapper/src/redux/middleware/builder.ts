@@ -37,6 +37,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case "builder/build-and-run":
           BuildAndRun(dispatch);
           break;
+        case "builder/clean-build-folder":
+          CleanBuildFolder(dispatch);
+          break;
         case "builder/redraw":
           Redraw();
           break;
@@ -54,6 +57,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             action,
             dispatch,
             JSON.parse(getState().builder.nodeinfo)
+          );
+          break;
+        case "builder/update-node-info-name":
+          UpdateNodeInfoName(
+            action,
+            dispatch,
+            JSON.parse(getState().builder.nodeinfo),
           );
           break;
         case "builder/get-remote-modules":
@@ -132,6 +142,7 @@ const BuildAndRun = async (dispatchString: TPayloadString) => {
     data: {
       format: "Snakefile",
       content: app.GetModuleListJSON(),
+      targets: app.GetLeafNodeNames(),
     },
   };
   const callback = (result) => {
@@ -144,6 +155,33 @@ const BuildAndRun = async (dispatchString: TPayloadString) => {
       break;
     case "electron":
       callback(await builderAPI.BuildAndRun(query));
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
+};
+
+const CleanBuildFolder = async (dispatchString: TPayloadString) => {
+  const app = BuilderEngine.Instance;
+  const query: Record<string, unknown> = {
+    query: "builder/clean-build-folder",
+    data: {
+      format: "Snakefile",
+      content: {
+        path: "",  // Path currently set in builder package
+      }
+    },
+  };
+  const callback = (result) => {
+    console.log(result);
+  };
+  switch (backend as string) {
+    case "rest":
+      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+      SubmitQuery(query, dispatchString, callback);
+      break;
+    case "electron":
+      callback(await builderAPI.CleanBuildFolder(query));
       break;
     default:
       console.error("Unknown backend: ", backend);
@@ -269,11 +307,9 @@ const UpdateNodeInfoKey = (
   console.log("Middleware: UpdateNodeInfoKey");
   const builder = BuilderEngine.Instance;
   const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
-  console.log(nodeinfo.id);
   if (node !== null) {
     const workflow = builder.nodeScene.getNodeWorkflow(node);
     const keys = action.payload.keys as string[];
-
     const indexInto = (obj, indexlist, value) => {
       if (indexlist.length == 1) {
         obj[indexlist[0]] = value;
@@ -284,6 +320,26 @@ const UpdateNodeInfoKey = (
     indexInto(workflow, keys, action.payload.value);
     builder.nodeScene.setNodeWorkflow(node, workflow);
     //dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+  } else {
+    console.log("Node not found: ", nodeinfo);
+  }
+};
+
+const UpdateNodeInfoName = (
+  action: IPayloadString,
+  dispatch,
+  nodeinfo
+): void => {
+  // Update field for node
+  console.log("Middleware: UpdateNodeInfoName");
+  const builder = BuilderEngine.Instance;
+  const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
+  if (node !== null) {
+    builder.nodeScene.setNodeName(node, action.payload);
+    node.setName(action.payload);
+    builder.engine.repaintCanvas();
+    console.log(builder.GetLeafNodeNames());
+    //dispatch(builderUpdateNodeInfo(JSON.stringify(nodeinfo)));
   } else {
     console.log("Node not found: ", nodeinfo);
   }

@@ -9,6 +9,10 @@ contextBridge.exposeInMainWorld("displayAPI", {
 contextBridge.exposeInMainWorld("builderAPI", {
   CompileToJson: (query: Query) =>
     ipcRenderer.invoke("builder/compile-to-json", query),
+  BuildAndRun: (query: Query) =>
+    ipcRenderer.invoke("builder/build-and-run", query),
+  CleanBuildFolder: (query: Query) =>
+    ipcRenderer.invoke("builder/clean-build-folder", query),
   GetRemoteModules: (query: Query) =>
     ipcRenderer.invoke("builder/get-remote-modules", query),
 });

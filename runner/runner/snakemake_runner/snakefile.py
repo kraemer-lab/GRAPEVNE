@@ -1,6 +1,7 @@
 import contextlib
 import json
 import os
+import platform
 import shutil
 import subprocess
 import tempfile
@@ -43,13 +44,14 @@ def DeleteAllOutput(filename: str) -> dict:
     }
 
 
-def Launch(filename: str) -> dict:
+def Launch(filename: str, **kwargs) -> dict:
     """Launch snakemake workflow given a [locally accessible] location"""
     filename, workdir = GetFileAndWorkingDirectory(filename)
     stdout, stderr = snakemake(
         filename,
         "--nolock",
         workdir=workdir,
+        **kwargs,
     )
     return {
         "status": "ok" if not stderr else "error",
@@ -410,12 +412,42 @@ def IsolatedTempFile(content: str, tempdir=None):
     shutil.rmtree(snakefile_dir.name)
 
 
+def WrapCommandForTerminal(cmd: List[str], workdir: str) -> List[str]:
+    """Wrap command for terminal execution
+
+    This function takes a command and wraps it in a terminal execution command
+    for the current platform.
+    """
+    cmdstr = " ".join(cmd)
+    if platform.system() == "Windows":
+        # Launch terminal process on Windows
+        cmd = [
+            "cmd.exe",
+            "/k",  # Keep terminal open after execution
+            f'"cd {workdir}\n{cmdstr}"',
+        ]
+    elif platform.system() == "Darwin":
+        # Launch terminal process on macOS
+        cmd = [
+            "osascript",
+            "-e",
+            f'tell app "Terminal" to do script "cd {workdir}\n{cmdstr}"',
+        ]
+    elif platform.system() == "Linux":
+        # Launch terminal process on Linux
+        cmd = ["x-terminal-emulator", "-e", f'"cd {workdir}\n{cmdstr}"']
+    else:
+        raise Exception(f"Unsupported platform: {platform.system()}.")
+    return cmd
+
+
 def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
     """Run snakemake as subprocess
 
     This function takes optional arguments that are passed through to the
     snakemake executable, with the exception of:
         workdir: sets the working directory for job execution
+        terminal: if True, run snakemake in a terminal window
     """
     # Get Snakefile path
     snakefile = os.path.abspath(filename)
@@ -423,34 +455,39 @@ def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
     workdir = kwargs.get("workdir", "")
     if not workdir:
         workdir = os.path.dirname(snakefile)
-    # Collate arguments list
     try:
         del kwargs["workdir"]
     except KeyError:
         pass
+    # Check for terminal flag, then omit from kwargs
+    terminal = kwargs.get("terminal", None)
+    try:
+        del kwargs["terminal"]
+    except KeyError:
+        pass
+    # Collate arguments list
     arglist = list(args)
+    # Ensure conda is enabled
+    if "--use-conda" not in arglist:
+        arglist.append("--use-conda")
     for k, v in kwargs.items():
         arglist.extend([k, v])
     # Default set a single core if none specified
     if "--cores" not in kwargs.keys() and "--cores" not in args:
         arglist.extend(["--cores", "1"])
     # Launch process and wait for return
-    print(
-        [
-            "snakemake",
-            "--snakefile",
-            snakefile,
-            *arglist,
-            workdir,
-        ]
-    )
+    cmd = [
+        "snakemake",
+        "--snakefile",
+        snakefile,
+        *arglist,
+    ]
+    if terminal:
+        cmd = WrapCommandForTerminal(cmd, workdir)
+    print(cmd)
+    print("$" + (" ".join(cmd)) + "$")
     p = subprocess.run(
-        [
-            "snakemake",
-            "--snakefile",
-            snakefile,
-            *arglist,
-        ],
+        cmd,
         cwd=workdir,
         capture_output=True,
     )

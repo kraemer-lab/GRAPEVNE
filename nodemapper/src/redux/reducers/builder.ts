@@ -23,7 +23,7 @@ const builderStateInit: IBuilderState = {
   }),
   modules_list: "[]",
   statustext: "",
-  nodeinfo: "",
+  nodeinfo: "{}", // {} requires to be a valid JSON string
   can_selected_expand: true,
 };
 

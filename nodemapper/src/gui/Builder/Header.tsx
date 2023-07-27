@@ -13,6 +13,7 @@ import { builderImportModule } from "redux/actions";
 import { builderBuildAndRun } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
+import { builderCleanBuildFolder } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
 import { builderSetRepositoryTarget } from "redux/actions";
 
@@ -72,14 +73,19 @@ const Header = () => {
     dispatch(builderNodeDeselected(""));
   };
 
-  // Build - compile config to workflow zip and download
-  const btnBuild = () => {
-    dispatch(builderCompileToJson());
-  };
-
   // Run - build and run the workflow
   const btnRun = () => {
     dispatch(builderBuildAndRun());
+  };
+  
+  // Clean build folder
+  const btnCleanBuildFolder = () => {
+    dispatch(builderCleanBuildFolder());
+  };
+  
+  // Build - compile config to workflow zip and download
+  const btnBuild = () => {
+    dispatch(builderCompileToJson());
   };
 
   // Distribute model (visual)
@@ -141,20 +147,28 @@ const Header = () => {
           marginBottom: 2,
         }}
       >
+        {/*
         <button className="btn" onClick={btnLoadScene}>
           LOAD
         </button>
         <button className="btn" onClick={btnSaveScene}>
           SAVE
         </button>
+        */}
+        <button className="btn" onClick={btnRun}>
+          BUILD AND TEST
+        </button>
+        <button className="btn" onClick={btnCleanBuildFolder}>
+          DELETE TEST BUILD
+        </button>
         <button className="btn" onClick={btnBuild}>
-          BUILD
+          CLEAN BUILD
         </button>
         <button className="btn" onClick={btnClearScene}>
-          CLEAR
+          CLEAR GRAPH
         </button>
         <button className="btn" onClick={btnArrange}>
-          ARRANGE
+          ARRANGE GRAPH
         </button>
         {/*
           <button className="btn" onClick={btnImportModule}>

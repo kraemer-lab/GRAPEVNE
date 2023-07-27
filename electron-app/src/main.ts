@@ -30,6 +30,7 @@ app.whenReady().then(() => {
   );
   ipcMain.handle("builder/compile-to-json", handles.builder_CompileToJson);
   ipcMain.handle("builder/build-and-run", handles.builder_BuildAndRun);
+  ipcMain.handle("builder/clean-build-folder", handles.builder_CleanBuildFolder);
 
   // Runner
   ipcMain.handle("runner/build", handles.runner_Build);

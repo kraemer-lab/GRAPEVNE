@@ -1,12 +1,19 @@
 import React from "react";
 import NodeInfo from "./NodeInfo";
+import EasyEdit from "react-easy-edit";
 import BuilderEngine from "../BuilderEngine";
+
+import { Types } from "react-easy-edit";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { NodeModel } from "@projectstorm/react-diagrams";
-import { DefaultNodeModel } from "NodeMap";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DefaultNodeModel } from "NodeMap";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
+import { builderUpdateNodeInfoName } from "redux/actions";
 
 interface IPayload {
   id: string;
@@ -65,49 +72,76 @@ const ExpandButton = (props: ExpandProps) => {
   }
 };
 
+const PermitNodeExpand = (nodeinfo: Record<string, unknown>) => {
+  const app = BuilderEngine.Instance;
+  return app.CanNodeExpand(nodeinfo.name as string);
+}
+
 const NodeInfoRenderer = (props) => {
-  const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
-  if (nodeinfo) {
-    return (
+  const dispatch = useAppDispatch();
+  const nodeinfoStr = useAppSelector((state) => state.builder.nodeinfo);
+  
+  const SetNodeName = (name: string) => {
+    if (name)
+      dispatch(builderUpdateNodeInfoName(name));
+  }
+
+  if (!nodeinfoStr)
+    return <></>;
+  const nodeinfo = JSON.parse(nodeinfoStr);
+  if (Object.keys(nodeinfo).length === 0)
+    return <></>;
+
+  return (
+    <div
+      style={{
+        background: "#333333",
+        display: "flex",
+        width: "33%",
+        height: "100%",
+        flexFlow: "column",
+      }}
+    >
       <div
         style={{
-          background: "#333333",
+          borderStyle: "solid",
+          borderWidth: "1px 0px 1px 0px",
+          borderColor: "#666666",
+          backgroundColor: "#333333",
+          color: "#dddddd",
+          flex: "0 0 auto",
           display: "flex",
-          width: "33%",
-          height: "100%",
-          flexFlow: "column",
+          justifyContent: "space-between",
         }}
       >
-        <div
-          style={{
-            borderStyle: "solid",
-            borderWidth: "1px 0px 1px 0px",
-            borderColor: "#666666",
-            backgroundColor: "#333333",
-            color: "#dddddd",
-            flex: "0 0 auto",
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <div>{JSON.parse(nodeinfo).name}</div>
-          <div>
-            <ExpandButton nodeinfo={JSON.parse(nodeinfo)} />
-          </div>
+        <div>
+          <EasyEdit
+            type={Types.TEXT}
+            onHoverCssClass="easyEditHover"
+            value={nodeinfo.name}
+            saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
+            cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+            onSave={(value) => {SetNodeName(value)}}
+          />
         </div>
-        <div
-          style={{
-            flex: "1 1 auto",
-            overflowY: "auto",
-          }}
-        >
-          <NodeInfo />
+        <div>
+          {(PermitNodeExpand(nodeinfo)) ? (
+            <ExpandButton nodeinfo={nodeinfo} />
+          ) : (
+            <></>
+          )}
         </div>
       </div>
-    );
-  } else {
-    return <></>;
-  }
+      <div
+        style={{
+          flex: "1 1 auto",
+          overflowY: "auto",
+        }}
+      >
+        <NodeInfo />
+      </div>
+    </div>
+  );
 };
 
 export default NodeInfoRenderer;

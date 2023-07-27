@@ -218,14 +218,21 @@ class Model:
             }
         return c
 
-    def SaveWorkflow(self) -> None:
+    def SaveWorkflow(
+        self,
+        build_path: str = "build",
+        clean_build: bool = True,
+    ) -> str:
         """Saves the workflow to the build directory"""
-        pathlib.Path("build/config").mkdir(parents=True, exist_ok=True)
-        pathlib.Path("build/workflow").mkdir(parents=True, exist_ok=True)
-        with open("build/workflow/Snakefile", "w") as file:
+        if clean_build:  # Delete build directory before rebuilding
+            shutil.rmtree(build_path, ignore_errors=True)
+        pathlib.Path(f"{build_path}/config").mkdir(parents=True, exist_ok=True)
+        pathlib.Path(f"{build_path}/workflow").mkdir(parents=True, exist_ok=True)
+        with open(f"{build_path}/workflow/Snakefile", "w") as file:
             file.write(self.BuildSnakefile())
-        with open("build/config/config.yaml", "w") as file:
+        with open(f"{build_path}/config/config.yaml", "w") as file:
             file.write(self.BuildSnakefileConfig())
+        return build_path
 
     def WrangleName(self, basename: str, subname: str = "") -> str:
         """Wrangles a valid and unique rule name"""
@@ -604,10 +611,19 @@ def BuildFromFile(
     return BuildFromJSON(config, **kwargs)
 
 
+def CleanBuildFolder(
+    build_path: str = ""
+) -> None:
+    """Deletes the build folder, if it exists"""
+    shutil.rmtree(build_path, ignore_errors=True)
+
+
 def BuildFromJSON(
     config: dict,
     singlefile: bool = False,
     expand: bool = True,
+    build_path: str = "",
+    clean_build: bool = True,
 ) -> Tuple[Union[Tuple[str, str], bytes], Model]:
     """Builds a workflow from a JSON specification
 
@@ -639,18 +655,12 @@ def BuildFromJSON(
         return ((m.BuildSnakefileConfig(), m.BuildSnakefile())), m
     else:
         # Create (zipped) workflow and return as binary object
-        m.SaveWorkflow()
+        build_path = m.SaveWorkflow(build_path, clean_build)
         zipfilename = "build"
-        shutil.make_archive(zipfilename, "zip", "build")
+        shutil.make_archive(zipfilename, "zip", build_path)
         with open(f"{zipfilename}.zip", "rb") as file:
             contents = file.read()
         return contents, m
-
-
-def BuildAndRun(*args, **kwargs):
-    print("Build and run...")
-    print(args)
-    print(kwargs)
 
 
 if __name__ == "__main__":
