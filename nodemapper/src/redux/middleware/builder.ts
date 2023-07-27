@@ -319,7 +319,6 @@ const UpdateNodeInfoKey = (
     };
     indexInto(workflow, keys, action.payload.value);
     builder.nodeScene.setNodeWorkflow(node, workflow);
-    //dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
   } else {
     console.log("Node not found: ", nodeinfo);
   }
@@ -338,8 +337,6 @@ const UpdateNodeInfoName = (
     builder.nodeScene.setNodeName(node, action.payload);
     node.setName(action.payload);
     builder.engine.repaintCanvas();
-    console.log(builder.GetLeafNodeNames());
-    //dispatch(builderUpdateNodeInfo(JSON.stringify(nodeinfo)));
   } else {
     console.log("Node not found: ", nodeinfo);
   }

@@ -183,7 +183,7 @@ export default class NodeMapEngine {
       .forEach((node) => {
         if (
           Object.keys(
-            this.nodeScene.getNodeInputNodes(node as DefaultNodeModel)
+            this.nodeScene.getNodeOutputNodes(node as DefaultNodeModel)
           ).length == 0
         )
           leafNodes.push(node);
