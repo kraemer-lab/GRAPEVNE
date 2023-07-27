@@ -177,10 +177,17 @@ export default class NodeMapEngine {
 
   public GetLeafNodes(): NodeModel[] {
     const leafNodes = [];
-    this.engine.getModel().getNodes().forEach((node) => {
-      if (Object.keys(this.nodeScene.getNodeInputNodes(node as DefaultNodeModel)).length == 0)
-        leafNodes.push(node);
-    });
+    this.engine
+      .getModel()
+      .getNodes()
+      .forEach((node) => {
+        if (
+          Object.keys(
+            this.nodeScene.getNodeInputNodes(node as DefaultNodeModel)
+          ).length == 0
+        )
+          leafNodes.push(node);
+      });
     return leafNodes;
   }
 
@@ -195,9 +202,12 @@ export default class NodeMapEngine {
 
   public DoesNodeNameClash(name: string): boolean {
     let clash = false;
-    this.engine.getModel().getNodes().forEach((node) => {
-      if (this.getProperty(node, "name") === name) clash = true;
-    });
+    this.engine
+      .getModel()
+      .getNodes()
+      .forEach((node) => {
+        if (this.getProperty(node, "name") === name) clash = true;
+      });
     return clash;
   }
 
@@ -206,14 +216,13 @@ export default class NodeMapEngine {
     // Note: this function always adds a postfix, use EnsureUniqueName to
     //       preserve existing name if possible
     let nodePostfix = 0;
-    while(this.DoesNodeNameClash(name + "_" + (++nodePostfix)));
-    return name += "_" + nodePostfix;
+    while (this.DoesNodeNameClash(name + "_" + ++nodePostfix));
+    return (name += "_" + nodePostfix);
   }
 
   public EnsureUniqueName(name: string): string {
     // Preserves existing name if no clashes, otherwise adds a postfix
-    if (this.DoesNodeNameClash(name))
-      return this.GetUniqueName(name);
+    if (this.DoesNodeNameClash(name)) return this.GetUniqueName(name);
     return name;
   }
 
@@ -226,8 +235,7 @@ export default class NodeMapEngine {
     let node: DefaultNodeModel = null;
     let node_name = data.name as string;
     // Unique name
-    if (uniquenames)
-      node_name = this.EnsureUniqueName(node_name);
+    if (uniquenames) node_name = this.EnsureUniqueName(node_name);
     // Create node
     node = new DefaultNodeModel(
       node_name,
@@ -300,7 +308,7 @@ export default class NodeMapEngine {
 
     // Modules list
     const modules = json.config["config"] as Record<string, unknown>;
-    if (!modules) return null;  // Do not expand if no modules
+    if (!modules) return null; // Do not expand if no modules
 
     // Create sub-nodes from modules list
     const newnodes: DefaultNodeModel[] = [] as DefaultNodeModel[];

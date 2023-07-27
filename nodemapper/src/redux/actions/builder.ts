@@ -8,7 +8,9 @@ export const builderCompileToJson = createAction("builder/compile-to-json");
 
 export const builderBuildAndRun = createAction("builder/build-and-run");
 
-export const builderCleanBuildFolder = createAction("builder/clean-build-folder");
+export const builderCleanBuildFolder = createAction(
+  "builder/clean-build-folder"
+);
 
 export const builderRedraw = createAction("builder/redraw");
 
@@ -34,7 +36,9 @@ export const builderUpdateNodeInfoKey = createAction<
   Record<string, string[] | string>
 >("builder/update-node-info-key");
 
-export const builderUpdateNodeInfoName = createAction<string>("builder/update-node-info-name");
+export const builderUpdateNodeInfoName = createAction<string>(
+  "builder/update-node-info-name"
+);
 
 export const builderSetRepositoryTarget = createAction<Record<string, any>>( // eslint-disable-line @typescript-eslint/no-explicit-any
   "builder/set-repository-target"

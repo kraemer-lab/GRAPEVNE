@@ -75,22 +75,19 @@ const ExpandButton = (props: ExpandProps) => {
 const PermitNodeExpand = (nodeinfo: Record<string, unknown>) => {
   const app = BuilderEngine.Instance;
   return app.CanNodeExpand(nodeinfo.name as string);
-}
+};
 
 const NodeInfoRenderer = (props) => {
   const dispatch = useAppDispatch();
   const nodeinfoStr = useAppSelector((state) => state.builder.nodeinfo);
-  
-  const SetNodeName = (name: string) => {
-    if (name)
-      dispatch(builderUpdateNodeInfoName(name));
-  }
 
-  if (!nodeinfoStr)
-    return <></>;
+  const SetNodeName = (name: string) => {
+    if (name) dispatch(builderUpdateNodeInfoName(name));
+  };
+
+  if (!nodeinfoStr) return <></>;
   const nodeinfo = JSON.parse(nodeinfoStr);
-  if (Object.keys(nodeinfo).length === 0)
-    return <></>;
+  if (Object.keys(nodeinfo).length === 0) return <></>;
 
   return (
     <div
@@ -121,11 +118,13 @@ const NodeInfoRenderer = (props) => {
             value={nodeinfo.name}
             saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
             cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-            onSave={(value) => {SetNodeName(value)}}
+            onSave={(value) => {
+              SetNodeName(value);
+            }}
           />
         </div>
         <div>
-          {(PermitNodeExpand(nodeinfo)) ? (
+          {PermitNodeExpand(nodeinfo) ? (
             <ExpandButton nodeinfo={nodeinfo} />
           ) : (
             <></>

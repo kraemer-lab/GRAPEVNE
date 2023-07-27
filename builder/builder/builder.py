@@ -611,9 +611,7 @@ def BuildFromFile(
     return BuildFromJSON(config, **kwargs)
 
 
-def CleanBuildFolder(
-    build_path: str = ""
-) -> None:
+def CleanBuildFolder(build_path: str = "") -> None:
     """Deletes the build folder, if it exists"""
     shutil.rmtree(build_path, ignore_errors=True)
 

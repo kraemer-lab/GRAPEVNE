@@ -77,12 +77,12 @@ const Header = () => {
   const btnRun = () => {
     dispatch(builderBuildAndRun());
   };
-  
+
   // Clean build folder
   const btnCleanBuildFolder = () => {
     dispatch(builderCleanBuildFolder());
   };
-  
+
   // Build - compile config to workflow zip and download
   const btnBuild = () => {
     dispatch(builderCompileToJson());

@@ -63,7 +63,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateNodeInfoName(
             action,
             dispatch,
-            JSON.parse(getState().builder.nodeinfo),
+            JSON.parse(getState().builder.nodeinfo)
           );
           break;
         case "builder/get-remote-modules":
@@ -168,8 +168,8 @@ const CleanBuildFolder = async (dispatchString: TPayloadString) => {
     data: {
       format: "Snakefile",
       content: {
-        path: "",  // Path currently set in builder package
-      }
+        path: "", // Path currently set in builder package
+      },
     },
   };
   const callback = (result) => {

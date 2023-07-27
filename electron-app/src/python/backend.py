@@ -58,13 +58,13 @@ def post(request):
                     "format": data["format"],
                     "content": build_path,
                 },
-                terminal=True
+                terminal=True,
             ),
         }
     elif query == "builder/clean-build-folder":
         data = {
             "query": query,
-            "body": builder.CleanBuildFolder(default_testbuild_path)
+            "body": builder.CleanBuildFolder(default_testbuild_path),
         }
     elif query == "builder/get-remote-modules":
         js = data["content"]
