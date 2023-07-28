@@ -50,6 +50,7 @@ def Launch_cmd(filename: str, **kwargs) -> Tuple[List[str], str]:
     return snakemake_cmd(
         filename,
         "--nolock",
+        "$(snakemake --list)",
         workdir=workdir,
         **kwargs,
     )

@@ -54,6 +54,7 @@ app.whenReady().then(() => {
   ptyProcess.onData((data: any) => {
     win.webContents.send("terminal/receive-data", data);
   });
+  terminal_sendData('\n');  // Forces the terminal to display the prompt
 
   ////////////////////
   // Setup IPC handles
@@ -92,5 +93,7 @@ app.whenReady().then(() => {
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+  // TODO: Terminal does not respond after first launch on Mac
+  //if (process.platform !== "darwin") app.quit();
+  app.quit();
 });

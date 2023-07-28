@@ -25,8 +25,8 @@ caption: Getting started
 maxdepth: 1
 ---
 getting_started/installation
-getting_started/modules
 getting_started/builder
+getting_started/modules
 getting_started/tutorial
 ```
 
