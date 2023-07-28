@@ -49,6 +49,16 @@ def Launch(data: dict, **kwargs) -> dict:
     return launch_response
 
 
+def Launch_cmd(data: dict, **kwargs) -> dict:
+    """Returns the launch command for a workflow"""
+    if data["format"] == "Snakefile":
+        cmd, workdir = snakefile.Launch_cmd(data["content"], **kwargs)
+        launch_response: dict = {"command": cmd, "workdir": workdir}
+    else:
+        raise ValueError(f"Format not supported: {data['format']}")
+    return launch_response
+
+
 def Tokenize(data: dict) -> dict:
     """Tokenizes a workflow given a Snakefile as string."""
     if data["format"] == "Snakefile":

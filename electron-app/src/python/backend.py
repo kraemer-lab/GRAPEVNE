@@ -50,16 +50,16 @@ def post(request):
             build_path=build_path,
             clean_build=False,  # Do not overwrite existing build
         )
-        # Second, launch the workflow in a window
+        # Second, return the launch command
+        data = runner.Launch_cmd({"format": data["format"],
+                                  "content": build_path},
+                                 terminal=False)
+        # Stringify command
+        data["command"] = " ".join(data["command"])
+        # Return the launch command
         data = {
             "query": query,
-            "body": runner.Launch(
-                {
-                    "format": data["format"],
-                    "content": build_path,
-                },
-                terminal=True,
-            ),
+            "body": data,
         }
     elif query == "builder/clean-build-folder":
         data = {

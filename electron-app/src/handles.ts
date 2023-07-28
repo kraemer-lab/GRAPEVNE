@@ -87,8 +87,15 @@ export async function builder_CompileToJson(event: any, query: any) {
   return fs.readFileSync("./build.zip", { encoding: "base64" });
 }
 
-export async function builder_BuildAndRun(event: any, query: any) {
-  return await ProcessQuery(event, query);
+export async function builder_BuildAndRun(event: any, query: any, cmd_callback: any) {
+  const data = await ProcessQuery(event, query);
+  // Execute the build in the working directory through the pty
+  if (data["body"]["cmd"] !== "") {
+    cmd_callback("\x15");  // ctrl-u to clear the line
+    cmd_callback("cd " + data["body"]["workdir"] + "\n");
+    cmd_callback(data["body"]["command"] + "\n");
+  }
+  return data;
 }
 
 export async function builder_CleanBuildFolder(event: any, query: any) {

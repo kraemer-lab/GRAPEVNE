@@ -6,11 +6,9 @@ import { StrictMode } from "react";
 // Layout for main window, including sliding-pane support
 const App = () => {
   return (
-    <StrictMode>
-      <div style={{ height: "100vh" }}>
-        <MainPage />
-      </div>
-    </StrictMode>
+    <div style={{ height: "100vh" }}>
+      <MainPage />
+    </div>
   );
 };
 

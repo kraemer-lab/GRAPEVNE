@@ -2,6 +2,11 @@ import { contextBridge, ipcRenderer } from "electron";
 
 type Query = Record<string, unknown>;
 
+contextBridge.exposeInMainWorld("terminalAPI", {
+  sendData: (data: string) => ipcRenderer.send("terminal/send-data", data),
+  receiveData: (callback: any) => ipcRenderer.on('terminal/receive-data', callback),
+});
+
 contextBridge.exposeInMainWorld("displayAPI", {
   FolderInfo: (query: Query) => ipcRenderer.invoke("display/folderinfo", query),
 });

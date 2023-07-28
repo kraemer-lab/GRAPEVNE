@@ -8,6 +8,7 @@ interface IBuilderState {
   statustext: string;
   nodeinfo: string;
   can_selected_expand: boolean;
+  terminal_visibile: boolean;
 }
 
 // State
@@ -25,6 +26,7 @@ const builderStateInit: IBuilderState = {
   statustext: "",
   nodeinfo: "{}", // {} requires to be a valid JSON string
   can_selected_expand: true,
+  terminal_visibile: false,
 };
 
 // Nodemap
@@ -76,7 +78,12 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderSetRepositoryTarget, (state, action) => {
       state.repo = JSON.stringify(action.payload);
       console.info("[Reducer] " + action.type);
-    });
+    })
+    .addCase(actions.builderToggleTerminalVisibility, (state, action) => {
+      state.terminal_visibile = !state.terminal_visibile;
+      console.info("[Reducer] " + action.type);
+    })
+    ;
 });
 
 export default builderReducer;

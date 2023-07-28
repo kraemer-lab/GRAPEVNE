@@ -16,6 +16,7 @@ import { builderNodeDeselected } from "redux/actions";
 import { builderCleanBuildFolder } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
 import { builderSetRepositoryTarget } from "redux/actions";
+import { builderToggleTerminalVisibility } from "redux/actions";
 
 const StatusBar: React.FC = () => {
   const [status, setStatus] = useState("");
@@ -92,6 +93,11 @@ const Header = () => {
   const btnArrange = () => {
     BuilderEngine.Instance.RedistributeModel();
   };
+  
+  // Toggle terminal visibility
+  const btnToggleTerminalVisibility = () => {
+    dispatch(builderToggleTerminalVisibility());
+  };
 
   // Load modules from repository
   const btnGetModuleList = () => {
@@ -162,13 +168,16 @@ const Header = () => {
           DELETE TEST BUILD
         </button>
         <button className="btn" onClick={btnBuild}>
-          CLEAN BUILD
+          BUILD / ZIP
         </button>
         <button className="btn" onClick={btnClearScene}>
           CLEAR GRAPH
         </button>
         <button className="btn" onClick={btnArrange}>
           ARRANGE GRAPH
+        </button>
+        <button className="btn" onClick={btnToggleTerminalVisibility}>
+          TERMINAL
         </button>
         {/*
           <button className="btn" onClick={btnImportModule}>

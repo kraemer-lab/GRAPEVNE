@@ -44,15 +44,21 @@ def DeleteAllOutput(filename: str) -> dict:
     }
 
 
-def Launch(filename: str, **kwargs) -> dict:
-    """Launch snakemake workflow given a [locally accessible] location"""
+def Launch_cmd(filename: str, **kwargs) -> Tuple[List[str], str]:
+    """Return the snakemake launch command and working directory"""
     filename, workdir = GetFileAndWorkingDirectory(filename)
-    stdout, stderr = snakemake(
+    return snakemake_cmd(
         filename,
         "--nolock",
         workdir=workdir,
         **kwargs,
     )
+
+
+def Launch(filename: str, **kwargs) -> dict:
+    """Launch snakemake workflow given a [locally accessible] location"""
+    cmd, workdir = Launch_cmd(filename, **kwargs)
+    stdout, stderr = snakemake_run(cmd, workdir)
     return {
         "status": "ok" if not stderr else "error",
         "content": {"stdout": stdout, "stderr": stderr},
@@ -441,8 +447,8 @@ def WrapCommandForTerminal(cmd: List[str], workdir: str) -> List[str]:
     return cmd
 
 
-def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
-    """Run snakemake as subprocess
+def snakemake_cmd(filename: str, *args, **kwargs) -> Tuple[List[str], str]:
+    """Determine snakemake command to launch as subprocess
 
     This function takes optional arguments that are passed through to the
     snakemake executable, with the exception of:
@@ -485,10 +491,23 @@ def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
     if terminal:
         cmd = WrapCommandForTerminal(cmd, workdir)
     print(cmd)
-    print("$" + (" ".join(cmd)) + "$")
+    return cmd, workdir
+
+
+def snakemake_run(cmd: List[str], workdir: str) -> Tuple[str, str]:
+    """Run the snakemake command returned by snakemake_cmd"""
     p = subprocess.run(
         cmd,
         cwd=workdir,
         capture_output=True,
     )
     return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
+
+
+def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
+    """Run snakemake as subprocess
+
+    See snakemake_cmd for details on arguments.
+    """
+    cmd, workdir = snakemake_cmd(filename, *args, **kwargs)
+    return snakemake_run(cmd, workdir)
