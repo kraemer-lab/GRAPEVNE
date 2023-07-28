@@ -123,7 +123,7 @@ const Header = () => {
         repo = {
           type: "github",
           listing_type: "DirectoryListing",
-          repo: "jsbrittain/snakeshack",
+          repo: "kraemer-lab/vneyard",
         };
         break;
       case "BranchListing":
@@ -170,6 +170,7 @@ const Header = () => {
         <button className="btn" onClick={btnBuild}>
           BUILD / ZIP
         </button>
+        |
         <button className="btn" onClick={btnClearScene}>
           CLEAR GRAPH
         </button>
@@ -179,16 +180,12 @@ const Header = () => {
         <button className="btn" onClick={btnToggleTerminalVisibility}>
           TERMINAL
         </button>
-        {/*
-          <button className="btn" onClick={btnImportModule}>
-            IMPORT MODULE
-          </button>
-        */}
+        |
         <button className="btn" onClick={btnGetModuleList}>
           GET MODULE LIST
         </button>
         <select
-          defaultValue="localFilesystem"
+          defaultValue="DirectoryListing"
           onChange={(e) => selectRepositoryTarget(e.target.value)}
         >
           <option value="LocalFilesystem">Local filesystem</option>

@@ -14,13 +14,9 @@ interface IBuilderState {
 // State
 const builderStateInit: IBuilderState = {
   repo: JSON.stringify({
-    // (TODO: replace with proper settings menu)
-    type: "local",
-    listing_type: "DirectoryListing",
-    repo: "../../snakeshack",
-    //type: "github",
-    //listing_type: "DirectoryListing", //'BranchListing',
-    //repo: "jsbrittain/snakeshack",
+    type: "github",  // local | github
+    listing_type: "DirectoryListing",  // DirectoryListing | BranchListing
+    repo: "kraemer-lab/vneyard",  // local path or github repo (user/repo)
   }),
   modules_list: "[]",
   statustext: "",

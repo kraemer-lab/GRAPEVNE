@@ -59,10 +59,12 @@ def GetLocalModules(path: str) -> List[dict]:
                         config = yaml.safe_load(file)
                 except FileNotFoundError:
                     print(f"Config file not found - assuming blank: {file}")
+                module_classification = GetModuleClassification(config)
                 modules.append(
                     {
                         "name": f"({org}) {FormatName(workflow)}",
-                        "type": module_type[:-1],  # remove plural
+                        # "type": module_type[:-1],  # remove plural
+                        "type": module_classification,
                         "config": {
                             "snakefile": abspath(url_workflow),
                             "config": config,
@@ -159,10 +161,13 @@ def GetRemoteModulesGithubDirectoryListing(repo: str) -> List[dict]:
                         "Github API request failed (getting workflow config file)."
                     )
                 config = yaml.safe_load(r_config.text)
+                # Determine module type by config file, rather than directory name
+                module_classification = GetModuleClassification(config)
                 modules.append(
                     {
                         "name": f"({org['name']}) {FormatName(workflow['name'])}",
-                        "type": module_type["name"][:-1],  # remove plural
+                        # "type": module_type["name"][:-1],  # remove plural
+                        "type": module_classification,
                         "config": {
                             "snakefile": {
                                 "function": "github",
@@ -220,10 +225,12 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
         if r_config.status_code != 200:
             raise Exception("Github API request failed (getting workflow config file).")
         config = yaml.safe_load(r_config.text)
+        module_classification = GetModuleClassification(config)
         modules.append(
             {
                 "name": branch["name"],
-                "type": module_types[module_type],
+                # "type": module_types[module_type],
+                "type": module_classification,
                 "config": {
                     "snakefile": {
                         "function": "github",
@@ -239,6 +246,22 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
         )
 
     return modules
+
+
+def GetModuleClassification(config: dict) -> str:
+    """Determine the module classification from the config file
+
+    Args:
+        config: module config file
+    """
+    # If config is None, then default to module
+    if config is None:
+        return "module"
+    # If the input namespace exists and is anything other than None, then it is
+    # a module
+    if config.get("input_namespace", "blank") is None:
+        return "source"
+    return "module"
 
 
 def GetWorkflowFiles(

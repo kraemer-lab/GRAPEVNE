@@ -338,10 +338,12 @@ export default class NodeMapEngine {
       offset += 5.0;
       // Call AddNodeToGraph with uniquenames = false to prevent node renaming
       // (at least until after the graph is expanded)
+      const module_type = NodeMapEngine.GetModuleType(
+        data.config.config as Record<string, unknown>);
       const newnode = this.AddNodeToGraph(
         data,
         newpoint,
-        "rgb(192,255,255)",
+        NodeMapEngine.GetModuleTypeColor(module_type),
         false
       );
       newnodes.push(newnode);
@@ -460,5 +462,45 @@ export default class NodeMapEngine {
     // Redraw and return new nodes
     this.engine.repaintCanvas();
     return newnodes;
+  }
+
+  public static GetModuleType(config: Record<string, unknown>): string {
+    for (const key in config) {
+      console.log(key + " = " + config[key]);
+      if (key === "input_namespace") {
+        const value = config[key];
+        if (value === null) {
+          return "source";
+        }
+      }
+    }
+    return "module";
+  }
+  
+  public static GetModuleTypeColor(type: string): string {
+    let color = "";
+    switch (type) {
+      case "source": {
+        color = "rgb(192,255,0)";
+        break;
+      }
+      case "module": {
+        color = "rgb(0,192,255)";
+        break;
+      }
+      case "connector": {
+        color = "rgb(0,255,192)";
+        break;
+      }
+      case "terminal": {
+        color = "rgb(192,0,255)";
+        break;
+      }
+      default: {
+        color = "rgb(128,128,128)";
+        break;
+      }
+    }
+    return color;
   }
 }
