@@ -1,7 +1,8 @@
 # Modules
 
-GRAPEVNE works by connecting 'Modules' together. These modules are standard
-Snakemake workflows that conform to some additional requirements.
+This page provides a description of the basic block of GRAPEVNE - the Module
+specification. GRAPEVNE works by connecting 'Modules' together. These modules
+are standard Snakemake workflows that conform to some additional constraints.
 
 - Modules are self-contained Snakemake workflows, complete with all of the files
   required to run those workflows, such as configuration files, scripts, etc.
@@ -10,11 +11,11 @@ Snakemake workflows that conform to some additional requirements.
   and [WorkflowHub](https://workflowhub.eu/) requirements.
 - Modules can be launched directly through Snakemake, independent of GRAPEVNE.
 
-Modules also conforms to certain standards, and can contain meta-data, that allow them to be
-easily reused, interfaced with one another, and connected together in a
-hierarchical arrangement to form interconnected module networks of varying scale
+Beyond this, modules conform to certain standards and contain meta-data
+that allow them to be easily reused, interfaced with one another, and connected together in a
+hierarchical arrangement to form interconnected networks of varying scale
 and sophistication. This capacity for reuse, flexibility, and an emphasis on
-version control facilitates faster development and reliable re-use of
+version control facilitates faster development, reproducibility and re-use of
 existing processes.
 
 ## How do modules work?
@@ -44,7 +45,7 @@ There are two approaches to importing existing workflows:
 
 ## How do I construct a module?
 
-A Module is Snakemake workflow that conforms to
+A Module is a Snakemake workflow that conforms to
 [Snakemake's best-practise workflow layout](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
 
 In addition, the following parameters are configured and provided by GRAPEVNE,

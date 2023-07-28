@@ -1,6 +1,4 @@
-# Quickstart
-
-## GRAPEVNE Builder
+# GRAPEVNE Builder
 
 GRAPEVNE Builder is the graphical interface that assists you in graphing,
 manipulating and building GRAPEVNE workflows.
@@ -12,7 +10,7 @@ run a simple workflow using several modules that are already available online.
 For this tutorial we will download, process and visualise some publically
 available Covid-19 data.
 
-### Loading modules
+## Loading modules
 
 To begin, open GRAPEVNE. This should start the
 application in the 'Builder' screen, where you will construct and test-run
@@ -32,7 +30,7 @@ The module list is filterable - for this session we are interested in only the
 `Tutorial Builder` modules, so select this from the filter drop-down box (
 which is currently displaying `(all)`).
 
-### Adding your first module
+## Adding your first module
 
 In this tutorial we are interested in the number of new cases of Covid-19 that
 were reported to the World Health Organisation (WHO) at different times and across
@@ -50,7 +48,7 @@ appeared on the graph you can click on the node/module to edit its parameters.
 This module has been set up (by default) to download the `snakemake` logo from
 their website. However, we want to change this to download the WHO data.
 
-### Modify module parameters
+## Modify module parameters
 
 Click on the module and take a moment to look through the parameters list that
 is displayed on the right-hand side of the screen. Note that there is
@@ -76,7 +74,7 @@ In addition to changing the URL location, we also want to rename the file
 after download for convenience. We can do this by editing the `filename` field
 (`config-params-filename`) and changing it to `data.csv`.
 
-### Connect modules together into workflows
+## Connect modules together into workflows
 
 We will now add two mode nodes to the graph. First, add the `Filter` node.
 The WHO dataset contains information on many countries, but we want to limit
@@ -107,7 +105,7 @@ screen into the canvas area, and connect the `Filter` node to it. Leave its
 parameters set to the defaults (for now). Now we are ready to (test) run our
 first workflow...
 
-### Test run a workflow
+## Test run a workflow
 
 GRAPEVNE is designed to build workflows into self-contained files that can be
 shared with others. However, we don't currently want to do that. Instead, we
@@ -132,7 +130,7 @@ Try this now: click `Build and Test`. Remember to open the `Terminal` in order
 to monitor progress. This is the perfect time to grab a fresh cup of tea while
 the environment loads - we will discuss why this takes so long shortly...
 
-### Your first graph
+## Your first graph
 
 You can monitor the status of your workflow from the `Terminal`, but if all
 goes well then you should see a figure pop-up onto your screed displaying
@@ -148,7 +146,7 @@ visualisation package. Visualising data is useful as a tutorial example, and
 can be very useful to periodically inspect the results of analyses, or to
 manually-inspect pre-processed inputs prior to starting long jobs.
 
-### Extending the graph
+## Extending the graph
 
 Let us now extend the analysis by considering seasonal variations. With your
 previous graph entact, add a new node `AggregateByMonth` and connect the
@@ -166,7 +164,7 @@ Your graph should now look (very similar) to this:
 :alt: Complete layout for the Builder Tutorial
 ```
 
-### Run your extended graph
+## Run your extended graph
 
 Click on `Build and Test` to run your extended graph. Since a lot of the
 set-up process was completed on the first run (although not all - we have
@@ -183,7 +181,7 @@ and after a few more seconds of processing time, the second graph will appear,
 revealing the seasonal fluctuations in new Covid-19 cases by month (numbered
 1-12 in this case) for our selected country.
 
-### Changing parameters
+## Changing parameters
 
 As you have seen already, changing the parameters of this analysis is extremely
 easy, you simply have to edit them by clicking on the relevant modules. Try this
@@ -197,7 +195,7 @@ and will automatically re-process the necessary steps to produce the
 required analysis.
 ```
 
-### Building workflows for use outside of GRAPEVNE
+## Building workflows for use outside of GRAPEVNE
 
 Although this extends slightly beyond the basic usage of GRAPEVNE, it is useful
 to consider two scenarios where we may want to build a workflow and distribute
@@ -219,7 +217,7 @@ GRAPEVNE application. These can therefore be run locally, or remotely, as
 required and demonstrates another principal of GRAPEVNE: that workflows remains
 entirely compatible with modern Snakemake.
 
-### Building workflows for use as modules
+## Building workflows for use as modules
 
 The second basic scenario of workflow usage is using GRAPEVNE to create
 workflows composed of hierarchies of modules. This requires us to be able to
@@ -243,7 +241,7 @@ Indeed, it is this form of hierarchical modularization that makes GRAPEVNE
 so powerful. However, to demonstrate this we will want to set-up our own
 repository for testing (which we discuss in the next set of tutorials).
 
-### Wait, but why is the workflow so slow on a first run?
+## Wait, but why is the workflow so slow on a first run?
 
 You may be wondering why the workflow was so slow to execute on its first run.
 After all, it was simply reading a file, filtering it, and plotting the result.
