@@ -312,6 +312,7 @@ export default class NodeMapEngine {
 
     // Create sub-nodes from modules list
     const newnodes: DefaultNodeModel[] = [] as DefaultNodeModel[];
+    const namemap: Record<string, string> = {};
     let offset = 0.0;
     for (const item in modules) {
       if (modules[item] === null || modules[item] === undefined) continue;
@@ -327,6 +328,7 @@ export default class NodeMapEngine {
           config[key] = modules[item][key];
         }
       }
+      // Node config
       const data = {
         name: item,
         type: (modules[item] as Record<string, unknown>).type,
@@ -336,6 +338,10 @@ export default class NodeMapEngine {
       newpoint.x += offset;
       newpoint.y += offset;
       offset += 5.0;
+      // Determine unique name (but don't substitute yet)
+      const uniquename = this.EnsureUniqueName(data.name);
+      if (uniquename !== data.name)
+        namemap[data.name] = uniquename;
       // Call AddNodeToGraph with uniquenames = false to prevent node renaming
       // (at least until after the graph is expanded)
       const module_type = NodeMapEngine.GetModuleType(
@@ -456,8 +462,49 @@ export default class NodeMapEngine {
     });
     this.engine.getModel().removeNode(node);
 
-    // TODO: Ensure unique names (subgraph was expanded without renaming so may
-    //       clash with existing nodes)
+    // Ensure unique names (subgraph was expanded without renaming so may
+    //   clash with existing nodes)
+    // Replace node names in newnode configs (namespaces)
+    newnodes.forEach((node) => {
+      const json = this.getNodePropertiesAsJSON(node);
+      const outerconfig = json.config as Record<string, unknown>;
+      const config = outerconfig["config"] as Record<string, unknown>;
+      for(const key in config) {
+        if (key == "output_namespace") {
+          if (Object.keys(namemap).includes(config[key] as string)) {
+            config[key] = namemap[config[key] as string];
+          }
+        }
+        if (key === "input_namespace") {
+          const input_namespace = config[key];
+          if (typeof input_namespace === "string") {
+            // string = single input port
+            if (Object.keys(namemap).includes(input_namespace)) {
+              config[key] = namemap[input_namespace];
+            }
+          } else {
+            // record = multiple input ports
+            for (const inkey in input_namespace as Record<string, unknown>) {
+              const inval = input_namespace[inkey];
+              if (Object.keys(namemap).includes(inval as string)) {
+                input_namespace[inkey] = namemap[inval as string];
+              }
+            }
+          }
+        }
+      }
+      // Save changes back to node
+      this.nodeScene.setNodeUserProperties(node, json);
+    });
+    // Finally, substitute node names
+    newnodes.forEach((node) => {
+      const nodename = this.nodeScene.getNodeName(node);
+      if (Object.keys(namemap).includes(nodename)) {
+        console.log("(expand) substitution: " + nodename + " -> " + namemap[nodename]);
+        this.nodeScene.setNodeName(node, namemap[nodename]);
+        node.setName(namemap[nodename]);
+      }
+    });
 
     // Redraw and return new nodes
     this.engine.repaintCanvas();
@@ -466,7 +513,6 @@ export default class NodeMapEngine {
 
   public static GetModuleType(config: Record<string, unknown>): string {
     for (const key in config) {
-      console.log(key + " = " + config[key]);
       if (key === "input_namespace") {
         const value = config[key];
         if (value === null) {
