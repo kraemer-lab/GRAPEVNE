@@ -93,7 +93,7 @@ const Header = () => {
   const btnArrange = () => {
     BuilderEngine.Instance.RedistributeModel();
   };
-  
+
   // Toggle terminal visibility
   const btnToggleTerminalVisibility = () => {
     dispatch(builderToggleTerminalVisibility());

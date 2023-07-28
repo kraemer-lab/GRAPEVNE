@@ -51,9 +51,9 @@ def post(request):
             clean_build=False,  # Do not overwrite existing build
         )
         # Second, return the launch command
-        data = runner.Launch_cmd({"format": data["format"],
-                                  "content": build_path},
-                                 terminal=False)
+        data = runner.Launch_cmd(
+            {"format": data["format"], "content": build_path}, terminal=False
+        )
         # Stringify command
         data["command"] = " ".join(data["command"])
         # Return the launch command

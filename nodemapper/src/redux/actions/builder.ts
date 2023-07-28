@@ -8,7 +8,9 @@ export const builderCompileToJson = createAction("builder/compile-to-json");
 
 export const builderBuildAndRun = createAction("builder/build-and-run");
 
-export const builderToggleTerminalVisibility = createAction("builder/toggle-terminal-visibility");
+export const builderToggleTerminalVisibility = createAction(
+  "builder/toggle-terminal-visibility"
+);
 
 export const builderCleanBuildFolder = createAction(
   "builder/clean-build-folder"

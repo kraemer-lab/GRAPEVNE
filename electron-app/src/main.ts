@@ -4,7 +4,7 @@ import path from "path";
 import * as os from "node:os";
 import * as pty from "node-pty";
 
-const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -25,7 +25,6 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
-  
   /////////////////////////
   // Create electron window
   /////////////////////////
@@ -40,15 +39,15 @@ app.whenReady().then(() => {
   ////////////////////////
 
   const ptyProcess = pty.spawn(shell, [], {
-    name: 'xterm-color',
+    name: "xterm-color",
     cols: 80,
     rows: 5,
     cwd: process.env.HOME,
-    env: process.env
+    env: process.env,
   });
   const terminal_sendData = (data: string) => {
     ptyProcess.write(data);
-  }
+  };
   ipcMain.on("terminal/send-data", (event, data) => {
     terminal_sendData(data);
   });
@@ -69,9 +68,8 @@ app.whenReady().then(() => {
     handles.builder_GetRemoteModules
   );
   ipcMain.handle("builder/compile-to-json", handles.builder_CompileToJson);
-  ipcMain.handle(
-    "builder/build-and-run",
-    (event, data) => handles.builder_BuildAndRun(event, data, terminal_sendData)
+  ipcMain.handle("builder/build-and-run", (event, data) =>
+    handles.builder_BuildAndRun(event, data, terminal_sendData)
   );
   ipcMain.handle(
     "builder/clean-build-folder",
@@ -91,7 +89,6 @@ app.whenReady().then(() => {
     "runner/check-node-dependencies",
     handles.runner_CheckNodeDependencies
   );
-
 });
 
 app.on("window-all-closed", () => {

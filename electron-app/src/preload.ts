@@ -4,7 +4,8 @@ type Query = Record<string, unknown>;
 
 contextBridge.exposeInMainWorld("terminalAPI", {
   sendData: (data: string) => ipcRenderer.send("terminal/send-data", data),
-  receiveData: (callback: any) => ipcRenderer.on('terminal/receive-data', callback),
+  receiveData: (callback: any) =>
+    ipcRenderer.on("terminal/receive-data", callback),
 });
 
 contextBridge.exposeInMainWorld("displayAPI", {

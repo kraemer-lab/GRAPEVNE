@@ -1,6 +1,6 @@
-import React from "react"
-import { Terminal } from "xterm"
-import TerminalController from "Terminal/TerminalController"
+import React from "react";
+import { Terminal } from "xterm";
+import TerminalController from "Terminal/TerminalController";
 
 class TerminalWindow extends React.Component {
   terminal: TerminalController;
@@ -8,7 +8,7 @@ class TerminalWindow extends React.Component {
 
   constructor(props) {
     super(props);
-    this.terminal = TerminalController.Instance;  // singleton instance
+    this.terminal = TerminalController.Instance; // singleton instance
     this.xtermRef = React.createRef();
     this.terminal.setReference(this.xtermRef);
   }
@@ -18,9 +18,7 @@ class TerminalWindow extends React.Component {
   }
 
   render() {
-    return (
-      <div ref={this.xtermRef} />
-    );
+    return <div ref={this.xtermRef} />;
   }
 }
 

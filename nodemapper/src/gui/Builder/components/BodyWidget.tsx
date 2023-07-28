@@ -53,7 +53,9 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
 
 export const BodyWidget = (props: BodyWidgetProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
-  const terminal_visible = useAppSelector((state) => state.builder.terminal_visibile);
+  const terminal_visible = useAppSelector(
+    (state) => state.builder.terminal_visibile
+  );
   let modules_list = modules; // create a mutable copy
 
   const [filterSelection, setFilterSelection] = React.useState("");
@@ -156,19 +158,21 @@ export const BodyWidget = (props: BodyWidgetProps) => {
           </select>
           <TrayWidget>{trayitems}</TrayWidget>
         </div>
-          <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
-            <GridCanvasWidget>
-              <CanvasWidget engine={props.engine} />
-            </GridCanvasWidget>
-            <div style={{
+        <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
+          <GridCanvasWidget>
+            <CanvasWidget engine={props.engine} />
+          </GridCanvasWidget>
+          <div
+            style={{
               position: "absolute",
-              display: (terminal_visible) ? "block" : "none",
+              display: terminal_visible ? "block" : "none",
               bottom: 0,
               width: "100%",
-            }}>
-              <TerminalWindow />
-            </div>
-          </Layer>
+            }}
+          >
+            <TerminalWindow />
+          </div>
+        </Layer>
         <NodeInfoRenderer />
       </Content>
     </Body>

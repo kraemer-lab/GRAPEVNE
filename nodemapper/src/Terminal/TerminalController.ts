@@ -1,7 +1,7 @@
-import React from "react"
-import { Terminal } from "xterm"
+import React from "react";
+import { Terminal } from "xterm";
 
-import "./../../node_modules/xterm/css/xterm.css"
+import "./../../node_modules/xterm/css/xterm.css";
 
 // TODO
 // This line permits any function declarations from the window.builderAPI
@@ -19,8 +19,7 @@ class TerminalController {
 
   constructor() {
     this.term = new Terminal();
-    if (window !== undefined)
-      this.terminalAPI = window.terminalAPI;
+    if (window !== undefined) this.terminalAPI = window.terminalAPI;
   }
 
   // Singleton pattern
@@ -35,10 +34,10 @@ class TerminalController {
 
   // Initialise the terminal - must setReference() before calling
   init() {
-    this.term.open(this.xtermRef.current);
-    this.term.resize(80, 5);
     if (this.terminalAPI !== undefined) {
       // Connect terminal to the (electron) API (but only if it exists)
+      this.term.open(this.xtermRef.current);
+      this.term.resize(80, 5);
       this.term.onData((data) => this.terminalAPI.sendData(data));
       this.terminalAPI.receiveData((event, data) => this.sendData(data));
     }
