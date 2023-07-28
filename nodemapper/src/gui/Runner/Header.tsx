@@ -29,7 +29,7 @@ const StatusBar: React.FC = () => {
   );
 };
 
-function Header() {
+const Header = () => {
   const [textEditGraph, setTextEditGraph] = useState("EDIT GRAPH: OFF");
   const graph_is_moveable = useAppSelector(
     (state) => state.display.graph_is_moveable
@@ -105,6 +105,6 @@ function Header() {
       </div>
     </>
   );
-}
+};
 
 export default Header;

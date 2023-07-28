@@ -5,7 +5,6 @@ module.exports = {
   packagerConfig: {},
   rebuildConfig: {},
   makers: [
-
     // zip distributable of binary
     {
       name: "@electron-forge/maker-zip",
@@ -24,7 +23,6 @@ module.exports = {
       name: "@electron-forge/maker-rpm",
       config: {},
     },*/
-
   ],
   publishers: [
     {
@@ -32,9 +30,9 @@ module.exports = {
       config: {
         repository: {
           owner: "kraemer-lab",
-          name: "GRAPEVNE"
+          name: "GRAPEVNE",
         },
-        draft: true
+        draft: true,
       },
     },
   ],

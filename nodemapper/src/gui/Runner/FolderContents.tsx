@@ -13,7 +13,7 @@ import { runnerLoadSnakefile } from "redux/actions/runner";
 
 import "./FolderContents.css";
 
-function FolderContents() {
+const FolderContents = () => {
   const folderinfo = useAppSelector((state) => state.display.folderinfo);
   const [items, setItems] = useState([]);
   const dispatch = useAppDispatch();
@@ -29,7 +29,8 @@ function FolderContents() {
     list.unshift({ name: "..", isdir: true });
     setItems(js.contents);
   }, [folderinfo]);
-  function selectFile(item) {
+
+  const selectFile = (item) => {
     const newpath = JSON.parse(folderinfo).foldername + "/" + item.name;
     if (item.isdir) {
       dispatch(displaySetFolder(newpath));
@@ -37,7 +38,7 @@ function FolderContents() {
       dispatch(displaySetFilename(newpath));
       dispatch(runnerLoadSnakefile(newpath));
     }
-  }
+  };
   const listitems = items.map((item) => (
     <li key={item.name}>
       <button className="button" onClick={() => selectFile(item)}>
@@ -51,6 +52,6 @@ function FolderContents() {
       <ul>{listitems}</ul>
     </>
   );
-}
+};
 
 export default FolderContents;

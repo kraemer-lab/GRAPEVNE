@@ -1,9 +1,7 @@
-import builderjs from "builderjs";
 import fs from "fs";
 import path from "path";
 import * as child from "child_process";
 
-const use_nodejs = false;
 const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
 
 // General query processing interface for Python scripts (replacement for Flask)
@@ -14,15 +12,15 @@ export async function ProcessQuery(
 ): Promise<Record<string, any>> {
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
-    let stdout = "";  // collate return data
-    let stderr = "";  // collate error data
+    let stdout = ""; // collate return data
+    let stderr = ""; // collate error data
 
     console.log(`open [${pythonPath}]: ${args}`);
     const proc = child.spawn(pythonPath, args);
-    
+
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
-    proc.on('close', () => {
+    proc.on("close", () => {
       console.log(`close: ${stdout}`);
       if (stdout === "")
         // Empty return, most likely a failure in python
@@ -32,16 +30,15 @@ export async function ProcessQuery(
             code: 1,
             stdout: stdout,
             stderr: stderr,
-          }
+          },
         });
-      else
-        // Normal return route
-        resolve(JSON.parse(stdout));
+      // Normal return route
+      else resolve(JSON.parse(stdout));
     });
 
     // the backend will only fail under exceptional circumstances;
     // most python related errors are relayed as stderr messages
-    proc.on('error', (code: number) => {
+    proc.on("error", (code: number) => {
       console.log(`error: ${code}`);
       reject({
         query: "error",
@@ -49,165 +46,106 @@ export async function ProcessQuery(
           code: code,
           stdout: stdout,
           stderr: stderr,
-        }
+        },
       });
     });
-    
+
     // collate stdout data
-    proc.stdout.on('data', function(data: string) {
+    proc.stdout.on("data", function (data: string) {
       console.log(`stdout: ${data}`);
       stdout += data;
     });
 
     // collate stderr data
-    proc.stderr.on('data', function(data: string) {
+    proc.stderr.on("data", function (data: string) {
       console.log(`stderr: ${data}`);
       stderr += data;
     });
-
   });
 }
 
-// Query handlers (migrating from python-shell to nodejs)
+// Query handlers
 
 export async function display_FolderInfo(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function builder_GetRemoteModules(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    const modules = await builderjs.GetModulesList(
-      query["data"]["content"]["url"]
-    );
-    return {
-      query: "builder/get-remote-modules",
-      body: modules,
-    };
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function builder_CompileToJson(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    // Note: Instead of returning the zip file as a base64 string from Python
-    //       (as was the procedure in the REST implementation), we instead rely
-    //       on Python saving the zip file to disk, then reading it back in.
+  // Note: Instead of returning the zip file as a base64 string from Python
+  //       (as was the procedure in the REST implementation), we instead rely
+  //       on Python saving the zip file to disk, then reading it back in.
 
-    // ensure any previous zip file is deleted before sending query
-    await fs.unlink("./build.zip", (err: unknown) => {
-      console.warn(err);
-    });
-    await ProcessQuery(event, query, "text");
-    return fs.readFileSync("./build.zip", { encoding: "base64" });
+  // ensure any previous zip file is deleted before sending query
+  await fs.unlink("./build.zip", (err: unknown) => {
+    console.warn(err);
+  });
+  await ProcessQuery(event, query, "text");
+  return fs.readFileSync("./build.zip", { encoding: "base64" });
+}
+
+export async function builder_BuildAndRun(
+  event: any,
+  query: any,
+  cmd_callback: any
+) {
+  const data = await ProcessQuery(event, query);
+  // Execute the build in the working directory through the pty
+  if (data["body"]["cmd"] !== "") {
+    cmd_callback("\x15"); // ctrl-u to clear the line
+    cmd_callback("cd " + data["body"]["workdir"] + "\n");
+    cmd_callback(data["body"]["command"] + "\n");
   }
+  return data;
+}
+
+export async function builder_CleanBuildFolder(event: any, query: any) {
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_Build(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_DeleteResults(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_Lint(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_LoadWorkflow(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_Tokenize(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_TokenizeLoad(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_JobStatus(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_Launch(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 export async function runner_CheckNodeDependencies(event: any, query: any) {
-  if (use_nodejs) {
-    // nodejs version
-    throw new Error("Not yet implemented");
-  } else {
-    // python version
-    return await ProcessQuery(event, query);
-  }
+  return await ProcessQuery(event, query);
 }
 
 exports.display_FolderInfo = display_FolderInfo;
 exports.builder_GetRemoteModules = builder_GetRemoteModules;
 exports.builder_CompileToJson = builder_CompileToJson;
+exports.builder_BuildAndRun = builder_BuildAndRun;
 exports.runner_Build = runner_Build;
 exports.runner_DeleteResults = runner_DeleteResults;
 exports.runner_Lint = runner_Lint;

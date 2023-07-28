@@ -40,10 +40,20 @@ def LintContents(data: dict) -> dict:
     return lint_response
 
 
-def Launch(data: dict) -> dict:
+def Launch(data: dict, **kwargs) -> dict:
     """Launches a workflow in a given location."""
     if data["format"] == "Snakefile":
-        launch_response: dict = snakefile.Launch(data["content"])
+        launch_response: dict = snakefile.Launch(data["content"], **kwargs)
+    else:
+        raise ValueError(f"Format not supported: {data['format']}")
+    return launch_response
+
+
+def Launch_cmd(data: dict, **kwargs) -> dict:
+    """Returns the launch command for a workflow"""
+    if data["format"] == "Snakefile":
+        cmd, workdir = snakefile.Launch_cmd(data["content"], **kwargs)
+        launch_response: dict = {"command": cmd, "workdir": workdir}
     else:
         raise ValueError(f"Format not supported: {data['format']}")
     return launch_response

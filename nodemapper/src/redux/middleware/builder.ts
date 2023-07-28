@@ -25,14 +25,20 @@ const builderAPI = window.builderAPI;
 const runnerAPI = window.runnerAPI;
 const backend = globals.getBackend();
 
-export function builderMiddleware({ getState, dispatch }) {
-  return function (next) {
-    return function (action) {
+export const builderMiddleware = ({ getState, dispatch }) => {
+  return (next) => {
+    return (action) => {
       // action.type, action.payload
       console.log("Middleware: ", action);
       switch (action.type) {
         case "builder/compile-to-json":
           CompileToJSON();
+          break;
+        case "builder/build-and-run":
+          BuildAndRun(dispatch);
+          break;
+        case "builder/clean-build-folder":
+          CleanBuildFolder(dispatch);
           break;
         case "builder/redraw":
           Redraw();
@@ -53,6 +59,13 @@ export function builderMiddleware({ getState, dispatch }) {
             JSON.parse(getState().builder.nodeinfo)
           );
           break;
+        case "builder/update-node-info-name":
+          UpdateNodeInfoName(
+            action,
+            dispatch,
+            JSON.parse(getState().builder.nodeinfo)
+          );
+          break;
         case "builder/get-remote-modules":
           GetRemoteModules(dispatch, JSON.parse(getState().builder.repo));
           break;
@@ -68,7 +81,7 @@ export function builderMiddleware({ getState, dispatch }) {
       return next(action);
     };
   };
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // Middleware
@@ -122,10 +135,63 @@ const CompileToJSON = async () => {
   }
 };
 
-function Redraw() {
+const BuildAndRun = async (dispatchString: TPayloadString) => {
+  const app = BuilderEngine.Instance;
+  const query: Record<string, unknown> = {
+    query: "builder/build-and-run",
+    data: {
+      format: "Snakefile",
+      content: app.GetModuleListJSON(),
+      targets: app.GetLeafNodeNames(),
+    },
+  };
+  const callback = (result) => {
+    console.log(result);
+  };
+  switch (backend as string) {
+    case "rest":
+      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+      SubmitQuery(query, dispatchString, callback);
+      break;
+    case "electron":
+      callback(await builderAPI.BuildAndRun(query));
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
+};
+
+const CleanBuildFolder = async (dispatchString: TPayloadString) => {
+  const app = BuilderEngine.Instance;
+  const query: Record<string, unknown> = {
+    query: "builder/clean-build-folder",
+    data: {
+      format: "Snakefile",
+      content: {
+        path: "", // Path currently set in builder package
+      },
+    },
+  };
+  const callback = (result) => {
+    console.log(result);
+  };
+  switch (backend as string) {
+    case "rest":
+      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+      SubmitQuery(query, dispatchString, callback);
+      break;
+    case "electron":
+      callback(await builderAPI.CleanBuildFolder(query));
+      break;
+    default:
+      console.error("Unknown backend: ", backend);
+  }
+};
+
+const Redraw = () => {
   const app = BuilderEngine.Instance;
   app.engine.repaintCanvas();
-}
+};
 
 interface IPayloadLink {
   payload: DefaultLinkModel; // Non-serialisable object; consider alternatives
@@ -186,12 +252,16 @@ const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
   }
 };
 
-async function NodeSelected(action: IPayloadRecord, dispatch: TPayloadString, getState) {
+const NodeSelected = async (
+  action: IPayloadRecord,
+  dispatch: TPayloadString,
+  getState
+) => {
   // Deselect any nodes first and wait for the state to update
   if (getState().builder.nodeinfo !== "") {
     const deselect = async () => {
       return dispatch(builderNodeDeselected(""));
-    }
+    };
     await deselect();
   }
   // Select the node
@@ -217,27 +287,29 @@ async function NodeSelected(action: IPayloadRecord, dispatch: TPayloadString, ge
     };
   }
   dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
-}
+};
 
 interface INodeDeselectedDispatch {
   payload: string;
 }
 type TNodeDeselectedDispatch = (action: INodeDeselectedDispatch) => void;
 
-function NodeDeselected(dispatch: TNodeDeselectedDispatch) {
+const NodeDeselected = (dispatch: TNodeDeselectedDispatch) => {
   dispatch(builderUpdateNodeInfo(""));
-}
+};
 
-function UpdateNodeInfoKey(action: IPayloadRecord, dispatch, nodeinfo): void {
+const UpdateNodeInfoKey = (
+  action: IPayloadRecord,
+  dispatch,
+  nodeinfo
+): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoKey");
   const builder = BuilderEngine.Instance;
   const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
-  console.log(nodeinfo.id);
   if (node !== null) {
     const workflow = builder.nodeScene.getNodeWorkflow(node);
     const keys = action.payload.keys as string[];
-
     const indexInto = (obj, indexlist, value) => {
       if (indexlist.length == 1) {
         obj[indexlist[0]] = value;
@@ -247,13 +319,34 @@ function UpdateNodeInfoKey(action: IPayloadRecord, dispatch, nodeinfo): void {
     };
     indexInto(workflow, keys, action.payload.value);
     builder.nodeScene.setNodeWorkflow(node, workflow);
-    //dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
   } else {
     console.log("Node not found: ", nodeinfo);
   }
-}
+};
 
-async function GetRemoteModules(dispatchString: TPayloadString, repo: string) {
+const UpdateNodeInfoName = (
+  action: IPayloadString,
+  dispatch,
+  nodeinfo
+): void => {
+  // Update field for node
+  console.log("Middleware: UpdateNodeInfoName");
+  const builder = BuilderEngine.Instance;
+  const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
+  if (node !== null) {
+    const name = builder.EnsureUniqueName(action.payload);
+    builder.nodeScene.setNodeName(node, name);
+    node.setName(name);
+    builder.engine.repaintCanvas();
+  } else {
+    console.log("Node not found: ", nodeinfo);
+  }
+};
+
+const GetRemoteModules = async (
+  dispatchString: TPayloadString,
+  repo: string
+) => {
   // Get list of remote modules
   dispatchString(builderUpdateStatusText("Loading remote modules..."));
   const app = BuilderEngine.Instance;
@@ -281,27 +374,27 @@ async function GetRemoteModules(dispatchString: TPayloadString, repo: string) {
     default:
       console.error("Unknown backend: ", backend);
   }
-}
+};
 
-function UpdateModulesList(dispatch: TPayloadString) {
+const UpdateModulesList = (dispatch: TPayloadString) => {
   // Update list of modules - done in reducer
   dispatch(builderUpdateStatusText(""));
-}
+};
 
-function ImportModule() {
+const ImportModule = () => {
   // Query user for config file and import module
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // POST request handlers
 ///////////////////////////////////////////////////////////////////////////////
 
-function SubmitQueryExpectZip(
+const SubmitQueryExpectZip = (
   query: Record<string, unknown>,
   callback: (content: unknown) => void
-) {
+) => {
   // POST request handler
-  async function postZIPRequest() {
+  const postZIPRequest = async () => {
     const postRequestOptions = {
       method: "POST",
       headers: {
@@ -317,7 +410,7 @@ function SubmitQueryExpectZip(
           const reader = response.body.getReader();
           return new ReadableStream({
             start(controller) {
-              function push() {
+              const push = () => {
                 reader.read().then(({ done, value }) => {
                   if (done) {
                     controller.close();
@@ -326,7 +419,7 @@ function SubmitQueryExpectZip(
                   controller.enqueue(value);
                   push();
                 });
-              }
+              };
               push();
             },
           });
@@ -341,15 +434,15 @@ function SubmitQueryExpectZip(
       .then((result) => {
         callback(result);
       });
-  }
+  };
   postZIPRequest();
-}
+};
 
-async function postRequestCheckNodeDependencies(
+const postRequestCheckNodeDependencies = async (
   query: Record<string, unknown>,
   dispatch: TPayloadString,
   callback: (data: Record<string, unknown>) => void
-) {
+) => {
   const postRequestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json;charset=UTF-8" },
@@ -373,11 +466,11 @@ async function postRequestCheckNodeDependencies(
     .catch((error) => {
       console.error("Error during query: ", error);
     });
-}
+};
 
 const SubmitQuery = (query: Record<string, unknown>, dispatch, callback) => {
   // POST request handler
-  async function postRequest() {
+  const postRequest = async () => {
     const postRequestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json;charset=UTF-8" },
@@ -401,13 +494,13 @@ const SubmitQuery = (query: Record<string, unknown>, dispatch, callback) => {
       .catch((error) => {
         console.error("Error during query: ", error);
       });
-  }
+  };
 
-  function processResponse(content: JSON, callback) {
+  const processResponse = (content: JSON, callback) => {
     console.log("Process response: ", content);
     dispatch(builderUpdateStatusText(""));
     callback(content);
-  }
+  };
 
   // Received query request
   if (JSON.stringify(query) !== JSON.stringify({})) postRequest();

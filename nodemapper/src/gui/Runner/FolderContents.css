@@ -8,8 +8,9 @@
   display: inline-block;
   font-size: 12px;
   background: #555555;
+  color: #cccccc;
 }
 .button:hover {
   background: #777777;
-  color: black;
+  color: #cccccc;
 }

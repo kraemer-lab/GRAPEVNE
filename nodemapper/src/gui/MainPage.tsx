@@ -21,7 +21,7 @@ const MenuChoiceRender: React.FC<MenuChoiceRenderProps> = (
   }
 };
 
-function MainPage() {
+const MainPage = () => {
   const [menuChoice, setMenuChoice] = useState(0);
 
   return (
@@ -69,6 +69,6 @@ function MainPage() {
       </div>
     </>
   );
-}
+};
 
 export default MainPage;

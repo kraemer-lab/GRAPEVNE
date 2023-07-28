@@ -7,17 +7,14 @@ import { useAppDispatch } from "redux/store/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { builderUpdateNodeInfoKey } from "redux/actions";
 
-import "./HighlightedJSON.css"
+import "./HighlightedJSON.css";
 
 /*
  * HighlightedJSON code modified from:
  * https://codepen.io/benshope/pen/BxVpjo
  */
 
-const protectedNames = [
-  "input_namespace",
-  "output_namespace",
-];
+const protectedNames = ["input_namespace", "output_namespace"];
 
 interface IHighlightJSONProps {
   keylist: string[];
@@ -28,21 +25,24 @@ const addQuotesIfString = (value: string, isString: boolean) => {
   return value;
 };
 
-
 const HighlightedJSON = (json_obj) => {
   const dispatch = useAppDispatch();
 
   // Parse JSON string
   const json_str: string = json_obj.json;
-  if (json_str === "" || json_str === undefined || json_str === JSON.stringify({}))
+  if (
+    json_str === "" ||
+    json_str === undefined ||
+    json_str === JSON.stringify({})
+  )
     return <div className="json"></div>;
   const json = JSON.parse(json_str);
 
   // Recursive function to render the JSON tree
-  const HighlightJSON = ({keylist}: IHighlightJSONProps) => {
+  const HighlightJSON = ({ keylist }: IHighlightJSONProps) => {
     // Isolate current branch in the json tree (indexed by keylist)
     let jsonObj = json;
-    for(let i = 0; i < keylist.length; i++) {
+    for (let i = 0; i < keylist.length; i++) {
       jsonObj = jsonObj[keylist[i]];
     }
     // Map the JSON sub-fields to a list of rendered elements
@@ -58,7 +58,7 @@ const HighlightedJSON = (json_obj) => {
       if (isSimpleValue) {
         isProtectedValue = protectedNames.includes(key);
       }
-      if (isProtectedValue && (valueType === "null")) {
+      if (isProtectedValue && valueType === "null") {
         value = "(null)";
         valueType = null;
       }
@@ -82,31 +82,29 @@ const HighlightedJSON = (json_obj) => {
                 minWidth: "150px",
               }}
             >
-            {value}
+              {value}
+            </span>
+          ) : isSimpleValue ? (
+            <span
+              className={valueType}
+              style={{
+                display: "inline-block",
+                height: "25px",
+                minWidth: "150px",
+              }}
+            >
+              <EasyEdit
+                type={Types.TEXT}
+                onHoverCssClass="easyEditHover"
+                // cancelOnBlur={true} // TODO: won't let you click 'save'!! //
+                saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
+                cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                value={value}
+                onSave={(value) => setValue(value)}
+              />
             </span>
           ) : (
-            isSimpleValue ? (
-              <span
-                className={valueType}
-                style={{
-                  display: "inline-block",
-                  height: "25px",
-                  minWidth: "150px",
-                }}
-              >
-                <EasyEdit
-                  type={Types.TEXT}
-                  onHoverCssClass="easyEditHover"
-                  // cancelOnBlur={true} // TODO: won't let you click 'save'!! //
-                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-                  value={value}
-                  onSave={(value) => setValue(value)}
-                />
-              </span>
-            ) : (
-              <HighlightJSON keylist={[...keylist, key]} />
-            )
+            <HighlightJSON keylist={[...keylist, key]} />
           )}
         </div>
       );

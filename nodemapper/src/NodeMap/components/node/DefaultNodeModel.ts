@@ -148,4 +148,8 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
   setOptions(options: DefaultNodeModelOptions) {
     this.options = options;
   }
+
+  setName(name: string) {
+    this.options.name = name;
+  }
 }

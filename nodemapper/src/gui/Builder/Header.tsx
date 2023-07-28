@@ -10,10 +10,13 @@ import { displayUpdateNodeInfo } from "redux/actions";
 import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderImportModule } from "redux/actions";
+import { builderBuildAndRun } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
+import { builderCleanBuildFolder } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
 import { builderSetRepositoryTarget } from "redux/actions";
+import { builderToggleTerminalVisibility } from "redux/actions";
 
 const StatusBar: React.FC = () => {
   const [status, setStatus] = useState("");
@@ -71,6 +74,16 @@ const Header = () => {
     dispatch(builderNodeDeselected(""));
   };
 
+  // Run - build and run the workflow
+  const btnRun = () => {
+    dispatch(builderBuildAndRun());
+  };
+
+  // Clean build folder
+  const btnCleanBuildFolder = () => {
+    dispatch(builderCleanBuildFolder());
+  };
+
   // Build - compile config to workflow zip and download
   const btnBuild = () => {
     dispatch(builderCompileToJson());
@@ -79,6 +92,11 @@ const Header = () => {
   // Distribute model (visual)
   const btnArrange = () => {
     BuilderEngine.Instance.RedistributeModel();
+  };
+
+  // Toggle terminal visibility
+  const btnToggleTerminalVisibility = () => {
+    dispatch(builderToggleTerminalVisibility());
   };
 
   // Load modules from repository
@@ -135,20 +153,31 @@ const Header = () => {
           marginBottom: 2,
         }}
       >
+        {/*
         <button className="btn" onClick={btnLoadScene}>
           LOAD
         </button>
         <button className="btn" onClick={btnSaveScene}>
           SAVE
         </button>
+        */}
+        <button className="btn" onClick={btnRun}>
+          BUILD AND TEST
+        </button>
+        <button className="btn" onClick={btnCleanBuildFolder}>
+          DELETE TEST BUILD
+        </button>
         <button className="btn" onClick={btnBuild}>
-          BUILD
+          BUILD / ZIP
         </button>
         <button className="btn" onClick={btnClearScene}>
-          CLEAR
+          CLEAR GRAPH
         </button>
         <button className="btn" onClick={btnArrange}>
-          ARRANGE
+          ARRANGE GRAPH
+        </button>
+        <button className="btn" onClick={btnToggleTerminalVisibility}>
+          TERMINAL
         </button>
         {/*
           <button className="btn" onClick={btnImportModule}>

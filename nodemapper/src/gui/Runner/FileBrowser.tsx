@@ -6,7 +6,7 @@ import { runnerLoadWorkflow } from "redux/actions";
 
 import "./FileBrowser.css";
 
-function FileBrowser() {
+const FileBrowser = () => {
   const dispatch = useAppDispatch();
   const btnLoadWorkflow = () => {
     dispatch(runnerLoadWorkflow());
@@ -33,6 +33,6 @@ function FileBrowser() {
       <FolderContents />
     </div>
   );
-}
+};
 
 export default FileBrowser;

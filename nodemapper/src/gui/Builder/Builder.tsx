@@ -2,7 +2,7 @@ import React from "react";
 import Header from "./Header";
 import NodeManager from "./NodeManager";
 
-function Builder() {
+const Builder = () => {
   return (
     <>
       <div
@@ -22,6 +22,6 @@ function Builder() {
       </div>
     </>
   );
-}
+};
 
 export default Builder;

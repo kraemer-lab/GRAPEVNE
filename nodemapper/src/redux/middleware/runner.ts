@@ -25,9 +25,9 @@ declare const window: any;
 const runnerAPI = window.runnerAPI;
 const backend = globals.getBackend();
 
-export function runnerMiddleware({ getState, dispatch }) {
-  return function (next) {
-    return function (action) {
+export const runnerMiddleware = ({ getState, dispatch }) => {
+  return (next) => {
+    return (action) => {
       // action.type
       //       .payload
       console.log("Middleware: ", action);
@@ -71,7 +71,7 @@ export function runnerMiddleware({ getState, dispatch }) {
       return next(action);
     };
   };
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // Middleware
@@ -165,7 +165,7 @@ const LoadSnakefile = async (action, dispatch): Promise<void> => {
     default:
       console.error("Unknown backend: ", backend);
   }
-  dispatch(displayUpdateNodeInfo(""));
+  dispatch(runnerUpdateStatusText(""));
 };
 
 const LaunchSnakefile = async (dispatch, folderinfo: string): Promise<void> => {
@@ -298,6 +298,7 @@ const LoadWorkflow = async (dispatch, folderinfo: string): Promise<void> => {
     default:
       console.error("Unknown backend: ", backend);
   }
+  dispatch(runnerUpdateStatusText(""));
 };
 
 const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
@@ -352,9 +353,9 @@ const RebuildNodeMap = (content: Record<string, any>, dispatch): void => {
   dispatch(runnerLintSnakefile());
 };
 
-function QueryAndLoadTextFile(
+const QueryAndLoadTextFile = (
   onLoad: (result, filename: string) => void
-): void {
+): void => {
   // eslint-disable-line @typescript-eslint/ban-types
   // Opens a file dialog, then executes readerEvent
   const input = document.createElement("input");
@@ -367,15 +368,15 @@ function QueryAndLoadTextFile(
       onLoad(readerEvent.target.result, file.name);
   };
   input.click();
-}
+};
 
-function SubmitQuery(
+const SubmitQuery = (
   query: Record<string, unknown>,
   dispatch,
   callback: (content: Record<string, unknown>) => void
-): void {
+): void => {
   // POST request handler
-  async function postRequest() {
+  const postRequest = async () => {
     const postRequestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json;charset=UTF-8" },
@@ -397,14 +398,14 @@ function SubmitQuery(
       .catch((error) => {
         console.error("Error during query: ", error);
       });
-  }
+  };
 
-  function processResponse(content: Record<string, unknown>, callback) {
+  const processResponse = (content: Record<string, unknown>, callback) => {
     console.log("Process response: ", content);
     dispatch(runnerUpdateStatusText(""));
     callback(content);
-  }
+  };
 
   // Received query request (POST to backend server)...
   if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
-}
+};

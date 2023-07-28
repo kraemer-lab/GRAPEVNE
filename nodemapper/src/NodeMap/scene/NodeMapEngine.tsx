@@ -175,17 +175,68 @@ export default class NodeMapEngine {
     });
   }
 
+  public GetLeafNodes(): NodeModel[] {
+    const leafNodes = [];
+    this.engine
+      .getModel()
+      .getNodes()
+      .forEach((node) => {
+        if (
+          Object.keys(
+            this.nodeScene.getNodeOutputNodes(node as DefaultNodeModel)
+          ).length == 0
+        )
+          leafNodes.push(node);
+      });
+    return leafNodes;
+  }
+
+  public GetLeafNodeNames(): string[] {
+    const leafNodes = this.GetLeafNodes();
+    const leafNodeNames = [];
+    leafNodes.forEach((node) => {
+      leafNodeNames.push(this.getProperty(node, "name"));
+    });
+    return leafNodeNames;
+  }
+
+  public DoesNodeNameClash(name: string): boolean {
+    let clash = false;
+    this.engine
+      .getModel()
+      .getNodes()
+      .forEach((node) => {
+        if (this.getProperty(node, "name") === name) clash = true;
+      });
+    return clash;
+  }
+
+  public GetUniqueName(name: string): string {
+    // Adds a postfix to the name to make it unique
+    // Note: this function always adds a postfix, use EnsureUniqueName to
+    //       preserve existing name if possible
+    let nodePostfix = 0;
+    while (this.DoesNodeNameClash(name + "_" + ++nodePostfix));
+    return (name += "_" + nodePostfix);
+  }
+
+  public EnsureUniqueName(name: string): string {
+    // Preserves existing name if no clashes, otherwise adds a postfix
+    if (this.DoesNodeNameClash(name)) return this.GetUniqueName(name);
+    return name;
+  }
+
   public AddNodeToGraph(
     data: Record<string, unknown>,
     point,
     color,
     uniquenames = true
   ): DefaultNodeModel {
-    const nodesCount = keys(this.engine.getModel().getNodes()).length;
-
     let node: DefaultNodeModel = null;
     let node_name = data.name as string;
-    if (uniquenames) node_name += "_" + (nodesCount + 1);
+    // Unique name
+    if (uniquenames) node_name = this.EnsureUniqueName(node_name);
+    // Create node
     node = new DefaultNodeModel(
       node_name,
       color,
@@ -231,13 +282,35 @@ export default class NodeMapEngine {
     return node;
   }
 
+  public CanNodeExpand(name: string): boolean {
+    const node = this.getNodeByName(name);
+    if (!node) return false;
+    const json = this.getNodePropertiesAsJSON(node);
+    if (!json.config) return false;
+    if (!json.config["config"]) return false;
+    const modules = json.config["config"] as Record<string, unknown>;
+    let can_node_expand = false;
+    for (const item in modules) {
+      if (modules[item] === null || modules[item] === undefined) continue;
+      if (modules[item]["config"] === undefined) continue;
+      can_node_expand = true;
+      break;
+    }
+    return can_node_expand;
+  }
+
   public ExpandNodeByName(name: string): DefaultNodeModel[] {
     const node = this.getNodeByName(name);
     if (!node) return null;
     const json = this.getNodePropertiesAsJSON(node);
     if (!json.config) return null;
     if (!json.config["config"]) return null;
+
+    // Modules list
     const modules = json.config["config"] as Record<string, unknown>;
+    if (!modules) return null; // Do not expand if no modules
+
+    // Create sub-nodes from modules list
     const newnodes: DefaultNodeModel[] = [] as DefaultNodeModel[];
     let offset = 0.0;
     for (const item in modules) {

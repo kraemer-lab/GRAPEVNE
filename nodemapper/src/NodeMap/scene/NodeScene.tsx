@@ -98,6 +98,14 @@ class NodeScene {
     return this.getNodeUserProperties(node).name as string;
   }
 
+  setNodeName(node: DefaultNodeModel, name: string): void {
+    const opts = node.getOptions();
+    const userProperties = JSON.parse(opts.extras);
+    userProperties["name"] = name;
+    opts.extras = JSON.stringify(userProperties);
+    node.setOptions(opts);
+  }
+
   InitializeScene(): void {
     // Initialise Node drawing engine and specify starting layout
     this.engine = createEngine();

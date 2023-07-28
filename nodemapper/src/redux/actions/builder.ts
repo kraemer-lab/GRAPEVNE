@@ -6,6 +6,16 @@ export const builderSaveNodemap = createAction("builder/save-nodemap");
 
 export const builderCompileToJson = createAction("builder/compile-to-json");
 
+export const builderBuildAndRun = createAction("builder/build-and-run");
+
+export const builderToggleTerminalVisibility = createAction(
+  "builder/toggle-terminal-visibility"
+);
+
+export const builderCleanBuildFolder = createAction(
+  "builder/clean-build-folder"
+);
+
 export const builderRedraw = createAction("builder/redraw");
 
 export const builderGetRemoteModules = createAction(
@@ -29,6 +39,10 @@ export const builderUpdateNodeInfo = createAction<string>(
 export const builderUpdateNodeInfoKey = createAction<
   Record<string, string[] | string>
 >("builder/update-node-info-key");
+
+export const builderUpdateNodeInfoName = createAction<string>(
+  "builder/update-node-info-name"
+);
 
 export const builderSetRepositoryTarget = createAction<Record<string, any>>( // eslint-disable-line @typescript-eslint/no-explicit-any
   "builder/set-repository-target"

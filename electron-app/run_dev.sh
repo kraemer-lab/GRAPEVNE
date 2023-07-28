@@ -20,11 +20,6 @@ if [ ! -d "venv" ]; then
 fi
 source venv/bin/activate
 
-# compile builderjs
-pushd ../builderjs
-yarn build
-popd
-
 # compile and run
 yarn
 yarn build

@@ -23,12 +23,7 @@ python -m PyInstaller src/python/backend.py --onefile --hidden-import ../builder
 
 # Ensure nodemapper up-to-date
 pushd ../nodemapper
-yarn
-yarn build
-popd
-
-# compile builderjs
-pushd ../builderjs
+cp src/redux/globals_electron.ts src/redux/globals.ts
 yarn
 yarn build
 popd
