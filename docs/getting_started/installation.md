@@ -41,6 +41,7 @@ If you intend to contribute towards GRAPEVNE, or simply wish to build from
 source, then follow these instructions.
 
 Dependencies:
+
 - Python 3.9+
 - [yarn](https://yarnpkg.com/) package manager
 

@@ -16,13 +16,12 @@ To begin, open GRAPEVNE. This should start the
 application in the 'Builder' screen, where you will construct and test-run
 your workflows.
 
-There are various options available at the top of the screen. 
+There are various options available at the top of the screen.
 For this tutorial we will make use of pre-constructed modules available through
 our online repository. To access the repository ensure that 'Directory
 Listing (github)' is selected from the repository drop-down box at the top of
 the screen, and that `kraemer-lab/vneyard` (note the spelling) is displayed in
-the repository field. Then, click `Get Module List`. A message (`Loading remote
-modules`) will display while the listing loads. This will take a few seconds
+the repository field. Then, click `Get Module List`. A message (`Loading remote modules`) will display while the listing loads. This will take a few seconds
 and you will know when it completed as the list of available modules will
 display on the left-hand side of the screen.
 
@@ -58,6 +57,7 @@ which appears under `config-params-url`. Hovering your mouse over the URL text
 will change the background colour, indicating that is can be edited. Clicking
 on the text will open an edit box. Do this now, select all of the text and
 replace it with the location of the WHO data:
+
 ```
 https://covid19.who.int/WHO-COVID-19-global-data.csv
 ```
@@ -190,7 +190,7 @@ if you are not sure of your country code). Click `Build and Test` to launch the
 analysis.
 
 ```{note}
-Snakemake will know that the parameters of the analysis have changed 
+Snakemake will know that the parameters of the analysis have changed
 and will automatically re-process the necessary steps to produce the
 required analysis.
 ```
@@ -208,9 +208,11 @@ run outside of GRAPEVNE.
 
 For example, to run your newly created workflow called `build.zip` outside of
 GRAPEVNE, simply unzip it, move into the `build` folder and type:
+
 ```
 snakemake --cores 1 $(snakemake --list)
 ```
+
 in the terminal (or command prompt). This will launch the same series of steps
 as you executed with the `Build and Test` button, but without needing the
 GRAPEVNE application. These can therefore be run locally, or remotely, as
@@ -234,6 +236,7 @@ exposed in the editor for use.
 ## Summary
 
 You are now able to build a workflow to either
+
 1. distribute to others for use, or
 2. use as a module in another workflow
 

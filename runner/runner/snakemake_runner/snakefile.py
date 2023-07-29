@@ -261,12 +261,12 @@ def CheckNodeDependencies(jsDeps: dict) -> dict:
     """Check if all dependencies are resolved for a given node"""
 
     # Build model from JSON (for dependency analysis)
-    build, model = BuildFromJSON(jsDeps, singlefile=True)
+    build, model = BuildFromJSON(jsDeps, singlefile=True, partial_build=True)
 
     # Determine input namespaces for target node
     input_namespaces = model.ConstructSnakefileConfig()[
         model.GetNodeByName(model.nodes[0].name).rulename  # first (target) node
-    ].get("input_namespace", {})
+    ]["config"].get("input_namespace", {})
     if isinstance(input_namespaces, str):
         input_namespaces = {"In": input_namespaces}
     if not input_namespaces:

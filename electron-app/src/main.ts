@@ -54,7 +54,7 @@ app.whenReady().then(() => {
   ptyProcess.onData((data: any) => {
     win.webContents.send("terminal/receive-data", data);
   });
-  terminal_sendData('\n');  // Forces the terminal to display the prompt
+  terminal_sendData("\n"); // Forces the terminal to display the prompt
 
   ////////////////////
   // Setup IPC handles

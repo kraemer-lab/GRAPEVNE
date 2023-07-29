@@ -340,12 +340,12 @@ export default class NodeMapEngine {
       offset += 5.0;
       // Determine unique name (but don't substitute yet)
       const uniquename = this.EnsureUniqueName(data.name);
-      if (uniquename !== data.name)
-        namemap[data.name] = uniquename;
+      if (uniquename !== data.name) namemap[data.name] = uniquename;
       // Call AddNodeToGraph with uniquenames = false to prevent node renaming
       // (at least until after the graph is expanded)
       const module_type = NodeMapEngine.GetModuleType(
-        data.config.config as Record<string, unknown>);
+        data.config.config as Record<string, unknown>
+      );
       const newnode = this.AddNodeToGraph(
         data,
         newpoint,
@@ -469,7 +469,7 @@ export default class NodeMapEngine {
       const json = this.getNodePropertiesAsJSON(node);
       const outerconfig = json.config as Record<string, unknown>;
       const config = outerconfig["config"] as Record<string, unknown>;
-      for(const key in config) {
+      for (const key in config) {
         if (key == "output_namespace") {
           if (Object.keys(namemap).includes(config[key] as string)) {
             config[key] = namemap[config[key] as string];
@@ -500,7 +500,9 @@ export default class NodeMapEngine {
     newnodes.forEach((node) => {
       const nodename = this.nodeScene.getNodeName(node);
       if (Object.keys(namemap).includes(nodename)) {
-        console.log("(expand) substitution: " + nodename + " -> " + namemap[nodename]);
+        console.log(
+          "(expand) substitution: " + nodename + " -> " + namemap[nodename]
+        );
         this.nodeScene.setNodeName(node, namemap[nodename]);
         node.setName(namemap[nodename]);
       }
@@ -522,7 +524,7 @@ export default class NodeMapEngine {
     }
     return "module";
   }
-  
+
   public static GetModuleTypeColor(type: string): string {
     let color = "";
     switch (type) {
