@@ -14,6 +14,7 @@ import { DefaultNodeModel } from "NodeMap";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfoName } from "redux/actions";
+import { builderCheckNodeDependencies } from "redux/actions";
 
 interface IPayload {
   id: string;
@@ -22,6 +23,24 @@ interface IPayload {
 interface ExpandProps {
   nodeinfo: Record<string, unknown>;
 }
+
+interface ValidateButtonProps {
+  nodename: string;
+}
+
+const ValidateButton = (props: ValidateButtonProps) => {
+  const dispatch = useAppDispatch();
+
+  const btnValidate = () => {
+    dispatch(builderCheckNodeDependencies(props.nodename));
+  };
+
+  return (
+    <button className="btn" onClick={btnValidate}>
+      Validate
+    </button>
+  );
+};
 
 const ExpandButton = (props: ExpandProps) => {
   const [newnodes, setNewNodes] = React.useState<NodeModel[]>(null);
@@ -124,11 +143,10 @@ const NodeInfoRenderer = (props) => {
           />
         </div>
         <div>
+          <ValidateButton nodename={nodeinfo.name} />
           {PermitNodeExpand(nodeinfo) ? (
             <ExpandButton nodeinfo={nodeinfo} />
-          ) : (
-            <></>
-          )}
+          ) : null}
         </div>
       </div>
       <div

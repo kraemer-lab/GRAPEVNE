@@ -44,21 +44,20 @@ def DeleteAllOutput(filename: str) -> dict:
     }
 
 
-def Launch_cmd(filename: str, **kwargs) -> Tuple[List[str], str]:
+def Launch_cmd(filename: str, *args, **kwargs) -> Tuple[List[str], str]:
     """Return the snakemake launch command and working directory"""
     filename, workdir = GetFileAndWorkingDirectory(filename)
     return snakemake_cmd(
         filename,
-        "--nolock",
-        "$(snakemake --list)",
         workdir=workdir,
+        *args,
         **kwargs,
     )
 
 
-def Launch(filename: str, **kwargs) -> dict:
+def Launch(filename: str, *args, **kwargs) -> dict:
     """Launch snakemake workflow given a [locally accessible] location"""
-    cmd, workdir = Launch_cmd(filename, **kwargs)
+    cmd, workdir = Launch_cmd(filename, *args, **kwargs)
     stdout, stderr = snakemake_run(cmd, workdir)
     return {
         "status": "ok" if not stderr else "error",
@@ -261,12 +260,12 @@ def CheckNodeDependencies(jsDeps: dict) -> dict:
     """Check if all dependencies are resolved for a given node"""
 
     # Build model from JSON (for dependency analysis)
-    build, model = BuildFromJSON(jsDeps, singlefile=True)
+    build, model = BuildFromJSON(jsDeps, singlefile=True, partial_build=True)
 
     # Determine input namespaces for target node
     input_namespaces = model.ConstructSnakefileConfig()[
         model.GetNodeByName(model.nodes[0].name).rulename  # first (target) node
-    ].get("input_namespace", {})
+    ]["config"].get("input_namespace", {})
     if isinstance(input_namespaces, str):
         input_namespaces = {"In": input_namespaces}
     if not input_namespaces:
@@ -474,14 +473,8 @@ def snakemake_cmd(filename: str, *args, **kwargs) -> Tuple[List[str], str]:
         pass
     # Collate arguments list
     arglist = list(args)
-    # Ensure conda is enabled
-    if "--use-conda" not in arglist:
-        arglist.append("--use-conda")
     for k, v in kwargs.items():
         arglist.extend([k, v])
-    # Default set a single core if none specified
-    if "--cores" not in kwargs.keys() and "--cores" not in args:
-        arglist.extend(["--cores", "1"])
     # Launch process and wait for return
     cmd = [
         "snakemake",

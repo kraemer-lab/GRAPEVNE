@@ -35,7 +35,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           CompileToJSON();
           break;
         case "builder/build-and-run":
-          BuildAndRun(dispatch);
+          BuildAndRun(dispatch, getState().builder.snakemake_args);
           break;
         case "builder/clean-build-folder":
           CleanBuildFolder(dispatch);
@@ -44,7 +44,14 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           Redraw();
           break;
         case "builder/add-link":
-          AddLink(action, dispatch);
+          AddLink(
+            action,
+            getState().builder.auto_validate_connections,
+            dispatch
+          );
+          break;
+        case "builder/check-node-dependencies":
+          CheckNodeDependencies(action.payload, dispatch);
           break;
         case "builder/node-selected":
           NodeSelected(action, dispatch, getState);
@@ -135,7 +142,10 @@ const CompileToJSON = async () => {
   }
 };
 
-const BuildAndRun = async (dispatchString: TPayloadString) => {
+const BuildAndRun = async (
+  dispatchString: TPayloadString,
+  snakemake_args: string
+) => {
   const app = BuilderEngine.Instance;
   const query: Record<string, unknown> = {
     query: "builder/build-and-run",
@@ -143,6 +153,7 @@ const BuildAndRun = async (dispatchString: TPayloadString) => {
       format: "Snakefile",
       content: app.GetModuleListJSON(),
       targets: app.GetLeafNodeNames(),
+      args: snakemake_args,
     },
   };
   const callback = (result) => {
@@ -196,7 +207,15 @@ const Redraw = () => {
 interface IPayloadLink {
   payload: DefaultLinkModel; // Non-serialisable object; consider alternatives
 }
-const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
+const AddLink = async (
+  action: IPayloadLink,
+  auto_validate_connections: boolean,
+  dispatch: TPayloadString
+) => {
+  // Skip check if auto-validation is disabled
+  if (!auto_validate_connections) {
+    return;
+  }
   // Determine which is the input (vs output) port (ordering is drag-dependent)
   const app = BuilderEngine.Instance;
   const link = action.payload;
@@ -209,8 +228,18 @@ const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
   const node = targetPort.getParent();
   const nodename = JSON.parse(node.getOptions().extras)["name"];
 
+  // Check node dependencies
+  CheckNodeDependencies(nodename, dispatch);
+};
+
+const CheckNodeDependencies = async (
+  nodename: string,
+  dispatch: TPayloadString
+) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
+  const app = BuilderEngine.Instance;
+  const node = app.getNodeByName(nodename) as DefaultNodeModel;
   const inputNodes = app.nodeScene.getNodeInputNodes(node);
   const depNodeNames = Object.values(inputNodes) as string[];
   depNodeNames.unshift(nodename);
@@ -224,12 +253,17 @@ const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
       content: JSON.stringify(jsDeps),
     },
   };
+  // Set node grey to indicate checking
+  const node_type = app.getProperty(node, "type");
+  node.getOptions().color = "rgb(192,192,192)";
+  app.engine.repaintCanvas();
+
   const callback = (data: Record<string, unknown>) => {
     dispatch(builderUpdateStatusText(""));
     console.log(data);
     switch (data["body"]["status"]) {
       case "ok":
-        node.getOptions().color = "rgb(0,192,255)";
+        node.getOptions().color = BuilderEngine.GetModuleTypeColor(node_type);
         break;
       case "missing":
         node.getOptions().color = "red";
@@ -237,6 +271,7 @@ const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
       default:
         console.error("Unexpected response: ", data["body"]);
     }
+    app.engine.repaintCanvas();
     dispatch(builderRedraw());
   };
   switch (backend as string) {
@@ -348,7 +383,7 @@ const GetRemoteModules = async (
   repo: string
 ) => {
   // Get list of remote modules
-  dispatchString(builderUpdateStatusText("Loading remote modules..."));
+  dispatchString(builderUpdateStatusText("Loading modules..."));
   const app = BuilderEngine.Instance;
   const query: Record<string, unknown> = {
     query: "builder/get-remote-modules",

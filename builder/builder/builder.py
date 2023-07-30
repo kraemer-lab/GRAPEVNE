@@ -1,4 +1,5 @@
 import argparse
+import copy
 import json
 import pathlib
 import re
@@ -84,7 +85,7 @@ class Module(Node):
             return filename
         if isinstance(self.snakefile, dict):
             # Remote file
-            c = self.snakefile.copy()
+            c = copy.deepcopy(self.snakefile)
             c["kwargs"]["path"] = c["kwargs"]["path"].replace(
                 workflow_filename, config_filename
             )
@@ -126,6 +127,11 @@ class Model:
     def __init__(self) -> None:
         """Initialise the model"""
         self.nodes: List[Node] = []  # List of Node objects
+        self.partial_build: bool = False
+
+    def SetPartialBuild(self, partial_build: bool) -> None:
+        """Sets the partial build flag (does not throw if a node is missing)"""
+        self.partial_build = partial_build
 
     def BuildSnakefile(
         self,
@@ -292,6 +298,10 @@ class Model:
         Example: Connect the output of module2 to the named input on module1
             connector = [ {"input1": "module2"}, "module1" ]
 
+        Error behaviour depends on the partial_build flag. If False then an
+        error is thrown if a node is not found. If True then the connector is
+        ignored and None returned.
+
         Args:
             name (str): Name of the connector
             connector (list): Connector definition
@@ -299,6 +309,8 @@ class Model:
         mapping = connector.get("map", None)
         node_to = self.GetNodeByName(mapping[1])
         if not node_to:
+            if self.partial_build:
+                return
             raise ValueError(
                 "No matching node found for connector source: "
                 "Requested '" + mapping[1] + "'"
@@ -310,6 +322,8 @@ class Model:
             for k, v in mapping[0].items():
                 incoming_node = self.GetNodeByName(v)
                 if not incoming_node:
+                    if self.partial_build:
+                        return
                     raise ValueError(
                         "No matching node found for connector source: " + v
                     )
@@ -317,6 +331,8 @@ class Model:
         else:
             node_from = self.GetNodeByName(mapping[0])
             if not node_from:
+                if self.partial_build:
+                    return
                 raise ValueError(
                     "No matching node found for connector destination: " + mapping[0]
                 )
@@ -579,7 +595,10 @@ def YAMLToConfig(content: str) -> str:
                 c += f'["{key}"]={{}}\n'  # Create empty dict
                 c += "\n".join([f'["{key}"]{v}' for v in vv]) + "\n"
             elif isinstance(value, list):
-                raise Exception("Lists not supported in config")
+                c += f'["{key}"]=[]\n'  # Create empty list
+                for item in value:
+                    c += f'["{key}"].append("{item}")\n'
+                # raise Exception("Lists not supported in config")
             elif not value:
                 # Null
                 c += f'["{key}"]="None"\n'
@@ -620,8 +639,9 @@ def BuildFromJSON(
     config: dict,
     singlefile: bool = False,
     expand: bool = True,
-    build_path: str = "",
+    build_path: str = "build",
     clean_build: bool = True,
+    partial_build: bool = False,  # Don't throw an error if node is missing
 ) -> Tuple[Union[Tuple[str, str], bytes], Model]:
     """Builds a workflow from a JSON specification
 
@@ -630,6 +650,7 @@ def BuildFromJSON(
     With singlefile=False the workflow is a (zipped) directory structure.
     """
     m = Model()
+    m.SetPartialBuild(partial_build)
     # Add modules first to ensure all namespaces are defined before connectors
     for item in config:
         if item["type"].casefold() in ["module", "source", "terminal"]:

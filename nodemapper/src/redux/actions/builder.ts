@@ -4,12 +4,26 @@ export const builderLoadNodemap = createAction("builder/load-nodemap");
 
 export const builderSaveNodemap = createAction("builder/save-nodemap");
 
+export const builderSetAutoValidateConnections = createAction<boolean>(
+  "builder/set-auto-validate-connections"
+);
+
+export const builderToggleAutoValidateConnections = createAction(
+  "builder/toggle-auto-validate-connections"
+);
+
 export const builderCompileToJson = createAction("builder/compile-to-json");
+
+export const builderOpenTerminal = createAction("builder/open-terminal");
 
 export const builderBuildAndRun = createAction("builder/build-and-run");
 
 export const builderToggleTerminalVisibility = createAction(
   "builder/toggle-terminal-visibility"
+);
+
+export const builderToggleSettingsVisibility = createAction(
+  "builder/toggle-settings-visibility"
 );
 
 export const builderCleanBuildFolder = createAction(
@@ -28,6 +42,10 @@ export const builderUpdateModulesList = createAction<string>(
   "builder/update-modules-list"
 );
 
+export const builderCheckNodeDependencies = createAction<string>(
+  "builder/check-node-dependencies"
+);
+
 export const builderUpdateStatusText = createAction<string>(
   "builder/update-status-text"
 );
@@ -42,6 +60,10 @@ export const builderUpdateNodeInfoKey = createAction<
 
 export const builderUpdateNodeInfoName = createAction<string>(
   "builder/update-node-info-name"
+);
+
+export const builderSetSnakemakeArgs = createAction<string>(
+  "builder/set-snakemake-args"
 );
 
 export const builderSetRepositoryTarget = createAction<Record<string, any>>( // eslint-disable-line @typescript-eslint/no-explicit-any

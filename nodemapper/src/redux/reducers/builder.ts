@@ -9,24 +9,26 @@ interface IBuilderState {
   nodeinfo: string;
   can_selected_expand: boolean;
   terminal_visibile: boolean;
+  settings_visible: boolean;
+  snakemake_args: string;
+  auto_validate_connections: boolean;
 }
 
 // State
 const builderStateInit: IBuilderState = {
   repo: JSON.stringify({
-    // (TODO: replace with proper settings menu)
-    type: "local",
-    listing_type: "DirectoryListing",
-    repo: "../../snakeshack",
-    //type: "github",
-    //listing_type: "DirectoryListing", //'BranchListing',
-    //repo: "jsbrittain/snakeshack",
+    type: "github", // local | github
+    listing_type: "DirectoryListing", // DirectoryListing | BranchListing
+    repo: "kraemer-lab/vneyard", // local path or github repo (user/repo)
   }),
   modules_list: "[]",
   statustext: "",
   nodeinfo: "{}", // {} requires to be a valid JSON string
   can_selected_expand: true,
   terminal_visibile: false,
+  settings_visible: false,
+  snakemake_args: "--cores 1 --use-conda $(snakemake --list)",
+  auto_validate_connections: false,
 };
 
 // Nodemap
@@ -81,6 +83,26 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderToggleTerminalVisibility, (state, action) => {
       state.terminal_visibile = !state.terminal_visibile;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderOpenTerminal, (state, action) => {
+      state.terminal_visibile = true;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderToggleSettingsVisibility, (state, action) => {
+      state.settings_visible = !state.settings_visible;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
+      state.snakemake_args = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetAutoValidateConnections, (state, action) => {
+      state.auto_validate_connections = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderToggleAutoValidateConnections, (state, action) => {
+      state.auto_validate_connections = !state.auto_validate_connections;
       console.info("[Reducer] " + action.type);
     });
 });

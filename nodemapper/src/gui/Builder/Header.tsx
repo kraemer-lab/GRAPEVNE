@@ -11,12 +11,13 @@ import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderImportModule } from "redux/actions";
 import { builderBuildAndRun } from "redux/actions";
+import { builderOpenTerminal } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderCleanBuildFolder } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
-import { builderSetRepositoryTarget } from "redux/actions";
 import { builderToggleTerminalVisibility } from "redux/actions";
+import { builderToggleSettingsVisibility } from "redux/actions";
 
 const StatusBar: React.FC = () => {
   const [status, setStatus] = useState("");
@@ -31,32 +32,10 @@ const StatusBar: React.FC = () => {
   );
 };
 
-const RepoOptions: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const repoSettings = JSON.parse(
-    useAppSelector((state) => state.builder.repo)
-  );
-  const [repoURL, setRepoURL] = useState(repoSettings.repo);
-
-  const handleChange = (url) => {
-    const repo_settings = { ...repoSettings };
-    repo_settings.repo = url;
-    setRepoURL(url);
-    dispatch(builderSetRepositoryTarget(repo_settings));
-  };
-
-  return (
-    <input
-      type="text"
-      value={repoURL}
-      onChange={(e) => handleChange(e.target.value)}
-    />
-  );
-};
-
 const Header = () => {
   const dispatch = useAppDispatch();
 
+  /*
   // Load nodemap from file
   const btnLoadScene = () => {
     BuilderEngine.Instance.LoadScene();
@@ -66,6 +45,7 @@ const Header = () => {
   const btnSaveScene = () => {
     BuilderEngine.Instance.SaveScene();
   };
+  */
 
   // Load nodemap from file
   const btnClearScene = () => {
@@ -77,6 +57,7 @@ const Header = () => {
   // Run - build and run the workflow
   const btnRun = () => {
     dispatch(builderBuildAndRun());
+    dispatch(builderOpenTerminal());
   };
 
   // Clean build folder
@@ -104,39 +85,9 @@ const Header = () => {
     dispatch(builderGetRemoteModules());
   };
 
-  const btnImportModule = () => {
-    //dispatch(builderImportModule());
-    console.error("Import of individual modules not currently implemented.");
-  };
-
-  const selectRepositoryTarget = (target) => {
-    let repo = {};
-    switch (target) {
-      case "LocalFilesystem":
-        repo = {
-          type: "local",
-          listing_type: "DirectoryListing",
-          repo: "../../snakeshack",
-        };
-        break;
-      case "DirectoryListing":
-        repo = {
-          type: "github",
-          listing_type: "DirectoryListing",
-          repo: "jsbrittain/snakeshack",
-        };
-        break;
-      case "BranchListing":
-        repo = {
-          type: "github",
-          listing_type: "BranchListing",
-          repo: "jsbrittain/snakeshack",
-        };
-        break;
-      default:
-        console.error("Unknown repository type selected: ", target);
-    }
-    dispatch(builderSetRepositoryTarget(repo));
+  // Open settings pane
+  const btnSettings = () => {
+    dispatch(builderToggleSettingsVisibility());
   };
 
   return (
@@ -170,6 +121,7 @@ const Header = () => {
         <button className="btn" onClick={btnBuild}>
           BUILD / ZIP
         </button>
+        |
         <button className="btn" onClick={btnClearScene}>
           CLEAR GRAPH
         </button>
@@ -179,23 +131,13 @@ const Header = () => {
         <button className="btn" onClick={btnToggleTerminalVisibility}>
           TERMINAL
         </button>
-        {/*
-          <button className="btn" onClick={btnImportModule}>
-            IMPORT MODULE
-          </button>
-        */}
+        |
         <button className="btn" onClick={btnGetModuleList}>
           GET MODULE LIST
         </button>
-        <select
-          defaultValue="localFilesystem"
-          onChange={(e) => selectRepositoryTarget(e.target.value)}
-        >
-          <option value="LocalFilesystem">Local filesystem</option>
-          <option value="DirectoryListing">Directory Listing (Github)</option>
-          <option value="BranchListing">Branch Listing (Github)</option>
-        </select>
-        <RepoOptions />
+        <button className="btn" onClick={btnSettings}>
+          SETTINGS
+        </button>
         <StatusBar />
       </div>
     </>

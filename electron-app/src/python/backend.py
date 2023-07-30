@@ -52,7 +52,12 @@ def post(request):
         )
         # Second, return the launch command
         data = runner.Launch_cmd(
-            {"format": data["format"], "content": build_path}, terminal=False
+            {
+                "format": data["format"],
+                "content": build_path,
+                "args": data.get("args", ""),
+            },
+            terminal=False,
         )
         # Stringify command
         data["command"] = " ".join(data["command"])
