@@ -11,6 +11,7 @@ import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderImportModule } from "redux/actions";
 import { builderBuildAndRun } from "redux/actions";
+import { builderOpenTerminal } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderCleanBuildFolder } from "redux/actions";
@@ -56,6 +57,7 @@ const Header = () => {
   // Run - build and run the workflow
   const btnRun = () => {
     dispatch(builderBuildAndRun());
+    dispatch(builderOpenTerminal());
   };
 
   // Clean build folder

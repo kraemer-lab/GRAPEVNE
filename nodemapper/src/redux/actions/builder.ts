@@ -6,6 +6,8 @@ export const builderSaveNodemap = createAction("builder/save-nodemap");
 
 export const builderCompileToJson = createAction("builder/compile-to-json");
 
+export const builderOpenTerminal = createAction("builder/open-terminal");
+
 export const builderBuildAndRun = createAction("builder/build-and-run");
 
 export const builderToggleTerminalVisibility = createAction(

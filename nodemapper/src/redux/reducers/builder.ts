@@ -83,6 +83,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       state.terminal_visibile = !state.terminal_visibile;
       console.info("[Reducer] " + action.type);
     })
+    .addCase(actions.builderOpenTerminal, (state, action) => {
+      state.terminal_visibile = true;
+      console.info("[Reducer] " + action.type);
+    })
     .addCase(actions.builderToggleSettingsVisibility, (state, action) => {
       state.settings_visible = !state.settings_visible;
       console.info("[Reducer] " + action.type);
