@@ -9,6 +9,8 @@ interface IBuilderState {
   nodeinfo: string;
   can_selected_expand: boolean;
   terminal_visibile: boolean;
+  settings_visible: boolean;
+  snakemake_args: string;
 }
 
 // State
@@ -23,6 +25,8 @@ const builderStateInit: IBuilderState = {
   nodeinfo: "{}", // {} requires to be a valid JSON string
   can_selected_expand: true,
   terminal_visibile: false,
+  settings_visible: false,
+  snakemake_args: "--cores 1 --use-conda $(snakemake --list)",
 };
 
 // Nodemap
@@ -77,6 +81,14 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderToggleTerminalVisibility, (state, action) => {
       state.terminal_visibile = !state.terminal_visibile;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderToggleSettingsVisibility, (state, action) => {
+      state.settings_visible = !state.settings_visible;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
+      state.snakemake_args = action.payload;
       console.info("[Reducer] " + action.type);
     });
 });

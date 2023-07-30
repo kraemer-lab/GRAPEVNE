@@ -12,6 +12,10 @@ export const builderToggleTerminalVisibility = createAction(
   "builder/toggle-terminal-visibility"
 );
 
+export const builderToggleSettingsVisibility = createAction(
+  "builder/toggle-settings-visibility"
+);
+
 export const builderCleanBuildFolder = createAction(
   "builder/clean-build-folder"
 );
@@ -28,6 +32,10 @@ export const builderUpdateModulesList = createAction<string>(
   "builder/update-modules-list"
 );
 
+export const builderCheckNodeDependencies = createAction<string>(
+  "builder/check-node-dependencies"
+);
+
 export const builderUpdateStatusText = createAction<string>(
   "builder/update-status-text"
 );
@@ -42,6 +50,10 @@ export const builderUpdateNodeInfoKey = createAction<
 
 export const builderUpdateNodeInfoName = createAction<string>(
   "builder/update-node-info-name"
+);
+
+export const builderSetSnakemakeArgs = createAction<string>(
+  "builder/set-snakemake-args"
 );
 
 export const builderSetRepositoryTarget = createAction<Record<string, any>>( // eslint-disable-line @typescript-eslint/no-explicit-any

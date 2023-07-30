@@ -54,7 +54,8 @@ app.whenReady().then(() => {
   ptyProcess.onData((data: any) => {
     win.webContents.send("terminal/receive-data", data);
   });
-  terminal_sendData("\n"); // Forces the terminal to display the prompt
+  // Set PS1 prompt (to show current folder)
+  terminal_sendData("export PS1=\"\\e[0;32m\\W > \\e[m\"\n");
 
   ////////////////////
   // Setup IPC handles

@@ -49,10 +49,16 @@ def Launch(data: dict, **kwargs) -> dict:
     return launch_response
 
 
-def Launch_cmd(data: dict, **kwargs) -> dict:
+def Launch_cmd(data: dict, *args, **kwargs) -> dict:
     """Returns the launch command for a workflow"""
     if data["format"] == "Snakefile":
-        cmd, workdir = snakefile.Launch_cmd(data["content"], **kwargs)
+        snakemake_args = data.get("args", "").split(" ")
+        cmd, workdir = snakefile.Launch_cmd(
+            data["content"],
+            *snakemake_args,
+            *args,
+            **kwargs,
+        )
         launch_response: dict = {"command": cmd, "workdir": workdir}
     else:
         raise ValueError(f"Format not supported: {data['format']}")

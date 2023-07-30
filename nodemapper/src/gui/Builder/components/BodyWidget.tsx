@@ -9,6 +9,7 @@ import { DiagramEngine } from "@projectstorm/react-diagrams";
 import TerminalWindow from "./TerminalWindow";
 import BuilderEngine from "../BuilderEngine";
 import NodeInfoRenderer from "./NodeInfoRenderer";
+import BuilderSettings from "./BuilderSettings";
 
 import { TrayWidget } from "./TrayWidget";
 import { useAppDispatch } from "redux/store/hooks";
@@ -147,15 +148,33 @@ export const BodyWidget = (props: BodyWidgetProps) => {
             overflowY: "auto",
           }}
         >
-          <select
-            name="orglist"
-            id="orglist"
-            value={filterSelection}
-            style={{ width: "100%" }}
-            onChange={onChangeOrgList}
-          >
-            {organisaton_list_options}
-          </select>
+          <div>
+            <select
+              name="orglist"
+              id="orglist"
+              value={filterSelection}
+              style={{
+                color: "white",
+                fontFamily: "Helvetica, Arial",
+                padding: "5px",
+                margin: "0px 10px",
+                border: "solid 1px ${(p) => p.color}",
+                borderRadius: "5px",
+                marginBottom: "2px",
+                marginTop: "2px",
+                cursor: "pointer",
+                minWidth: "200px",
+                background: "rgb(20, 20, 20)",
+                flexGrow: "0",
+                flexShrink: "0",
+                width: "95%",
+                boxSizing: "border-box",
+              }}
+              onChange={onChangeOrgList}
+            >
+              {organisaton_list_options}
+            </select>
+          </div>
           <TrayWidget>{trayitems}</TrayWidget>
         </div>
         <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
@@ -174,6 +193,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
           </div>
         </Layer>
         <NodeInfoRenderer />
+        <BuilderSettings />
       </Content>
     </Body>
   );
