@@ -11,6 +11,7 @@ interface IBuilderState {
   terminal_visibile: boolean;
   settings_visible: boolean;
   snakemake_args: string;
+  auto_validate_connections: boolean;
 }
 
 // State
@@ -27,6 +28,7 @@ const builderStateInit: IBuilderState = {
   terminal_visibile: false,
   settings_visible: false,
   snakemake_args: "--cores 1 --use-conda $(snakemake --list)",
+  auto_validate_connections: false,
 };
 
 // Nodemap
@@ -93,6 +95,14 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
       state.snakemake_args = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetAutoValidateConnections, (state, action) => {
+      state.auto_validate_connections = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderToggleAutoValidateConnections, (state, action) => {
+      state.auto_validate_connections = !state.auto_validate_connections;
       console.info("[Reducer] " + action.type);
     });
 });

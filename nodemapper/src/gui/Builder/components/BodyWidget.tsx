@@ -167,7 +167,6 @@ export const BodyWidget = (props: BodyWidgetProps) => {
                 background: "rgb(20, 20, 20)",
                 flexGrow: "0",
                 flexShrink: "0",
-                width: "95%",
                 boxSizing: "border-box",
               }}
               onChange={onChangeOrgList}

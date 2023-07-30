@@ -44,10 +44,17 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           Redraw();
           break;
         case "builder/add-link":
-          AddLink(action, dispatch);
+          AddLink(
+            action,
+            getState().builder.auto_validate_connections,
+            dispatch,
+          );
           break;
         case "builder/check-node-dependencies":
-          CheckNodeDependencies(action.payload, dispatch);
+          CheckNodeDependencies(
+            action.payload,
+            dispatch,
+          );
           break;
         case "builder/node-selected":
           NodeSelected(action, dispatch, getState);
@@ -203,7 +210,15 @@ const Redraw = () => {
 interface IPayloadLink {
   payload: DefaultLinkModel; // Non-serialisable object; consider alternatives
 }
-const AddLink = async (action: IPayloadLink, dispatch: TPayloadString) => {
+const AddLink = async (
+  action: IPayloadLink,
+  auto_validate_connections: boolean,
+  dispatch: TPayloadString,
+) => {
+  // Skip check if auto-validation is disabled
+  if (!auto_validate_connections) {
+    return;
+  }
   // Determine which is the input (vs output) port (ordering is drag-dependent)
   const app = BuilderEngine.Instance;
   const link = action.payload;

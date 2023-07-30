@@ -2,8 +2,9 @@ import React from "react";
 import { useState } from "react";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
-import { builderSetRepositoryTarget } from "redux/actions";
 import { builderSetSnakemakeArgs } from "redux/actions";
+import { builderSetRepositoryTarget } from "redux/actions";
+import { builderSetAutoValidateConnections } from "redux/actions";
 
 const default_input_size = 35;
 
@@ -38,6 +39,7 @@ const BuilderSettings = () => {
     useAppSelector((state) => state.builder.repo)
   ).listing_type;
   const snakemake_args = useAppSelector((state) => state.builder.snakemake_args);
+  const auto_validate_connections = useAppSelector((state) => state.builder.auto_validate_connections);
   
   const selectRepositoryTarget = (target) => {
     let repo = {};
@@ -73,6 +75,10 @@ const BuilderSettings = () => {
     dispatch(builderSetSnakemakeArgs(args));
   };
 
+  const SetAutoValidateConnections = (value: boolean) => {
+    dispatch(builderSetAutoValidateConnections(value));
+  };
+
   return (
     <>
         <div style={{
@@ -96,12 +102,25 @@ const BuilderSettings = () => {
           </div>
           <br />
           <p>Snakemake arguments</p>
-          <input
-            type="text"
-            size={default_input_size}
-            value={snakemake_args}
-            onChange={(e) => SetSnakemakeArgs(e.target.value)}
-          />
+          <p>
+            <input
+              type="text"
+              size={default_input_size}
+              value={snakemake_args}
+              onChange={(e) => SetSnakemakeArgs(e.target.value)}
+            />
+          </p>
+          <br />
+          <p>Validation</p>
+          <p>
+            <input
+              type="checkbox"
+              id="auto_validate_connections"
+              checked={auto_validate_connections}
+              onChange={(e) => SetAutoValidateConnections(e.target.checked)}
+            />
+            <label htmlFor="auto_validate_connections"> Auto-validate connections</label>
+          </p>
         </div>
     </>
   );

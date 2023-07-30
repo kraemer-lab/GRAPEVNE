@@ -595,7 +595,10 @@ def YAMLToConfig(content: str) -> str:
                 c += f'["{key}"]={{}}\n'  # Create empty dict
                 c += "\n".join([f'["{key}"]{v}' for v in vv]) + "\n"
             elif isinstance(value, list):
-                raise Exception("Lists not supported in config")
+                c += f'["{key}"]=[]\n'  # Create empty list
+                for item in value:
+                    c += f'["{key}"].append("{item}")\n'
+                # raise Exception("Lists not supported in config")
             elif not value:
                 # Null
                 c += f'["{key}"]="None"\n'
