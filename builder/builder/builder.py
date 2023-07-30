@@ -1,6 +1,7 @@
 import argparse
 import json
 import pathlib
+import copy
 import re
 import shutil
 from typing import List
@@ -84,7 +85,7 @@ class Module(Node):
             return filename
         if isinstance(self.snakefile, dict):
             # Remote file
-            c = self.snakefile.copy()
+            c = copy.deepcopy(self.snakefile)
             c["kwargs"]["path"] = c["kwargs"]["path"].replace(
                 workflow_filename, config_filename
             )
@@ -635,7 +636,7 @@ def BuildFromJSON(
     config: dict,
     singlefile: bool = False,
     expand: bool = True,
-    build_path: str = "",
+    build_path: str = "build",
     clean_build: bool = True,
     partial_build: bool = False,  # Don't throw an error if node is missing
 ) -> Tuple[Union[Tuple[str, str], bytes], Model]:

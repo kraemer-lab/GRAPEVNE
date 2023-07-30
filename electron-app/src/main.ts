@@ -4,8 +4,6 @@ import path from "path";
 import * as os from "node:os";
 import * as pty from "node-pty";
 
-const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
-
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
@@ -38,6 +36,7 @@ app.whenReady().then(() => {
   // Setup pseudo terminal
   ////////////////////////
 
+  const shell = os.platform() === "win32" ? "powershell.exe" : (process.env.SHELL || "bash");
   const ptyProcess = pty.spawn(shell, [], {
     name: "xterm-color",
     cols: 80,
