@@ -11,7 +11,7 @@ module.exports = {
     },
 
     // Installers
-    /*{
+    {
       name: "@electron-forge/maker-squirrel",
       config: {},
     },
@@ -22,7 +22,7 @@ module.exports = {
     {
       name: "@electron-forge/maker-rpm",
       config: {},
-    },*/
+    },
   ],
   publishers: [
     {
