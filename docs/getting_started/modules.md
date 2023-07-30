@@ -1,4 +1,4 @@
-# Modules
+# Inside modules
 
 This page provides a description of the basic block of GRAPEVNE - the Module
 specification. GRAPEVNE works by connecting 'Modules' together. These modules

@@ -1,4 +1,4 @@
-# Quickstart
+# Tutorial
 
 The quickstart guide begins with a walkthrough of a basic workflow, constructed
 from modules that are available through our online repositories. You will be
@@ -19,4 +19,8 @@ maxdepth: 1
 builder
 submodules
 validation
+modules
+inside-modules
+challenge
+datadeps
 ```
