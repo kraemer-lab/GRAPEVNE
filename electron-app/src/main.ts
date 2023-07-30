@@ -36,7 +36,8 @@ app.whenReady().then(() => {
   // Setup pseudo terminal
   ////////////////////////
 
-  const shell = os.platform() === "win32" ? "powershell.exe" : (process.env.SHELL || "bash");
+  const shell =
+    os.platform() === "win32" ? "powershell.exe" : process.env.SHELL || "bash";
   const ptyProcess = pty.spawn(shell, [], {
     name: "xterm-color",
     cols: 80,
@@ -54,7 +55,7 @@ app.whenReady().then(() => {
     win.webContents.send("terminal/receive-data", data);
   });
   // Set PS1 prompt (to show current folder)
-  terminal_sendData("export PS1=\"\\e[0;32m\\W > \\e[m\"\n");
+  terminal_sendData('export PS1="\\e[0;32m\\W > \\e[m"\n');
 
   ////////////////////
   // Setup IPC handles

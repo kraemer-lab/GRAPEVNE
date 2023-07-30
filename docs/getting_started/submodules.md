@@ -23,6 +23,7 @@ Repositories in GRAPEVNE follow a strict folder structure, which we must now
 make in order for GRAPEVNE to recognise your module. Create the following folder
 structure in the directory of your choice (e.g. in `Downloads`) and copy your
 module into the `modules` folder:
+
 ```
 vneyard                     <--- root repository folder
 └── workflows               <--- workflows folder (required)
@@ -112,10 +113,12 @@ single input port (whose name reflects the sub-module [and specific port] to
 which it connects).
 
 Drag a `Download` module into the scene, change its parameters to:
+
 ```
 url: https://covid19.who.int/WHO-COVID-19-global-data.csv
 filename: data.csv
 ```
+
 then connect it to the input port of
 `FilterAndAggregateByMonth`. Drag a `Plot` module into the scene and
 connect it to the output of `FilterAndAggregateByMonth`. If you `Build and Test`

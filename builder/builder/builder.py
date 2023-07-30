@@ -1,7 +1,7 @@
 import argparse
+import copy
 import json
 import pathlib
-import copy
 import re
 import shutil
 from typing import List

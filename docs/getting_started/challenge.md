@@ -20,10 +20,11 @@ line would read "-5" in this case. The file should contain one line for every
 letter of the alphabet.
 
 As extended exercises:
-1) limit the analysis to only consider words of a
-specified length (i.e. words between, say, 4-8 letters long)
-2) plot the results as a bar graph with a separate bar for each letter of the
-alphabet.
+
+1. limit the analysis to only consider words of a
+   specified length (i.e. words between, say, 4-8 letters long)
+2. plot the results as a bar graph with a separate bar for each letter of the
+   alphabet.
 
 In order to make best use of GRAPEVNE modules and hierarchies, it is recommended
 to take the following approach:
@@ -33,7 +34,6 @@ to take the following approach:
 Create a module (that runs in a conda environment) to download a list of words.
 
 Here is a list of English words: [https://github.com/dwyl/english-words/blob/master/words_alpha.txt](https://github.com/dwyl/english-words/blob/master/words_alpha.txt) (credit to: [https://github.com/dwyl/english-words](https://github.com/dwyl/english-words)).
- 
 
 ### Module 2: Count the number of words beginning with each letter of the alphabet
 
@@ -48,7 +48,7 @@ produces as output a file containing the reversed words.
 
 ### Module 4: Subtract two numeric files from one another
 
-Create a module that takes as input *two* files containing lists of numbers,
+Create a module that takes as input _two_ files containing lists of numbers,
 and produces as output a single file containing the difference (i.e. `a-b`)
 in row-wise fashion (i.e. if file 1 contained lines `1 2 3 4 5` and file two
 contained lines `3 1 5 2 3` then the output would be `-2 1 -2 2 2`).

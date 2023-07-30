@@ -33,7 +33,7 @@ const ValidateButton = (props: ValidateButtonProps) => {
 
   const btnValidate = () => {
     dispatch(builderCheckNodeDependencies(props.nodename));
-  }
+  };
 
   return (
     <button className="btn" onClick={btnValidate}>
@@ -143,7 +143,7 @@ const NodeInfoRenderer = (props) => {
           />
         </div>
         <div>
-          <ValidateButton nodename={nodeinfo.name}/>
+          <ValidateButton nodename={nodeinfo.name} />
           {PermitNodeExpand(nodeinfo) ? (
             <ExpandButton nodeinfo={nodeinfo} />
           ) : null}

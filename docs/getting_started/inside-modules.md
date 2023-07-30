@@ -19,6 +19,7 @@ environments. These are natively supported by Snakemake so provide a natural
 mechanism to handle application dependencies.
 
 The file structure for this module looks like this:
+
 ```
 Download
 ├── config
@@ -30,12 +31,14 @@ Download
 ```
 
 There are three files of interest:
-- `Snakemake`: contains the rules for the module, 
+
+- `Snakemake`: contains the rules for the module,
 - `config.yaml`: contains the configuration information, which is displayed in
-GRAPEVNE when you click on a module.
+  GRAPEVNE when you click on a module.
 - `conda.yaml`: contains information concerning the conda environment
 
 The `config.yaml` file contains the following:
+
 ```yaml
 /config/config.yaml
 input_namespace: null
@@ -46,6 +49,7 @@ params:
 ```
 
 The `Snakefile` file contains the following:
+
 ```python
 configfile: "config/config.yaml"
 from snakemake.remote import AUTO
@@ -76,6 +80,7 @@ rule target:
 ```
 
 The `conda.yaml` file contains the following:
+
 ```yaml
 channels:
   - bioconda
@@ -120,6 +125,7 @@ a custom script to process data. The folder structure
 of the `Filter` module is similar to that of `Download`, with the addition of a
 `resources` folder that contains the custom script, and a dummy input file that
 we use for testing, in the `results` folder):
+
 ```
 Filter
 ├── config
@@ -137,6 +143,7 @@ Filter
 ```
 
 The `config.yaml` file contains the following:
+
 ```yaml
 input_namespace: in
 output_namespace: out
@@ -147,6 +154,7 @@ params:
 ```
 
 The `Snakemake` file contains the following:
+
 ```python
 configfile: "config/config.yaml"
 import json
@@ -201,6 +209,7 @@ contains the following (note that it is not necessary to fully comprehend this
 file if you are not familiar with python - just note that we `import` several
 dependencies at the top of the file and will need to tell Snakemake where to
 find these in a moment...):
+
 ```python
 import json
 import argparse
@@ -241,14 +250,15 @@ installed on the host computer. To declare these dependencies (and allow
 Snakemake to initialise a conda environment in which to download and prepare
 these requirements), we make use of the `conda.yaml` file, which is set-up as
 follows:
+
 ```yaml
 channels:
   - bioconda
 dependencies:
   - python
   - pip:
-    - numpy
-    - pandas
+      - numpy
+      - pandas
 ```
 
 The file states that in order for this rule to execute correctly, we need
@@ -294,6 +304,7 @@ correct dependencies are listed in the `conda.yaml` environment file.
 
 For demonstration purposes, the contents of the `resources/scripts/plotcol.py`
 file are:
+
 ```python
 import json
 import argparse
@@ -336,17 +347,19 @@ if __name__ == "__main__":
 ```
 
 The contents of the `conda.yaml` file are:
+
 ```yaml
 channels:
   - bioconda
 dependencies:
   - python
   - pip:
-    - numpy
-    - pandas
-    - matplotlib
-    - lxml
+      - numpy
+      - pandas
+      - matplotlib
+      - lxml
 ```
+
 noting the inclusion of `matplotlib` to produce the graphical output, which is
 installed by `pip` as a dependency.
 

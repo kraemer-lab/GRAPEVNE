@@ -47,14 +47,11 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           AddLink(
             action,
             getState().builder.auto_validate_connections,
-            dispatch,
+            dispatch
           );
           break;
         case "builder/check-node-dependencies":
-          CheckNodeDependencies(
-            action.payload,
-            dispatch,
-          );
+          CheckNodeDependencies(action.payload, dispatch);
           break;
         case "builder/node-selected":
           NodeSelected(action, dispatch, getState);
@@ -213,7 +210,7 @@ interface IPayloadLink {
 const AddLink = async (
   action: IPayloadLink,
   auto_validate_connections: boolean,
-  dispatch: TPayloadString,
+  dispatch: TPayloadString
 ) => {
   // Skip check if auto-validation is disabled
   if (!auto_validate_connections) {
@@ -233,11 +230,11 @@ const AddLink = async (
 
   // Check node dependencies
   CheckNodeDependencies(nodename, dispatch);
-}
+};
 
 const CheckNodeDependencies = async (
   nodename: string,
-  dispatch: TPayloadString,
+  dispatch: TPayloadString
 ) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
@@ -260,7 +257,7 @@ const CheckNodeDependencies = async (
   const node_type = app.getProperty(node, "type");
   node.getOptions().color = "rgb(192,192,192)";
   app.engine.repaintCanvas();
-  
+
   const callback = (data: Record<string, unknown>) => {
     dispatch(builderUpdateStatusText(""));
     console.log(data);

@@ -4,9 +4,13 @@ export const builderLoadNodemap = createAction("builder/load-nodemap");
 
 export const builderSaveNodemap = createAction("builder/save-nodemap");
 
-export const builderSetAutoValidateConnections = createAction<boolean>("builder/set-auto-validate-connections");
+export const builderSetAutoValidateConnections = createAction<boolean>(
+  "builder/set-auto-validate-connections"
+);
 
-export const builderToggleAutoValidateConnections = createAction("builder/toggle-auto-validate-connections");
+export const builderToggleAutoValidateConnections = createAction(
+  "builder/toggle-auto-validate-connections"
+);
 
 export const builderCompileToJson = createAction("builder/compile-to-json");
 
