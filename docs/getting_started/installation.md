@@ -2,20 +2,16 @@
 
 ## Download
 
-_The first pre-release builds will be available Q3 2023_
+For Windows users, ensure you are running [PowerShell](https://learn.microsoft.com/en-us/powershell/).
 
-Download the latest version of GRAPVEVNE for your system from
+Ensure you have `mamba` and `snakemake` installed and accessible from your
+default shell. The recommended installation procedure is:
+- Install [mambaforge](https://github.com/conda-forge/miniforge#mambaforge); if
+you already have conda installed, run `conda install -n base -c conda-forge mamba`
+- Install snakemake (`mamba install -c conda-forge -c bioconda snakemake`)
+
+Then download the latest version of GRAPVEVNE for your system from
 [github releases](https://github.com/kraemer-lab/GRAPEVNE/releases).
-
-To enable all of GRAPEVNE's features you will also need to
-ensure that you have `snakemake` installed and that it is accessible on your
-system (`snakemake` is installable via the Python Package Index
-[PyPI](https://pypi.org/project/snakemake/). We also strongly recommend that you
-install the [`conda`](https://docs.conda.io/en/latest/) environment management
-software ([`mamba`](https://github.com/mamba-org/mamba) is the recommended [faster]
-alternative), as this will provide isolated environments to launch your modules
-with version locked software. Further details are available in our tutorial
-documentation.
 
 ### Module repositories
 
@@ -46,12 +42,11 @@ Dependencies:
 - [yarn](https://yarnpkg.com/) package manager
 
 To build locally, clone the GRAPEVNE repository:
-
 ```
 git clone git@github.com:kraemer-lab/GRAPEVNE.git -b main
+cd GRAPEVNE
+./build.sh
 ```
 
-then run `build.sh` from the command line. This will generate the GRAPEVNE Builder
-app and will attempt to launch it (if running on an Apple Mac). If the app does
-not launch you will find the relevant build in `electron-app/out`, in an
-appropriately named subfolder for your operating system.
+This will generate the GRAPEVNE Builder app, which will be located in
+an appropriately named subfolder of `electron-app/out`.
