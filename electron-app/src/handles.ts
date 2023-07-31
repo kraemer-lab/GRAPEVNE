@@ -95,9 +95,8 @@ export async function builder_BuildAndRun(
   const data = await ProcessQuery(event, query);
   // Execute the build in the working directory through the pty
   if (data["body"]["cmd"] !== "") {
-    cmd_callback("\x15"); // ctrl-u to clear the line
-    cmd_callback("cd " + data["body"]["workdir"] + "\n");
-    cmd_callback(data["body"]["command"] + "\n");
+    cmd_callback("cd " + data["body"]["workdir"]);
+    cmd_callback(data["body"]["command"]);
   }
   return data;
 }

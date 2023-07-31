@@ -1,5 +1,7 @@
 import React from "react";
 import EasyEdit from "react-easy-edit";
+import BuilderEngine from "../BuilderEngine";
+
 import { Types } from "react-easy-edit";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -25,11 +27,17 @@ const addQuotesIfString = (value: string, isString: boolean) => {
   return value;
 };
 
-const HighlightedJSON = (json_obj) => {
+interface HighlightedJSONProps {
+  json: string;
+  onEditFocus: () => void;
+  onEditBlur: () => void;
+}
+
+const HighlightedJSON = (props: HighlightedJSONProps) => {
   const dispatch = useAppDispatch();
 
   // Parse JSON string
-  const json_str: string = json_obj.json;
+  const json_str: string = props.json;
   if (
     json_str === "" ||
     json_str === undefined ||
@@ -96,11 +104,17 @@ const HighlightedJSON = (json_obj) => {
               <EasyEdit
                 type={Types.TEXT}
                 onHoverCssClass="easyEditHover"
-                // cancelOnBlur={true} // TODO: won't let you click 'save'!! //
                 saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                 cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
                 value={value}
-                onSave={(value) => setValue(value)}
+                onFocus={(e) => props.onEditFocus() }
+                onBlur={(e) => props.onEditBlur() }
+                onSave={(value) => {
+                  setValue(value);
+                  props.onEditBlur();
+                }}
+                onCancel={() => props.onEditBlur()}
+                saveOnBlur={true}
               />
             </span>
           ) : (

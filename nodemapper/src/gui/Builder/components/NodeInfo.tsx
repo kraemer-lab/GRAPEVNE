@@ -16,7 +16,12 @@ const Content = styled.div`
   height: 100%;
 `;
 
-const NodeInfo = () => {
+interface NodeInfoProps {
+  onEditFocus: () => void;
+  onEditBlur: () => void;
+}
+
+const NodeInfo = (props: NodeInfoProps) => {
   const [codesnippet, setCodesnippet] = useState("");
   const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
   const dispatch = useAppDispatch();
@@ -33,7 +38,11 @@ const NodeInfo = () => {
   return (
     <>
       <Content>
-        <HighlightedJSON json={codesnippet} />
+        <HighlightedJSON
+          json={codesnippet}
+          onEditFocus={props.onEditFocus}
+          onEditBlur={props.onEditBlur}
+        />
       </Content>
     </>
   );

@@ -48,6 +48,10 @@ app.whenReady().then(() => {
   const terminal_sendData = (data: string) => {
     ptyProcess.write(data);
   };
+  const terminal_sendLine = (data: string) => {
+    // Clear line before command and add newline at end of command
+    terminal_sendData("\x15" + data + "\n");
+  };
   ipcMain.on("terminal/send-data", (event, data) => {
     terminal_sendData(data);
   });
@@ -55,7 +59,7 @@ app.whenReady().then(() => {
     win.webContents.send("terminal/receive-data", data);
   });
   // Set PS1 prompt (to show current folder)
-  terminal_sendData('export PS1="\\e[0;32m\\W > \\e[m"\n');
+  terminal_sendLine('export PS1="\\e[0;32m\\W > \\e[m"');
 
   ////////////////////
   // Setup IPC handles
@@ -71,7 +75,7 @@ app.whenReady().then(() => {
   );
   ipcMain.handle("builder/compile-to-json", handles.builder_CompileToJson);
   ipcMain.handle("builder/build-and-run", (event, data) =>
-    handles.builder_BuildAndRun(event, data, terminal_sendData)
+    handles.builder_BuildAndRun(event, data, terminal_sendLine)
   );
   ipcMain.handle(
     "builder/clean-build-folder",

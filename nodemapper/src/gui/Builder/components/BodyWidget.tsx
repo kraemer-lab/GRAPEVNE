@@ -77,6 +77,9 @@ export const BodyWidget = (props: BodyWidgetProps) => {
             dispatch(builderNodeDeselected(payload));
           }
         },
+        entityRemoved: (e) => {
+          dispatch(builderNodeDeselected({}));
+        },
       });
       setNewnode(null);
     }
