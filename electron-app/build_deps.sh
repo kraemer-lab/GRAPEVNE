@@ -19,7 +19,10 @@ python -m pip install ../runner
 
 # compile python code to binary for deployment
 python -m pip install pyinstaller
-python -m PyInstaller src/python/backend.py --onefile --hidden-import ../builder
+python -m PyInstaller src/python/backend.py \
+    --onefile \
+    --hidden-import ../builder \
+    --hidden-import ../runner
 
 # Ensure nodemapper up-to-date
 pushd ../nodemapper

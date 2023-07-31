@@ -1,10 +1,12 @@
-import contextlib
-import json
 import os
-import platform
+import io
+import json
 import shutil
-import subprocess
+import platform
 import tempfile
+import subprocess
+import contextlib
+
 from pathlib import Path
 from typing import Dict
 from typing import List
@@ -12,9 +14,15 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
+from contextlib import redirect_stdout
+from contextlib import redirect_stderr
+from snakemake import main as snakemake_main
+
 from builder.builder import BuildFromJSON
 from builder.builder import YAMLToConfig
 from runner.TokenizeFile import TokenizeFile
+
+snakemake_launcher = "python"
 
 
 # ##############################################################################
@@ -490,12 +498,24 @@ def snakemake_cmd(filename: str, *args, **kwargs) -> Tuple[List[str], str]:
 
 def snakemake_run(cmd: List[str], workdir: str) -> Tuple[str, str]:
     """Run the snakemake command returned by snakemake_cmd"""
-    p = subprocess.run(
-        cmd,
-        cwd=workdir,
-        capture_output=True,
-    )
-    return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
+    if snakemake_launcher == "subprocess":
+        p = subprocess.run(
+            cmd,
+            cwd=workdir,
+            capture_output=True,
+        )
+        return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
+    elif snakemake_launcher == "python":
+        with redirect_stdout(io.StringIO()) as f_stdout:
+            with redirect_stderr(io.StringIO()) as f_stderr:
+                try:
+                    snakemake_main(cmd)
+                except SystemExit:
+                    # SystemExit is raised by snakemake upon exit
+                    pass
+        return f_stdout.getvalue(), f_stderr.getvalue()
+    else:
+        raise Exception(f"Unsupported launcher: {snakemake_launcher}.")
 
 
 def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
