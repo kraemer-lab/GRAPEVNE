@@ -397,11 +397,16 @@ def GetMissingFileDependencies_FromFile(filename: str, *args, **kwargs) -> List[
         return []
     if not stderr:
         return []
-    if "MissingInputException" not in [
-        line.split(" ")[0] for line in stderr.split("\n")[0:2]
-    ]:
+    exceptions = set(
+        [ex for ex in
+         [line.split(" ")[0] for line in stderr.split("\n")[0:2]]
+         if ex.endswith('Exception')])
+    permitted_exceptions = set([
+        "MissingInputException",
+    ])
+    if len(exceptions - permitted_exceptions) > 0:
         raise Exception(
-            f"A non-MissingInputException error has been detected: \nstdout={stdout}\nstderr={stderr}"
+            f"A non-expected error has been detected: \nstdout={stdout}\nstderr={stderr}"
         )
     fileslist = list(filter(None, map(str.strip, stderr.split("\n"))))
     ix = fileslist.index("affected files:")
@@ -506,10 +511,13 @@ def snakemake_run(cmd: List[str], workdir: str) -> Tuple[str, str]:
         )
         return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
     elif snakemake_launcher == "python":
+        cmd_str = ' '.join(cmd[1:])  # strip snakemake executable
         with redirect_stdout(io.StringIO()) as f_stdout:
             with redirect_stderr(io.StringIO()) as f_stderr:
                 try:
-                    snakemake_main(cmd)
+                    snakemake_main(
+                        cmd_str + " -d " + workdir,
+                    )
                 except SystemExit:
                     # SystemExit is raised by snakemake upon exit
                     pass

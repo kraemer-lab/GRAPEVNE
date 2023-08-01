@@ -22,7 +22,9 @@ python -m pip install pyinstaller
 python -m PyInstaller src/python/backend.py \
     --onefile \
     --hidden-import ../builder \
-    --hidden-import ../runner
+    --hidden-import ../runner \
+    --hidden-import requests \
+    --hidden-import "smart-open[all]"
 
 # Ensure nodemapper up-to-date
 pushd ../nodemapper
