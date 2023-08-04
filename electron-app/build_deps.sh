@@ -21,10 +21,15 @@ python -m pip install ../runner
 python -m pip install pyinstaller
 python -m PyInstaller src/python/backend.py \
     --onefile \
-    --hidden-import ../builder \
-    --hidden-import ../runner \
-    --hidden-import requests \
-    --hidden-import "smart-open[all]"
+    --hidden-import builder \
+    --hidden-import runner \
+    --hidden-import smart_open.ftp \
+    --hidden-import smart_open.gcs \
+    --hidden-import smart_open.hdfs \
+    --hidden-import smart_open.http \
+    --hidden-import smart_open.s3 \
+    --hidden-import smart_open.ssh \
+    --hidden-import smart_open.webhdfs \
 
 # Ensure nodemapper up-to-date
 pushd ../nodemapper

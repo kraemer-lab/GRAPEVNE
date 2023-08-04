@@ -145,13 +145,13 @@ const NodeInfoRenderer = (props) => {
             value={nodeinfo.name}
             saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
             cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-            onFocus={(e) => onEditFocus() }
-            onBlur={(e) => onEditBlur() }
+            onFocus={(e) => onEditFocus()}
+            onBlur={(e) => onEditBlur()}
             onSave={(value) => {
               SetNodeName(value);
               onEditBlur();
             }}
-            onCancel={() => onEditBlur() }
+            onCancel={() => onEditBlur()}
             saveOnBlur={true}
           />
         </div>
@@ -169,8 +169,8 @@ const NodeInfoRenderer = (props) => {
         }}
       >
         <NodeInfo
-          onEditFocus={() => onEditFocus() }
-          onEditBlur={() => onEditBlur() }
+          onEditFocus={() => onEditFocus()}
+          onEditBlur={() => onEditBlur()}
         />
       </div>
     </div>

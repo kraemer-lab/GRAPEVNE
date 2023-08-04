@@ -107,8 +107,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                 cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
                 value={value}
-                onFocus={(e) => props.onEditFocus() }
-                onBlur={(e) => props.onEditBlur() }
+                onFocus={(e) => props.onEditFocus()}
+                onBlur={(e) => props.onEditBlur()}
                 onSave={(value) => {
                   setValue(value);
                   props.onEditBlur();
