@@ -19,4 +19,4 @@ rm -rf dist out
 #rm -rf node_modules  # deep clean
 yarn
 yarn build
-yarn make
+yarn package

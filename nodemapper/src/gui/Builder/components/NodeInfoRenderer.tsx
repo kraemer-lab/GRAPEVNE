@@ -108,6 +108,14 @@ const NodeInfoRenderer = (props) => {
   const nodeinfo = JSON.parse(nodeinfoStr);
   if (Object.keys(nodeinfo).length === 0) return <></>;
 
+  // Get node to lock/unlock it during text edits
+  const app = BuilderEngine.Instance;
+  const node = app.getNodeByName(nodeinfo.name as string);
+  // Node is not locked by default
+  node.setLocked(false);
+  const onEditFocus = () => node.setLocked(true);
+  const onEditBlur = () => node.setLocked(false);
+
   return (
     <div
       style={{
@@ -137,9 +145,14 @@ const NodeInfoRenderer = (props) => {
             value={nodeinfo.name}
             saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
             cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+            onFocus={(e) => onEditFocus()}
+            onBlur={(e) => onEditBlur()}
             onSave={(value) => {
               SetNodeName(value);
+              onEditBlur();
             }}
+            onCancel={() => onEditBlur()}
+            saveOnBlur={true}
           />
         </div>
         <div>
@@ -155,7 +168,10 @@ const NodeInfoRenderer = (props) => {
           overflowY: "auto",
         }}
       >
-        <NodeInfo />
+        <NodeInfo
+          onEditFocus={() => onEditFocus()}
+          onEditBlur={() => onEditBlur()}
+        />
       </div>
     </div>
   );

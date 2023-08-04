@@ -1,10 +1,13 @@
 import contextlib
+import io
 import json
 import os
 import platform
 import shutil
 import subprocess
 import tempfile
+from contextlib import redirect_stderr
+from contextlib import redirect_stdout
 from pathlib import Path
 from typing import Dict
 from typing import List
@@ -12,9 +15,47 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
+import snakemake.remote.HTTP
+import snakemake.remote.S3
+from snakemake import main as snakemake_main
+from snakemake.remote import AUTO  # noqa: F401
+from snakemake.remote import AutoRemoteProvider
+
 from builder.builder import BuildFromJSON
 from builder.builder import YAMLToConfig
 from runner.TokenizeFile import TokenizeFile
+
+# ##############################################################################
+# Snakemake customizations
+# ##############################################################################
+
+snakemake_launcher = "python"
+
+
+# Override snakemake's 'AUTO' protocol mapper (this replaces the normal dynamic
+# import behaviour which is not supported when building PyInstaller binaries)
+@property  # type: ignore
+def protocol_mapping(self):
+    provider_list = [
+        snakemake.remote.HTTP.RemoteProvider,
+        snakemake.remote.S3.RemoteProvider,
+    ]
+    # assemble scheme mapping
+    protocol_dict = {}
+    for Provider in provider_list:
+        try:
+            for protocol in Provider().available_protocols:
+                protocol_short = protocol[:-3]  # remove "://" suffix
+                protocol_dict[protocol_short] = Provider
+        except Exception as e:
+            # If for any reason Provider() fails (e.g. missing python
+            # packages or config env vars), skip this provider.
+            print(f"Instantiating {Provider.__class__.__name__} failed: {e}")
+    return protocol_dict
+
+
+# Method replacement in snakemake.remote package
+AutoRemoteProvider.protocol_mapping = protocol_mapping
 
 
 # ##############################################################################
@@ -33,7 +74,7 @@ def Build(data: dict) -> str:
 def DeleteAllOutput(filename: str) -> dict:
     """Ask snakemake to remove all output files"""
     filename, workdir = GetFileAndWorkingDirectory(filename)
-    stdout, stderr = snakemake(
+    stdout, stderr = snakemake_launch(
         filename,
         "--delete-all-output",
         workdir=workdir,
@@ -68,7 +109,7 @@ def Launch(filename: str, *args, **kwargs) -> dict:
 def Lint(snakefile: str) -> dict:
     """Lint a Snakefile using the snakemake library, returns JSON"""
     try:
-        stdout, stderr = snakemake(snakefile, "--lint", "json")
+        stdout, stderr = snakemake_launch(snakefile, "--lint", "json")
     except BaseException as e:
         return {"error": str(e)}
     # strip first and last lines as needed (snakemake returns)
@@ -307,7 +348,7 @@ def DagFileContent(content: str) -> dict:
 def DagLocal(filename: str, workdir: str = "") -> dict:
     """Returns DAG as JSON from Snakefile"""
     kwargs = {"workdir": workdir} if workdir else {}
-    stdout, stderr = snakemake(filename, "--d3dag", **kwargs)
+    stdout, stderr = snakemake_launch(filename, "--d3dag", **kwargs)
     # strip first and last lines as needed (snakemake returns True/False)
     sl = stdout.split("\n")
     if sl[0] in {"True", "False"}:
@@ -382,21 +423,34 @@ def GetMissingFileDependencies_FromFile(filename: str, *args, **kwargs) -> List[
     """
     if "--d3dag" not in args:
         args = args + ("--d3dag",)
-    stdout, stderr = snakemake(filename, *args, **kwargs)
+    stdout, stderr = snakemake_launch(filename, *args, **kwargs)
     stderr = "\n".join(stderr.split("\n"))
     if stdout:
         # build succeeded
         return []
     if not stderr:
         return []
-    if "MissingInputException" not in [
-        line.split(" ")[0] for line in stderr.split("\n")[0:2]
-    ]:
+    exceptions = set(
+        [
+            ex
+            for ex in [line.split(" ")[0] for line in stderr.split("\n")[0:2]]
+            if ex.endswith("Exception")
+        ]
+    )
+    permitted_exceptions = set(
+        [
+            "MissingInputException",
+        ]
+    )
+    if len(exceptions - permitted_exceptions) > 0:
         raise Exception(
-            f"A non-MissingInputException error has been detected: \nstdout={stdout}\nstderr={stderr}"
+            f"A non-expected error has been detected: \nstdout={stdout}\nstderr={stderr}"
         )
     fileslist = list(filter(None, map(str.strip, stderr.split("\n"))))
-    ix = fileslist.index("affected files:")
+    try:
+        ix = fileslist.index("affected files:")
+    except ValueError:
+        raise Exception("No affected files found: " + stdout + "\n" + stderr)
     return fileslist[(ix + 1) :]
 
 
@@ -490,15 +544,30 @@ def snakemake_cmd(filename: str, *args, **kwargs) -> Tuple[List[str], str]:
 
 def snakemake_run(cmd: List[str], workdir: str) -> Tuple[str, str]:
     """Run the snakemake command returned by snakemake_cmd"""
-    p = subprocess.run(
-        cmd,
-        cwd=workdir,
-        capture_output=True,
-    )
-    return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
+    if snakemake_launcher == "subprocess":
+        p = subprocess.run(
+            cmd,
+            cwd=workdir,
+            capture_output=True,
+        )
+        return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
+    elif snakemake_launcher == "python":
+        cmd_str = " ".join(cmd[1:])  # strip snakemake executable
+        with redirect_stdout(io.StringIO()) as f_stdout:
+            with redirect_stderr(io.StringIO()) as f_stderr:
+                try:
+                    snakemake_main(
+                        cmd_str + " -d " + workdir,
+                    )
+                except SystemExit:
+                    # SystemExit is raised by snakemake upon exit
+                    pass
+        return f_stdout.getvalue(), f_stderr.getvalue()
+    else:
+        raise Exception(f"Unsupported launcher: {snakemake_launcher}.")
 
 
-def snakemake(filename: str, *args, **kwargs) -> Tuple[str, str]:
+def snakemake_launch(filename: str, *args, **kwargs) -> Tuple[str, str]:
     """Run snakemake as subprocess
 
     See snakemake_cmd for details on arguments.
