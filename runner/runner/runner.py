@@ -109,3 +109,20 @@ def CheckNodeDependencies(data: dict) -> dict:
     else:
         raise ValueError(f"Format not supported: {data['format']}")
     return response
+
+
+def SnakemakeRun(data: dict) -> dict:
+    """Run snakemake using a customised snakemake package import"""
+    if data["format"] == "Snakefile":
+        stdout, stderr = snakefile.snakemake_run(
+            data["content"]["command"].split(" "),
+            data["content"]["workdir"],
+            capture_output=False,
+        )
+        response = {
+            "stdout": stdout,
+            "stderr": stderr,
+        }
+    else:
+        raise ValueError(f"Format not supported: {data['format']}")
+    return response

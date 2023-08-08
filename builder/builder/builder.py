@@ -1,9 +1,12 @@
 import argparse
 import copy
 import json
+import logging
+import os
 import pathlib
 import re
 import shutil
+import tempfile
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -12,7 +15,17 @@ from typing import Union
 import requests
 import yaml
 
+
 Namespace = Union[str, None, dict]
+
+# Set up logging
+logfile = os.path.expanduser("~") + "/GRAPEVNE.log"
+logging.basicConfig(
+    filename=logfile,
+    encoding="utf-8",
+    level=logging.DEBUG,
+)
+logging.info("Working directory: %s", os.getcwd())
 
 
 class Node:
@@ -616,7 +629,7 @@ def YAMLToConfig(content: str) -> str:
 
 def BuildFromFile(
     filename: str, **kwargs
-) -> Tuple[Union[Tuple[str, str], bytes], Model]:
+) -> Tuple[Union[Tuple[str, str], bytes], Model, str]:
     """Builds a workflow from a JSON specification file"""
     try:
         with open(filename, "r") as file:
@@ -632,7 +645,8 @@ def BuildFromFile(
 
 def CleanBuildFolder(build_path: str = "") -> None:
     """Deletes the build folder, if it exists"""
-    shutil.rmtree(build_path, ignore_errors=True)
+    if build_path:
+        shutil.rmtree(build_path, ignore_errors=True)
 
 
 def BuildFromJSON(
@@ -642,20 +656,25 @@ def BuildFromJSON(
     build_path: str = "build",
     clean_build: bool = True,
     partial_build: bool = False,  # Don't throw an error if node is missing
-) -> Tuple[Union[Tuple[str, str], bytes], Model]:
+) -> Tuple[Union[Tuple[str, str], bytes], Model, str]:
     """Builds a workflow from a JSON specification
 
     Returns a tuple of the workflow and the workflow model object.
     With singlefile=True the workflow is a tuple of (config, snakefile) strings
     With singlefile=False the workflow is a (zipped) directory structure.
     """
+    logging.debug("BuildFromJSON")
+    logging.debug(
+        f"{config=}, {singlefile=}, {expand=}, {build_path=}, "
+        f"{clean_build=}, {partial_build=}"
+    )
     m = Model()
     m.SetPartialBuild(partial_build)
     # Add modules first to ensure all namespaces are defined before connectors
     for item in config:
         if item["type"].casefold() in ["module", "source", "terminal"]:
-            print("=== Add module (call)")
-            print(item)
+            logging.debug("=== Add module (call)")
+            logging.debug(item)
             m.AddModule(
                 item["name"],
                 item["config"],
@@ -668,18 +687,23 @@ def BuildFromJSON(
                 item["config"],
             )
     if expand:
+        logging.debug("Expanding modules...")
         m.ExpandAllModules()
     if singlefile:
         # Return composite string
-        return ((m.BuildSnakefileConfig(), m.BuildSnakefile())), m
+        logging.debug("Returning single file build...")
+        logging.debug(f"{m.BuildSnakefileConfig()}, {m.BuildSnakefile()}")
+        return ((m.BuildSnakefileConfig(), m.BuildSnakefile())), m, ""
     else:
         # Create (zipped) workflow and return as binary object
+        logging.debug("Creating zip file...")
         build_path = m.SaveWorkflow(build_path, clean_build)
-        zipfilename = "build"
+        zipfilename = tempfile.gettempdir() + "/build"
         shutil.make_archive(zipfilename, "zip", build_path)
         with open(f"{zipfilename}.zip", "rb") as file:
             contents = file.read()
-        return contents, m
+        logging.debug(f"Returning zip file: {zipfilename}.zip")
+        return contents, m, zipfilename + ".zip"
 
 
 if __name__ == "__main__":

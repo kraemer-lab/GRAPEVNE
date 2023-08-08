@@ -301,7 +301,7 @@ def CheckNodeDependencies(jsDeps: dict) -> dict:
     """Check if all dependencies are resolved for a given node"""
 
     # Build model from JSON (for dependency analysis)
-    build, model = BuildFromJSON(jsDeps, singlefile=True, partial_build=True)
+    build, model, _ = BuildFromJSON(jsDeps, singlefile=True, partial_build=True)
 
     # Determine input namespaces for target node
     input_namespaces = model.ConstructSnakefileConfig()[
@@ -542,27 +542,39 @@ def snakemake_cmd(filename: str, *args, **kwargs) -> Tuple[List[str], str]:
     return cmd, workdir
 
 
-def snakemake_run(cmd: List[str], workdir: str) -> Tuple[str, str]:
+def snakemake_run(
+    cmd: List[str], workdir: str, capture_output: bool = True
+) -> Tuple[str, str]:
     """Run the snakemake command returned by snakemake_cmd"""
     if snakemake_launcher == "subprocess":
         p = subprocess.run(
             cmd,
             cwd=workdir,
-            capture_output=True,
+            capture_output=capture_output,
         )
         return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
     elif snakemake_launcher == "python":
         cmd_str = " ".join(cmd[1:])  # strip snakemake executable
-        with redirect_stdout(io.StringIO()) as f_stdout:
-            with redirect_stderr(io.StringIO()) as f_stderr:
-                try:
-                    snakemake_main(
-                        cmd_str + " -d " + workdir,
-                    )
-                except SystemExit:
-                    # SystemExit is raised by snakemake upon exit
-                    pass
-        return f_stdout.getvalue(), f_stderr.getvalue()
+        if capture_output:
+            with redirect_stdout(io.StringIO()) as f_stdout:
+                with redirect_stderr(io.StringIO()) as f_stderr:
+                    try:
+                        snakemake_main(
+                            cmd_str + " -d " + workdir,
+                        )
+                    except SystemExit:
+                        # SystemExit is raised by snakemake upon exit
+                        pass
+            return f_stdout.getvalue(), f_stderr.getvalue()
+        else:
+            try:
+                snakemake_main(
+                    cmd_str + " -d " + workdir,
+                )
+            except SystemExit:
+                # SystemExit is raised by snakemake upon exit
+                pass
+            return "", ""
     else:
         raise Exception(f"Unsupported launcher: {snakemake_launcher}.")
 

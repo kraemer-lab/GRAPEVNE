@@ -7,8 +7,7 @@ const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
 // General query processing interface for Python scripts (replacement for Flask)
 export async function ProcessQuery(
   event: any,
-  query: Record<string, unknown>,
-  mode = "json" // json, text, binary
+  query: Record<string, unknown>
 ): Promise<Record<string, any>> {
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
@@ -64,6 +63,47 @@ export async function ProcessQuery(
   });
 }
 
+// General query processing interface for Python scripts (replacement for Flask)
+export async function RunWorkflow(
+  event: any,
+  query: Record<string, unknown>,
+  stdout_callback: (cmd: string) => void,
+  stderr_callback: (cmd: string) => void
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const args = [JSON.stringify(query)];
+
+    console.log(`open [${pythonPath}]: ${args}`);
+    const proc = child.spawn(pythonPath, args);
+
+    // backend process closes; either successfully (stdout return)
+    // or with an error (stderr return)
+    proc.on("close", () => {
+      console.log(`close:`);
+      resolve(void 0);
+    });
+
+    // the backend will only fail under exceptional circumstances;
+    // most python related errors are relayed as stderr messages
+    proc.on("error", (code: number) => {
+      console.log(`error: ${code}`);
+      reject();
+    });
+
+    // collate stdout data
+    proc.stdout.on("data", function (data: string) {
+      console.log(`stdout: ${data}`);
+      stdout_callback(data);
+    });
+
+    // collate stderr data
+    proc.stderr.on("data", function (data: string) {
+      console.log(`stderr: ${data}`);
+      stderr_callback(data);
+    });
+  });
+}
+
 // Query handlers
 
 export async function display_FolderInfo(event: any, query: any) {
@@ -78,31 +118,53 @@ export async function builder_CompileToJson(event: any, query: any) {
   // Note: Instead of returning the zip file as a base64 string from Python
   //       (as was the procedure in the REST implementation), we instead rely
   //       on Python saving the zip file to disk, then reading it back in.
-
-  // ensure any previous zip file is deleted before sending query
-  await fs.unlink("./build.zip", (err: unknown) => {
-    console.warn(err);
+  const data = await ProcessQuery(event, query);
+  return fs.readFileSync(data["body"]["zipfile"], {
+    encoding: "base64",
   });
-  await ProcessQuery(event, query, "text");
-  return fs.readFileSync("./build.zip", { encoding: "base64" });
 }
 
 export async function builder_BuildAndRun(
   event: any,
   query: any,
-  cmd_callback: any
+  cmd_callback: (cmd: string) => void,
+  stdout_callback: (cmd: string) => void,
+  stderr_callback: (cmd: string) => void
 ) {
+  stdout_callback("Building workflow...");
   const data = await ProcessQuery(event, query);
   // Execute the build in the working directory through the pty
-  if (data["body"]["cmd"] !== "") {
+  if (data["body"]["command"] !== "") {
+    stdout_callback("Running workflow...");
     cmd_callback("cd " + data["body"]["workdir"]);
-    cmd_callback(data["body"]["command"]);
+    //cmd_callback(data["body"]["command"]);
+    const query = {
+      query: "runner/snakemake-run",
+      data: {
+        format: "Snakefile",
+        content: {
+          workdir: data["body"]["workdir"],
+          command: data["body"]["command"],
+        },
+      },
+    };
+    await RunWorkflow(event, query, stdout_callback, stderr_callback);
+    stdout_callback("Workflow complete.");
+  } else {
+    stdout_callback("No workflow command to run.");
   }
   return data;
 }
 
-export async function builder_CleanBuildFolder(event: any, query: any) {
-  return await ProcessQuery(event, query);
+export async function builder_CleanBuildFolder(
+  event: any,
+  query: any,
+  status_callback: (status: string) => void
+) {
+  status_callback("Cleaning build folder...");
+  const data = await ProcessQuery(event, query);
+  status_callback("Build folder cleaned.");
+  return data;
 }
 
 export async function runner_Build(event: any, query: any) {
