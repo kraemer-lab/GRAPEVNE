@@ -53,6 +53,7 @@ def Launch_cmd(data: dict, *args, **kwargs) -> dict:
     """Returns the launch command for a workflow"""
     if data["format"] == "Snakefile":
         snakemake_args = data.get("args", "").split(" ")
+        args = *args, *data.get("targets", [])
         cmd, workdir = snakefile.Launch_cmd(
             data["content"],
             *snakemake_args,
@@ -118,10 +119,12 @@ def CheckNodeDependencies(data: dict) -> dict:
 def SnakemakeRun(data: dict) -> dict:
     """Run snakemake using a customised snakemake package import"""
     if data["format"] == "Snakefile":
+        capture_output = data["content"].get("capture_output", False)
         stdout, stderr = snakefile.snakemake_run(
             data["content"]["command"].split(" "),
             data["content"]["workdir"],
-            capture_output=False,
+            capture_output=capture_output,
+            snakemake_launcher=data["content"].get("backend", ""),
         )
         response = {
             "stdout": stdout,

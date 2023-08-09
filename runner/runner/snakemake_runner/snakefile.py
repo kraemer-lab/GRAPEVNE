@@ -1,12 +1,12 @@
-import io
-import os
-import json
-import shutil
-import logging
-import platform
-import tempfile
-import subprocess
 import contextlib
+import io
+import json
+import logging
+import os
+import platform
+import shutil
+import subprocess
+import tempfile
 from contextlib import redirect_stderr
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -46,6 +46,8 @@ logging.info("Working directory: %s", os.getcwd())
 
 # Override snakemake's 'AUTO' protocol mapper (this replaces the normal dynamic
 # import behaviour which is not supported when building PyInstaller binaries)
+
+
 @property  # type: ignore
 def protocol_mapping(self):
     provider_list = [
@@ -418,7 +420,9 @@ def GetMissingFileDependencies_FromContents(
     deps = []
     with IsolatedTempFile(content_str) as snakefile:
         path = os.path.dirname(os.path.abspath(snakefile))
-        while file_list := GetMissingFileDependencies_FromFile(snakefile, snakemake_launcher):
+        while file_list := GetMissingFileDependencies_FromFile(
+            snakefile, snakemake_launcher
+        ):
             deps.extend(file_list)
 
             # Return early if target dependencies are not resolved
@@ -435,8 +439,8 @@ def GetMissingFileDependencies_FromContents(
 
 def GetMissingFileDependencies_FromFile(
     filename: str,
-    snakemake_launcher: str = "",
     *args,
+    snakemake_launcher: str = "",
     **kwargs,
 ) -> List[str]:
     """Get missing file dependencies from snakemake (single file)
@@ -449,8 +453,8 @@ def GetMissingFileDependencies_FromFile(
 
     stdout, stderr = snakemake_launch(
         filename,
-        snakemake_launcher,
         *args,
+        snakemake_launcher=snakemake_launcher,
         **kwargs,
     )
     stderr = "\n".join(stderr.split("\n"))
@@ -459,14 +463,18 @@ def GetMissingFileDependencies_FromFile(
         return []
     if not stderr:
         return []
-    exceptions = set([
-        ex
-        for ex in [line.split(" ")[0] for line in stderr.split("\n")[0:2]]
-        if ex.endswith("Exception")
-    ])
-    permitted_exceptions = set([
-        "MissingInputException",
-    ])
+    exceptions = set(
+        [
+            ex
+            for ex in [line.split(" ")[0] for line in stderr.split("\n")[0:2]]
+            if ex.endswith("Exception")
+        ]
+    )
+    permitted_exceptions = set(
+        [
+            "MissingInputException",
+        ]
+    )
     if len(exceptions - permitted_exceptions) > 0:
         raise Exception(
             f"A non-expected error has been detected: \nstdout={stdout}\nstderr={stderr}"
@@ -611,8 +619,8 @@ def snakemake_run(
 
 def snakemake_launch(
     filename: str,
-    snakemake_launcher: str = "",
     *args,
+    snakemake_launcher: str = "",
     **kwargs,
 ) -> Tuple[str, str]:
     """Construct the snakemake command and then launch

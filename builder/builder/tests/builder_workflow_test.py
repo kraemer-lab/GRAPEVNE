@@ -23,7 +23,7 @@ workflow_folder = "builder/tests/workflow_import_test"
 )
 def test_Workflow_Imports(name: Tuple[List[str], str]):
     modules, module_out = name
-    build, m = builder.BuildFromFile(
+    build, m, _ = builder.BuildFromFile(
         f"{workflow_folder}/workflow_imports/{modules}.json",
         singlefile=True,
         expand=True,

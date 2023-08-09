@@ -39,7 +39,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           BuildAndRun(
             dispatch,
             getState().builder.snakemake_args,
-            getState().builder.snakemake_backend,
+            getState().builder.snakemake_backend
           );
           break;
         case "builder/clean-build-folder":
@@ -53,14 +53,14 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             action,
             getState().builder.auto_validate_connections,
             getState().builder.snakemake_backend,
-            dispatch,
+            dispatch
           );
           break;
         case "builder/check-node-dependencies":
           CheckNodeDependencies(
             action.payload,
             dispatch,
-            getState().builder.snakemake_backend,
+            getState().builder.snakemake_backend
           );
           break;
         case "builder/node-selected":
@@ -84,10 +84,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           );
           break;
         case "builder/get-remote-modules":
-          GetRemoteModules(
-            dispatch,
-            JSON.parse(getState().builder.repo)
-          );
+          GetRemoteModules(dispatch, JSON.parse(getState().builder.repo));
           break;
         case "builder/update-modules-list":
           UpdateModulesList(dispatch);
@@ -96,10 +93,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           ImportModule();
           break;
         case "builder/set-settings-visibility":
-          SetSettingsVisibility(
-            dispatch,
-            action.payload,
-          );
+          SetSettingsVisibility(dispatch, action.payload);
           break;
         case "builder/toggle-settings-visibility":
           ToggleSettingsVisibility(
@@ -244,7 +238,7 @@ const AddLink = async (
   action: IPayloadLink,
   auto_validate_connections: boolean,
   snakemake_backend: string,
-  dispatch: TPayloadString,
+  dispatch: TPayloadString
 ) => {
   // Skip check if auto-validation is disabled
   if (!auto_validate_connections) {
@@ -589,14 +583,11 @@ const SetSettingsVisibility = (
     // Close node info pane
     dispatch(builderNodeDeselected(""));
   return 0;
-}
+};
 
 const ToggleSettingsVisibility = (
   dispatch: TPayloadString,
   settings_visible: boolean
 ) => {
-  SetSettingsVisibility(
-    dispatch,
-    !settings_visible
-  );
-}
+  SetSettingsVisibility(dispatch, !settings_visible);
+};

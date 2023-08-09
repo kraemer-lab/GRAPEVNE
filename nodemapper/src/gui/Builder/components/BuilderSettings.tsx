@@ -16,7 +16,7 @@ const RepoOptions: React.FC = () => {
   );
   const listingType = repoSettings.listing_type;
   const [repoURL, setRepoURL] = useState(repoSettings.repo);
-  
+
   const selectRepositoryTarget = (target) => {
     let repo = {};
     switch (target) {
@@ -57,23 +57,23 @@ const RepoOptions: React.FC = () => {
 
   return (
     <>
-    <div>
-      <select
-        defaultValue={listingType}
-        onChange={(e) => selectRepositoryTarget(e.target.value)}
-        style={{width: "100%"}}
-      >
-        <option value="LocalFilesystem">Local filesystem</option>
-        <option value="DirectoryListing">Directory Listing (Github)</option>
-        <option value="BranchListing">Branch Listing (Github)</option>
-      </select>
-    </div>
-    <input
-      type="text"
-      size={default_input_size}
-      value={repoURL}
-      onChange={(e) => handleChange(e.target.value)}
-    />
+      <div>
+        <select
+          defaultValue={listingType}
+          onChange={(e) => selectRepositoryTarget(e.target.value)}
+          style={{ width: "100%" }}
+        >
+          <option value="LocalFilesystem">Local filesystem</option>
+          <option value="DirectoryListing">Directory Listing (Github)</option>
+          <option value="BranchListing">Branch Listing (Github)</option>
+        </select>
+      </div>
+      <input
+        type="text"
+        size={default_input_size}
+        value={repoURL}
+        onChange={(e) => handleChange(e.target.value)}
+      />
     </>
   );
 };
@@ -81,7 +81,9 @@ const RepoOptions: React.FC = () => {
 const BuilderSettings = () => {
   const dispatch = useAppDispatch();
   const isvisible = useAppSelector((state) => state.builder.settings_visible);
-  const snakemake_backend = useAppSelector((state) => state.builder.snakemake_backend);
+  const snakemake_backend = useAppSelector(
+    (state) => state.builder.snakemake_backend
+  );
   const snakemake_args = useAppSelector(
     (state) => state.builder.snakemake_args
   );
@@ -110,14 +112,16 @@ const BuilderSettings = () => {
       >
         <br />
         <p>Repository</p>
-        <p><RepoOptions /></p>
+        <p>
+          <RepoOptions />
+        </p>
         <br />
         <p>Snakemake backend</p>
         <p>
           <select
             defaultValue={snakemake_backend}
             onChange={(e) => selectBackend(e.target.value)}
-            style={{width: "100%"}}
+            style={{ width: "100%" }}
           >
             <option value="builtin">Built-in</option>
             <option value="system">System</option>

@@ -593,6 +593,16 @@ class Model:
     def GetRuleNames(self) -> List[str]:
         return [n.rulename for n in self.nodes]
 
+    def LookupRuleName(self, name: str) -> Optional[str]:
+        for n in self.nodes:
+            if name == n.name:
+                return n.rulename
+        return None
+
+    def LookupRuleNames(self, names: List[str]) -> List[Optional[str]]:
+        """Lookup rule name given full name, can take a single string or list"""
+        return [self.LookupRuleName(name) for name in names]
+
 
 def YAMLToConfig(content: str) -> str:
     """Transcribes YAML to a (Snakemake readable) dictionary config syntax"""

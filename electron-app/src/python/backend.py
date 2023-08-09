@@ -36,7 +36,7 @@ def post(request):
     if query == "runner/snakemake-run":
         # Special query - does not capture stdout, stderr
         runner.SnakemakeRun(data)
-        return json.dumps({})
+        return None
 
     # Suppress stdout as we only want to control the return data from this
     # PyInstaller executable which is called from electron.
@@ -74,17 +74,61 @@ def post(request):
             #     json.dump(js, f, indent=4)
             build_path = default_testbuild_path
             logging.info("BuildFromJSON")
-            memory_zip, _, _ = builder.BuildFromJSON(
+            memory_zip, m, _ = builder.BuildFromJSON(
                 js,
                 build_path=build_path,
                 clean_build=False,  # Do not overwrite existing build
             )
+            targets = data.get("targets", [])
+            target_modules = m.LookupRuleNames(targets)
+
+            # Get list of snakemake rules, cross-reference with target_modules
+            # and select 'target' or all rules, then pass on to command
+            data_list = runner.Launch_cmd(
+                {
+                    "format": data["format"],
+                    "content": build_path,
+                    "args": "--list",
+                },
+                terminal=False,
+            )
+            # Stringify command
+            data_list["command"] = " ".join(data_list["command"])
+            logging.info("List command: %s", data_list["command"])
+            response = runner.SnakemakeRun(
+                {
+                    "format": data["format"],
+                    "content": {
+                        "command": data_list["command"],
+                        "workdir": data_list["workdir"],
+                        "capture_output": True,
+                        "backend": data.get("backend", ""),
+                    },
+                }
+            )
+            snakemake_list = response["stdout"].split("\n")
+            logging.debug("snakemake --list output: %s", snakemake_list)
+            target_rules = []
+            for target in target_modules:
+                target_rule = f"{target}_target"
+                if target_rule in snakemake_list:
+                    target_rules.append(target_rule)
+                else:
+                    target_rules.extend(
+                        [
+                            rulename
+                            for rulename in snakemake_list
+                            if rulename.startswith(target)
+                        ]
+                    )
+
             # Second, return the launch command
             logging.info("Generating launch command")
             data = runner.Launch_cmd(
                 {
                     "format": data["format"],
                     "content": build_path,
+                    "targets": target_rules,
                     "args": data.get("args", ""),
                 },
                 terminal=False,
@@ -165,9 +209,10 @@ def post(request):
         else:
             raise NotImplementedError(f"Unknown query: {query}")
 
-    return json.dumps(data)
+    # Return via stdout
+    rtn = json.dumps(data)
+    print(rtn)
+    logging.info("Query response: %s", rtn)
 
 
-rtn = post(sys.argv[1])
-logging.info("Query response: %s", rtn)
-print(rtn)  # Return stringified JSON by stdout
+post(sys.argv[1])

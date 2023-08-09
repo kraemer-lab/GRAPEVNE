@@ -20,7 +20,7 @@ export async function ProcessQuery(
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
     proc.on("close", () => {
-      console.log(`close: ${stdout}`);
+      console.log(`close: ${stdout} ${stderr}`);
       if (stdout === "")
         // Empty return, most likely a failure in python
         resolve({
