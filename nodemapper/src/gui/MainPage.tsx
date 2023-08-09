@@ -55,12 +55,14 @@ const MainPage = () => {
             }}
           >
             GRAPEVNE
+            {/*
             <button className="btn" onClick={() => setMenuChoice(0)}>
               BUILDER
             </button>
             <button className="btn" onClick={() => setMenuChoice(1)}>
               RUNNER
             </button>
+            */}
           </div>
         </div>
         <div className="body" style={{ flex: "1 1 auto", overflowY: "auto" }}>

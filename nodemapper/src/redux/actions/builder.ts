@@ -22,6 +22,10 @@ export const builderToggleTerminalVisibility = createAction(
   "builder/toggle-terminal-visibility"
 );
 
+export const builderSetSettingsVisibility = createAction<boolean>(
+  "builder/set-settings-visibility"
+);
+
 export const builderToggleSettingsVisibility = createAction(
   "builder/toggle-settings-visibility"
 );
@@ -37,6 +41,10 @@ export const builderGetRemoteModules = createAction(
 );
 
 export const builderImportModule = createAction("builder/import-module");
+
+export const builderSelectSnakemakeBackend = createAction<string>(
+  "builder/select-snakemake-backend"
+);
 
 export const builderUpdateModulesList = createAction<string>(
   "builder/update-modules-list"

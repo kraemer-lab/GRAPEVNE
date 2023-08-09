@@ -137,19 +137,29 @@ export async function builder_BuildAndRun(
   if (data["body"]["command"] !== "") {
     stdout_callback("Running workflow...");
     cmd_callback("cd " + data["body"]["workdir"]);
-    //cmd_callback(data["body"]["command"]);
-    const query = {
-      query: "runner/snakemake-run",
-      data: {
-        format: "Snakefile",
-        content: {
-          workdir: data["body"]["workdir"],
-          command: data["body"]["command"],
-        },
-      },
-    };
-    await RunWorkflow(event, query, stdout_callback, stderr_callback);
-    stdout_callback("Workflow complete.");
+    const backend = query["data"]["backend"];
+    let query_run = {};
+    switch (backend) {
+      case "builtin":
+        query_run = {
+          query: "runner/snakemake-run",
+          data: {
+            format: "Snakefile",
+            content: {
+              workdir: data["body"]["workdir"],
+              command: data["body"]["command"],
+            },
+          },
+        };
+        await RunWorkflow(event, query_run, stdout_callback, stderr_callback);
+        stdout_callback("Workflow complete.");
+        break;
+      case "system":
+        cmd_callback(data["body"]["command"]);
+        break;
+      default:
+        console.log("Unknown Snakemake backend requested: " + backend);
+    }
   } else {
     stdout_callback("No workflow command to run.");
   }

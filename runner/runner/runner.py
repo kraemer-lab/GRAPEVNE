@@ -105,7 +105,11 @@ def CheckNodeDependencies(data: dict) -> dict:
     """Checks the dependencies of a node, given the node and first-order inputs."""
     if data["format"] == "Snakefile":
         js = json.loads(data["content"])
-        response: dict = snakefile.CheckNodeDependencies(js)
+        snakemake_launcher = data.get("backend", "")
+        response: dict = snakefile.CheckNodeDependencies(
+            js,
+            snakemake_launcher,
+        )
     else:
         raise ValueError(f"Format not supported: {data['format']}")
     return response

@@ -1,11 +1,12 @@
-import contextlib
 import io
-import json
 import os
-import platform
+import json
 import shutil
-import subprocess
+import logging
+import platform
 import tempfile
+import subprocess
+import contextlib
 from contextlib import redirect_stderr
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -26,11 +27,22 @@ from builder.builder import YAMLToConfig
 from runner.TokenizeFile import TokenizeFile
 
 # ##############################################################################
-# Snakemake customizations
+# Log file
 # ##############################################################################
 
-snakemake_launcher = "python"
+logfile = os.path.expanduser("~") + "/GRAPEVNE.log"
 
+# Set up logging
+logging.basicConfig(
+    filename=logfile,
+    encoding="utf-8",
+    level=logging.DEBUG,
+)
+logging.info("Working directory: %s", os.getcwd())
+
+# ##############################################################################
+# Snakemake customizations
+# ##############################################################################
 
 # Override snakemake's 'AUTO' protocol mapper (this replaces the normal dynamic
 # import behaviour which is not supported when building PyInstaller binaries)
@@ -297,7 +309,7 @@ def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
     return rules
 
 
-def CheckNodeDependencies(jsDeps: dict) -> dict:
+def CheckNodeDependencies(jsDeps: dict, snakemake_launcher: str = "") -> dict:
     """Check if all dependencies are resolved for a given node"""
 
     # Build model from JSON (for dependency analysis)
@@ -316,7 +328,11 @@ def CheckNodeDependencies(jsDeps: dict) -> dict:
     # Determine unresolved dependencies (and their source namespaces)
     target_namespaces = set([f"results/{n}" for n in input_namespaces])
     missing_deps = set(
-        GetMissingFileDependencies_FromContents(build, list(target_namespaces))
+        GetMissingFileDependencies_FromContents(
+            build,
+            list(target_namespaces),
+            snakemake_launcher,
+        )
     )
     unresolved_dep_sources = set(
         s.split("/")[1] for s in missing_deps if s.startswith("results/")
@@ -376,7 +392,9 @@ def GetFileAndWorkingDirectory(filename: str) -> Tuple[str, str]:
 
 
 def GetMissingFileDependencies_FromContents(
-    content: Union[Tuple[dict, str], str], target_namespaces: List[str] = []
+    content: Union[Tuple[dict, str], str],
+    target_namespaces: List[str] = [],
+    snakemake_launcher: str = "",
 ) -> List[str]:
     """Get missing file dependencies from snakemake
 
@@ -400,7 +418,7 @@ def GetMissingFileDependencies_FromContents(
     deps = []
     with IsolatedTempFile(content_str) as snakefile:
         path = os.path.dirname(os.path.abspath(snakefile))
-        while file_list := GetMissingFileDependencies_FromFile(snakefile):
+        while file_list := GetMissingFileDependencies_FromFile(snakefile, snakemake_launcher):
             deps.extend(file_list)
 
             # Return early if target dependencies are not resolved
@@ -415,7 +433,12 @@ def GetMissingFileDependencies_FromContents(
     return deps
 
 
-def GetMissingFileDependencies_FromFile(filename: str, *args, **kwargs) -> List[str]:
+def GetMissingFileDependencies_FromFile(
+    filename: str,
+    snakemake_launcher: str = "",
+    *args,
+    **kwargs,
+) -> List[str]:
     """Get missing file dependencies from snakemake (single file)
 
     Find missing dependencies for one run of a ruleset; for recursive /
@@ -423,25 +446,27 @@ def GetMissingFileDependencies_FromFile(filename: str, *args, **kwargs) -> List[
     """
     if "--d3dag" not in args:
         args = args + ("--d3dag",)
-    stdout, stderr = snakemake_launch(filename, *args, **kwargs)
+
+    stdout, stderr = snakemake_launch(
+        filename,
+        snakemake_launcher,
+        *args,
+        **kwargs,
+    )
     stderr = "\n".join(stderr.split("\n"))
     if stdout:
         # build succeeded
         return []
     if not stderr:
         return []
-    exceptions = set(
-        [
-            ex
-            for ex in [line.split(" ")[0] for line in stderr.split("\n")[0:2]]
-            if ex.endswith("Exception")
-        ]
-    )
-    permitted_exceptions = set(
-        [
-            "MissingInputException",
-        ]
-    )
+    exceptions = set([
+        ex
+        for ex in [line.split(" ")[0] for line in stderr.split("\n")[0:2]]
+        if ex.endswith("Exception")
+    ])
+    permitted_exceptions = set([
+        "MissingInputException",
+    ])
     if len(exceptions - permitted_exceptions) > 0:
         raise Exception(
             f"A non-expected error has been detected: \nstdout={stdout}\nstderr={stderr}"
@@ -543,17 +568,22 @@ def snakemake_cmd(filename: str, *args, **kwargs) -> Tuple[List[str], str]:
 
 
 def snakemake_run(
-    cmd: List[str], workdir: str, capture_output: bool = True
+    cmd: List[str],
+    workdir: str,
+    capture_output: bool = True,
+    snakemake_launcher: str = "",
 ) -> Tuple[str, str]:
-    """Run the snakemake command returned by snakemake_cmd"""
-    if snakemake_launcher == "subprocess":
+    """Run the snakemake command by the selected launch method"""
+    logging.info("Launching snakemake [%s]: %s", snakemake_launcher, " ".join(cmd))
+    snakemake_launcher = "builtin" if not snakemake_launcher else snakemake_launcher
+    if snakemake_launcher == "system":
         p = subprocess.run(
             cmd,
             cwd=workdir,
             capture_output=capture_output,
         )
         return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
-    elif snakemake_launcher == "python":
+    elif snakemake_launcher == "builtin":
         cmd_str = " ".join(cmd[1:])  # strip snakemake executable
         if capture_output:
             with redirect_stdout(io.StringIO()) as f_stdout:
@@ -579,10 +609,15 @@ def snakemake_run(
         raise Exception(f"Unsupported launcher: {snakemake_launcher}.")
 
 
-def snakemake_launch(filename: str, *args, **kwargs) -> Tuple[str, str]:
-    """Run snakemake as subprocess
+def snakemake_launch(
+    filename: str,
+    snakemake_launcher: str = "",
+    *args,
+    **kwargs,
+) -> Tuple[str, str]:
+    """Construct the snakemake command and then launch
 
     See snakemake_cmd for details on arguments.
     """
     cmd, workdir = snakemake_cmd(filename, *args, **kwargs)
-    return snakemake_run(cmd, workdir)
+    return snakemake_run(cmd, workdir, snakemake_launcher=snakemake_launcher)
