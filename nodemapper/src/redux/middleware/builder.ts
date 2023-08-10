@@ -12,6 +12,7 @@ import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
+import { builderSetSettingsVisibility } from "redux/actions";
 
 const API_ENDPOINT = globals.getApiEndpoint();
 
@@ -35,7 +36,11 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           CompileToJSON();
           break;
         case "builder/build-and-run":
-          BuildAndRun(dispatch, getState().builder.snakemake_args);
+          BuildAndRun(
+            dispatch,
+            getState().builder.snakemake_args,
+            getState().builder.snakemake_backend
+          );
           break;
         case "builder/clean-build-folder":
           CleanBuildFolder(dispatch);
@@ -47,14 +52,19 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           AddLink(
             action,
             getState().builder.auto_validate_connections,
+            getState().builder.snakemake_backend,
             dispatch
           );
           break;
         case "builder/check-node-dependencies":
-          CheckNodeDependencies(action.payload, dispatch);
+          CheckNodeDependencies(
+            action.payload,
+            dispatch,
+            getState().builder.snakemake_backend
+          );
           break;
         case "builder/node-selected":
-          NodeSelected(action, dispatch, getState);
+          NodeSelected(action, dispatch, dispatch, getState);
           break;
         case "builder/node-deselected":
           NodeDeselected(dispatch);
@@ -82,6 +92,15 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case "builder/import-module":
           ImportModule();
           break;
+        case "builder/set-settings-visibility":
+          SetSettingsVisibility(dispatch, action.payload);
+          break;
+        case "builder/toggle-settings-visibility":
+          ToggleSettingsVisibility(
+            dispatch,
+            getState().builder.settings_visible
+          );
+          break;
         default:
           break;
       }
@@ -105,6 +124,12 @@ interface IPayloadString {
   type: string;
 }
 type TPayloadString = (action: IPayloadString) => void;
+
+interface IPayloadBool {
+  payload: boolean;
+  type: string;
+}
+type TPayloadBool = (action: IPayloadBool) => void;
 
 const CompileToJSON = async () => {
   const app = BuilderEngine.Instance;
@@ -144,7 +169,8 @@ const CompileToJSON = async () => {
 
 const BuildAndRun = async (
   dispatchString: TPayloadString,
-  snakemake_args: string
+  snakemake_args: string,
+  snakemake_backend: string
 ) => {
   const app = BuilderEngine.Instance;
   const query: Record<string, unknown> = {
@@ -154,6 +180,7 @@ const BuildAndRun = async (
       content: app.GetModuleListJSON(),
       targets: app.GetLeafNodeNames(),
       args: snakemake_args,
+      backend: snakemake_backend,
     },
   };
   const callback = (result) => {
@@ -210,6 +237,7 @@ interface IPayloadLink {
 const AddLink = async (
   action: IPayloadLink,
   auto_validate_connections: boolean,
+  snakemake_backend: string,
   dispatch: TPayloadString
 ) => {
   // Skip check if auto-validation is disabled
@@ -229,12 +257,13 @@ const AddLink = async (
   const nodename = JSON.parse(node.getOptions().extras)["name"];
 
   // Check node dependencies
-  CheckNodeDependencies(nodename, dispatch);
+  CheckNodeDependencies(nodename, dispatch, snakemake_backend);
 };
 
 const CheckNodeDependencies = async (
   nodename: string,
-  dispatch: TPayloadString
+  dispatch: TPayloadString,
+  snakemake_backend: string
 ) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
@@ -251,6 +280,7 @@ const CheckNodeDependencies = async (
     data: {
       format: "Snakefile",
       content: JSON.stringify(jsDeps),
+      backend: snakemake_backend,
     },
   };
   // Set node grey to indicate checking
@@ -290,6 +320,7 @@ const CheckNodeDependencies = async (
 const NodeSelected = async (
   action: IPayloadRecord,
   dispatch: TPayloadString,
+  dispatchBool: TPayloadBool,
   getState
 ) => {
   // Deselect any nodes first and wait for the state to update
@@ -299,6 +330,8 @@ const NodeSelected = async (
     };
     await deselect();
   }
+  // Close settings menu (if open)
+  dispatchBool(builderSetSettingsVisibility(false));
   // Select the node
   const builder = BuilderEngine.Instance;
   const id = (action.payload as Record<string, string>).id;
@@ -384,6 +417,7 @@ const GetRemoteModules = async (
 ) => {
   // Get list of remote modules
   dispatchString(builderUpdateStatusText("Loading modules..."));
+  console.log("Repository settings: ", repo);
   const app = BuilderEngine.Instance;
   const query: Record<string, unknown> = {
     query: "builder/get-remote-modules",
@@ -539,4 +573,21 @@ const SubmitQuery = (query: Record<string, unknown>, dispatch, callback) => {
 
   // Received query request
   if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
+};
+
+const SetSettingsVisibility = (
+  dispatch: TPayloadString,
+  new_state: boolean
+) => {
+  if (new_state)
+    // Close node info pane
+    dispatch(builderNodeDeselected(""));
+  return 0;
+};
+
+const ToggleSettingsVisibility = (
+  dispatch: TPayloadString,
+  settings_visible: boolean
+) => {
+  SetSettingsVisibility(dispatch, !settings_visible);
 };

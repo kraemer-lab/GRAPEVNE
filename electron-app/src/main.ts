@@ -50,14 +50,18 @@ app.whenReady().then(() => {
   };
   const terminal_sendLine = (data: string) => {
     // Clear line before command and add newline at end of command
-    terminal_sendData("\x15" + data + "\n");
+    terminal_sendData("\x15" + data + "\r\n");
   };
   ipcMain.on("terminal/send-data", (event, data) => {
     terminal_sendData(data);
   });
-  ptyProcess.onData((data: any) => {
-    win.webContents.send("terminal/receive-data", data);
-  });
+  const sendPtyData = (data: string) => {
+    win.webContents.send(
+      "terminal/receive-data",
+      data.replace(/\r?\n/g, "\r\n")
+    );
+  };
+  ptyProcess.onData(sendPtyData);
   // Set PS1 prompt (to show current folder)
   terminal_sendLine('export PS1="\\e[0;32m\\W > \\e[m"');
 
@@ -75,11 +79,20 @@ app.whenReady().then(() => {
   );
   ipcMain.handle("builder/compile-to-json", handles.builder_CompileToJson);
   ipcMain.handle("builder/build-and-run", (event, data) =>
-    handles.builder_BuildAndRun(event, data, terminal_sendLine)
+    handles.builder_BuildAndRun(
+      event,
+      data,
+      terminal_sendLine,
+      // stdout_callback
+      (data: string) => sendPtyData(data + "\r\n"),
+      // stderr_callback
+      (data: string) => sendPtyData(data + "\r\n")
+    )
   );
-  ipcMain.handle(
-    "builder/clean-build-folder",
-    handles.builder_CleanBuildFolder
+  ipcMain.handle("builder/clean-build-folder", (event, data) =>
+    handles.builder_CleanBuildFolder(event, data, (data: string) =>
+      sendPtyData(data + "\r\n")
+    )
   );
 
   // Runner

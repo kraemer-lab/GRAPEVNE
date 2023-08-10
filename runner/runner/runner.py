@@ -53,6 +53,7 @@ def Launch_cmd(data: dict, *args, **kwargs) -> dict:
     """Returns the launch command for a workflow"""
     if data["format"] == "Snakefile":
         snakemake_args = data.get("args", "").split(" ")
+        args = *args, *data.get("targets", [])
         cmd, workdir = snakefile.Launch_cmd(
             data["content"],
             *snakemake_args,
@@ -105,7 +106,30 @@ def CheckNodeDependencies(data: dict) -> dict:
     """Checks the dependencies of a node, given the node and first-order inputs."""
     if data["format"] == "Snakefile":
         js = json.loads(data["content"])
-        response: dict = snakefile.CheckNodeDependencies(js)
+        snakemake_launcher = data.get("backend", "")
+        response: dict = snakefile.CheckNodeDependencies(
+            js,
+            snakemake_launcher,
+        )
+    else:
+        raise ValueError(f"Format not supported: {data['format']}")
+    return response
+
+
+def SnakemakeRun(data: dict) -> dict:
+    """Run snakemake using a customised snakemake package import"""
+    if data["format"] == "Snakefile":
+        capture_output = data["content"].get("capture_output", False)
+        stdout, stderr = snakefile.snakemake_run(
+            data["content"]["command"].split(" "),
+            data["content"]["workdir"],
+            capture_output=capture_output,
+            snakemake_launcher=data["content"].get("backend", ""),
+        )
+        response = {
+            "stdout": stdout,
+            "stderr": stderr,
+        }
     else:
         raise ValueError(f"Format not supported: {data['format']}")
     return response

@@ -11,23 +11,26 @@ interface IBuilderState {
   terminal_visibile: boolean;
   settings_visible: boolean;
   snakemake_args: string;
+  snakemake_backend: string;
   auto_validate_connections: boolean;
 }
 
 // State
 const builderStateInit: IBuilderState = {
   repo: JSON.stringify({
-    type: "github", // local | github
-    listing_type: "DirectoryListing", // DirectoryListing | BranchListing
-    repo: "kraemer-lab/vneyard", // local path or github repo (user/repo)
+    type: "local", // local | github
+    listing_type: "LocalFilesystem", // LocalFilesystem, // DirectoryListing | BranchListing
+    //repo: "kraemer-lab/vneyard", // local path or github repo (user/repo)
+    repo: "/Users/jsb/repos/jsbrittain/snakeshack",
   }),
   modules_list: "[]",
   statustext: "",
-  nodeinfo: "{}", // {} requires to be a valid JSON string
+  nodeinfo: "{}", // {} required to be a valid JSON string
   can_selected_expand: true,
   terminal_visibile: false,
   settings_visible: false,
-  snakemake_args: "--cores 1 --use-conda $(snakemake --list)",
+  snakemake_args: "--cores 1 --use-conda", // $(snakemake --list)",
+  snakemake_backend: "builtin", // builtin | system
   auto_validate_connections: false,
 };
 
@@ -89,6 +92,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       state.terminal_visibile = true;
       console.info("[Reducer] " + action.type);
     })
+    .addCase(actions.builderSetSettingsVisibility, (state, action) => {
+      state.settings_visible = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
     .addCase(actions.builderToggleSettingsVisibility, (state, action) => {
       state.settings_visible = !state.settings_visible;
       console.info("[Reducer] " + action.type);
@@ -103,6 +110,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderToggleAutoValidateConnections, (state, action) => {
       state.auto_validate_connections = !state.auto_validate_connections;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSelectSnakemakeBackend, (state, action) => {
+      state.snakemake_backend = action.payload;
       console.info("[Reducer] " + action.type);
     });
 });
