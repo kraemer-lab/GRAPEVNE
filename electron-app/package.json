@@ -1,6 +1,6 @@
 {
   "name": "GRAPEVNE",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "GRAPEVNE electron app",
   "main": "dist/main.js",
   "scripts": {
