@@ -18,10 +18,13 @@ interface IBuilderState {
 // State
 const builderStateInit: IBuilderState = {
   repo: JSON.stringify({
-    type: "local", // local | github
-    listing_type: "LocalFilesystem", // LocalFilesystem, // DirectoryListing | BranchListing
-    //repo: "kraemer-lab/vneyard", // local path or github repo (user/repo)
-    repo: "/Users/jsb/repos/jsbrittain/snakeshack",
+    //type: "local",
+    //listing_type: "LocalFilesystem",
+    //repo: "/Users/jsb/repos/jsbrittain/snakeshack",
+
+    type: "github", // local | github
+    listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
+    repo: "kraemer-lab/vneyard",
   }),
   modules_list: "[]",
   statustext: "",

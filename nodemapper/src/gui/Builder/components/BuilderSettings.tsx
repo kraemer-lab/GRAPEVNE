@@ -24,7 +24,7 @@ const RepoOptions: React.FC = () => {
         repo = {
           type: "local",
           listing_type: "DirectoryListing",
-          repo: "/Users/jsb/repos/jsbrittain/snakeshack",
+          repo: "/",
         };
         break;
       case "DirectoryListing":

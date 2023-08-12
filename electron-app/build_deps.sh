@@ -29,7 +29,7 @@ python -m PyInstaller src/python/backend.py \
     --hidden-import smart_open.http \
     --hidden-import smart_open.s3 \
     --hidden-import smart_open.ssh \
-    --hidden-import smart_open.webhdfs \
+    --hidden-import smart_open.webhdfs
 
 # Ensure nodemapper up-to-date
 pushd ../nodemapper
