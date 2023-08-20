@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import * as child from "child_process";
+import web from "./web";
 
 const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
 
@@ -111,7 +112,15 @@ export async function display_FolderInfo(event: any, query: any) {
 }
 
 export async function builder_GetRemoteModules(event: any, query: any) {
-  return await ProcessQuery(event, query);
+  // python version
+  //return await ProcessQuery(event, query);
+
+  // nodejs version
+  const modules = await web.GetModulesList(query["data"]["content"]["url"]);
+  return {
+    query: "builder/get-remote-modules",
+    body: modules,
+  };
 }
 
 export async function builder_CompileToJson(event: any, query: any) {
