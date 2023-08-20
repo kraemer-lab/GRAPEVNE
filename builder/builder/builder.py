@@ -666,6 +666,7 @@ def BuildFromJSON(
     build_path: str = "build",
     clean_build: bool = True,
     partial_build: bool = False,  # Don't throw an error if node is missing
+    create_zip: bool = True,
 ) -> Tuple[Union[Tuple[str, str], bytes], Model, str]:
     """Builds a workflow from a JSON specification
 
@@ -706,14 +707,18 @@ def BuildFromJSON(
         return ((m.BuildSnakefileConfig(), m.BuildSnakefile())), m, ""
     else:
         # Create (zipped) workflow and return as binary object
-        logging.debug("Creating zip file...")
         build_path = m.SaveWorkflow(build_path, clean_build)
         zipfilename = tempfile.gettempdir() + "/build"
-        shutil.make_archive(zipfilename, "zip", build_path)
-        with open(f"{zipfilename}.zip", "rb") as file:
-            contents = file.read()
-        logging.debug(f"Returning zip file: {zipfilename}.zip")
-        return contents, m, zipfilename + ".zip"
+        if create_zip:
+            logging.debug("Creating zip file...")
+            shutil.make_archive(zipfilename, "zip", build_path)
+            with open(f"{zipfilename}.zip", "rb") as file:
+                contents = file.read()
+            logging.debug(f"Returning zip file: {zipfilename}.zip")
+            return contents, m, zipfilename + ".zip"
+        else:
+            logging.debug("Returning build folder...")
+            return b"", m, zipfilename + ".zip"
 
 
 if __name__ == "__main__":

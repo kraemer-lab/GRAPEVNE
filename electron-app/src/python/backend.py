@@ -78,6 +78,7 @@ def post(request):
                 js,
                 build_path=build_path,
                 clean_build=False,  # Do not overwrite existing build
+                create_zip=False,
             )
             targets = data.get("targets", [])
             target_modules = m.LookupRuleNames(targets)
