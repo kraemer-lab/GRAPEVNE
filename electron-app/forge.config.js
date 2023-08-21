@@ -2,7 +2,19 @@ const path = require("path");
 const fs = require("fs");
 
 module.exports = {
-  packagerConfig: {},
+  packagerConfig: {
+    ignore: [
+      /^\/\.gitignore$/,
+      /^\/\.git$/,
+      /^\/\.github$/,
+      /^.*\.sh$/,
+      /^.*\.zip$/,
+      /build/,
+      /coverage/,
+      /venv/,
+      "Mambaforge.sh",
+    ]
+  },
   rebuildConfig: {},
   makers: [
     // zip distributable of binary
