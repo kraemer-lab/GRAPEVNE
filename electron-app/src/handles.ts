@@ -4,6 +4,7 @@ import * as child from "child_process";
 import web from "./web";
 
 const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
+const condaPath = path.join(process.resourcesPath, "app", "dist", "conda", "bin");
 
 // General query processing interface for Python scripts (replacement for Flask)
 export async function ProcessQuery(
@@ -64,7 +65,8 @@ export async function ProcessQuery(
   });
 }
 
-// General query processing interface for Python scripts (replacement for Flask)
+// General query processing interface for Python scripts
+// (provides realtime stdout/stderr responses)
 export async function RunWorkflow(
   event: any,
   query: Record<string, unknown>,
@@ -74,8 +76,13 @@ export async function RunWorkflow(
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
 
-    console.log(`open [${pythonPath}]: ${args}`);
-    const proc = child.spawn(pythonPath, args);
+    // Set PATH to include bundled conda during snakemake calls
+    const path = `${condaPath}:${process.env.PATH}`;
+    const proc = child.spawn(
+      pythonPath,
+      args,
+      {env: {...process.env, PATH: path}}
+    );
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)

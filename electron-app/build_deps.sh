@@ -4,7 +4,7 @@ set -eoux pipefail
 
 # activate virtual environment
 if [ ! -d "venv" ]; then
-	python3 -m venv venv
+    python3 -m venv venv
 fi
 RUNNER_OS=${RUNNER_OS:-$(uname)}
 if [[ "$RUNNER_OS" == "Windows" ]]; then
@@ -37,3 +37,33 @@ cp src/redux/globals_electron.ts src/redux/globals.ts
 yarn
 yarn build
 popd
+
+# Bundle Mambaforge
+if [[ "$RUNNER_OS" == "Windows" ]]; then
+    echo "Downloading Mambaforge for Windows..."
+    curl.exe -o "Mambaforge-Windows-x86_64.exe" "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Windows-x86_64.exe"
+    start /wait "" Mambaforge-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\Mambaforge
+    echo "done."
+elif [[ "$RUNNER_OS" == "Linux" ]]; then
+    echo "Downloading Mambaforge for Linux..."
+    wget -O Mambaforge.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
+    bash Mambaforge.sh -b -p "./dist/conda"
+    echo "done."
+elif [[ "$RUNNER_OS" == "macOS" || "$RUNNER_OS" == "Darwin" ]]; then
+    # Check for existing installation (will only present on developer machines)
+    echo "Downloading Mambaforge for macOS..."
+    if [ -f "Mambaforge.sh" ]; then
+        echo "Mambaforge.sh already exists, skipping download."
+    else
+        curl -fsSLo Mambaforge.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-MacOSX-$(uname -m).sh"
+    fi
+    if [ -d "./dist/conda" ]; then
+        echo "Conda environment already exists, skipping installation."
+    else
+        bash Mambaforge.sh -b -p "./dist/conda"
+    fi
+    echo "done."
+else
+    echo "Unknown OS: $RUNNER_OS"
+    exit 1
+fi

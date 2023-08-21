@@ -62,8 +62,6 @@ app.whenReady().then(() => {
     );
   };
   ptyProcess.onData(sendPtyData);
-  // Set PS1 prompt (to show current folder)
-  terminal_sendLine('export PS1="\\e[0;32m\\W > \\e[m"');
 
   ////////////////////
   // Setup IPC handles
