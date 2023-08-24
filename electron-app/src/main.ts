@@ -7,20 +7,17 @@ import * as pty from "node-pty";
 
 // Self-test code
 if (app.commandLine.getSwitchValue("self-test") == "true") {
-
   // Run test suite
   testsuite((data: string) => console.log(data))
-  .then(() => {
-    console.log("All tests passed");
-    app.exit(0);
-  })
-  .catch((err) => {
-    console.log("Test failed: " + err);
-    app.exit(1);
-  });
-
+    .then(() => {
+      console.log("All tests passed");
+      app.exit(0);
+    })
+    .catch((err) => {
+      console.log("Test failed: " + err);
+      app.exit(1);
+    });
 } else {
-
   // Create electon window
   const createWindow = () => {
     const win = new BrowserWindow({
@@ -55,7 +52,9 @@ if (app.commandLine.getSwitchValue("self-test") == "true") {
     ////////////////////////
 
     const shell =
-      os.platform() === "win32" ? "powershell.exe" : process.env.SHELL || "bash";
+      os.platform() === "win32"
+        ? "powershell.exe"
+        : process.env.SHELL || "bash";
     const ptyProcess = pty.spawn(shell, [], {
       name: "xterm-color",
       cols: 80,

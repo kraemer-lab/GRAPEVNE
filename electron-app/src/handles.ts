@@ -4,7 +4,13 @@ import * as child from "child_process";
 import web from "./web";
 
 const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
-const condaPath = path.join(process.resourcesPath, "app", "dist", "conda", "bin");
+const condaPath = path.join(
+  process.resourcesPath,
+  "app",
+  "dist",
+  "conda",
+  "bin"
+);
 
 // General query processing interface for Python scripts (replacement for Flask)
 export async function ProcessQuery(
@@ -70,19 +76,27 @@ export async function ProcessQuery(
 export async function RunWorkflow(
   event: any,
   query: Record<string, unknown>,
+  conda_backend: string,
+  envs: Record<string, string>,
   stdout_callback: (cmd: string) => void,
   stderr_callback: (cmd: string) => void
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
 
-    // Set PATH to include bundled conda during snakemake calls
-    const path = `${condaPath}:${process.env.PATH}`;
-    const proc = child.spawn(
-      pythonPath,
-      args,
-      {env: {...process.env, PATH: path}}
-    );
+    // Set PATH to include bundled conda during snakemake calls, plus any
+    // other environment variables specified by the user
+    const systempath = process.env.PATH || "";
+    const userpath = envs.PATH || "";
+    let path = `${userpath}:${systempath}`;
+    if (conda_backend === "builtin") path = `${condaPath}:${path}`;
+    const proc = child.spawn(pythonPath, args, {
+      env: {
+        ...process.env,
+        ...envs,
+        PATH: path,
+      },
+    });
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
@@ -153,7 +167,24 @@ export async function builder_BuildAndRun(
   if (data["body"]["command"] !== "") {
     stdout_callback("Running workflow...");
     cmd_callback("cd " + data["body"]["workdir"]);
+
+    // Query parameters
     const backend = query["data"]["backend"];
+    const conda_backend = query["data"]["conda_backend"];
+    const environment_variables = query["data"]["environment_variables"];
+
+    // Convert environment variables string to a dictionary
+    const envs = environment_variables
+      .split(";")
+      .reduce((acc: Record<string, string>, line: string) => {
+        const [key, value] = line.split("=");
+        if (key && value) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
+    // Run the workflow
     let query_run = {};
     switch (backend) {
       case "builtin":
@@ -167,7 +198,14 @@ export async function builder_BuildAndRun(
             },
           },
         };
-        await RunWorkflow(event, query_run, stdout_callback, stderr_callback);
+        await RunWorkflow(
+          event,
+          query_run,
+          conda_backend,
+          envs,
+          stdout_callback,
+          stderr_callback
+        );
         stdout_callback("Workflow complete.");
         break;
       case "system":

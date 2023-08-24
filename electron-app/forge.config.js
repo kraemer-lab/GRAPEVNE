@@ -13,7 +13,7 @@ module.exports = {
       /coverage/,
       /venv/,
       "Mambaforge.sh",
-    ]
+    ],
   },
   rebuildConfig: {},
   makers: [
