@@ -180,13 +180,7 @@ const GetRemoteModulesGithubDirectoryListing = async (
               function: "github",
               args: [repo],
               kwargs: {
-                path: path.join(
-                  "workflows",
-                  org,
-                  module_type,
-                  workflow,
-                  "workflow/Snakefile"
-                ),
+                path: `workflows/${org}/${module_type}/${workflow}/workflow/Snakefile`,
                 branch: branch,
               },
             },
@@ -255,7 +249,7 @@ const GetRemoteModulesGithubBranchListing = async (
           function: "github",
           args: [repo],
           kwargs: {
-            path: path.join("workflow/Snakefile"),
+            path: "workflow/Snakefile",
             branch: branch,
           },
         },
