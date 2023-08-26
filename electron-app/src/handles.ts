@@ -1,6 +1,9 @@
 import fs from "fs";
 import path from "path";
+
+import * as os from "node:os";
 import * as child from "child_process";
+
 import web from "./web";
 
 const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
@@ -9,8 +12,9 @@ const condaPath = path.join(
   "app",
   "dist",
   "conda",
-  "bin"
+  os.platform() === "win32" ? "condabin" : "bin"
 );
+const pathSeparator = os.platform() === "win32" ? ";" : ":";
 
 // General query processing interface for Python scripts (replacement for Flask)
 export async function ProcessQuery(
@@ -88,13 +92,16 @@ export async function RunWorkflow(
     // other environment variables specified by the user
     const systempath = process.env.PATH || "";
     const userpath = envs.PATH || "";
-    let path = `${userpath}:${systempath}`;
-    if (conda_backend === "builtin") path = `${condaPath}:${path}`;
+    let path = `${userpath}${pathSeparator}${systempath}`;
+    if (conda_backend === "builtin")
+      path = `${condaPath}${pathSeparator}${path}`;
+    //const pathname = os.platform() === "win32" ? "Path" : "PATH";
     const proc = child.spawn(pythonPath, args, {
       env: {
         ...process.env,
         ...envs,
-        PATH: path,
+        PATH: path, // Linux/MacOS --- nb. are these two necessary?
+        Path: path, // Windows
       },
     });
 
@@ -198,6 +205,7 @@ export async function builder_BuildAndRun(
             },
           },
         };
+        console.log("Run query: " + JSON.stringify(query_run));
         await RunWorkflow(
           event,
           query_run,

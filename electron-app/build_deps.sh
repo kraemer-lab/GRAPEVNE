@@ -41,8 +41,10 @@ popd
 # Bundle Mambaforge
 if [[ "$RUNNER_OS" == "Windows" ]]; then
     echo "Downloading Mambaforge for Windows..."
-    curl.exe -o "Mambaforge-Windows-x86_64.exe" "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Windows-x86_64.exe"
-    start /wait "" Mambaforge-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\Mambaforge
+    # curl does not work on git-bash, so use the activated python environment
+    python -c "import requests; open('Mambaforge-Windows-x86_64.exe', 'wb').write(requests.get('https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Windows-x86_64.exe', allow_redirects=True).content)"
+    powershell -Command 'Start-Process .\Mambaforge-Windows-x86_64.exe -ArgumentList "/S /NoRegistry=1 /D=%UserProfile%\mambaforge" -Wait'
+    mv ~/mambaforge ./dist/conda
     echo "done."
 elif [[ "$RUNNER_OS" == "Linux" ]]; then
     echo "Downloading Mambaforge for Linux..."

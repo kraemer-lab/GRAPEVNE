@@ -65,9 +65,13 @@ if (app.commandLine.getSwitchValue("self-test") == "true") {
     const terminal_sendData = (data: string) => {
       ptyProcess.write(data);
     };
+    const clearline =
+      os.platform() === "win32"
+        ? "\x1b" // ESC (Windows)
+        : "\x15"; // CTRL+U (Linux, MacOS)
     const terminal_sendLine = (data: string) => {
       // Clear line before command and add newline at end of command
-      terminal_sendData("\x15" + data + "\r\n");
+      terminal_sendData(clearline + data + "\r\n");
     };
     ipcMain.on("terminal/send-data", (event, data) => {
       terminal_sendData(data);
