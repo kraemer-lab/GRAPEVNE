@@ -4,7 +4,8 @@ import logging
 import os
 import sys
 import tempfile
-
+import subprocess
+import snakemake
 import filesystem
 
 import builder
@@ -237,4 +238,12 @@ def post(request):
     logging.info("Query response: %s", rtn)
 
 
-post(sys.argv[1])
+logging.debug("sys.argv: %s", sys.argv)
+if len(sys.argv) > 2:
+    # TODO: Somewhere, somehow, snakemake is calling this executable with a
+    #       parameter set. This is a temporary hack to get around that until
+    #       the calling function can be redirected.
+    logging.debug("snakemake: %s", sys.argv[3:])
+    snakemake.main(" ".join(sys.argv[3:]))
+else:
+    post(sys.argv[1])

@@ -19,7 +19,7 @@ python -m pip install ../runner
 
 # compile python code to binary for deployment
 python -m pip install pyinstaller
-python -m PyInstaller src/python/backend.py \
+python -m PyInstaller src/python/pyrunner.py \
     --onefile \
     --hidden-import builder \
     --hidden-import runner \

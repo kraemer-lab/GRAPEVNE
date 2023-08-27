@@ -6,7 +6,7 @@ import * as child from "child_process";
 
 import web from "./web";
 
-const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
+const pyrunner = path.join(process.resourcesPath, "app", "dist", "pyrunner");
 const condaPath = path.join(
   process.resourcesPath,
   "app",
@@ -26,8 +26,8 @@ export async function ProcessQuery(
     let stdout = ""; // collate return data
     let stderr = ""; // collate error data
 
-    console.log(`open [${pythonPath}]: ${args}`);
-    const proc = child.spawn(pythonPath, args);
+    console.log(`open [${pyrunner}]: ${args}`);
+    const proc = child.spawn(pyrunner, args);
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
@@ -96,7 +96,7 @@ export async function RunWorkflow(
     if (conda_backend === "builtin")
       path = `${condaPath}${pathSeparator}${path}`;
     //const pathname = os.platform() === "win32" ? "Path" : "PATH";
-    const proc = child.spawn(pythonPath, args, {
+    const proc = child.spawn(pyrunner, args, {
       env: {
         ...process.env,
         ...envs,
