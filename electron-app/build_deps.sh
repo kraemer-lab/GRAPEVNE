@@ -18,6 +18,7 @@ python -m pip install ../builder
 python -m pip install ../runner
 
 # compile python code to binary for deployment
+mkdir dist
 python -m pip install pyinstaller
 python -m PyInstaller src/python/pyrunner.py \
     --onefile \
@@ -43,7 +44,7 @@ if [[ "$RUNNER_OS" == "Windows" ]]; then
     echo "Downloading Mambaforge for Windows..."
     # curl does not work on git-bash, so use the activated python environment
     python -c "import requests; open('Mambaforge-Windows-x86_64.exe', 'wb').write(requests.get('https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-Windows-x86_64.exe', allow_redirects=True).content)"
-    powershell.exe -Command 'Start-Process .\Mambaforge-Windows-x86_64.exe -ArgumentList "/S /NoRegistry=1 /D=$env.UserProfile\UserProfile\mambaforge" -Wait'
+    powershell.exe -Command 'Start-Process .\Mambaforge-Windows-x86_64.exe -ArgumentList "/S /NoRegistry=1 /D=$env:UserProfile\mambaforge" -Wait'
     powershell.exe -Command 'Start-Process mv -ArgumentList "$env:UserProfile\mambaforge .\dist\conda" -Wait'
     echo "done."
 elif [[ "$RUNNER_OS" == "Linux" ]]; then

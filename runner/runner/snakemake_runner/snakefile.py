@@ -432,7 +432,7 @@ def GetMissingFileDependencies_FromContents(
 
             # Touch missing files
             for dep in deps:
-                target = os.path.abspath(f"{path}/{dep}")
+                target = os.path.abspath(os.path.join(path, dep))
                 Path(os.path.dirname(target)).mkdir(parents=True, exist_ok=True)
                 Path(target).touch()
     return deps

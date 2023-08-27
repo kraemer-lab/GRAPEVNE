@@ -9,10 +9,11 @@ module.exports = {
       /^\/\.github$/,
       /^.*\.sh$/,
       /^.*\.zip$/,
-      /^build/,
-      /^coverage/,
-      /^venv/,
-      /^Mambaforge/,
+      /^\/build/,
+      /^\/coverage/,
+      /^\/venv/,
+      /^\/Mambaforge.sh/,
+      /^\/Mambaforge-Windows-x86_64.exe/,
     ],
   },
   rebuildConfig: {},
@@ -23,11 +24,11 @@ module.exports = {
     },
 
     // Installers
-    /*{
+    {
       name: "@electron-forge/maker-squirrel",
       config: {},
     },
-    {
+    /*{
       name: "@electron-forge/maker-deb",
       config: {},
     },
@@ -41,7 +42,7 @@ module.exports = {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "kraemer-lab",
+          owner: "jsbrittain",
           name: "GRAPEVNE",
         },
         draft: true,
