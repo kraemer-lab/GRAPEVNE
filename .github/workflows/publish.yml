@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [windows-latest, ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v2
@@ -40,4 +40,5 @@ jobs:
           ./build_deps.sh
           yarn
           yarn build
+          yarn package && ./build_testsuite.sh
           yarn run publish
