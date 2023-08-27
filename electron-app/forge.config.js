@@ -24,11 +24,11 @@ module.exports = {
     },
 
     // Installers
-    {
+    /*{
       name: "@electron-forge/maker-squirrel",
       config: {},
     },
-    /*{
+    {
       name: "@electron-forge/maker-deb",
       config: {},
     },
