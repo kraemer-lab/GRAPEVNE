@@ -10,8 +10,10 @@ interface IBuilderState {
   can_selected_expand: boolean;
   terminal_visibile: boolean;
   settings_visible: boolean;
-  snakemake_args: string;
   snakemake_backend: string;
+  snakemake_args: string;
+  conda_backend: string;
+  environment_variables: string;
   auto_validate_connections: boolean;
 }
 
@@ -32,8 +34,10 @@ const builderStateInit: IBuilderState = {
   can_selected_expand: true,
   terminal_visibile: false,
   settings_visible: false,
-  snakemake_args: "--cores 1 --use-conda", // $(snakemake --list)",
   snakemake_backend: "builtin", // builtin | system
+  snakemake_args: "--cores 1 --use-conda", // $(snakemake --list)",
+  conda_backend: "builtin", // builtin | system
+  environment_variables: "",
   auto_validate_connections: false,
 };
 
@@ -117,6 +121,14 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSelectSnakemakeBackend, (state, action) => {
       state.snakemake_backend = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSelectCondaBackend, (state, action) => {
+      state.conda_backend = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetEnvironmentVars, (state, action) => {
+      state.environment_variables = action.payload;
       console.info("[Reducer] " + action.type);
     });
 });

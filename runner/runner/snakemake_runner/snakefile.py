@@ -333,7 +333,7 @@ def CheckNodeDependencies(jsDeps: dict, snakemake_launcher: str = "") -> dict:
         GetMissingFileDependencies_FromContents(
             build,
             list(target_namespaces),
-            snakemake_launcher,
+            snakemake_launcher=snakemake_launcher,
         )
     )
     unresolved_dep_sources = set(
@@ -421,7 +421,8 @@ def GetMissingFileDependencies_FromContents(
     with IsolatedTempFile(content_str) as snakefile:
         path = os.path.dirname(os.path.abspath(snakefile))
         while file_list := GetMissingFileDependencies_FromFile(
-            snakefile, snakemake_launcher
+            snakefile,
+            snakemake_launcher=snakemake_launcher,
         ):
             deps.extend(file_list)
 

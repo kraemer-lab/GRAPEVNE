@@ -1,8 +1,20 @@
 import fs from "fs";
 import path from "path";
+
+import * as os from "node:os";
 import * as child from "child_process";
 
-const pythonPath = path.join(process.resourcesPath, "app", "dist", "backend");
+import web from "./web";
+
+const pyrunner = path.join(process.resourcesPath, "app", "dist", "pyrunner");
+const condaPath = path.join(
+  process.resourcesPath,
+  "app",
+  "dist",
+  "conda",
+  os.platform() === "win32" ? "condabin" : "bin"
+);
+const pathSeparator = os.platform() === "win32" ? ";" : ":";
 
 // General query processing interface for Python scripts (replacement for Flask)
 export async function ProcessQuery(
@@ -14,8 +26,8 @@ export async function ProcessQuery(
     let stdout = ""; // collate return data
     let stderr = ""; // collate error data
 
-    console.log(`open [${pythonPath}]: ${args}`);
-    const proc = child.spawn(pythonPath, args);
+    console.log(`open [${pyrunner}]: ${args}`);
+    const proc = child.spawn(pyrunner, args);
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
@@ -63,18 +75,35 @@ export async function ProcessQuery(
   });
 }
 
-// General query processing interface for Python scripts (replacement for Flask)
+// General query processing interface for Python scripts
+// (provides realtime stdout/stderr responses)
 export async function RunWorkflow(
   event: any,
   query: Record<string, unknown>,
+  conda_backend: string,
+  envs: Record<string, string>,
   stdout_callback: (cmd: string) => void,
   stderr_callback: (cmd: string) => void
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
 
-    console.log(`open [${pythonPath}]: ${args}`);
-    const proc = child.spawn(pythonPath, args);
+    // Set PATH to include bundled conda during snakemake calls, plus any
+    // other environment variables specified by the user
+    const systempath = process.env.PATH || "";
+    const userpath = envs.PATH || "";
+    let path = `${userpath}${pathSeparator}${systempath}`;
+    if (conda_backend === "builtin")
+      path = `${condaPath}${pathSeparator}${path}`;
+    //const pathname = os.platform() === "win32" ? "Path" : "PATH";
+    const proc = child.spawn(pyrunner, args, {
+      env: {
+        ...process.env,
+        ...envs,
+        PATH: path, // Linux/MacOS --- nb. are these two necessary?
+        Path: path, // Windows
+      },
+    });
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
@@ -111,7 +140,15 @@ export async function display_FolderInfo(event: any, query: any) {
 }
 
 export async function builder_GetRemoteModules(event: any, query: any) {
-  return await ProcessQuery(event, query);
+  // python version
+  //return await ProcessQuery(event, query);
+
+  // nodejs version
+  const modules = await web.GetModulesList(query["data"]["content"]["url"]);
+  return {
+    query: "builder/get-remote-modules",
+    body: modules,
+  };
 }
 
 export async function builder_CompileToJson(event: any, query: any) {
@@ -137,7 +174,24 @@ export async function builder_BuildAndRun(
   if (data["body"]["command"] !== "") {
     stdout_callback("Running workflow...");
     cmd_callback("cd " + data["body"]["workdir"]);
+
+    // Query parameters
     const backend = query["data"]["backend"];
+    const conda_backend = query["data"]["conda_backend"];
+    const environment_variables = query["data"]["environment_variables"];
+
+    // Convert environment variables string to a dictionary
+    const envs = environment_variables
+      .split(";")
+      .reduce((acc: Record<string, string>, line: string) => {
+        const [key, value] = line.split("=");
+        if (key && value) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
+    // Run the workflow
     let query_run = {};
     switch (backend) {
       case "builtin":
@@ -151,7 +205,15 @@ export async function builder_BuildAndRun(
             },
           },
         };
-        await RunWorkflow(event, query_run, stdout_callback, stderr_callback);
+        console.log("Run query: " + JSON.stringify(query_run));
+        await RunWorkflow(
+          event,
+          query_run,
+          conda_backend,
+          envs,
+          stdout_callback,
+          stderr_callback
+        );
         stdout_callback("Workflow complete.");
         break;
       case "system":

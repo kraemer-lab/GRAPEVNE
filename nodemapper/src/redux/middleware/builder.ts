@@ -31,23 +31,30 @@ export const builderMiddleware = ({ getState, dispatch }) => {
     return (action) => {
       // action.type, action.payload
       console.log("Middleware: ", action);
+
       switch (action.type) {
         case "builder/compile-to-json":
           CompileToJSON();
           break;
+
         case "builder/build-and-run":
           BuildAndRun(
             dispatch,
             getState().builder.snakemake_args,
-            getState().builder.snakemake_backend
+            getState().builder.snakemake_backend,
+            getState().builder.conda_backend,
+            getState().builder.environment_variables
           );
           break;
+
         case "builder/clean-build-folder":
           CleanBuildFolder(dispatch);
           break;
+
         case "builder/redraw":
           Redraw();
           break;
+
         case "builder/add-link":
           AddLink(
             action,
@@ -56,6 +63,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             dispatch
           );
           break;
+
         case "builder/check-node-dependencies":
           CheckNodeDependencies(
             action.payload,
@@ -63,12 +71,15 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_backend
           );
           break;
+
         case "builder/node-selected":
           NodeSelected(action, dispatch, dispatch, getState);
           break;
+
         case "builder/node-deselected":
           NodeDeselected(dispatch);
           break;
+
         case "builder/update-node-info-key":
           UpdateNodeInfoKey(
             action,
@@ -76,6 +87,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             JSON.parse(getState().builder.nodeinfo)
           );
           break;
+
         case "builder/update-node-info-name":
           UpdateNodeInfoName(
             action,
@@ -83,27 +95,34 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             JSON.parse(getState().builder.nodeinfo)
           );
           break;
+
         case "builder/get-remote-modules":
           GetRemoteModules(dispatch, JSON.parse(getState().builder.repo));
           break;
+
         case "builder/update-modules-list":
           UpdateModulesList(dispatch);
           break;
+
         case "builder/import-module":
           ImportModule();
           break;
+
         case "builder/set-settings-visibility":
           SetSettingsVisibility(dispatch, action.payload);
           break;
+
         case "builder/toggle-settings-visibility":
           ToggleSettingsVisibility(
             dispatch,
             getState().builder.settings_visible
           );
           break;
+
         default:
           break;
       }
+
       return next(action);
     };
   };
@@ -170,7 +189,9 @@ const CompileToJSON = async () => {
 const BuildAndRun = async (
   dispatchString: TPayloadString,
   snakemake_args: string,
-  snakemake_backend: string
+  snakemake_backend: string,
+  conda_backend: string,
+  environment_variables: string
 ) => {
   const app = BuilderEngine.Instance;
   const query: Record<string, unknown> = {
@@ -181,6 +202,8 @@ const BuildAndRun = async (
       targets: app.GetLeafNodeNames(),
       args: snakemake_args,
       backend: snakemake_backend,
+      conda_backend: conda_backend,
+      environment_variables: environment_variables,
     },
   };
   const callback = (result) => {

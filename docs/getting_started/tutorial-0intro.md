@@ -13,12 +13,11 @@ available under controlled access through [GISAID](https://gisaid.org/).
 
 Briefly, the vocpl workflow consists of the following steps:
 
-1. Specify seeds
-2. Subsample alignment
-3. Genome alignment (nextalign)
-4. Maximum Likelihood Tree estimation
-5. Sequence reconstruction (treetime)
-6. Discrete trait analysis
+1. Subsample alignment
+2. Genome alignment (nextalign)
+3. Maximum Likelihood Tree estimation
+4. Sequence reconstruction (treetime)
+5. Discrete trait analysis
 
 ```{graphviz}
 :name: vocpl.workflow
@@ -29,13 +28,12 @@ digraph G {
     rankdir = LR;
     node [shape = box];
 
-    n1 [label="Specify seeds"];
-    n2 [label="Subsample alignment"];
-    n3 [label="Genome alignment"];
-    n4 [label="Tree estimation"];
-    n5 [label="Sequence reconstruction"];
-    n6 [label="Discrete Trait Analysis"];
-    n1 -> n2 -> n3 -> n4 -> n5 -> n6
+    n1 [label="Subsample alignment"];
+    n2 [label="Genome alignment"];
+    n3 [label="Tree estimation"];
+    n4 [label="Sequence reconstruction"];
+    n5 [label="Discrete Trait Analysis"];
+    n1 -> n2 -> n3 -> n4 -> n5
 }
 ```
 

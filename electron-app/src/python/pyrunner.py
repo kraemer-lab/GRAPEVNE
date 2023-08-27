@@ -4,7 +4,8 @@ import logging
 import os
 import sys
 import tempfile
-
+import subprocess
+import snakemake
 import filesystem
 
 import builder
@@ -26,7 +27,13 @@ logging.info("Working directory: %s", os.getcwd())
 
 def post(request):
     """Handles POST requests from the frontend."""
-    request_js = json.loads(request)
+    logging.debug("Received request: %s", request)
+    try:
+        request_js = json.loads(request)
+    except json.decoder.JSONDecodeError as e:
+        logging.error("JSONDecodeError: %s", e)
+        logging.error("Received query not in proper JSON format")
+        return None
     query = request_js["query"]
     data = request_js["data"]
 
@@ -78,9 +85,11 @@ def post(request):
                 js,
                 build_path=build_path,
                 clean_build=False,  # Do not overwrite existing build
+                create_zip=False,
             )
             targets = data.get("targets", [])
             target_modules = m.LookupRuleNames(targets)
+            logging.debug("target module (rulenames): %s", target_modules)
 
             # Get list of snakemake rules, cross-reference with target_modules
             # and select 'target' or all rules, then pass on to command
@@ -110,10 +119,22 @@ def post(request):
             logging.debug("snakemake --list output: %s", snakemake_list)
             target_rules = []
             for target in target_modules:
+                if not target:
+                    # No equivalent rulename found, target is (presumably) a
+                    # module containing sub-modules
+                    ...
+                    raise NotImplementedError(
+                        "Cannot determine target rulenames for module "
+                        "containing sub-modules"
+                    )
                 target_rule = f"{target}_target"
                 if target_rule in snakemake_list:
+                    # {rulename}_target appears in workflow,
+                    # add rule to target list
                     target_rules.append(target_rule)
                 else:
+                    # _target rule does not appear in workflow, add all rules
+                    # starting with the module name to the target list
                     target_rules.extend(
                         [
                             rulename
@@ -210,9 +231,19 @@ def post(request):
             raise NotImplementedError(f"Unknown query: {query}")
 
     # Return via stdout
+    logging.debug("Query: %s", query)
+    logging.debug("Query response: %s", data)
     rtn = json.dumps(data)
     print(rtn)
     logging.info("Query response: %s", rtn)
 
 
-post(sys.argv[1])
+logging.debug("sys.argv: %s", sys.argv)
+if len(sys.argv) > 2:
+    # TODO: Somewhere, somehow, snakemake is calling this executable with a
+    #       parameter set. This is a temporary hack to get around that until
+    #       the calling function can be redirected.
+    logging.debug("snakemake: %s", sys.argv[3:])
+    snakemake.main(" ".join(sys.argv[3:]))
+else:
+    post(sys.argv[1])

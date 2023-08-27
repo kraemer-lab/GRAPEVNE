@@ -9,8 +9,6 @@ the software's ability to help users grow and develop their analytical pipelines
 It was originally focussed on solving phylogenetic problems, but has developed
 to support a broad range of use-cases.
 
-**GRAPEVNE is currently a prototype and is subject to major revisions**
-
 ```{toctree}
 ---
 caption: Background

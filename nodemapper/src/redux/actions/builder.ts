@@ -46,6 +46,14 @@ export const builderSelectSnakemakeBackend = createAction<string>(
   "builder/select-snakemake-backend"
 );
 
+export const builderSelectCondaBackend = createAction<string>(
+  "builder/select-conda-backend"
+);
+
+export const builderSetEnvironmentVars = createAction<string>(
+  "builder/set-environment_vars"
+);
+
 export const builderUpdateModulesList = createAction<string>(
   "builder/update-modules-list"
 );

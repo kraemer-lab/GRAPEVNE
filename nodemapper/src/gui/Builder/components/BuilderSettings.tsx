@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
 import { builderSetSnakemakeArgs } from "redux/actions";
+import { builderSelectCondaBackend } from "redux/actions";
+import { builderSetEnvironmentVars } from "redux/actions";
 import { builderSetRepositoryTarget } from "redux/actions";
 import { builderSelectSnakemakeBackend } from "redux/actions";
 import { builderSetAutoValidateConnections } from "redux/actions";
@@ -87,6 +89,10 @@ const BuilderSettings = () => {
   const snakemake_args = useAppSelector(
     (state) => state.builder.snakemake_args
   );
+  const conda_backend = useAppSelector((state) => state.builder.conda_backend);
+  const environment_vars = useAppSelector(
+    (state) => state.builder.environment_variables
+  );
   const auto_validate_connections = useAppSelector(
     (state) => state.builder.auto_validate_connections
   );
@@ -95,12 +101,20 @@ const BuilderSettings = () => {
     dispatch(builderSetSnakemakeArgs(args));
   };
 
-  const SetAutoValidateConnections = (value: boolean) => {
-    dispatch(builderSetAutoValidateConnections(value));
+  const SetEnvironmentVars = (args: string) => {
+    dispatch(builderSetEnvironmentVars(args));
   };
 
-  const selectBackend = (value: string) => {
+  const selectSnakemakeBackend = (value: string) => {
     dispatch(builderSelectSnakemakeBackend(value));
+  };
+
+  const selectCondaBackend = (value: string) => {
+    dispatch(builderSelectCondaBackend(value));
+  };
+
+  const SetAutoValidateConnections = (value: boolean) => {
+    dispatch(builderSetAutoValidateConnections(value));
   };
 
   return (
@@ -116,11 +130,34 @@ const BuilderSettings = () => {
           <RepoOptions />
         </p>
         <br />
-        <p>Snakemake backend</p>
+        <p>Snakemake</p>
+        <p>backend</p>
         <p>
           <select
             defaultValue={snakemake_backend}
-            onChange={(e) => selectBackend(e.target.value)}
+            onChange={(e) => selectSnakemakeBackend(e.target.value)}
+            style={{ width: "100%" }}
+          >
+            <option value="builtin">Built-in</option>
+            <option value="system">System</option>
+          </select>
+        </p>
+        <p>arguments</p>
+        <p>
+          <input
+            type="text"
+            size={default_input_size}
+            value={snakemake_args}
+            onChange={(e) => SetSnakemakeArgs(e.target.value)}
+          />
+        </p>
+        <br />
+        <p>Conda</p>
+        <p>backend</p>
+        <p>
+          <select
+            defaultValue={conda_backend}
+            onChange={(e) => selectCondaBackend(e.target.value)}
             style={{ width: "100%" }}
           >
             <option value="builtin">Built-in</option>
@@ -128,13 +165,14 @@ const BuilderSettings = () => {
           </select>
         </p>
         <br />
-        <p>Snakemake arguments</p>
+        <p>Environment</p>
+        <p>variables</p>
         <p>
           <input
             type="text"
             size={default_input_size}
-            value={snakemake_args}
-            onChange={(e) => SetSnakemakeArgs(e.target.value)}
+            value={environment_vars}
+            onChange={(e) => SetEnvironmentVars(e.target.value)}
           />
         </p>
         <br />

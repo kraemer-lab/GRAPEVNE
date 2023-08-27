@@ -2,7 +2,19 @@ const path = require("path");
 const fs = require("fs");
 
 module.exports = {
-  packagerConfig: {},
+  packagerConfig: {
+    ignore: [
+      /^\/\.gitignore$/,
+      /^\/\.git$/,
+      /^\/\.github$/,
+      /^.*\.sh$/,
+      /^.*\.zip$/,
+      /^build/,
+      /^coverage/,
+      /^venv/,
+      /^Mambaforge/,
+    ],
+  },
   rebuildConfig: {},
   makers: [
     // zip distributable of binary
@@ -11,7 +23,7 @@ module.exports = {
     },
 
     // Installers
-    {
+    /*{
       name: "@electron-forge/maker-squirrel",
       config: {},
     },
@@ -22,7 +34,7 @@ module.exports = {
     {
       name: "@electron-forge/maker-rpm",
       config: {},
-    },
+    },*/
   ],
   publishers: [
     {
