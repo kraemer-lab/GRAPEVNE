@@ -23,11 +23,11 @@ module.exports = {
     },
 
     // Installers
-    /*{
+    {
       name: "@electron-forge/maker-squirrel",
       config: {},
     },
-    {
+    /*{
       name: "@electron-forge/maker-deb",
       config: {},
     },
@@ -41,7 +41,7 @@ module.exports = {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "kraemer-lab",
+          owner: "jsbrittain",
           name: "GRAPEVNE",
         },
         draft: true,
