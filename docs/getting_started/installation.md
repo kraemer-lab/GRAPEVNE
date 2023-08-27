@@ -2,19 +2,20 @@
 
 ## Download
 
-For Windows users, ensure you are running [PowerShell](https://learn.microsoft.com/en-us/powershell/).
-
-Ensure you have `mamba` and `snakemake` installed and accessible from your
-default shell. The recommended installation procedure is:
-
-- Install [mambaforge](https://github.com/conda-forge/miniforge#mambaforge); if
-  you already have conda installed, run `conda install -n base -c conda-forge mamba`
-- Install snakemake (`mamba install -c conda-forge -c bioconda snakemake`)
-
-Then download the latest version of GRAPVEVNE for your system from
+You can download the latest version of GRAPVEVNE for your system from
 [github releases](https://github.com/kraemer-lab/GRAPEVNE/releases).
 
+For Windows users, ensure you have [PowerShell](https://learn.microsoft.com/en-us/powershell/), which comes installed as standard on modern distributions.
+
+GRAPEVNE includes all of the necessary software needed to build and launch
+workflows bundled as part of the application (namely snakemake, conda and python).
+You can still use your own versions of these software by making the appropriate selections in the settings menu after install.
+
+
 ### Module repositories
+
+You don't need your own repository to use GRAPEVNE, instead you can make use of
+the repositories setup by others, and for the tutorials, etc.
 
 The GRAPEVNE Builder reads modules from a repository. This repository
 has a strict folder structure that must be adhered to. The simplest way to
@@ -40,6 +41,7 @@ source, then follow these instructions.
 Dependencies:
 
 - Python 3.9+
+- Nodejs 16+
 - [yarn](https://yarnpkg.com/) package manager
 
 To build locally, clone the GRAPEVNE repository:

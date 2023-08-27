@@ -14,8 +14,8 @@ caption: Background
 maxdepth: 1
 ---
 tutorial-0intro
+tutorial-6pipeline
+tutorial-3inputs
 tutorial-1seeds
 tutorial-2alignment
-tutorial-3inputs
-tutorial-6pipeline
 ```

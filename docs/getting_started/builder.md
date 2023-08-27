@@ -62,14 +62,6 @@ replace it with the location of the WHO data:
 https://covid19.who.int/WHO-COVID-19-global-data.csv
 ```
 
-```{note}
-There is currently a known issue with GRAPEVNE, whereby pressing the Delete
-key while editing a text field will also remove the currently selected module
-from the graph. Hopefully this will be fixed by the time you see this tutorial,
-but if not you can avoid this behaviour by selecting the text and pasting the
-above url in-place (without pressing 'delete')!
-```
-
 In addition to changing the URL location, we also want to rename the file
 after download for convenience. We can do this by editing the `filename` field
 (`config-params-filename`) and changing it to `data.csv`.
