@@ -30,6 +30,7 @@ if (app.commandLine.getSwitchValue("self-test") == "true") {
 
     if (app.isPackaged) {
       win.loadFile("index.html"); //prod
+      //win.webContents.openDevTools();
     } else {
       win.loadURL("http://localhost:5001"); //dev
       win.webContents.openDevTools();
@@ -95,6 +96,10 @@ if (app.commandLine.getSwitchValue("self-test") == "true") {
     ipcMain.handle(
       "builder/get-remote-modules",
       handles.builder_GetRemoteModules
+    );
+    ipcMain.handle(
+      "builder/get-remote-module-config",
+      handles.builder_GetRemoteModuleConfig
     );
     ipcMain.handle("builder/compile-to-json", handles.builder_CompileToJson);
     ipcMain.handle("builder/build-and-run", (event, data) =>

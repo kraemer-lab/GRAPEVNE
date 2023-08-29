@@ -53,7 +53,7 @@ elif [[ "$RUNNER_OS" == "Linux" ]]; then
     bash Mambaforge.sh -b -p "./dist/conda"
     echo "done."
 elif [[ "$RUNNER_OS" == "macOS" || "$RUNNER_OS" == "Darwin" ]]; then
-    # Check for existing installation (will only present on developer machines)
+    # Check for existing installation (will only be present on developer machines)
     echo "Downloading Mambaforge for macOS..."
     if [ -f "Mambaforge.sh" ]; then
         echo "Mambaforge.sh already exists, skipping download."

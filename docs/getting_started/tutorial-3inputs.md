@@ -5,7 +5,7 @@ multiple inputs. This is a feature of GRAPEVNE modules that allows processes to
 have access to data from multiple different namespaces.
 
 To understand how these are specified and can be used within modules, see
-[inside modules](inside-modules.md). 
+[inside modules](inside-modules.md).
 
 ## Optional inputs
 
@@ -19,8 +19,9 @@ to its default value (and therefore has not been remapped by GRAPEVNE).
 This is the approach adopted in most of the modules provided in the vocpl
 pipeline. Although this adds some additional code to the module specifications,
 it allows each module to operate in two modes, either:
-1) depending on its successors for seed values, or
-2) directly accepting an input list of seeds.
+
+1. depending on its successors for seed values, or
+2. directly accepting an input list of seeds.
 
 To see this in action, here is a truncated workflow from the module
 `nextalign`:

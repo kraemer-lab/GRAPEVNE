@@ -3,8 +3,64 @@ import path from "path";
 import fs from "fs";
 import axios from "axios";
 
+const load_config = false;
+
+const GetModuleConfig = async (
+  repo: Record<string, unknown>,
+  snakefile: Record<string, unknown> | string
+) => {
+  console.log("GetModuleConfig: ", repo);
+  let workflow_url = "";
+  let config_url = "";
+  let snakefile_str = "";
+  switch (repo["type"]) {
+    case "github":
+      snakefile_str = (snakefile as Record<string, Record<string, string>>)[
+        "kwargs"
+      ]["path"];
+      workflow_url =
+        "https://raw.githubusercontent.com/" +
+        (repo.repo as string) +
+        "/main/" +
+        snakefile_str;
+      // Strip 'workflow/Snakefile' and replace with 'config/config.yaml'
+      // TODO: Read Snakefile and look for config file at relative path
+      config_url = workflow_url;
+      config_url = config_url.substring(0, config_url.lastIndexOf("/"));
+      config_url = config_url.substring(0, config_url.lastIndexOf("/"));
+      config_url += "/config/config.yaml";
+      return await axios
+        .get(config_url)
+        .then((response) => {
+          return yaml.load(response.data) as Record<string, unknown>;
+        })
+        .catch(() => {
+          console.log("No (or invalid YAML) config file found.");
+          return {};
+        });
+      break;
+    case "local":
+      workflow_url = snakefile as string;
+      config_url = workflow_url;
+      config_url = config_url.substring(0, config_url.lastIndexOf("/"));
+      config_url = config_url.substring(0, config_url.lastIndexOf("/"));
+      config_url += "/config/config.yaml";
+      try {
+        return yaml.load(fs.readFileSync(config_url, "utf8")) as Record<
+          string,
+          unknown
+        >;
+      } catch (err) {
+        console.log("No (or invalid YAML) config file found.");
+      }
+      break;
+    default:
+      throw new Error("Invalid url type: " + repo["type"]);
+  }
+};
+
 const GetModulesList = async (url: Record<string, unknown>) => {
-  console.log("GetModulesList", url);
+  console.log("GetModulesList: ", url);
   switch (url["type"]) {
     case "github":
       return GetRemoteModulesGithub(
@@ -14,7 +70,7 @@ const GetModulesList = async (url: Record<string, unknown>) => {
     case "local":
       return GetLocalModules(url["repo"] as string);
     default:
-      throw new Error("Invalid url type.");
+      throw new Error("Invalid url type: " + url["type"]);
   }
 };
 
@@ -62,18 +118,20 @@ const GetLocalModules = (
         );
 
         let config = {};
-        try {
-          config = yaml.load(fs.readFileSync(config_file, "utf8")) as Record<
-            string,
-            unknown
-          >;
-        } catch (err) {
-          console.log("No (or invalid YAML) config file found.");
+        let module_classification = module_type.slice(0, -1); // remove plural
+        if (load_config) {
+          try {
+            config = yaml.load(fs.readFileSync(config_file, "utf8")) as Record<
+              string,
+              unknown
+            >;
+          } catch (err) {
+            console.log("No (or invalid YAML) config file found.");
+          }
+          module_classification = GetModuleClassification(config);
         }
-        const module_classification = GetModuleClassification(config);
         modules.push({
           name: "(" + org + ") " + FormatName(workflow),
-          //type: module_type.slice(0, -1), // remove plural
           type: module_classification,
           config: {
             snakefile: url_workflow,
@@ -162,18 +220,21 @@ const GetRemoteModulesGithubDirectoryListing = async (
           "config/config.yaml"
         );
 
-        const config = await get(url_config)
-          .then((data) => {
-            return yaml.load(data) as Record<string, unknown>;
-          })
-          .catch(() => {
-            console.log("No (or invalid YAML) config file found.");
-            return {};
-          });
-        const module_classification = GetModuleClassification(config);
+        let config = {};
+        let module_classification = module_type.slice(0, -1);
+        if (load_config) {
+          config = await get(url_config)
+            .then((data) => {
+              return yaml.load(data) as Record<string, unknown>;
+            })
+            .catch(() => {
+              console.log("No (or invalid YAML) config file found.");
+              return {};
+            });
+          module_classification = GetModuleClassification(config);
+        }
         const module = {
           name: "(" + org + ") " + FormatName(workflow),
-          //type: module_type.slice(0, -1), // remove plural
           type: module_classification,
           config: {
             snakefile: {
@@ -231,18 +292,22 @@ const GetRemoteModulesGithubBranchListing = async (
       branch,
       "config/config.yaml"
     );
-    const config = await get(url_config)
-      .then((data) => {
-        return yaml.load(data) as Record<string, unknown>;
-      })
-      .catch(() => {
-        console.log("No (or invalid YAML) config file found.");
-        return {};
-      });
-    const module_classification = GetModuleClassification(config);
+    let config = {};
+    let module_classification =
+      module_types[module_type as keyof typeof module_types];
+    if (load_config) {
+      config = await get(url_config)
+        .then((data) => {
+          return yaml.load(data) as Record<string, unknown>;
+        })
+        .catch(() => {
+          console.log("No (or invalid YAML) config file found.");
+          return {};
+        });
+      module_classification = GetModuleClassification(config);
+    }
     const module = {
       name: "(" + module_org + ") " + FormatName(module_name),
-      //type: module_types[module_type as keyof typeof module_types],
       type: module_classification,
       config: {
         snakefile: {
@@ -280,11 +345,13 @@ const GetModuleClassification = (config: Record<string, unknown>): string => {
 };
 
 export {
+  GetModuleConfig,
   GetLocalModules,
   GetModulesList,
   GetRemoteModulesGithubDirectoryListing,
 };
 module.exports = {
+  GetModuleConfig,
   GetLocalModules,
   GetModulesList,
   GetRemoteModulesGithubDirectoryListing,

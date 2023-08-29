@@ -141,7 +141,7 @@ export async function display_FolderInfo(event: any, query: any) {
 
 export async function builder_GetRemoteModules(event: any, query: any) {
   // python version
-  //return await ProcessQuery(event, query);
+  // return await ProcessQuery(event, query);
 
   // nodejs version
   const modules = await web.GetModulesList(query["data"]["content"]["url"]);
@@ -149,6 +149,14 @@ export async function builder_GetRemoteModules(event: any, query: any) {
     query: "builder/get-remote-modules",
     body: modules,
   };
+}
+
+export async function builder_GetRemoteModuleConfig(event: any, query: any) {
+  const config = await web.GetModuleConfig(
+    query["data"]["content"]["repo"],
+    query["data"]["content"]["snakefile"]
+  );
+  return config;
 }
 
 export async function builder_CompileToJson(event: any, query: any) {

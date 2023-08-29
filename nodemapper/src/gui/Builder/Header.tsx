@@ -63,11 +63,13 @@ const Header = () => {
   // Clean build folder
   const btnCleanBuildFolder = () => {
     dispatch(builderCleanBuildFolder());
+    dispatch(builderOpenTerminal());
   };
 
   // Build - compile config to workflow zip and download
   const btnBuild = () => {
     dispatch(builderCompileToJson());
+    dispatch(builderOpenTerminal());
   };
 
   // Distribute model (visual)
@@ -105,6 +107,8 @@ const Header = () => {
         }}
       >
         {/*
+          *** LOAD function needs to assign eventListeners on load
+
         <button className="btn" onClick={btnLoadScene}>
           LOAD
         </button>

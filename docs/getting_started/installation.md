@@ -11,7 +11,6 @@ GRAPEVNE includes all of the necessary software needed to build and launch
 workflows bundled as part of the application (namely snakemake, conda and python).
 You can still use your own versions of these software by making the appropriate selections in the settings menu after install.
 
-
 ### Module repositories
 
 You don't need your own repository to use GRAPEVNE, instead you can make use of

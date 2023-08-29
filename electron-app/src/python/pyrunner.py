@@ -4,9 +4,9 @@ import logging
 import os
 import sys
 import tempfile
-import subprocess
-import snakemake
+
 import filesystem
+import snakemake
 
 import builder
 import runner
