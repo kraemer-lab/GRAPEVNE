@@ -147,6 +147,8 @@ export const BodyWidget = (props: BodyWidgetProps) => {
     const point = engine.getRelativeMousePoint(event);
     const color = BuilderEngine.GetModuleTypeColor(data.type as string);
     const node = app.AddNodeToGraph(data, point, color);
+    // Broadcast new node (cannot call react hooks from non-react functions)
+    setNewnode(node);
 
     // Read workflow configuration if not provided
     const workflow = app.nodeScene.getNodeWorkflow(node);
@@ -156,6 +158,8 @@ export const BodyWidget = (props: BodyWidgetProps) => {
       console.log(key, value);
     }
     if (_.isEmpty(workflow_config)) {
+      workflow["config"] = {"msg": "Configuration loading... refresh to view."};
+      app.nodeScene.setNodeWorkflow(node, workflow);
       console.log(
         `No configuration found for module ${workflow["name"]}, attemping to load...`
       );
@@ -176,14 +180,12 @@ export const BodyWidget = (props: BodyWidgetProps) => {
         .then((config) => {
           workflow["config"] = config;
           app.nodeScene.setNodeWorkflow(node, workflow);
-          setNewnode(node);
         })
         .catch((error) => {
           console.log(error);
+          workflow["config"] = {"msg": "Configuration FAILED to load."};
+          app.nodeScene.setNodeWorkflow(node, workflow);
         });
-    } else {
-      // Broadcast new node (cannot call react hooks from non-react functions)
-      setNewnode(node);
     }
   };
 
