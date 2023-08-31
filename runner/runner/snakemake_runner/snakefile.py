@@ -586,10 +586,14 @@ def snakemake_run(
     logging.info("Launching snakemake [%s]: %s", snakemake_launcher, " ".join(cmd))
     snakemake_launcher = "builtin" if not snakemake_launcher else snakemake_launcher
     if snakemake_launcher == "system":
+        cmd_str = " ".join(cmd[1:])  # strip snakemake executable
+        shell = os.getenv("SHELL", "/bin/bash")
+        cmd_str = shell + ' -i -c "' + cmd_str + '"'
         p = subprocess.run(
-            cmd,
+            cmd_str,
             cwd=workdir,
             capture_output=capture_output,
+            shell=True,
         )
         return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
     elif snakemake_launcher == "builtin":

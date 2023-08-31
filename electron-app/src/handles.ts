@@ -6,6 +6,8 @@ import * as child from "child_process";
 
 import web from "./web";
 
+const shell =
+  os.platform() === "win32" ? "powershell.exe" : process.env.SHELL || "bash";
 const pyrunner = path.join(process.resourcesPath, "app", "dist", "pyrunner");
 const condaPath = path.join(
   process.resourcesPath,
@@ -16,7 +18,7 @@ const condaPath = path.join(
 );
 const pathSeparator = os.platform() === "win32" ? ";" : ":";
 
-// General query processing interface for Python scripts (replacement for Flask)
+// General query processing interface for Python scripts
 export async function ProcessQuery(
   event: any,
   query: Record<string, unknown>
@@ -26,6 +28,7 @@ export async function ProcessQuery(
     let stdout = ""; // collate return data
     let stderr = ""; // collate error data
 
+    // Launch child process; note that this does NOT use the system shell
     console.log(`open [${pyrunner}]: ${args}`);
     const proc = child.spawn(pyrunner, args);
 
@@ -76,7 +79,7 @@ export async function ProcessQuery(
 }
 
 // General query processing interface for Python scripts
-// (provides realtime stdout/stderr responses)
+// (provides realtime stdout/stderr responses; used for workflow executions)
 export async function RunWorkflow(
   event: any,
   query: Record<string, unknown>,
@@ -86,24 +89,43 @@ export async function RunWorkflow(
   stderr_callback: (cmd: string) => void
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const args = [JSON.stringify(query)];
+    const querystr = JSON.stringify(query);
 
     // Set PATH to include bundled conda during snakemake calls, plus any
     // other environment variables specified by the user
     const systempath = process.env.PATH || "";
     const userpath = envs.PATH || "";
-    let path = `${userpath}${pathSeparator}${systempath}`;
-    if (conda_backend === "builtin")
-      path = `${condaPath}${pathSeparator}${path}`;
-    //const pathname = os.platform() === "win32" ? "Path" : "PATH";
-    const proc = child.spawn(pyrunner, args, {
+    let envpath = `${userpath}${pathSeparator}${systempath}`;
+    const envvars = {
       env: {
         ...process.env,
         ...envs,
-        PATH: path, // Linux/MacOS --- nb. are these two necessary?
-        Path: path, // Windows
+        PATH: envpath,
       },
-    });
+    };
+
+    // Spawn child process (pyrunner) to launch python code (incl. snakemake)
+    //if (conda_backend === "builtin") {
+    let proc;
+    const use_shell = true;
+    if (use_shell) {
+      // Spawn child process in an 'interactive' (-i) shell so that the shell
+      // environment is loaded including PATH (and any available conda
+      // configuration)
+      proc = child.spawn(
+        // shell command (e.g. 'bash')
+        shell,
+        // shell arguments
+        ["-i", "-c", pyrunner + ' "' + querystr.replaceAll('"', '\\"') + '"'],
+        // environment variables
+        envvars
+      );
+    } else {
+      // Spawn child process directly (i.e. do not use the system shell). Note
+      // that this will not load the shell environment (including PATH)
+      envpath = `${condaPath}${pathSeparator}${envpath}`;
+      proc = child.spawn(pyrunner, [querystr], envvars);
+    }
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
