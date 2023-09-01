@@ -61,6 +61,7 @@ const RepoOptions: React.FC = () => {
     <>
       <div>
         <select
+          id="selectBuilderSettingsRepositoryType"
           defaultValue={listingType}
           onChange={(e) => selectRepositoryTarget(e.target.value)}
           style={{ width: "100%" }}
@@ -71,6 +72,7 @@ const RepoOptions: React.FC = () => {
         </select>
       </div>
       <input
+        id="inputBuilderSettingsRepositoryURL"
         type="text"
         size={default_input_size}
         value={repoURL}
@@ -160,7 +162,7 @@ const BuilderSettings = () => {
             onChange={(e) => selectCondaBackend(e.target.value)}
             style={{ width: "100%" }}
           >
-            <option value="builtin">Built-in</option>
+            {/*<option value="builtin">Built-in</option>*/}
             <option value="system">System</option>
           </select>
         </p>
@@ -169,6 +171,7 @@ const BuilderSettings = () => {
         <p>variables</p>
         <p>
           <input
+            id="inputBuilderSettingsEnvironmentVars"
             type="text"
             size={default_input_size}
             value={environment_vars}

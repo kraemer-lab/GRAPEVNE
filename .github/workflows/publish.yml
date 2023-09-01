@@ -17,28 +17,37 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest]
+        os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@master
         with:
           node-version: 18
-      - name: publish
+      - name: build
         working-directory: ./electron-app
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          ./build_deps.sh
+          yarn
+          yarn build
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: tmate debugging
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+      - name: postbuild-tests
+        working-directory: ./electron-app
         shell: bash
         # 'yarn package' is only run to allow build_testsuite.sh to run before
         # the package is pushed for publishing ('yarn run publish' builds and
         # publishes in one step)
         run: |
-          ./build_deps.sh
-          yarn
-          yarn build
-          yarn package && ./build_testsuite.sh
-          #yarn run publish
-      # Enable tmate debugging of manually-triggered workflows if the input option was provided
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+          yarn package
+          ./run_postbuild_tests.sh
+      - name: publish
+        working-directory: ./electron-app
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          yarn run publish

@@ -7,16 +7,37 @@ import * as child from "child_process";
 import web from "./web";
 
 const shell =
-  os.platform() === "win32" ? "powershell.exe" : process.env.SHELL || "bash";
-const pyrunner = path.join(process.resourcesPath, "app", "dist", "pyrunner");
+  os.platform() === "win32"
+    ? "powershell.exe"
+    : process.env.SHELL
+      || "bash";
+
+const shell_args =
+  os.platform() === "win32"
+    ? ["-NonInteractive", "-Command"]
+    : ["-i", "-c"];
+
+const pyrunner = path.join(
+  process.resourcesPath,
+  "app",
+  "dist",
+  "pyrunner"
+);
+
 const condaPath = path.join(
   process.resourcesPath,
   "app",
   "dist",
   "conda",
-  os.platform() === "win32" ? "condabin" : "bin"
+  os.platform() === "win32"
+    ? "condabin"
+    : "bin"
 );
-const pathSeparator = os.platform() === "win32" ? ";" : ":";
+
+const pathSeparator =
+  os.platform() === "win32"
+    ? ";"
+    : ":";
 
 // General query processing interface for Python scripts
 export async function ProcessQuery(
@@ -40,6 +61,7 @@ export async function ProcessQuery(
         // Empty return, most likely a failure in python
         resolve({
           query: "error",
+          returncode: 1,
           data: {
             code: 1,
             stdout: stdout,
@@ -47,7 +69,9 @@ export async function ProcessQuery(
           },
         });
       // Normal return route
-      else resolve(JSON.parse(stdout));
+      else resolve(
+        JSON.parse(stdout)
+      );
     });
 
     // the backend will only fail under exceptional circumstances;
@@ -56,6 +80,7 @@ export async function ProcessQuery(
       console.log(`error: ${code}`);
       reject({
         query: "error",
+        returncode: 1,
         data: {
           code: code,
           stdout: stdout,
@@ -116,7 +141,10 @@ export async function RunWorkflow(
         // shell command (e.g. 'bash')
         shell,
         // shell arguments
-        ["-i", "-c", pyrunner + ' "' + querystr.replaceAll('"', '\\"') + '"'],
+        [
+          ...shell_args,
+          pyrunner + ' "' + querystr.replaceAll('"', '\\"') + '"'
+        ],
         // environment variables
         envvars
       );
@@ -170,6 +198,7 @@ export async function builder_GetRemoteModules(event: any, query: any) {
   return {
     query: "builder/get-remote-modules",
     body: modules,
+    returncode: 0
   };
 }
 
@@ -200,6 +229,7 @@ export async function builder_BuildAndRun(
 ) {
   stdout_callback("Building workflow...");
   const data = await ProcessQuery(event, query);
+
   // Execute the build in the working directory through the pty
   if (data["body"]["command"] !== "") {
     stdout_callback("Running workflow...");
@@ -224,6 +254,7 @@ export async function builder_BuildAndRun(
     // Run the workflow
     let query_run = {};
     switch (backend) {
+
       case "builtin":
         query_run = {
           query: "runner/snakemake-run",
@@ -246,15 +277,20 @@ export async function builder_BuildAndRun(
         );
         stdout_callback("Workflow complete.");
         break;
+      
       case "system":
         cmd_callback(data["body"]["command"]);
         break;
+      
       default:
         console.log("Unknown Snakemake backend requested: " + backend);
     }
+
   } else {
     stdout_callback("No workflow command to run.");
   }
+
+  data['returncode'] = 0;
   return data;
 }
 
@@ -266,6 +302,7 @@ export async function builder_CleanBuildFolder(
   status_callback("Cleaning build folder...");
   const data = await ProcessQuery(event, query);
   status_callback("Build folder cleaned.");
+  data["returncode"] = 0;
   return data;
 }
 

@@ -1,0 +1,20 @@
+configfile: "config/config.yaml"
+import shutil
+
+params = config["params"]
+
+rule copy:
+    input:
+        expand(
+            srcdir("../results/{indir}/{filename}"),
+            indir=config["input_namespace"],
+            filename=params["filename"],
+        )
+    output:
+        expand(
+            "results/{outdir}/{filename}",
+            outdir=config["output_namespace"],
+            filename=params["filename"],
+        )
+    run:
+        shutil.copy(input[0], output[0])

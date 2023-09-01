@@ -61,6 +61,7 @@ export class GridCanvasWidget extends React.Component<
       <>
         <Global styles={Expand} />
         <Container
+          id="nodemapper-canvas"
           background={this.props.background || "rgb(60, 60, 60)"}
           color={this.props.color || "rgba(255,255,255, 0.05)"}
         >

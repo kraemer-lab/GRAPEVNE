@@ -162,10 +162,13 @@ def post(request):
                 "query": query,
                 "body": data,
             }
-        elif query == "builder/clean-build-folder":
+        elif query == "builder/clean-build-folder": 
             data = {
                 "query": query,
-                "body": builder.CleanBuildFolder(default_testbuild_path),
+                "body": {
+                    "path": default_testbuild_path,
+                },
+                "returncode": builder.CleanBuildFolder(default_testbuild_path),
             }
         elif query == "builder/get-remote-modules":
             js = data["content"]
