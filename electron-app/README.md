@@ -16,8 +16,8 @@ effectively, `snakemake` should be installed and accessible.
 
 To publish the GRAPEVNE Builder follow these steps:
 
-1. Increment the version number (`yarn version`)
-2. Push the version 'tag' to github (`git push --follow-tags`)
+1.  Increment the version number (`yarn version`)
+2.  Push the version 'tag' to github (`git push --follow-tags`)
 
 Publishing the tag will trigger the github action `Publish` creating a new
 _draft_ release (e.g. v1.0.0) and populates it with builds as configured in

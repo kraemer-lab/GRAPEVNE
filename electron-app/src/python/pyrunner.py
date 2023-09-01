@@ -60,7 +60,7 @@ def post(request):
             js = data["content"]
             # with open(default_build_path + "/workflow.json", "w") as f:  # dump config file to disk for debug
             #     json.dump(js, f, indent=4)
-            memory_zip, _, zipfilename = builder.BuildFromJSON(
+            _, _, zipfilename = builder.BuildFromJSON(
                 js,
                 build_path=default_build_path,
             )
@@ -81,7 +81,7 @@ def post(request):
             #     json.dump(js, f, indent=4)
             build_path = default_testbuild_path
             logging.info("BuildFromJSON")
-            memory_zip, m, _ = builder.BuildFromJSON(
+            _, m, _ = builder.BuildFromJSON(
                 js,
                 build_path=build_path,
                 clean_build=False,  # Do not overwrite existing build

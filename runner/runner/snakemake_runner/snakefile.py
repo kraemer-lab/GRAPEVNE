@@ -123,7 +123,7 @@ def Launch(filename: str, *args, **kwargs) -> dict:
 def Lint(snakefile: str) -> dict:
     """Lint a Snakefile using the snakemake library, returns JSON"""
     try:
-        stdout, stderr = snakemake_launch(snakefile, "--lint", "json")
+        stdout, _ = snakemake_launch(snakefile, "--lint", "json")
     except BaseException as e:
         return {"error": str(e)}
     # strip first and last lines as needed (snakemake returns)
@@ -233,10 +233,10 @@ def SplitByDagFromFile(filename: str, workdir: str = "") -> dict:
     return rules
 
 
-def GetRuleFromID(blocks: List[dict], id: int) -> str:
+def GetRuleFromID(blocks: List[dict], blockid: int) -> str:
     """Get rule name from block ID"""
     for block in blocks:
-        if block["id"] == id:
+        if block["id"] == blockid:
             return block["name"]
     return ""
 
@@ -366,7 +366,7 @@ def DagFileContent(content: str) -> dict:
 def DagLocal(filename: str, workdir: str = "") -> dict:
     """Returns DAG as JSON from Snakefile"""
     kwargs = {"workdir": workdir} if workdir else {}
-    stdout, stderr = snakemake_launch(filename, "--d3dag", **kwargs)
+    stdout, _ = snakemake_launch(filename, "--d3dag", **kwargs)
     # strip first and last lines as needed (snakemake returns True/False)
     sl = stdout.split("\n")
     if sl[0] in {"True", "False"}:
@@ -498,7 +498,7 @@ def IsolatedTempFile(content: str, tempdir=None):
     snakefile: str = snakefile_file.name
     snakefile_file.write(content)
     snakefile_file.seek(0)
-    snakefile_file.close
+    snakefile_file.close()
     # Yield filename as context
     yield snakefile
     # Cleanup

@@ -103,7 +103,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
             >
               <EasyEdit
                 type={Types.TEXT}
-                onHoverCssClass="easyEditHover"
+                onHoverCssClass="easyedit-hover"
                 saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                 cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
                 value={value}

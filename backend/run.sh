@@ -3,7 +3,7 @@
 set -euox pipefail
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-pushd $SCRIPT_DIR
+pushd "$SCRIPT_DIR"
 
 # Setup venv as needed
 if [ ! -d "venv" ]; then
