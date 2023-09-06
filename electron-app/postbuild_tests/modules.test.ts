@@ -142,6 +142,15 @@ describe("modules", () => {
     );
     await args.clear();
     await args.sendKeys("--cores 1 --use-conda");
+    
+    // Set conda environment path --- passthrough from test environment
+    if (process.env.CONDA_PATH != undefined) {
+      const args = await driver.findElement(
+        webdriver.By.id("inputBuilderSettingsEnvironmentVars")
+      );
+      await args.clear();
+      await args.sendKeys(`PATH=${process.env.CONDA_PATH}`);
+    }
 
     // Close settings pane
     await driver.findElement(By.id("btnBuilderSettings")).click();
