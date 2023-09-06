@@ -2,19 +2,21 @@
 
 set -eoux pipefail
 
+RUNNER_OS=${RUNNER_OS:-$(uname)}
+
 # install mambaforge if not already installed
-if [ ! command -v conda ]; then
-    ./install_mambaforge.sh
-fi
-if [ ! command -v conda ]; then
-    echo "could not find or install conda. Exiting."
-    exit 1
+if ! command -v mamba &> /dev/null
+then
+    . ./install_mambaforge.sh
 fi
 
 # launch GRAPEVNE in the background and in debug mode
-RUNNER_OS=${RUNNER_OS:-$(uname)}
 PKG=$(ls ./out | grep GRAPEVNE)
 if [[ "$RUNNER_OS" == "Windows" ]]; then
+    echo "Migrating folder to C drive (due to issues running conda cross-drive)"
+    cd ..
+    cp -r electron-app /c/Users/runneradmin
+    cd /c/Users/runneradmin/electron-app
     echo "Launching GRAPEVNE in the background and in debug mode"
     ./out/"${PKG}"/GRAPEVNE.exe --args --remote-debugging-port=9515 &
 elif [[ "$RUNNER_OS" == "Linux" ]]; then

@@ -128,7 +128,7 @@ describe("modules", () => {
     async (modulename, outfile) => {
       await BuildAndRunSingleModuleWorkflow(driver, modulename, outfile);
     },
-    ONE_MINUTE
+    5*ONE_MINUTE
   ); // long timeout
   
   test("Set snakemake arguments list to use conda", async () => {
@@ -167,6 +167,6 @@ describe("modules", () => {
     async (modulename, outfile) => {
       await BuildAndRunSingleModuleWorkflow(driver, modulename, outfile);
     },
-    ONE_MINUTE
+    10*ONE_MINUTE
   ); // long timeout
 });
