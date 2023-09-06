@@ -1,0 +1,23 @@
+configfile: "config/config.yaml"
+
+params = config["params"]
+
+rule copy:
+    input:
+        expand(
+            srcdir("../results/{indir}/{filename}"),
+            indir=config["input_namespace"],
+            filename=params["filename"],
+        )
+    output:
+        expand(
+            "results/{outdir}/{filename}",
+            outdir=config["output_namespace"],
+            filename=params["filename"],
+        )
+    conda:
+        "envs/conda.yaml"
+    shell:
+        """
+        cp {input} {output}
+        """

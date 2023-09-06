@@ -2,6 +2,15 @@
 
 set -eoux pipefail
 
+# install mambaforge if not already installed
+if [ ! command -v conda ]; then
+    ./install_mambaforge.sh
+fi
+if [ ! command -v conda ]; then
+    echo "could not find or install conda. Exiting."
+    exit 1
+fi
+
 # launch GRAPEVNE in the background and in debug mode
 RUNNER_OS=${RUNNER_OS:-$(uname)}
 PKG=$(ls ./out | grep GRAPEVNE)

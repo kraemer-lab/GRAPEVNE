@@ -147,6 +147,7 @@ const BuilderSettings = () => {
         <p>arguments</p>
         <p>
           <input
+            id="inputBuilderSettingsSnakemakeArgs"
             type="text"
             size={default_input_size}
             value={snakemake_args}
