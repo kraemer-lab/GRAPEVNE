@@ -1,4 +1,5 @@
 import { By } from 'selenium-webdriver';
+import { Actions } from 'selenium-webdriver';
 import { until } from 'selenium-webdriver';
 import { Select } from 'selenium-webdriver/lib/select';
 import { execSync } from 'child_process';
@@ -8,8 +9,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 const ONE_SEC = 1000;
-const TEN_SECS = 10000;
-const ONE_MINUTE = 60000;
+const TEN_SECS = 10 * ONE_SEC;
+const ONE_MINUTE = 60 * ONE_SEC;
 
 describe ("modules", () => {
   let driver: webdriver.ThenableWebDriver;
@@ -72,6 +73,31 @@ describe ("modules", () => {
     console.log("<<< WaitForReturnCode");
   }
 
+  const DragAndDrop = async (elementFrom: webdriver.WebElement, elementTo: webdriver.WebElement) => {
+    // Drag and drop replacement for Selenium (due to HTML5 issue)
+    // Solution sourced from:
+    //   https://stackoverflow.com/questions/39436870/why-drag-and-drop-is-not-working-in-selenium-webdriver
+    await driver.executeScript(
+        "function createEvent(typeOfEvent) {\n"
+      + "var event =document.createEvent(\"CustomEvent\");\n"
+      + "event.initCustomEvent(typeOfEvent,true, true, null);\n" + "event.dataTransfer = {\n" + "data: {},\n"
+      + "setData: function (key, value) {\n" + "this.data[key] = value;\n" + "},\n"
+      + "getData: function (key) {\n" + "return this.data[key];\n" + "}\n" + "};\n" + "return event;\n"
+      + "}\n" + "\n" + "function dispatchEvent(element, event,transferData) {\n"
+      + "if (transferData !== undefined) {\n" + "event.dataTransfer = transferData;\n" + "}\n"
+      + "if (element.dispatchEvent) {\n" + "element.dispatchEvent(event);\n"
+      + "} else if (element.fireEvent) {\n" + "element.fireEvent(\"on\" + event.type, event);\n" + "}\n"
+      + "}\n" + "\n" + "function simulateHTML5DragAndDrop(element, destination) {\n"
+      + "var dragStartEvent =createEvent('dragstart');\n" + "dispatchEvent(element, dragStartEvent);\n"
+      + "var dropEvent = createEvent('drop');\n"
+      + "dispatchEvent(destination, dropEvent,dragStartEvent.dataTransfer);\n"
+      + "var dragEndEvent = createEvent('dragend');\n"
+      + "dispatchEvent(element, dragEndEvent,dropEvent.dataTransfer);\n" + "}\n" + "\n"
+      + "var source = arguments[0];\n" + "var destination = arguments[1];\n"
+      + "simulateHTML5DragAndDrop(source,destination);",
+      elementFrom, elementTo);
+  };
+
   beforeAll(async () => {
     console.log("::: beforeAll");
     const options = new chrome.Options();
@@ -86,7 +112,7 @@ describe ("modules", () => {
 
   afterAll(async () => {
     console.log("::: afterAll");
-    await driver.close();
+    //await driver.close();
     await driver.quit();
     console.log("<<< afterAll");
   });
@@ -175,13 +201,11 @@ describe ("modules", () => {
     const canvas = await driver.findElement(
       By.id('nodemapper-canvas')
     );
-    const actions = driver.actions();
-    await actions.dragAndDrop(
-      module,
-      canvas
-    ).perform();
+
+    DragAndDrop(module, canvas);
+    driver.sleep(500);
+
     // Wait for module to be added to the scene and for the config to load
-    await driver.sleep(1000);
     console.log("<<< test Construct single module workflow in GRAPEVNE");
   });
 
