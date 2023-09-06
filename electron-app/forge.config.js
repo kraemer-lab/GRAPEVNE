@@ -10,6 +10,7 @@ module.exports = {
       /^.*\.sh$/,
       /^\/Mambaforge.sh/,
       /^\/Mambaforge-Windows-x86_64.exe/,
+      /^\/postbuild_tests/,
     ],
   },
   rebuildConfig: {},

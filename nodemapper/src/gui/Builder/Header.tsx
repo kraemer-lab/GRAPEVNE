@@ -106,7 +106,6 @@ const Header = () => {
           marginBottom: 2,
         }}
       >
-
         {/*
           *** LOAD function needs to assign eventListeners on load
         <button
@@ -125,15 +124,9 @@ const Header = () => {
           SAVE
         </button>
         */}
-        
-        <button
-          id="btnBuilderBuildAndTest"
-          className="btn"
-          onClick={btnRun}
-        >
+        <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
           BUILD AND TEST
         </button>
-        
         <button
           id="btnBuilderCleanBuildFolder"
           className="btn"
@@ -141,17 +134,10 @@ const Header = () => {
         >
           DELETE TEST BUILD
         </button>
-        
-        <button
-          id="btnBuilderBuildAndZip"
-          className="btn"
-          onClick={btnBuild}
-        >
+        <button id="btnBuilderBuildAndZip" className="btn" onClick={btnBuild}>
           BUILD / ZIP
         </button>
-        
         |
-        
         <button
           id="btnBuilderClearScene"
           className="btn"
@@ -159,7 +145,6 @@ const Header = () => {
         >
           CLEAR GRAPH
         </button>
-        
         <button
           id="btnBuilderArrangeGraph"
           className="btn"
@@ -167,7 +152,6 @@ const Header = () => {
         >
           ARRANGE GRAPH
         </button>
-        
         <button
           id="btnBuilderToggleTerminalVisibility"
           className="btn"
@@ -175,9 +159,7 @@ const Header = () => {
         >
           TERMINAL
         </button>
-        
         |
-
         <button
           id="btnBuilderGetModuleList"
           className="btn"
@@ -185,15 +167,9 @@ const Header = () => {
         >
           GET MODULE LIST
         </button>
-        
-        <button
-          id="btnBuilderSettings"
-          className="btn"
-          onClick={btnSettings}
-        >
+        <button id="btnBuilderSettings" className="btn" onClick={btnSettings}>
           SETTINGS
         </button>
-
         <StatusBar />
       </div>
     </>

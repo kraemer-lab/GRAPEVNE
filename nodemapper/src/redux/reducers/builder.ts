@@ -35,7 +35,7 @@ const builderStateInit: IBuilderState = {
   terminal_visibile: false,
   settings_visible: false,
   snakemake_backend: "builtin", // builtin | system
-  snakemake_args: "--cores 1 --use-conda", // $(snakemake --list)",
+  snakemake_args: "--cores 1", // --use-conda $(snakemake --list)
   conda_backend: "builtin", // builtin | system
   environment_variables: "",
   auto_validate_connections: false,

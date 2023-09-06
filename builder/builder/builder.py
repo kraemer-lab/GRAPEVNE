@@ -89,8 +89,8 @@ class Module(Node):
 
     def _GetConfigFileinfo(self) -> Union[str, dict]:
         """Returns the config filename, or an equivalent dict for remote files"""
-        workflow_filename = "workflow/Snakefile"
-        config_filename = "config/config.yaml"
+        workflow_filename = os.path.join("workflow", "Snakefile")
+        config_filename = os.path.join("config", "config.yaml")
         if isinstance(self.snakefile, str):
             # Local file
             filename = self.snakefile

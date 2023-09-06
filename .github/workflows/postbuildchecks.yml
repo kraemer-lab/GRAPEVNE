@@ -1,8 +1,5 @@
-name: Publish
+name: Post-build checks
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
     inputs:
       debug_enabled:
@@ -13,8 +10,8 @@ on:
 
 jobs:
   build:
-    permissions: write-all
     runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -31,6 +28,7 @@ jobs:
           ./build_deps.sh
           yarn
           yarn build
+          yarn package
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       - name: tmate debugging
         uses: mxschmitt/action-tmate@v3
@@ -38,16 +36,5 @@ jobs:
       - name: postbuild-tests
         working-directory: ./electron-app
         shell: bash
-        # 'yarn package' is only run to allow build_testsuite.sh to run before
-        # the package is pushed for publishing ('yarn run publish' builds and
-        # publishes in one step)
         run: |
-          yarn package
           ./run_postbuild_tests.sh
-      - name: publish
-        working-directory: ./electron-app
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-        run: |
-          yarn run publish

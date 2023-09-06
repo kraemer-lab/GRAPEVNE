@@ -7,37 +7,22 @@ import * as child from "child_process";
 import web from "./web";
 
 const shell =
-  os.platform() === "win32"
-    ? "powershell.exe"
-    : process.env.SHELL
-      || "bash";
+  os.platform() === "win32" ? "powershell.exe" : process.env.SHELL || "bash";
 
 const shell_args =
-  os.platform() === "win32"
-    ? ["-NonInteractive", "-Command"]
-    : ["-i", "-c"];
+  os.platform() === "win32" ? ["-NonInteractive", "-Command"] : ["-i", "-c"];
 
-const pyrunner = path.join(
-  process.resourcesPath,
-  "app",
-  "dist",
-  "pyrunner"
-);
+const pyrunner = path.join(process.resourcesPath, "app", "dist", "pyrunner");
 
 const condaPath = path.join(
   process.resourcesPath,
   "app",
   "dist",
   "conda",
-  os.platform() === "win32"
-    ? "condabin"
-    : "bin"
+  os.platform() === "win32" ? "condabin" : "bin"
 );
 
-const pathSeparator =
-  os.platform() === "win32"
-    ? ";"
-    : ":";
+const pathSeparator = os.platform() === "win32" ? ";" : ":";
 
 // General query processing interface for Python scripts
 export async function ProcessQuery(
@@ -69,9 +54,7 @@ export async function ProcessQuery(
           },
         });
       // Normal return route
-      else resolve(
-        JSON.parse(stdout)
-      );
+      else resolve(JSON.parse(stdout));
     });
 
     // the backend will only fail under exceptional circumstances;
@@ -121,7 +104,13 @@ export async function RunWorkflow(
     const systempath = process.env.PATH || "";
     const userpath = envs.PATH || "";
     let envpath = `${userpath}${pathSeparator}${systempath}`;
-    const envvars = {
+    const options = {
+      cwd: (
+        (query.data as Record<string, unknown>).content as Record<
+          string,
+          unknown
+        >
+      ).workdir as string,
       env: {
         ...process.env,
         ...envs,
@@ -137,22 +126,24 @@ export async function RunWorkflow(
       // Spawn child process in an 'interactive' (-i) shell so that the shell
       // environment is loaded including PATH (and any available conda
       // configuration)
+      const shell_cmd =
+        os.platform() === "win32"
+          ? pyrunner + " '" + querystr.replaceAll('"', '"""') + "'"
+          : pyrunner + ' "' + querystr.replaceAll('"', '\\"') + '"';
+      console.log("shell_cmd: ", shell_cmd);
       proc = child.spawn(
         // shell command (e.g. 'bash')
         shell,
         // shell arguments
-        [
-          ...shell_args,
-          pyrunner + ' "' + querystr.replaceAll('"', '\\"') + '"'
-        ],
+        [...shell_args, shell_cmd],
         // environment variables
-        envvars
+        options
       );
     } else {
       // Spawn child process directly (i.e. do not use the system shell). Note
       // that this will not load the shell environment (including PATH)
       envpath = `${condaPath}${pathSeparator}${envpath}`;
-      proc = child.spawn(pyrunner, [querystr], envvars);
+      proc = child.spawn(pyrunner, [querystr], options);
     }
 
     // backend process closes; either successfully (stdout return)
@@ -198,7 +189,7 @@ export async function builder_GetRemoteModules(event: any, query: any) {
   return {
     query: "builder/get-remote-modules",
     body: modules,
-    returncode: 0
+    returncode: 0,
   };
 }
 
@@ -254,7 +245,6 @@ export async function builder_BuildAndRun(
     // Run the workflow
     let query_run = {};
     switch (backend) {
-
       case "builtin":
         query_run = {
           query: "runner/snakemake-run",
@@ -277,20 +267,19 @@ export async function builder_BuildAndRun(
         );
         stdout_callback("Workflow complete.");
         break;
-      
+
       case "system":
         cmd_callback(data["body"]["command"]);
         break;
-      
+
       default:
         console.log("Unknown Snakemake backend requested: " + backend);
     }
-
   } else {
     stdout_callback("No workflow command to run.");
   }
 
-  data['returncode'] = 0;
+  data["returncode"] = 0;
   return data;
 }
 

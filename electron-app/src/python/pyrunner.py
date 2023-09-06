@@ -162,7 +162,7 @@ def post(request):
                 "query": query,
                 "body": data,
             }
-        elif query == "builder/clean-build-folder": 
+        elif query == "builder/clean-build-folder":
             data = {
                 "query": query,
                 "body": {

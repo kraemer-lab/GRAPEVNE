@@ -42,9 +42,9 @@ const GetModuleConfig = async (
     case "local":
       workflow_url = snakefile as string;
       config_url = workflow_url;
-      config_url = config_url.substring(0, config_url.lastIndexOf("/"));
-      config_url = config_url.substring(0, config_url.lastIndexOf("/"));
-      config_url += "/config/config.yaml";
+      config_url = config_url.substring(0, config_url.lastIndexOf(path.sep));
+      config_url = config_url.substring(0, config_url.lastIndexOf(path.sep));
+      config_url = path.join(config_url, "config", "config.yaml");
       try {
         return yaml.load(fs.readFileSync(config_url, "utf8")) as Record<
           string,

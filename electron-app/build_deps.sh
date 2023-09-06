@@ -31,6 +31,18 @@ python -m PyInstaller src/python/pyrunner.py \
     --hidden-import smart_open.ssh \
     --hidden-import smart_open.webhdfs
 
+# Check for presence of yarn
+if ! command -v yarn &> /dev/null
+then
+    npm i yarn
+    alias yarn="${PWD}/node_modules/.bin/yarn"
+fi
+if ! command -v yarn &> /dev/null
+then
+    echo "yarn could not be found or installed."
+    exit
+fi
+
 # Ensure nodemapper up-to-date
 pushd ../nodemapper
 cp src/redux/globals_electron.ts src/redux/globals.ts
