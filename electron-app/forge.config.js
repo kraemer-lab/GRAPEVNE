@@ -39,7 +39,7 @@ module.exports = {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "jsbrittain",
+          owner: "kraemer-lab",
           name: "GRAPEVNE",
         },
         draft: true,
