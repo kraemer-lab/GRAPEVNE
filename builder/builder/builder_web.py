@@ -1,3 +1,4 @@
+import ast
 from os import listdir
 from os.path import abspath
 from os.path import isdir
@@ -211,7 +212,6 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
         if branch["name"] == "main":
             continue
         [module_type, module_org_and_name] = branch["name"].split("/", 1)
-        [module_org, module_name] = module_org_and_name.split("/", 1)
         if module_type not in module_types:
             raise Exception(
                 f"Invalid module type '{module_type}' in branch '{branch['name']}'."
@@ -288,7 +288,7 @@ def GetWorkflowFilesLocal(
         load_command: command used to load the module in the Snakemake file
     """
     # Isolate string containing workflow directory
-    workflow_dir = eval(load_command)
+    workflow_dir = ast.literal_eval(load_command)
     if isinstance(workflow_dir, tuple):  # account for trailing comma
         workflow_dir = workflow_dir[0]
     workflow_file = abspath(join(workflow_dir, "workflow/Snakefile"))
@@ -325,7 +325,7 @@ def FormatName(name: str) -> str:
 
 
 if __name__ == "__main__":
-    """Test function using default repository"""
+    # Test function using default repository
     print(
         GetModulesList(
             {

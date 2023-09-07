@@ -24,7 +24,7 @@ class TokenizeFile:
     def PrintTokens(self, log_fn=print, filter_token=None):
         """Pretty print tokens, with optional filter (token number or string)"""
         for ix, token in enumerate(self.tokens):
-            toknum, tokval, start, end, line = token
+            toknum, tokval, _, _, _ = token
             match = False
             if not filter_token:
                 match = True
@@ -88,7 +88,7 @@ class TokenizeFile:
         """Return first token index of line"""
         for ix, token in enumerate(self.tokens):
             _, _, start, _, _ = token
-            row, col = start
+            row, _ = start
             if row == linenumber:
                 return ix
         return None
@@ -123,7 +123,7 @@ class TokenizeFile:
         content = ""
         for line in range(line_from, line_to + 1):
             token = self.tokens[self.GetFirstTokenIndexOfLine(line)]
-            toknum, tokval, start, end, line = token
+            _, _, _, _, line = token
             content += line
         return content
 

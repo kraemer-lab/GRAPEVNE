@@ -6,7 +6,14 @@ import * as child from "child_process";
 
 import web from "./web";
 
+const shell =
+  os.platform() === "win32" ? "powershell.exe" : process.env.SHELL || "bash";
+
+const shell_args =
+  os.platform() === "win32" ? ["-NonInteractive", "-Command"] : ["-i", "-c"];
+
 const pyrunner = path.join(process.resourcesPath, "app", "dist", "pyrunner");
+
 const condaPath = path.join(
   process.resourcesPath,
   "app",
@@ -14,9 +21,10 @@ const condaPath = path.join(
   "conda",
   os.platform() === "win32" ? "condabin" : "bin"
 );
+
 const pathSeparator = os.platform() === "win32" ? ";" : ":";
 
-// General query processing interface for Python scripts (replacement for Flask)
+// General query processing interface for Python scripts
 export async function ProcessQuery(
   event: any,
   query: Record<string, unknown>
@@ -26,6 +34,7 @@ export async function ProcessQuery(
     let stdout = ""; // collate return data
     let stderr = ""; // collate error data
 
+    // Launch child process; note that this does NOT use the system shell
     console.log(`open [${pyrunner}]: ${args}`);
     const proc = child.spawn(pyrunner, args);
 
@@ -37,6 +46,7 @@ export async function ProcessQuery(
         // Empty return, most likely a failure in python
         resolve({
           query: "error",
+          returncode: 1,
           data: {
             code: 1,
             stdout: stdout,
@@ -53,6 +63,7 @@ export async function ProcessQuery(
       console.log(`error: ${code}`);
       reject({
         query: "error",
+        returncode: 1,
         data: {
           code: code,
           stdout: stdout,
@@ -76,7 +87,7 @@ export async function ProcessQuery(
 }
 
 // General query processing interface for Python scripts
-// (provides realtime stdout/stderr responses)
+// (provides realtime stdout/stderr responses; used for workflow executions)
 export async function RunWorkflow(
   event: any,
   query: Record<string, unknown>,
@@ -86,24 +97,54 @@ export async function RunWorkflow(
   stderr_callback: (cmd: string) => void
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const args = [JSON.stringify(query)];
+    const querystr = JSON.stringify(query);
 
     // Set PATH to include bundled conda during snakemake calls, plus any
     // other environment variables specified by the user
     const systempath = process.env.PATH || "";
     const userpath = envs.PATH || "";
-    let path = `${userpath}${pathSeparator}${systempath}`;
-    if (conda_backend === "builtin")
-      path = `${condaPath}${pathSeparator}${path}`;
-    //const pathname = os.platform() === "win32" ? "Path" : "PATH";
-    const proc = child.spawn(pyrunner, args, {
+    let envpath = `${userpath}${pathSeparator}${systempath}`;
+    const options = {
+      cwd: (
+        (query.data as Record<string, unknown>).content as Record<
+          string,
+          unknown
+        >
+      ).workdir as string,
       env: {
         ...process.env,
         ...envs,
-        PATH: path, // Linux/MacOS --- nb. are these two necessary?
-        Path: path, // Windows
+        PATH: envpath,
       },
-    });
+    };
+
+    // Spawn child process (pyrunner) to launch python code (incl. snakemake)
+    //if (conda_backend === "builtin") {
+    let proc;
+    const use_shell = true;
+    if (use_shell) {
+      // Spawn child process in an 'interactive' (-i) shell so that the shell
+      // environment is loaded including PATH (and any available conda
+      // configuration)
+      const shell_cmd =
+        os.platform() === "win32"
+          ? pyrunner + " '" + querystr.replaceAll('"', '"""') + "'"
+          : pyrunner + ' "' + querystr.replaceAll('"', '\\"') + '"';
+      console.log("shell_cmd: ", shell_cmd);
+      proc = child.spawn(
+        // shell command (e.g. 'bash')
+        shell,
+        // shell arguments
+        [...shell_args, shell_cmd],
+        // environment variables
+        options
+      );
+    } else {
+      // Spawn child process directly (i.e. do not use the system shell). Note
+      // that this will not load the shell environment (including PATH)
+      envpath = `${condaPath}${pathSeparator}${envpath}`;
+      proc = child.spawn(pyrunner, [querystr], options);
+    }
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
@@ -141,14 +182,23 @@ export async function display_FolderInfo(event: any, query: any) {
 
 export async function builder_GetRemoteModules(event: any, query: any) {
   // python version
-  //return await ProcessQuery(event, query);
+  // return await ProcessQuery(event, query);
 
   // nodejs version
   const modules = await web.GetModulesList(query["data"]["content"]["url"]);
   return {
     query: "builder/get-remote-modules",
     body: modules,
+    returncode: 0,
   };
+}
+
+export async function builder_GetRemoteModuleConfig(event: any, query: any) {
+  const config = await web.GetModuleConfig(
+    query["data"]["content"]["repo"],
+    query["data"]["content"]["snakefile"]
+  );
+  return config;
 }
 
 export async function builder_CompileToJson(event: any, query: any) {
@@ -170,6 +220,7 @@ export async function builder_BuildAndRun(
 ) {
   stdout_callback("Building workflow...");
   const data = await ProcessQuery(event, query);
+
   // Execute the build in the working directory through the pty
   if (data["body"]["command"] !== "") {
     stdout_callback("Running workflow...");
@@ -216,15 +267,19 @@ export async function builder_BuildAndRun(
         );
         stdout_callback("Workflow complete.");
         break;
+
       case "system":
         cmd_callback(data["body"]["command"]);
         break;
+
       default:
         console.log("Unknown Snakemake backend requested: " + backend);
     }
   } else {
     stdout_callback("No workflow command to run.");
   }
+
+  data["returncode"] = 0;
   return data;
 }
 
@@ -236,6 +291,7 @@ export async function builder_CleanBuildFolder(
   status_callback("Cleaning build folder...");
   const data = await ProcessQuery(event, query);
   status_callback("Build folder cleaned.");
+  data["returncode"] = 0;
   return data;
 }
 

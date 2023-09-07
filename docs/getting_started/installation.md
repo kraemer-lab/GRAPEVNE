@@ -5,33 +5,50 @@
 You can download the latest version of GRAPVEVNE for your system from
 [github releases](https://github.com/kraemer-lab/GRAPEVNE/releases).
 
-For Windows users, ensure you have [PowerShell](https://learn.microsoft.com/en-us/powershell/), which comes installed as standard on modern distributions.
+For Windows users, ensure you have
+[PowerShell](https://learn.microsoft.com/en-us/powershell/), which comes
+pre-installed as standard on most modern versions of Windows.
 
 GRAPEVNE includes all of the necessary software needed to build and launch
-workflows bundled as part of the application (namely snakemake, conda and python).
-You can still use your own versions of these software by making the appropriate selections in the settings menu after install.
+workflows bundled as part of the application (namely snakemake and python).
 
+However, it is still recommended that you install a version of `conda` on your
+system since many workflows (including the GRAPEVNE tutorials) make use of conda
+environments for package management. The recommended distribution to use is
+[mambaforge](https://github.com/conda-forge/miniforge#mambaforge).
 
 ### Module repositories
 
+The GRAPEVNE Builder reads modules from a repository.
+
+```{note}
 You don't need your own repository to use GRAPEVNE, instead you can make use of
-the repositories setup by others, and for the tutorials, etc.
+repositories setup by others (including for the tutorials).
+```
 
-The GRAPEVNE Builder reads modules from a repository. This repository
-has a strict folder structure that must be adhered to. The simplest way to
-load modules for testing is therefore to ensure that you select
-'github directory listing' from the repository drop-down menu to access
-modules from a github repository.
+If you do want to set-up your own repository, then please be aware that GRAPEVNE
+expects the repository to be ordered in a particular fashion, namely:
 
-To make a copy of the modules repository available on your local machine, [clone
-the repository](https://github.com/kraemer-lab/vneyard)
-and point GRAPEVNE to that folder by selecting 'Local filesystem' from the
-repository drop-down menu and entering the resoitory location on your computer.
+```
+vneyard                     <--- root repository folder
+└── workflows               <--- 'workflows' folder (name must match)
+    └── MyModules           <--- project name
+        └── modules         <--- 'modules' folder (name must match)
+            └── MyModule1   <--- module folders
+            └── MyModule2
+            └── MyModule3
+```
 
-GRAPEVNE should now be able to find and load modules locally. After building a
-new module in GRAPEVNE, simply move the new module into the relevant folder of
-the repository and refresh the GRAPEVNE Builder to gain access to that workflow
-as a reusable module!
+The folders `workflows` and `modules` are required names, whereas the names of
+the base repository folder (`vneyard`, the project name `My Modules` and the
+list of modules themselves (e.g. `MyModule1`) can be changed.
+
+Within a module (e.g. `MyModule`) there is a (strongly recommended) folder
+convention that follows the snakemake
+[Distribution and Reproducibility guidelines](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
+
+You can also clone an existing repository (such as the
+[vneyard](https://github.com/kraemer-lab/vneyard)) as a base environment.
 
 ## Developer build
 
@@ -42,9 +59,10 @@ Dependencies:
 
 - Python 3.9+
 - Nodejs 16+
-- [yarn](https://yarnpkg.com/) package manager
+- [yarn](https://yarnpkg.com/) package manager (can be installed through npm as
+  `npm i yarn`)
 
-To build locally, clone the GRAPEVNE repository:
+To build locally, clone the GRAPEVNE repository and run the build script:
 
 ```
 git clone git@github.com:kraemer-lab/GRAPEVNE.git -b main
@@ -52,5 +70,5 @@ cd GRAPEVNE
 ./build.sh
 ```
 
-This will generate the GRAPEVNE Builder app, which will be located in
+This will generate the GRAPEVNE Builder app for your system, located in
 an appropriately named subfolder of `electron-app/out`.

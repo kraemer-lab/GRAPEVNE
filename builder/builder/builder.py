@@ -89,8 +89,8 @@ class Module(Node):
 
     def _GetConfigFileinfo(self) -> Union[str, dict]:
         """Returns the config filename, or an equivalent dict for remote files"""
-        workflow_filename = "workflow/Snakefile"
-        config_filename = "config/config.yaml"
+        workflow_filename = os.path.join("workflow", "Snakefile")
+        config_filename = os.path.join("config", "config.yaml")
         if isinstance(self.snakefile, str):
             # Local file
             filename = self.snakefile
@@ -214,7 +214,7 @@ class Model:
                 if isinstance(cnode["input_namespace"], dict):
                     if not isinstance(node.input_namespace, dict):
                         node.input_namespace = {}
-                    for k, v in cnode["input_namespace"].items():
+                    for k in cnode["input_namespace"]:
                         if node.input_namespace.get(k, None):
                             cnode["input_namespace"][k] = node.input_namespace[k]
                         # Don't use 'null' for input namespaces
@@ -284,9 +284,6 @@ class Model:
         )
 
     def AddModule(self, name: str, module: dict) -> Module:
-        print("=== Add module")
-        print(name)
-        print(module)
         """Adds a module to the workflow"""
         kwargs = module.copy()
         if "rulename" not in kwargs:
@@ -414,7 +411,7 @@ class Model:
                 if node.input_namespace not in all_output_namespaces:
                     orphans.append(node.rulename)
             elif isinstance(node.input_namespace, dict):
-                for k, v in node.input_namespace.items():
+                for _, v in node.input_namespace.items():
                     if v not in all_output_namespaces:
                         # namespace should be unique to avoid clashes
                         orphans.append(v)
@@ -582,7 +579,7 @@ class Model:
             if isinstance(n.input_namespace, str):
                 input_namespaces.append(n.input_namespace)
             elif isinstance(n.input_namespace, dict):
-                for k, v in n.input_namespace.items():
+                for _, v in n.input_namespace.items():
                     input_namespaces.append(v)
             elif n.input_namespace is None:
                 continue
@@ -722,7 +719,7 @@ def BuildFromJSON(
 
 
 if __name__ == "__main__":
-    """Builds a workflow given a JSON specification file"""
+    # Builds a workflow given a JSON specification file
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Filename of json configuration")
     args = parser.parse_args()

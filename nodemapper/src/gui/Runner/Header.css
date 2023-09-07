@@ -1,3 +1,5 @@
+@import "Buttons.css";
+
 * {
   margin: 0;
   padding: 0;
@@ -8,11 +10,10 @@ body,
 #header-panel,
 #header-panel > div {
   background: #dddddd;
-  font-family: "Oswald", sans-serif;
+  font-family: Oswald, sans-serif;
 }
+
 #header-panel,
 #header-panel > div {
   margin-left: 20px;
 }
-
-@import "Buttons.css";

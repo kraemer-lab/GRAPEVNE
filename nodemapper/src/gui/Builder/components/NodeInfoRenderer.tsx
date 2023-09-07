@@ -141,7 +141,7 @@ const NodeInfoRenderer = (props) => {
         <div>
           <EasyEdit
             type={Types.TEXT}
-            onHoverCssClass="easyEditHover"
+            onHoverCssClass="easyedit-hover"
             value={nodeinfo.name}
             saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
             cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}

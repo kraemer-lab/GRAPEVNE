@@ -19,10 +19,19 @@ export const Tray = styled.div<{ color: string }>`
   cursor: pointer;
 `;
 
+const wranglename = (name: string) => {
+  return name
+    .replace(/ /g, "_")
+    .replace(/\(/g, "_")
+    .replace(/\)/g, "_")
+    .toLowerCase();
+};
+
 export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
   render() {
     return (
       <Tray
+        id={"modulelist-" + wranglename(this.props.name)}
         color={this.props.color}
         draggable={true}
         onDragStart={(event) => {

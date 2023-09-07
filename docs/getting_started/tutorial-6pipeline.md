@@ -19,6 +19,7 @@ using the `In` or `fasta` inputs (do not connect the `seeds` inputs). Use
 the `fasttree` module for maximum likelihood estimation.
 
 Your workflow should now contain the following nodes:
+
 - subsample_alignment
 - nextalign
 - fasttree
@@ -40,7 +41,7 @@ specified.
 Finally, we need to provide the seeds for our analysis. We will do this by using
 a module that supplies a seeds-file, `provide_seeds`. Conceptually, this module
 could be replaced with a local file, a database query, or a prompt which asks
-the user which seeds to use. However, we are demonstrating that *resources*
+the user which seeds to use. However, we are demonstrating that _resources_
 can be provided along with our workflow modules (in-fact, all scripts that are
 used in this analysis are also resources which are downloaded automatically
 when the workflow is run).
@@ -49,8 +50,8 @@ We now need to connect the `provide_seeds` module in to our workflow. But where
 should we connect it? While intuitively you might want to connect it to the
 first module (`provide_seeds`), or indeed connect it to all modules (which would
 also work), we actually only need to connect the `provide_seeds` module in to
-the *final* module of the workflow: the `dta` module in our case. This is
-because snakemake is a *build-system*, which means that we specify the desired
+the _final_ module of the workflow: the `dta` module in our case. This is
+because snakemake is a _build-system_, which means that we specify the desired
 output, and snakemake will work out the necessary steps to provide that result.
 Our graph acts to provide a clear sequence of steps that must be undertaken
 to take us from the provide `beta.fasta` file, to the desired trait anlaysis

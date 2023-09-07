@@ -21,6 +21,8 @@ contextBridge.exposeInMainWorld("builderAPI", {
     ipcRenderer.invoke("builder/clean-build-folder", query),
   GetRemoteModules: (query: Query) =>
     ipcRenderer.invoke("builder/get-remote-modules", query),
+  GetRemoteModuleConfig: (query: Query) =>
+    ipcRenderer.invoke("builder/get-remote-module-config", query),
 });
 
 contextBridge.exposeInMainWorld("runnerAPI", {

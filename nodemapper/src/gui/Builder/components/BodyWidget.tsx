@@ -1,3 +1,4 @@
+import _ from "lodash";
 import React from "react";
 import styled from "@emotion/styled";
 
@@ -19,6 +20,13 @@ import { DefaultNodeModel } from "NodeMap";
 import { GridCanvasWidget } from "./GridCanvasWidget";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
+
+// TODO
+// This line permits any function declarations from the window.builderAPI
+// as a workaround. Remove this in favour of a proper typescript-compatible
+// interface. This may require modification to the electron code.
+declare const window: any;
+const builderAPI = window.builderAPI;
 
 interface IPayload {
   id: string;
@@ -57,6 +65,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   const terminal_visible = useAppSelector(
     (state) => state.builder.terminal_visibile
   );
+  const repo = JSON.parse(useAppSelector((state) => state.builder.repo));
   let modules_list = modules; // create a mutable copy
 
   const [filterSelection, setFilterSelection] = React.useState("");
@@ -87,7 +96,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
 
   // Check for a valid module list
   if (modules_list === undefined) {
-    console.log(
+    console.debug(
       "ALERT: Modules failed to load - check that the repository name is " +
         "correct and is reachable"
     );
@@ -140,6 +149,44 @@ export const BodyWidget = (props: BodyWidgetProps) => {
     const node = app.AddNodeToGraph(data, point, color);
     // Broadcast new node (cannot call react hooks from non-react functions)
     setNewnode(node);
+
+    // Read workflow configuration if not provided
+    const workflow = app.nodeScene.getNodeWorkflow(node);
+    const workflow_config = workflow.config as Record<string, unknown>;
+    console.log("workflow_config: " + workflow_config);
+    for (const [key, value] of Object.entries(workflow_config)) {
+      console.log(key, value);
+    }
+    if (_.isEmpty(workflow_config)) {
+      workflow["config"] = { msg: "Configuration loading... refresh to view." };
+      app.nodeScene.setNodeWorkflow(node, workflow);
+      console.log(
+        `No configuration found for module ${workflow["name"]}, attemping to load...`
+      );
+      const query: Record<string, unknown> = {
+        query: "builder/get-remote-module-config",
+        data: {
+          format: "Snakefile",
+          content: {
+            repo: repo,
+            snakefile: workflow["snakefile"],
+          },
+        },
+      };
+      const getConfig = async (query) => {
+        return await builderAPI.GetRemoteModuleConfig(query);
+      };
+      getConfig(query)
+        .then((config) => {
+          workflow["config"] = config;
+          app.nodeScene.setNodeWorkflow(node, workflow);
+        })
+        .catch((error) => {
+          console.log(error);
+          workflow["config"] = { msg: "Configuration FAILED to load." };
+          app.nodeScene.setNodeWorkflow(node, workflow);
+        });
+    }
   };
 
   return (

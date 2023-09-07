@@ -1,16 +1,6 @@
 from builder.ImportWorkflow import ImportWorkflowDir
 from builder.ImportWorkflow import ParseFunctionSignature
 
-""" Check for github (or other) snakefiles ---- CURRENTLY UNUSED
-assert isinstance(m.nodes[1], dict)
-assert m.nodes[1].snakefile.get("function", None) == "calling_fcn"
-assert m.nodes[1].snakefile.get("args", []) == ["arg1", "arg2"]
-assert m.nodes[1].snakefile.get("kwargs", {}) == {
-    "kwarg1": "kwval1",
-    "kwarg2": "kwval2",
-}
-"""
-
 
 def test_ImportWorkflow_ImportWorkflowDir() -> None:
     m = ImportWorkflowDir(

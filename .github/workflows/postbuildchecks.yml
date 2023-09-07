@@ -1,0 +1,43 @@
+name: Post-build checks
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: "Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)"
+        required: false
+        default: false
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@master
+        with:
+          node-version: 18
+      - name: build
+        working-directory: ./electron-app
+        shell: bash
+        run: |
+          ./build_deps.sh
+          yarn
+          yarn build
+          yarn package
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: tmate debugging
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+      - name: postbuild-tests
+        working-directory: ./electron-app
+        shell: bash
+        run: |
+          ./run_postbuild_tests.sh

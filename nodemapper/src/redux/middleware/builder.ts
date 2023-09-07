@@ -452,6 +452,7 @@ const GetRemoteModules = async (
     },
   };
   const callback = (content: string) => {
+    console.log(content);
     dispatchString(builderUpdateModulesList(content["body"]));
   };
   let response: Record<string, undefined>;

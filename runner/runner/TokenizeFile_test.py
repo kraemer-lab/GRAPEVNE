@@ -43,8 +43,8 @@ def test_GetIndentLevelFromTokenIndex():
     tf = TokenizeFile(content)
     pos = [1]
     expected = [0]
-    for ix in range(len(pos)):
-        assert tf.GetIndentLevelFromTokenIndex(pos[ix]) == expected[ix]
+    for ix, item in enumerate(pos):
+        assert tf.GetIndentLevelFromTokenIndex(item) == expected[ix]
 
 
 def test_GetFirstTokenIndexOfLine():
@@ -62,11 +62,8 @@ def test_GetContentBetweenTokensIndices():
     expected = [
         "rule:",
     ]
-    for ix in range(len(indices)):
-        assert (
-            tf.GetContentBetweenTokenIndices(indices[ix][0], indices[ix][1])
-            == expected[ix]
-        )
+    for ix, index in enumerate(indices):
+        assert tf.GetContentBetweenTokenIndices(index[0], index[1]) == expected[ix]
 
 
 def test_GetContentBetweenLines():
@@ -77,8 +74,8 @@ def test_GetContentBetweenLines():
     expected = [
         "rule:\n    rule_item\n",
     ]
-    for ix in range(len(lines)):
-        assert tf.GetContentBetweenLines(lines[ix][0], lines[ix][1]) == expected[ix]
+    for ix, line in enumerate(lines):
+        assert tf.GetContentBetweenLines(line[0], line[1]) == expected[ix]
 
 
 def test_GetContentOfIndentBlock():

@@ -63,11 +63,13 @@ const Header = () => {
   // Clean build folder
   const btnCleanBuildFolder = () => {
     dispatch(builderCleanBuildFolder());
+    dispatch(builderOpenTerminal());
   };
 
   // Build - compile config to workflow zip and download
   const btnBuild = () => {
     dispatch(builderCompileToJson());
+    dispatch(builderOpenTerminal());
   };
 
   // Distribute model (visual)
@@ -105,37 +107,67 @@ const Header = () => {
         }}
       >
         {/*
-        <button className="btn" onClick={btnLoadScene}>
+          *** LOAD function needs to assign eventListeners on load
+        <button
+          id="btnBuilderLoadScene"
+          className="btn"
+          onClick={btnLoadScene}
+        >
           LOAD
         </button>
-        <button className="btn" onClick={btnSaveScene}>
+
+        <button
+          id="btnBuilderSaveScene"
+          className="btn"
+          onClick={btnSaveScene}
+        >
           SAVE
         </button>
         */}
-        <button className="btn" onClick={btnRun}>
+        <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
           BUILD AND TEST
         </button>
-        <button className="btn" onClick={btnCleanBuildFolder}>
+        <button
+          id="btnBuilderCleanBuildFolder"
+          className="btn"
+          onClick={btnCleanBuildFolder}
+        >
           DELETE TEST BUILD
         </button>
-        <button className="btn" onClick={btnBuild}>
+        <button id="btnBuilderBuildAndZip" className="btn" onClick={btnBuild}>
           BUILD / ZIP
         </button>
         |
-        <button className="btn" onClick={btnClearScene}>
+        <button
+          id="btnBuilderClearScene"
+          className="btn"
+          onClick={btnClearScene}
+        >
           CLEAR GRAPH
         </button>
-        <button className="btn" onClick={btnArrange}>
+        <button
+          id="btnBuilderArrangeGraph"
+          className="btn"
+          onClick={btnArrange}
+        >
           ARRANGE GRAPH
         </button>
-        <button className="btn" onClick={btnToggleTerminalVisibility}>
+        <button
+          id="btnBuilderToggleTerminalVisibility"
+          className="btn"
+          onClick={btnToggleTerminalVisibility}
+        >
           TERMINAL
         </button>
         |
-        <button className="btn" onClick={btnGetModuleList}>
+        <button
+          id="btnBuilderGetModuleList"
+          className="btn"
+          onClick={btnGetModuleList}
+        >
           GET MODULE LIST
         </button>
-        <button className="btn" onClick={btnSettings}>
+        <button id="btnBuilderSettings" className="btn" onClick={btnSettings}>
           SETTINGS
         </button>
         <StatusBar />
