@@ -38,7 +38,7 @@ const FlushConsoleLog = async (driver: webdriver.ThenableWebDriver) => {
 // should be refactored
 const WaitForReturnCode = async (
   driver: webdriver.ThenableWebDriver,
-  query: string,
+  query: string
 ): Promise<Record<string, any>> => {
   console.log("::: WaitForReturnCode");
   // Monitor console.log until a returncode is received
@@ -76,7 +76,8 @@ const DragAndDrop = async (
   // Drag and drop replacement for Selenium (due to HTML5 issue)
   // Solution sourced from:
   //   https://stackoverflow.com/questions/39436870/why-drag-and-drop-is-not-working-in-selenium-webdriver
-  await driver.executeScript(`
+  await driver.executeScript(
+    `
     function createEvent(typeOfEvent) {
       var event = document.createEvent("CustomEvent");
       event.initCustomEvent(typeOfEvent, true, true, null);
@@ -91,7 +92,7 @@ const DragAndDrop = async (
       };
       return event;
     }
-    
+
     function dispatchEvent(element, event,transferData) {
       if (transferData !== undefined) {
         event.dataTransfer = transferData;
@@ -102,7 +103,7 @@ const DragAndDrop = async (
         element.fireEvent("on" + event.type, event);
       }
     }
-    
+
     function simulateHTML5DragAndDrop(element, destination) {
       var dragStartEvent = createEvent('dragstart');
       dispatchEvent(element, dragStartEvent);
@@ -111,7 +112,7 @@ const DragAndDrop = async (
       var dragEndEvent = createEvent('dragend');
       dispatchEvent(element, dragEndEvent, dropEvent.dataTransfer);
     }
-    
+
     var source = arguments[0];
     var destination = arguments[1];
     simulateHTML5DragAndDrop(source,destination);
@@ -130,9 +131,7 @@ const BuildAndRunSingleModuleWorkflow = async (
 
   // Drag-and-drop module from modules-list into scene
   await driver.findElement(By.id("btnBuilderClearScene")).click();
-  const module = await driver.findElement(
-    By.id("modulelist-" + modulename)
-  );
+  const module = await driver.findElement(By.id("modulelist-" + modulename));
   const canvas = await driver.findElement(By.id("nodemapper-canvas"));
   DragAndDrop(driver, module, canvas);
   // Give time for the module to be created on the canvas,
@@ -161,7 +160,7 @@ const BuildAndRunSingleModuleWorkflow = async (
   expect(fs.existsSync(target_file)).toBeFalsy();
 
   console.log("<<< test Build and Test the workflow");
-}
+};
 
 export {
   RedirectConsoleLog,

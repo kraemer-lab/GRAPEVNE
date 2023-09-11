@@ -1,23 +1,17 @@
-name: Flake8-builder
+name: Ruff-runner
 
 on:
   workflow_call:
-#  push:
-#    branches: [main]
-#    paths:
-#      - ".github/workflows/flake8-builder.yml"
-#      - "builder/**"
-#      - "!builder/README.md"
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: builder
+        working-directory: runner
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11"]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -27,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8
-      - name: Testing code with flake8
+          pip install ruff
+      - name: Testing code with ruff
         run: |
-          flake8 $(git ls-files '*.py')
+          ruff check $(git ls-files '*.py')
