@@ -1,5 +1,6 @@
 import React from "react";
 import { Terminal } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
 
 import "./../../node_modules/xterm/css/xterm.css";
 
@@ -14,11 +15,14 @@ class TerminalController {
   private static _instance: TerminalController;
 
   term: Terminal;
+  fitAddon: FitAddon;
   xtermRef: React.RefObject<HTMLDivElement>;
   terminalAPI;
 
   constructor() {
     this.term = new Terminal();
+    this.fitAddon = new FitAddon();
+    this.term.loadAddon(this.fitAddon);
     if (window !== undefined) this.terminalAPI = window.terminalAPI;
   }
 
@@ -38,6 +42,7 @@ class TerminalController {
       // Connect terminal to the (electron) API (but only if it exists)
       this.term.open(this.xtermRef.current);
       this.term.resize(80, 5);
+      this.fitAddon.fit();  // TODO: Not resizing terminal as intended
       this.term.onData((data) => this.terminalAPI.sendData(data));
       this.terminalAPI.receiveData((event, data) => this.sendData(data));
     }

@@ -7,10 +7,10 @@ import { NodeModel } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-diagrams";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
-import TerminalWindow from "./TerminalWindow";
 import BuilderEngine from "../BuilderEngine";
 import NodeInfoRenderer from "./NodeInfoRenderer";
 import BuilderSettings from "./BuilderSettings";
+import InfoPanel from "./InfoPanel";
 
 import ResizeHandle from "./ResizeHandle";
 import { Panel } from "react-resizable-panels";
@@ -67,9 +67,6 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
 
 export const BodyWidget = (props: BodyWidgetProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
-  const terminal_visible = useAppSelector(
-    (state) => state.builder.terminal_visibile
-  );
   const repo = JSON.parse(useAppSelector((state) => state.builder.repo));
   let modules_list = modules; // create a mutable copy
 
@@ -259,16 +256,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
                           collapsible={true}
                         >
                           <div className={styles.PanelContent}>
-                            <div
-                              style={{
-                                position: "absolute",
-                                display: terminal_visible ? "flex" : "none",
-                                bottom: 0,
-                                width: "100%",
-                              }}
-                            >
-                              <TerminalWindow />
-                            </div>
+                            <InfoPanel />
                           </div>
                         </Panel>
                       </PanelGroup>
