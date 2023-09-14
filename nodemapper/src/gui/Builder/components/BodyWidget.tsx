@@ -24,6 +24,7 @@ import { DefaultNodeModel } from "NodeMap";
 import { GridCanvasWidget } from "./GridCanvasWidget";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
+import { ConfigPaneDisplay } from "redux/types";
 
 // TODO
 // This line permits any function declarations from the window.builderAPI
@@ -68,7 +69,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
   const repo = JSON.parse(useAppSelector((state) => state.builder.repo));
   let modules_list = modules; // create a mutable copy
-  const configPaneOpen = useAppSelector((state) => state.builder.config_pane_open);
+  const configPaneOpen = useAppSelector((state) => state.builder.config_pane_display);
 
   const [filterSelection, setFilterSelection] = React.useState("");
   const [newnode, setNewnode] = React.useState<NodeModel>(null);
@@ -242,7 +243,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
             <Panel
               className={styles.Panel}
               order={2}
-              defaultSize={configPaneOpen ? 60 : 80}
+              defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 60}
             >
               <div className={styles.BottomRow}>
                 <Body>
@@ -274,7 +275,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
               </div>
             </Panel>
 
-            { (configPaneOpen) ? (
+            { (configPaneOpen !== ConfigPaneDisplay.None) ? (
               <>
               <ResizeHandle />
               <Panel

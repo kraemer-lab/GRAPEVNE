@@ -1,6 +1,7 @@
 import BuilderEngine from "gui/Builder/BuilderEngine";
 import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "../actions";
+import { ConfigPaneDisplay } from "redux/types";
 
 interface IBuilderState {
   repo: string;
@@ -15,7 +16,7 @@ interface IBuilderState {
   conda_backend: string;
   environment_variables: string;
   auto_validate_connections: boolean;
-  config_pane_open: boolean;
+  config_pane_display: string;
 }
 
 // State
@@ -40,7 +41,7 @@ const builderStateInit: IBuilderState = {
   conda_backend: "builtin", // builtin | system
   environment_variables: "",
   auto_validate_connections: false,
-  config_pane_open: false,
+  config_pane_display: ConfigPaneDisplay.None,
 };
 
 // Nodemap
@@ -63,12 +64,12 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderNodeSelected, (state, action) => {
       // Action intercepted in middleware to control display
-      state.config_pane_open = true;
+      state.config_pane_display = ConfigPaneDisplay.Node;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderNodeDeselected, (state, action) => {
       // Action intercepted in middleware to control display
-      state.config_pane_open = state.settings_visible;
+      state.config_pane_display = state.settings_visible ? ConfigPaneDisplay.Settings : ConfigPaneDisplay.None; 
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderGetRemoteModules, (state, action) => {
@@ -105,12 +106,12 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetSettingsVisibility, (state, action) => {
       state.settings_visible = action.payload;
-      state.config_pane_open = state.settings_visible;
+      state.config_pane_display = state.settings_visible ? ConfigPaneDisplay.Settings : ConfigPaneDisplay.None; 
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderToggleSettingsVisibility, (state, action) => {
       state.settings_visible = !state.settings_visible;
-      state.config_pane_open = state.settings_visible;
+      state.config_pane_display = state.settings_visible ? ConfigPaneDisplay.Settings : ConfigPaneDisplay.None; 
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
