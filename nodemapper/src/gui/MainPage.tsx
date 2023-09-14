@@ -31,8 +31,6 @@ const MainPage = () => {
           display: "flex",
           height: "100%",
           width: "100%",
-          color: "#ffffff",
-          background: "#3d3d3d",
           flexFlow: "column",
         }}
       >
@@ -51,7 +49,6 @@ const MainPage = () => {
             style={{
               fontSize: 18,
               marginLeft: 0,
-              color: "#fff",
             }}
           >
             GRAPEVNE

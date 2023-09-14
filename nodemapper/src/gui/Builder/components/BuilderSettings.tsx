@@ -77,6 +77,7 @@ const RepoOptions: React.FC = () => {
         size={default_input_size}
         value={repoURL}
         onChange={(e) => handleChange(e.target.value)}
+        style={{ width: "100%" }}
       />
     </>
   );
@@ -123,10 +124,14 @@ const BuilderSettings = () => {
     <>
       <div
         style={{
-          display: isvisible ? "block" : "none",
+          display: isvisible ? "flex" : "none",
+          width: "100%",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignSelf: "flex-start",
+          padding: "10px",
         }}
       >
-        <br />
         <p>Repository</p>
         <p>
           <RepoOptions />
@@ -152,6 +157,7 @@ const BuilderSettings = () => {
             size={default_input_size}
             value={snakemake_args}
             onChange={(e) => SetSnakemakeArgs(e.target.value)}
+            style={{ width: "100%" }}
           />
         </p>
         <br />
@@ -177,6 +183,7 @@ const BuilderSettings = () => {
             size={default_input_size}
             value={environment_vars}
             onChange={(e) => SetEnvironmentVars(e.target.value)}
+            style={{ width: "100%" }}
           />
         </p>
         <br />

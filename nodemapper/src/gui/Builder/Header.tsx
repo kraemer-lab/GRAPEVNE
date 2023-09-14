@@ -26,7 +26,12 @@ const StatusBar: React.FC = () => {
     setStatus(statustext);
   }, [statustext]);
   return (
-    <div className="status-bar" style={{ fontSize: 14, color: "#fff" }}>
+    <div
+      className="status-bar"
+      style={{
+        fontSize: 14,
+      }}
+    >
       {status}
     </div>
   );
