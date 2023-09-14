@@ -8,9 +8,8 @@ import { CanvasWidget } from "@projectstorm/react-diagrams";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
 import BuilderEngine from "../BuilderEngine";
-import NodeInfoRenderer from "./NodeInfoRenderer";
-import BuilderSettings from "./BuilderSettings";
 import InfoPanel from "./InfoPanel";
+import ConfigPane from "./ConfigPane";
 
 import ResizeHandle from "./ResizeHandle";
 import { Panel } from "react-resizable-panels";
@@ -69,6 +68,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
   const repo = JSON.parse(useAppSelector((state) => state.builder.repo));
   let modules_list = modules; // create a mutable copy
+  const configPaneOpen = useAppSelector((state) => state.builder.config_pane_open);
 
   const [filterSelection, setFilterSelection] = React.useState("");
   const [newnode, setNewnode] = React.useState<NodeModel>(null);
@@ -196,7 +196,11 @@ export const BodyWidget = (props: BodyWidgetProps) => {
       <Body>
         <Content>
           <PanelGroup direction="horizontal">
-            <Panel className={styles.Panel} order={1} defaultSize={20}>
+            <Panel
+              className={styles.Panel}
+              order={1}
+              defaultSize={20}
+            >
               <div
                 className={styles.PanelContent}
                 style={{
@@ -235,7 +239,11 @@ export const BodyWidget = (props: BodyWidgetProps) => {
             </Panel>
             <ResizeHandle />
 
-            <Panel className={styles.Panel} order={2} defaultSize={60}>
+            <Panel
+              className={styles.Panel}
+              order={2}
+              defaultSize={configPaneOpen ? 60 : 80}
+            >
               <div className={styles.BottomRow}>
                 <Body>
                   <Content>
@@ -266,18 +274,21 @@ export const BodyWidget = (props: BodyWidgetProps) => {
               </div>
             </Panel>
 
-            <ResizeHandle />
-            <Panel
-              className={styles.Panel}
-              order={3}
-              defaultSize={20}
-              collapsible={true}
-            >
-              <div className={styles.PanelContent}>
-                <NodeInfoRenderer />
-                <BuilderSettings />
-              </div>
-            </Panel>
+            { (configPaneOpen) ? (
+              <>
+              <ResizeHandle />
+              <Panel
+                className={styles.Panel}
+                order={3}
+                defaultSize={20}
+                collapsible={true}
+              >
+                <div className={styles.PanelContent}>
+                  <ConfigPane />
+                </div>
+              </Panel>
+            </>
+            ) : <></> }
           </PanelGroup>
         </Content>
       </Body>

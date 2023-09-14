@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "./Header";
 import NodeManager from "./NodeManager";
+import StatusBar from "./StatusBar";
 
 const Builder = () => {
   return (
@@ -19,6 +20,7 @@ const Builder = () => {
         <div style={{ flex: "1 1 auto", overflowY: "auto" }}>
           <NodeManager />
         </div>
+        <StatusBar />
       </div>
     </>
   );

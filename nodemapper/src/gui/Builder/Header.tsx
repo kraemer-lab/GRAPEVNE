@@ -19,24 +19,6 @@ import { builderGetRemoteModules } from "redux/actions";
 import { builderToggleTerminalVisibility } from "redux/actions";
 import { builderToggleSettingsVisibility } from "redux/actions";
 
-const StatusBar: React.FC = () => {
-  const [status, setStatus] = useState("");
-  const statustext = useAppSelector((state) => state.builder.statustext);
-  React.useEffect(() => {
-    setStatus(statustext);
-  }, [statustext]);
-  return (
-    <div
-      className="status-bar"
-      style={{
-        fontSize: 14,
-      }}
-    >
-      {status}
-    </div>
-  );
-};
-
 const Header = () => {
   const dispatch = useAppDispatch();
 
@@ -82,11 +64,6 @@ const Header = () => {
     BuilderEngine.Instance.RedistributeModel();
   };
 
-  // Toggle terminal visibility
-  const btnToggleTerminalVisibility = () => {
-    dispatch(builderToggleTerminalVisibility());
-  };
-
   // Load modules from repository
   const btnGetModuleList = () => {
     dispatch(builderGetRemoteModules());
@@ -106,9 +83,11 @@ const Header = () => {
       />
       <div
         style={{
+          display: "flex",
           fontSize: 18,
           marginLeft: 0,
           marginBottom: 2,
+          alignItems: "center",
         }}
       >
         {/*
@@ -129,6 +108,7 @@ const Header = () => {
           SAVE
         </button>
         */}
+        GRAPEVNE
         <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
           BUILD AND TEST
         </button>
@@ -157,13 +137,6 @@ const Header = () => {
         >
           ARRANGE GRAPH
         </button>
-        <button
-          id="btnBuilderToggleTerminalVisibility"
-          className="btn"
-          onClick={btnToggleTerminalVisibility}
-        >
-          TERMINAL
-        </button>
         |
         <button
           id="btnBuilderGetModuleList"
@@ -175,7 +148,6 @@ const Header = () => {
         <button id="btnBuilderSettings" className="btn" onClick={btnSettings}>
           SETTINGS
         </button>
-        <StatusBar />
       </div>
     </>
   );

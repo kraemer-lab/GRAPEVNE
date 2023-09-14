@@ -51,7 +51,6 @@ const MainPage = () => {
               marginLeft: 0,
             }}
           >
-            GRAPEVNE
             {/*
             <button className="btn" onClick={() => setMenuChoice(0)}>
               BUILDER
