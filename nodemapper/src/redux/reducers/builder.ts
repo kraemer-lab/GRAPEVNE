@@ -31,7 +31,7 @@ const builderStateInit: IBuilderState = {
     repo: "kraemer-lab/vneyard",
   }),
   modules_list: "[]",
-  statustext: "",
+  statustext: "Idle",
   nodeinfo: "{}", // {} required to be a valid JSON string
   can_selected_expand: true,
   terminal_visibile: false,
@@ -82,7 +82,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {
-      state.statustext = action.payload;
+      setStatusText(state, action.payload);
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderUpdateNodeInfo, (state, action) => {
@@ -139,5 +139,12 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     });
 });
+
+const setStatusText = (state: IBuilderState, text: string) => {
+  if ((text === "") || (text === null) || (text === undefined))
+    text = "Idle";
+  state.statustext = text;
+  return state;
+}
 
 export default builderReducer;
