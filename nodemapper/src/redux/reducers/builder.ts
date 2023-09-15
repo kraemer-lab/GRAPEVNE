@@ -17,6 +17,7 @@ interface IBuilderState {
   environment_variables: string;
   auto_validate_connections: boolean;
   config_pane_display: string;
+  logtext: string;
 }
 
 // State
@@ -42,6 +43,7 @@ const builderStateInit: IBuilderState = {
   environment_variables: "",
   auto_validate_connections: false,
   config_pane_display: ConfigPaneDisplay.None,
+  logtext: " ",
 };
 
 // Nodemap
@@ -69,7 +71,9 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderNodeDeselected, (state, action) => {
       // Action intercepted in middleware to control display
-      state.config_pane_display = state.settings_visible ? ConfigPaneDisplay.Settings : ConfigPaneDisplay.None; 
+      state.config_pane_display = state.settings_visible
+        ? ConfigPaneDisplay.Settings
+        : ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderGetRemoteModules, (state, action) => {
@@ -106,12 +110,16 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetSettingsVisibility, (state, action) => {
       state.settings_visible = action.payload;
-      state.config_pane_display = state.settings_visible ? ConfigPaneDisplay.Settings : ConfigPaneDisplay.None; 
+      state.config_pane_display = state.settings_visible
+        ? ConfigPaneDisplay.Settings
+        : ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderToggleSettingsVisibility, (state, action) => {
       state.settings_visible = !state.settings_visible;
-      state.config_pane_display = state.settings_visible ? ConfigPaneDisplay.Settings : ConfigPaneDisplay.None; 
+      state.config_pane_display = state.settings_visible
+        ? ConfigPaneDisplay.Settings
+        : ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
@@ -137,14 +145,25 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderSetEnvironmentVars, (state, action) => {
       state.environment_variables = action.payload;
       console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderLogEvent, (state, action) => {
+      addLogEvent(state, action.payload);
+      console.info("[Reducer] " + action.type);
     });
 });
 
 const setStatusText = (state: IBuilderState, text: string) => {
-  if ((text === "") || (text === null) || (text === undefined))
-    text = "Idle";
+  if (text === "" || text === null || text === undefined) text = "Idle";
   state.statustext = text;
   return state;
-}
+};
 
+const addLogEvent = (state: IBuilderState, text: string) => {
+  if (state.logtext === " ") state.logtext = "";
+  if (text[text.length - 1] !== "\n") text += "\n";
+  state.logtext += text;
+  if (state.logtext === "") state.logtext = " ";
+};
+
+export { IBuilderState };
 export default builderReducer;

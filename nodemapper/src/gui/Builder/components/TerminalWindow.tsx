@@ -26,7 +26,8 @@ class TerminalWindow extends React.Component {
           height: "100%",
         }}
       />
-  )}
+    );
+  }
 }
 
 export default TerminalWindow;

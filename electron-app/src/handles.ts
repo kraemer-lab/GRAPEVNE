@@ -177,14 +177,11 @@ export async function RunWorkflow(
 const ErrorReturn = (query: string, err: any) => {
   console.error(query, err);
   let body = "";
-  if (err === undefined)
-    body = "undefined error";
+  if (err === undefined) body = "undefined error";
   else if (err.response !== undefined)
-    body = err.response.status + ": " + ((err.response) as any).statusText;
-  else if (err.message !== undefined)
-    body = ": " + err.message;
-  else
-    body = ": " + err;
+    body = err.response.status + ": " + (err.response as any).statusText;
+  else if (err.message !== undefined) body = ": " + err.message;
+  else body = ": " + err;
 
   // Request error
   return {
@@ -192,7 +189,7 @@ const ErrorReturn = (query: string, err: any) => {
     body: "ERROR " + body,
     returncode: 1,
   };
-}
+};
 
 // Query handlers
 

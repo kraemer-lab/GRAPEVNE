@@ -82,6 +82,15 @@ export default class NodeMapEngine {
     document.body.removeChild(element);
   }
 
+  public DeselectAll() {
+    this.engine
+      .getModel()
+      .getNodes()
+      .forEach((item) => {
+        item.setSelected(false);
+      });
+  }
+
   public getNodeById(id: string): NodeModel {
     let returnNode = null;
     this.engine

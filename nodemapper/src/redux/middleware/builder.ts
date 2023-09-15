@@ -7,6 +7,7 @@ import { DefaultLinkModel } from "NodeMap";
 import { DefaultNodeModel } from "NodeMap";
 
 import { builderRedraw } from "redux/actions";
+import { builderLogEvent } from "redux/actions";
 import { builderCompileToJson } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
@@ -30,8 +31,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
   return (next) => {
     return (action) => {
       // action.type, action.payload
-      console.log("Middleware: ", action);
-
+      if (action.type.split("/")[0] === "builder") {
+        console.log("Middleware [builder]: ", action);
+      }
       switch (action.type) {
         case "builder/compile-to-json":
           CompileToJSON();
@@ -73,7 +75,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case "builder/node-selected":
-          NodeSelected(action, dispatch, dispatch, getState);
+          NodeSelected(action, dispatch, dispatch);
           break;
 
         case "builder/node-deselected":
@@ -113,10 +115,11 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case "builder/toggle-settings-visibility":
-          ToggleSettingsVisibility(
-            dispatch,
-            getState().builder.settings_visible
-          );
+          ToggleSettingsVisibility(dispatch, getState().builder);
+          break;
+
+        case "builder/update-status-text":
+          UpdateStatusText(dispatch, action.payload);
           break;
 
         default:
@@ -193,6 +196,9 @@ const BuildAndRun = async (
   conda_backend: string,
   environment_variables: string
 ) => {
+  dispatchString(
+    builderUpdateStatusText("Building workflow and launching a test run...")
+  );
   const app = BuilderEngine.Instance;
   const query: Record<string, unknown> = {
     query: "builder/build-and-run",
@@ -206,8 +212,13 @@ const BuildAndRun = async (
       environment_variables: environment_variables,
     },
   };
-  const callback = (result) => {
-    console.log(result);
+  const callback = (content: string) => {
+    console.log(content);
+    if (content["returncode"] !== 0) {
+      // Report error
+      dispatchString(builderUpdateStatusText("Workflow run FAILED."));
+    }
+    dispatchString(builderUpdateStatusText(" ")); // Idle
   };
   switch (backend as string) {
     case "rest":
@@ -343,16 +354,8 @@ const CheckNodeDependencies = async (
 const NodeSelected = async (
   action: IPayloadRecord,
   dispatch: TPayloadString,
-  dispatchBool: TPayloadBool,
-  getState
+  dispatchBool: TPayloadBool
 ) => {
-  // Deselect any nodes first and wait for the state to update
-  if (getState().builder.nodeinfo !== "") {
-    const deselect = async () => {
-      return dispatch(builderNodeDeselected(""));
-    };
-    await deselect();
-  }
   // Close settings menu (if open)
   dispatchBool(builderSetSettingsVisibility(false));
   // Select the node
@@ -456,8 +459,8 @@ const GetRemoteModules = async (
     if (content["returncode"] !== 0) {
       // Report error
       dispatchString(builderUpdateStatusText(content["body"]));
-    } else
-      dispatchString(builderUpdateModulesList(content["body"]));
+    } else dispatchString(builderUpdateStatusText("Modules loaded."));
+    dispatchString(builderUpdateModulesList(content["body"]));
   };
   let response: Record<string, undefined>;
   switch (backend as string) {
@@ -607,15 +610,23 @@ const SetSettingsVisibility = (
   dispatch: TPayloadString,
   new_state: boolean
 ) => {
-  if (new_state)
+  if (new_state) {
     // Close node info pane
     dispatch(builderNodeDeselected(""));
+    const app = BuilderEngine.Instance;
+    app.DeselectAll();
+  }
   return 0;
 };
 
 const ToggleSettingsVisibility = (
   dispatch: TPayloadString,
-  settings_visible: boolean
+  state: Record<string, unknown>
 ) => {
-  SetSettingsVisibility(dispatch, !settings_visible);
+  SetSettingsVisibility(dispatch, !state.settings_visible);
+};
+
+const UpdateStatusText = (dispatch: TPayloadString, text: string) => {
+  // Send a copy of the status text to the logger
+  dispatch(builderLogEvent(text));
 };

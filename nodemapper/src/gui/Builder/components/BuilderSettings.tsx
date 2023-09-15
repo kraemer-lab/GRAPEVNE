@@ -129,9 +129,7 @@ const BuilderSettings = () => {
       >
         <div>
           <p>Repository</p>
-          <p>
-            <RepoOptions />
-          </p>
+          <RepoOptions />
         </div>
         <div>
           <p>Snakemake</p>

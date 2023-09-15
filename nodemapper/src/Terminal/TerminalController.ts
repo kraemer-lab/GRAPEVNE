@@ -9,6 +9,7 @@ import "./../../node_modules/xterm/css/xterm.css";
 // as a workaround. Remove this in favour of a proper typescript-compatible
 // interface. This may require modification to the electron code.
 declare const window: any;
+let terminal_mounted = false;
 
 // Single instance of a terminal
 class TerminalController {
@@ -42,8 +43,11 @@ class TerminalController {
       // Connect terminal to the (electron) API (but only if it exists)
       this.term.open(this.xtermRef.current);
       this.fitAddon.fit();
-      this.term.onData((data) => this.terminalAPI.sendData(data));
-      this.terminalAPI.receiveData((event, data) => this.sendData(data));
+      if (!terminal_mounted) {
+        this.term.onData((data) => this.terminalAPI.sendData(data));
+        this.terminalAPI.receiveData((event, data) => this.sendData(data));
+        terminal_mounted = true;
+      }
     }
   }
 

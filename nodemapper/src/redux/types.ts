@@ -4,6 +4,4 @@ enum ConfigPaneDisplay {
   Node = "node",
 }
 
-export {
-  ConfigPaneDisplay,
-}
+export { ConfigPaneDisplay };

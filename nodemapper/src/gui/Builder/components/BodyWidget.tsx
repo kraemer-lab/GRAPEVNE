@@ -70,7 +70,9 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
   const repo = JSON.parse(useAppSelector((state) => state.builder.repo));
   let modules_list = modules; // create a mutable copy
-  const configPaneOpen = useAppSelector((state) => state.builder.config_pane_display);
+  const configPaneOpen = useAppSelector(
+    (state) => state.builder.config_pane_display
+  );
 
   const [filterSelection, setFilterSelection] = React.useState("");
   const [newnode, setNewnode] = React.useState<NodeModel>(null);
@@ -198,11 +200,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
       <Body>
         <Content>
           <PanelGroup direction="horizontal">
-            <Panel
-              className={styles.Panel}
-              order={1}
-              defaultSize={20}
-            >
+            <Panel className={styles.Panel} order={1} defaultSize={20}>
               <div
                 className={styles.PanelContent}
                 style={{
@@ -268,7 +266,6 @@ export const BodyWidget = (props: BodyWidgetProps) => {
                             const term = TerminalController.Instance; // singleton instance
                             term.fitAddon.fit();
                           }}
-        
                         >
                           <div className={styles.PanelContent}>
                             <InfoPanel />
@@ -281,21 +278,23 @@ export const BodyWidget = (props: BodyWidgetProps) => {
               </div>
             </Panel>
 
-            { (configPaneOpen !== ConfigPaneDisplay.None) ? (
+            {configPaneOpen !== ConfigPaneDisplay.None ? (
               <>
-              <ResizeHandle />
-              <Panel
-                className={styles.Panel}
-                order={3}
-                defaultSize={20}
-                collapsible={true}
-              >
-                <div className={styles.PanelContent}>
-                  <ConfigPane />
-                </div>
-              </Panel>
-            </>
-            ) : <></> }
+                <ResizeHandle />
+                <Panel
+                  className={styles.Panel}
+                  order={3}
+                  defaultSize={20}
+                  collapsible={true}
+                >
+                  <div className={styles.PanelContent}>
+                    <ConfigPane />
+                  </div>
+                </Panel>
+              </>
+            ) : (
+              <></>
+            )}
           </PanelGroup>
         </Content>
       </Body>

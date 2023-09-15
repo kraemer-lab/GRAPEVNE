@@ -1,6 +1,6 @@
-import React from 'react';
-import { useState } from 'react';
-import { useAppSelector } from 'redux/store/hooks';
+import React from "react";
+import { useState } from "react";
+import { useAppSelector } from "redux/store/hooks";
 
 const StatusBar: React.FC = () => {
   const [status, setStatus] = useState("");
