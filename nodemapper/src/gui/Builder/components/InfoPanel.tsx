@@ -18,29 +18,26 @@ const InfoPanel = () => {
       }}
     >
       <TabList>
-        <Tab>Log</Tab>
-        <Tab>Terminal</Tab>
-        <Tab>File Browser</Tab>
+        <Tab>Log / Terminal</Tab>
       </TabList>
 
-      <TabPanel>
-        <h2>Log</h2>
-      </TabPanel>
-
-      <TabPanel>
+      <TabPanel
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      >
         <div
           style={{
             display: "flex",
             width: "100%",
+            height: "100%",
           }}
         >
           <TerminalWindow />
         </div>
       </TabPanel>
 
-      <TabPanel>
-        <h2>File Browser</h2>
-      </TabPanel>
     </Tabs>
   );
 }

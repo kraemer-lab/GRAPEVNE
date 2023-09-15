@@ -25,6 +25,7 @@ import { GridCanvasWidget } from "./GridCanvasWidget";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { ConfigPaneDisplay } from "redux/types";
+import TerminalController from "Terminal/TerminalController";
 
 // TODO
 // This line permits any function declarations from the window.builderAPI
@@ -263,6 +264,11 @@ export const BodyWidget = (props: BodyWidgetProps) => {
                           className={styles.Panel}
                           defaultSize={30}
                           collapsible={true}
+                          onResize={(size: number, _delta: number) => {
+                            const term = TerminalController.Instance; // singleton instance
+                            term.fitAddon.fit();
+                          }}
+        
                         >
                           <div className={styles.PanelContent}>
                             <InfoPanel />
