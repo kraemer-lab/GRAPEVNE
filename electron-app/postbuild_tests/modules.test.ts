@@ -32,7 +32,7 @@ describe("modules", () => {
     const options = new chrome.Options();
     options.debuggerAddress("localhost:9515");
     driver = new webdriver.Builder()
-      .forBrowser("chrome")
+      .forBrowser("chrome", "116")
       .setChromeOptions(options)
       .build();
     await RedirectConsoleLog(driver);
@@ -86,7 +86,10 @@ describe("modules", () => {
     console.log("::: test Get local modules list");
     // Get modules list
     await driver.findElement(By.id("btnBuilderGetModuleList")).click();
-    const msg = (await WaitForReturnCode(driver, "builder/get-remote-modules")) as any;
+    const msg = (await WaitForReturnCode(
+      driver,
+      "builder/get-remote-modules"
+    )) as any;
     expect(msg.returncode).toEqual(0);
     // Wait for module list to be populated
     await driver.wait(
@@ -128,9 +131,9 @@ describe("modules", () => {
     async (modulename, outfile) => {
       await BuildAndRunSingleModuleWorkflow(driver, modulename, outfile);
     },
-    5*ONE_MINUTE
+    5 * ONE_MINUTE
   ); // long timeout
-  
+
   test("Set snakemake arguments list to use conda", async () => {
     console.log("::: test Set snakemake arguments list to use conda");
     // Open settings pane
@@ -142,7 +145,7 @@ describe("modules", () => {
     );
     await args.clear();
     await args.sendKeys("--cores 1 --use-conda");
-    
+
     // Set conda environment path --- passthrough from test environment
     if (process.env.CONDA_PATH != undefined) {
       const args = await driver.findElement(
@@ -156,17 +159,17 @@ describe("modules", () => {
     await driver.findElement(By.id("btnBuilderSettings")).click();
     console.log("<<< test Set snakemake arguments list to use conda");
   });
-  
+
   test.each([
     [
       wranglename("(single_modules) conda"),
       path.join("single_modules_conda", "data.csv"),
-    ]
+    ],
   ])(
     "Build and Test the workflow: module '%s'",
     async (modulename, outfile) => {
       await BuildAndRunSingleModuleWorkflow(driver, modulename, outfile);
     },
-    10*ONE_MINUTE
+    10 * ONE_MINUTE
   ); // long timeout
 });

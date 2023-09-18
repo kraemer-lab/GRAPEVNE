@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
 import { builderSetSnakemakeArgs } from "redux/actions";
-import { builderSelectCondaBackend } from "redux/actions";
 import { builderSetEnvironmentVars } from "redux/actions";
 import { builderSetRepositoryTarget } from "redux/actions";
 import { builderSelectSnakemakeBackend } from "redux/actions";
@@ -77,6 +76,7 @@ const RepoOptions: React.FC = () => {
         size={default_input_size}
         value={repoURL}
         onChange={(e) => handleChange(e.target.value)}
+        style={{ width: "100%" }}
       />
     </>
   );
@@ -91,7 +91,6 @@ const BuilderSettings = () => {
   const snakemake_args = useAppSelector(
     (state) => state.builder.snakemake_args
   );
-  const conda_backend = useAppSelector((state) => state.builder.conda_backend);
   const environment_vars = useAppSelector(
     (state) => state.builder.environment_variables
   );
@@ -111,10 +110,6 @@ const BuilderSettings = () => {
     dispatch(builderSelectSnakemakeBackend(value));
   };
 
-  const selectCondaBackend = (value: string) => {
-    dispatch(builderSelectCondaBackend(value));
-  };
-
   const SetAutoValidateConnections = (value: boolean) => {
     dispatch(builderSetAutoValidateConnections(value));
   };
@@ -123,76 +118,73 @@ const BuilderSettings = () => {
     <>
       <div
         style={{
-          display: isvisible ? "block" : "none",
+          display: "flex",
+          width: "100%",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignSelf: "flex-start",
+          padding: "10px",
+          gap: "10px",
         }}
       >
-        <br />
-        <p>Repository</p>
-        <p>
+        <div>
+          <p>Repository</p>
           <RepoOptions />
-        </p>
-        <br />
-        <p>Snakemake</p>
-        <p>backend</p>
-        <p>
-          <select
-            defaultValue={snakemake_backend}
-            onChange={(e) => selectSnakemakeBackend(e.target.value)}
-            style={{ width: "100%" }}
-          >
-            <option value="builtin">Built-in</option>
-            <option value="system">System</option>
-          </select>
-        </p>
-        <p>arguments</p>
-        <p>
-          <input
-            id="inputBuilderSettingsSnakemakeArgs"
-            type="text"
-            size={default_input_size}
-            value={snakemake_args}
-            onChange={(e) => SetSnakemakeArgs(e.target.value)}
-          />
-        </p>
-        <br />
-        <p>Conda</p>
-        <p>backend</p>
-        <p>
-          <select
-            defaultValue={conda_backend}
-            onChange={(e) => selectCondaBackend(e.target.value)}
-            style={{ width: "100%" }}
-          >
-            {/*<option value="builtin">Built-in</option>*/}
-            <option value="system">System</option>
-          </select>
-        </p>
-        <br />
-        <p>Environment</p>
-        <p>variables</p>
-        <p>
-          <input
-            id="inputBuilderSettingsEnvironmentVars"
-            type="text"
-            size={default_input_size}
-            value={environment_vars}
-            onChange={(e) => SetEnvironmentVars(e.target.value)}
-          />
-        </p>
-        <br />
-        <p>Validation</p>
-        <p>
-          <input
-            type="checkbox"
-            id="auto_validate_connections"
-            checked={auto_validate_connections}
-            onChange={(e) => SetAutoValidateConnections(e.target.checked)}
-          />
-          <label htmlFor="auto_validate_connections">
-            {" "}
-            Auto-validate connections
-          </label>
-        </p>
+        </div>
+        <div>
+          <p>Snakemake</p>
+          <p>backend</p>
+          <p>
+            <select
+              defaultValue={snakemake_backend}
+              onChange={(e) => selectSnakemakeBackend(e.target.value)}
+              style={{ width: "100%" }}
+            >
+              <option value="builtin">Built-in</option>
+              <option value="system">System</option>
+            </select>
+          </p>
+          <p>arguments</p>
+          <p>
+            <input
+              id="inputBuilderSettingsSnakemakeArgs"
+              type="text"
+              size={default_input_size}
+              value={snakemake_args}
+              onChange={(e) => SetSnakemakeArgs(e.target.value)}
+              style={{ width: "100%" }}
+            />
+          </p>
+        </div>
+        <div>
+          <p>Environment</p>
+          <p>variables</p>
+          <p>
+            <input
+              id="inputBuilderSettingsEnvironmentVars"
+              type="text"
+              size={default_input_size}
+              value={environment_vars}
+              onChange={(e) => SetEnvironmentVars(e.target.value)}
+              style={{ width: "100%" }}
+            />
+          </p>
+        </div>
+        <div>
+          <p>Validation</p>
+          <p>
+            <input
+              type="checkbox"
+              id="auto_validate_connections"
+              checked={auto_validate_connections}
+              onChange={(e) => SetAutoValidateConnections(e.target.checked)}
+            />
+            <label htmlFor="auto_validate_connections">
+              {" "}
+              Auto-validate connections
+            </label>
+          </p>
+        </div>
       </div>
     </>
   );

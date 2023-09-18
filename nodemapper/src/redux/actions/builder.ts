@@ -82,6 +82,8 @@ export const builderSetSnakemakeArgs = createAction<string>(
   "builder/set-snakemake-args"
 );
 
+export const builderLogEvent = createAction<string>("builder/log-event");
+
 export const builderSetRepositoryTarget = createAction<Record<string, any>>( // eslint-disable-line @typescript-eslint/no-explicit-any
   "builder/set-repository-target"
 );

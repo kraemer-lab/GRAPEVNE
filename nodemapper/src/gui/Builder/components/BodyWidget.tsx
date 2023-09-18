@@ -7,10 +7,14 @@ import { NodeModel } from "@projectstorm/react-diagrams";
 import { CanvasWidget } from "@projectstorm/react-diagrams";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
 
-import TerminalWindow from "./TerminalWindow";
 import BuilderEngine from "../BuilderEngine";
-import NodeInfoRenderer from "./NodeInfoRenderer";
-import BuilderSettings from "./BuilderSettings";
+import InfoPanel from "./InfoPanel";
+import ConfigPane from "./ConfigPane";
+
+import ResizeHandle from "./ResizeHandle";
+import { Panel } from "react-resizable-panels";
+import { PanelGroup } from "react-resizable-panels";
+import styles from "./styles.module.css";
 
 import { TrayWidget } from "./TrayWidget";
 import { useAppDispatch } from "redux/store/hooks";
@@ -20,6 +24,8 @@ import { DefaultNodeModel } from "NodeMap";
 import { GridCanvasWidget } from "./GridCanvasWidget";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
+import { ConfigPaneDisplay } from "redux/types";
+import TerminalController from "Terminal/TerminalController";
 
 // TODO
 // This line permits any function declarations from the window.builderAPI
@@ -62,11 +68,11 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
 
 export const BodyWidget = (props: BodyWidgetProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
-  const terminal_visible = useAppSelector(
-    (state) => state.builder.terminal_visibile
-  );
   const repo = JSON.parse(useAppSelector((state) => state.builder.repo));
   let modules_list = modules; // create a mutable copy
+  const configPaneOpen = useAppSelector(
+    (state) => state.builder.config_pane_display
+  );
 
   const [filterSelection, setFilterSelection] = React.useState("");
   const [newnode, setNewnode] = React.useState<NodeModel>(null);
@@ -190,60 +196,108 @@ export const BodyWidget = (props: BodyWidgetProps) => {
   };
 
   return (
-    <Body>
-      <Content>
-        <div
-          style={{
-            background: "rgb(20, 20, 20)",
-            overflowY: "auto",
-          }}
-        >
-          <div>
-            <select
-              name="orglist"
-              id="orglist"
-              value={filterSelection}
-              style={{
-                color: "white",
-                fontFamily: "Helvetica, Arial",
-                padding: "5px",
-                margin: "0px 10px",
-                border: "solid 1px ${(p) => p.color}",
-                borderRadius: "5px",
-                marginBottom: "2px",
-                marginTop: "2px",
-                cursor: "pointer",
-                minWidth: "200px",
-                background: "rgb(20, 20, 20)",
-                flexGrow: "0",
-                flexShrink: "0",
-                boxSizing: "border-box",
-              }}
-              onChange={onChangeOrgList}
+    <div className={styles.Container}>
+      <Body>
+        <Content>
+          <PanelGroup direction="horizontal">
+            <Panel className={styles.Panel} order={1} defaultSize={20}>
+              <div
+                className={styles.PanelContent}
+                style={{
+                  overflowY: "auto",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
+                  alignSelf: "flex-start",
+                }}
+              >
+                <select
+                  name="orglist"
+                  id="orglist"
+                  value={filterSelection}
+                  style={{
+                    color: "white",
+                    fontFamily: "Helvetica, Arial",
+                    padding: "5px",
+                    margin: "0px 10px",
+                    border: "solid 1px ${(p) => p.color}",
+                    borderRadius: "5px",
+                    marginBottom: "2px",
+                    marginTop: "2px",
+                    cursor: "pointer",
+                    width: "100%",
+                    background: "var(--background-color)",
+                    flexGrow: "0",
+                    flexShrink: "0",
+                    boxSizing: "border-box",
+                  }}
+                  onChange={onChangeOrgList}
+                >
+                  {organisaton_list_options}
+                </select>
+                <TrayWidget>{trayitems}</TrayWidget>
+              </div>
+            </Panel>
+            <ResizeHandle />
+
+            <Panel
+              className={styles.Panel}
+              order={2}
+              defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 60}
             >
-              {organisaton_list_options}
-            </select>
-          </div>
-          <TrayWidget>{trayitems}</TrayWidget>
-        </div>
-        <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
-          <GridCanvasWidget>
-            <CanvasWidget engine={props.engine} />
-          </GridCanvasWidget>
-          <div
-            style={{
-              position: "absolute",
-              display: terminal_visible ? "block" : "none",
-              bottom: 0,
-              width: "100%",
-            }}
-          >
-            <TerminalWindow />
-          </div>
-        </Layer>
-        <NodeInfoRenderer />
-        <BuilderSettings />
-      </Content>
-    </Body>
+              <div className={styles.BottomRow}>
+                <Body>
+                  <Content>
+                    <Layer
+                      onDrop={onWidgetDrag_Drop}
+                      onDragOver={onWidgetDrag_DragOver}
+                    >
+                      <PanelGroup direction="vertical">
+                        <Panel className={styles.Panel} defaultSize={70}>
+                          <GridCanvasWidget>
+                            <CanvasWidget engine={props.engine} />
+                          </GridCanvasWidget>
+                        </Panel>
+                        <ResizeHandle />
+                        <Panel
+                          className={styles.Panel}
+                          defaultSize={30}
+                          collapsible={true}
+                          onResize={(size: number, _delta: number) => {
+                            const term = TerminalController.Instance; // singleton instance
+                            term.fitAddon.fit();
+                          }}
+                        >
+                          <div className={styles.PanelContent}>
+                            <InfoPanel />
+                          </div>
+                        </Panel>
+                      </PanelGroup>
+                    </Layer>
+                  </Content>
+                </Body>
+              </div>
+            </Panel>
+
+            {configPaneOpen !== ConfigPaneDisplay.None ? (
+              <>
+                <ResizeHandle />
+                <Panel
+                  className={styles.Panel}
+                  order={3}
+                  defaultSize={20}
+                  collapsible={true}
+                >
+                  <div className={styles.PanelContent}>
+                    <ConfigPane />
+                  </div>
+                </Panel>
+              </>
+            ) : (
+              <></>
+            )}
+          </PanelGroup>
+        </Content>
+      </Body>
+    </div>
   );
 };

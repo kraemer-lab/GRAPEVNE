@@ -17,15 +17,15 @@ jobs:
     uses: ./.github/workflows/eslint-electron-app.yml
   jest-electron-app:
     uses: ./.github/workflows/jest-electron-app.yml
-  flake8-backend:
-    uses: ./.github/workflows/flake8-backend.yml
+  ruff-backend:
+    uses: ./.github/workflows/ruff-backend.yml
   pytest-backend:
     uses: ./.github/workflows/pytest-backend.yml
-  flake8-builder:
-    uses: ./.github/workflows/flake8-builder.yml
+  ruff-builder:
+    uses: ./.github/workflows/ruff-builder.yml
   pytest-builder:
     uses: ./.github/workflows/pytest-builder.yml
-  flake8-runner:
-    uses: ./.github/workflows/flake8-runner.yml
+  ruff-runner:
+    uses: ./.github/workflows/ruff-runner.yml
   pytest-runner:
     uses: ./.github/workflows/pytest-runner.yml
