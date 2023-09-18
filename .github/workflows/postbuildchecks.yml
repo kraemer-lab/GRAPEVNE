@@ -24,6 +24,10 @@ jobs:
       - uses: actions/setup-node@master
         with:
           node-version: 18
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
       - name: build
         working-directory: ./electron-app
         shell: bash
