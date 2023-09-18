@@ -32,7 +32,7 @@ describe("modules", () => {
     const options = new chrome.Options();
     options.debuggerAddress("localhost:9515");
     driver = new webdriver.Builder()
-      .forBrowser("chrome")
+      .forBrowser("chrome", "116")
       .setChromeOptions(options)
       .build();
     await RedirectConsoleLog(driver);

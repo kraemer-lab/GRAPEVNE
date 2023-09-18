@@ -174,6 +174,23 @@ export async function RunWorkflow(
   });
 }
 
+const ErrorReturn = (query: string, err: any) => {
+  console.error(query, err);
+  let body = "";
+  if (err === undefined) body = "undefined error";
+  else if (err.response !== undefined)
+    body = err.response.status + ": " + (err.response as any).statusText;
+  else if (err.message !== undefined) body = ": " + err.message;
+  else body = ": " + err;
+
+  // Request error
+  return {
+    query: query,
+    body: "ERROR " + body,
+    returncode: 1,
+  };
+};
+
 // Query handlers
 
 export async function display_FolderInfo(event: any, query: any) {
@@ -185,12 +202,16 @@ export async function builder_GetRemoteModules(event: any, query: any) {
   // return await ProcessQuery(event, query);
 
   // nodejs version
-  const modules = await web.GetModulesList(query["data"]["content"]["url"]);
-  return {
-    query: "builder/get-remote-modules",
-    body: modules,
-    returncode: 0,
-  };
+  try {
+    const modules = await web.GetModulesList(query["data"]["content"]["url"]);
+    return {
+      query: "builder/get-remote-modules",
+      body: modules,
+      returncode: 0,
+    };
+  } catch (err: any) {
+    return ErrorReturn(query, err);
+  }
 }
 
 export async function builder_GetRemoteModuleConfig(event: any, query: any) {

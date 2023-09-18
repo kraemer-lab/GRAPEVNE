@@ -70,6 +70,14 @@ app.whenReady().then(() => {
   };
   ptyProcess.onData(sendPtyData);
 
+  /////////////////////////////
+  // Setup logging to front-end
+  /////////////////////////////
+
+  const sendLogData = (data: string) => {
+    win.webContents.send("builder/log-event", data.replace(/\r?\n/g, "\r\n"));
+  };
+
   ////////////////////
   // Setup IPC handles
   ////////////////////
@@ -93,14 +101,14 @@ app.whenReady().then(() => {
       data,
       terminal_sendLine,
       // stdout_callback
-      (data: string) => sendPtyData(data + "\r\n"),
+      (data: string) => sendLogData(data + "\r\n"),
       // stderr_callback
-      (data: string) => sendPtyData(data + "\r\n")
+      (data: string) => sendLogData(data + "\r\n")
     )
   );
   ipcMain.handle("builder/clean-build-folder", (event, data) =>
     handles.builder_CleanBuildFolder(event, data, (data: string) =>
-      sendPtyData(data + "\r\n")
+      sendLogData(data + "\r\n")
     )
   );
 

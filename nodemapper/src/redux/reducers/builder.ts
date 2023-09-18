@@ -1,6 +1,7 @@
 import BuilderEngine from "gui/Builder/BuilderEngine";
 import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "../actions";
+import { ConfigPaneDisplay } from "redux/types";
 
 interface IBuilderState {
   repo: string;
@@ -15,6 +16,8 @@ interface IBuilderState {
   conda_backend: string;
   environment_variables: string;
   auto_validate_connections: boolean;
+  config_pane_display: string;
+  logtext: string;
 }
 
 // State
@@ -29,7 +32,7 @@ const builderStateInit: IBuilderState = {
     repo: "kraemer-lab/vneyard",
   }),
   modules_list: "[]",
-  statustext: "",
+  statustext: "Idle",
   nodeinfo: "{}", // {} required to be a valid JSON string
   can_selected_expand: true,
   terminal_visibile: false,
@@ -39,6 +42,8 @@ const builderStateInit: IBuilderState = {
   conda_backend: "builtin", // builtin | system
   environment_variables: "",
   auto_validate_connections: false,
+  config_pane_display: ConfigPaneDisplay.None,
+  logtext: " ",
 };
 
 // Nodemap
@@ -61,10 +66,14 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderNodeSelected, (state, action) => {
       // Action intercepted in middleware to control display
+      state.config_pane_display = ConfigPaneDisplay.Node;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderNodeDeselected, (state, action) => {
       // Action intercepted in middleware to control display
+      state.config_pane_display = state.settings_visible
+        ? ConfigPaneDisplay.Settings
+        : ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderGetRemoteModules, (state, action) => {
@@ -77,7 +86,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {
-      state.statustext = action.payload;
+      setStatusText(state, action.payload);
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderUpdateNodeInfo, (state, action) => {
@@ -101,10 +110,16 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetSettingsVisibility, (state, action) => {
       state.settings_visible = action.payload;
+      state.config_pane_display = state.settings_visible
+        ? ConfigPaneDisplay.Settings
+        : ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderToggleSettingsVisibility, (state, action) => {
       state.settings_visible = !state.settings_visible;
+      state.config_pane_display = state.settings_visible
+        ? ConfigPaneDisplay.Settings
+        : ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
@@ -130,7 +145,25 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderSetEnvironmentVars, (state, action) => {
       state.environment_variables = action.payload;
       console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderLogEvent, (state, action) => {
+      addLogEvent(state, action.payload);
+      console.info("[Reducer] " + action.type);
     });
 });
 
+const setStatusText = (state: IBuilderState, text: string) => {
+  if (text === "" || text === null || text === undefined) text = "Idle";
+  state.statustext = text;
+  return state;
+};
+
+const addLogEvent = (state: IBuilderState, text: string) => {
+  if (state.logtext === " ") state.logtext = "";
+  if (text[text.length - 1] !== "\n") text += "\n";
+  state.logtext += text;
+  if (state.logtext === "") state.logtext = " ";
+};
+
+export { IBuilderState };
 export default builderReducer;

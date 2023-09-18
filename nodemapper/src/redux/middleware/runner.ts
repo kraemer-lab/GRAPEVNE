@@ -30,7 +30,9 @@ export const runnerMiddleware = ({ getState, dispatch }) => {
     return (action) => {
       // action.type
       //       .payload
-      console.log("Middleware: ", action);
+      if (action.type.split("/")[0] === "runner") {
+        console.log("Middleware [runner]: ", action);
+      }
       switch (action.type) {
         case "runner/node-selected":
           NodeSelected(action, dispatch, getState().display.graph_is_moveable);

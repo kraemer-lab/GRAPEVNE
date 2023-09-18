@@ -1,5 +1,6 @@
 import React from "react";
 import { Terminal } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
 
 import "./../../node_modules/xterm/css/xterm.css";
 
@@ -8,17 +9,21 @@ import "./../../node_modules/xterm/css/xterm.css";
 // as a workaround. Remove this in favour of a proper typescript-compatible
 // interface. This may require modification to the electron code.
 declare const window: any;
+let terminal_mounted = false;
 
 // Single instance of a terminal
 class TerminalController {
   private static _instance: TerminalController;
 
   term: Terminal;
+  fitAddon: FitAddon;
   xtermRef: React.RefObject<HTMLDivElement>;
   terminalAPI;
 
   constructor() {
     this.term = new Terminal();
+    this.fitAddon = new FitAddon();
+    this.term.loadAddon(this.fitAddon);
     if (window !== undefined) this.terminalAPI = window.terminalAPI;
   }
 
@@ -37,9 +42,12 @@ class TerminalController {
     if (this.terminalAPI !== undefined) {
       // Connect terminal to the (electron) API (but only if it exists)
       this.term.open(this.xtermRef.current);
-      this.term.resize(80, 5);
-      this.term.onData((data) => this.terminalAPI.sendData(data));
-      this.terminalAPI.receiveData((event, data) => this.sendData(data));
+      this.fitAddon.fit();
+      if (!terminal_mounted) {
+        this.term.onData((data) => this.terminalAPI.sendData(data));
+        this.terminalAPI.receiveData((event, data) => this.sendData(data));
+        terminal_mounted = true;
+      }
     }
   }
 

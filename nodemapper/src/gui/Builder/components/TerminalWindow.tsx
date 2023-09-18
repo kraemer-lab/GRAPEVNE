@@ -18,7 +18,15 @@ class TerminalWindow extends React.Component {
   }
 
   render() {
-    return <div ref={this.xtermRef} />;
+    return (
+      <div
+        ref={this.xtermRef}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      />
+    );
   }
 }
 

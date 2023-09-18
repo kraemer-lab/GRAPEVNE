@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld("builderAPI", {
     ipcRenderer.invoke("builder/get-remote-modules", query),
   GetRemoteModuleConfig: (query: Query) =>
     ipcRenderer.invoke("builder/get-remote-module-config", query),
+  logEvent: (callback: any) => ipcRenderer.on("builder/log-event", callback),
 });
 
 contextBridge.exposeInMainWorld("runnerAPI", {

@@ -119,9 +119,8 @@ const NodeInfoRenderer = (props) => {
   return (
     <div
       style={{
-        background: "#333333",
         display: "flex",
-        width: "33%",
+        width: "100%",
         height: "100%",
         flexFlow: "column",
       }}
@@ -130,12 +129,10 @@ const NodeInfoRenderer = (props) => {
         style={{
           borderStyle: "solid",
           borderWidth: "1px 0px 1px 0px",
-          borderColor: "#666666",
-          backgroundColor: "#333333",
-          color: "#dddddd",
           flex: "0 0 auto",
           display: "flex",
           justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <div>
