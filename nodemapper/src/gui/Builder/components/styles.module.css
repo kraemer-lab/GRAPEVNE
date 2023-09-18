@@ -5,10 +5,12 @@
   flex-direction: column;
   gap: 1rem;
 }
+
 .TopRow {
   flex: 0 0 auto;
   text-align: center;
 }
+
 .BottomRow {
   flex: 1 1 auto;
 }
@@ -34,11 +36,11 @@
   flex: 0 0 0.2em;
   position: relative;
   outline: none;
-
-  --background-color: transparent;
+  background-color: transparent;
 }
+
 .ResizeHandleOuter[data-resize-handle-active] {
-  --background-color: var(--color-solid-resize-bar-handle);
+  background-color: var(--color-solid-resize-bar-handle);
 }
 
 .ResizeHandleInner {
@@ -60,6 +62,7 @@
   padding: 0.25rem 0.5rem;
   cursor: pointer;
 }
+
 .Button:hover {
   background-color: var(--color-button-background-hover);
 }
