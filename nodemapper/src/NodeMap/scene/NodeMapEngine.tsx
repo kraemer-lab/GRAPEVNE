@@ -10,8 +10,9 @@ import { DefaultNodeModel } from "NodeMap";
 import { DefaultNodeFactory } from "NodeMap";
 import { DefaultPortFactory } from "NodeMap";
 
-// TODO: Replace with webpack proxy (problems getting this to work)
-const API_ENDPOINT = "http://127.0.0.1:5000/api";
+import * as globals from "redux/globals";
+
+const API_ENDPOINT = globals.getApiEndpoint();
 
 interface IPayload {
   id: string;
