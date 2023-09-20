@@ -2,6 +2,8 @@ import NodeMapEngine from "./NodeMapEngine";
 import { DefaultNodeModel } from "NodeMap";
 import { DefaultPortModel } from "NodeMap";
 
+type Query = Record<string, unknown>;
+
 test.skip("QueryAndLoadTextFile", () => {
   //
 });
@@ -370,7 +372,7 @@ const add_one_node = (engine: NodeMapEngine) => {
 
 const add_one_node_custom_config = (
   engine: NodeMapEngine,
-  config: Record<string, any>,
+  config: Query,
   uniquenames = true
 ) => {
   const point = { x: 0.1, y: 0.2 };
@@ -423,7 +425,7 @@ const node_data_workflow = (
   name = "test_name",
   type = "test_type",
   snakefile = "test_snakefile",
-  input_namespace: string | Record<string, any> = "test_input_namespace",
+  input_namespace: string | Query = "test_input_namespace",
   output_namespace = "test_output_namespace"
 ) => {
   return {

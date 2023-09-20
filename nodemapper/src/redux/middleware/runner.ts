@@ -14,6 +14,8 @@ import { runnerQueryJobStatus } from "redux/actions";
 import { runnerStoreJobStatus } from "redux/actions";
 import { runnerUpdateStatusText } from "redux/actions";
 
+type Query = Record<string, unknown>;
+
 const API_ENDPOINT = globals.getApiEndpoint();
 
 // TODO
@@ -117,14 +119,14 @@ const SelectNone = () => {
 
 const ImportSnakefile = (dispatch): void => {
   QueryAndLoadTextFile(async (content, filename) => {
-    const query: Record<string, unknown> = {
+    const query: Query = {
       query: "runner/tokenize",
       data: {
         format: "Snakefile",
         content: content,
       },
     };
-    const callback = (content: Record<string, unknown>) => {
+    const callback = (content: Query) => {
       RebuildNodeMap(content, dispatch);
     };
     switch (backend) {
@@ -133,7 +135,7 @@ const ImportSnakefile = (dispatch): void => {
         break;
       case "electron":
         callback(
-          (await runnerAPI.TokenizeLoad(query)) as Record<string, unknown>
+          (await runnerAPI.TokenizeLoad(query)) as Query
         );
         break;
       default:
@@ -145,14 +147,14 @@ const ImportSnakefile = (dispatch): void => {
 
 const LoadSnakefile = async (action, dispatch): Promise<void> => {
   dispatch(runnerUpdateStatusText("Loading Snakefile..."));
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/tokenize_load",
     data: {
       format: "Snakefile",
       content: action.payload,
     },
   };
-  const callback = (content: Record<string, unknown>) => {
+  const callback = (content: Query) => {
     RebuildNodeMap(content, dispatch);
   };
   switch (backend) {
@@ -161,7 +163,7 @@ const LoadSnakefile = async (action, dispatch): Promise<void> => {
       break;
     case "electron":
       callback(
-        (await runnerAPI.TokenizeLoad(query)) as Record<string, unknown>
+        (await runnerAPI.TokenizeLoad(query)) as Query
       );
       break;
     default:
@@ -171,14 +173,14 @@ const LoadSnakefile = async (action, dispatch): Promise<void> => {
 };
 
 const LaunchSnakefile = async (dispatch, folderinfo: string): Promise<void> => {
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/launch",
     data: {
       format: "Snakefile",
       content: JSON.parse(folderinfo).foldername,
     },
   };
-  const callback = (content: Record<string, unknown>) => {
+  const callback = (content: Query) => {
     console.info("Launch response: ", content["body"]);
   };
   switch (backend) {
@@ -186,7 +188,7 @@ const LaunchSnakefile = async (dispatch, folderinfo: string): Promise<void> => {
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
-      callback((await runnerAPI.Launch(query)) as Record<string, unknown>);
+      callback((await runnerAPI.Launch(query)) as Query);
       break;
     default:
       console.error("Unknown backend: ", backend);
@@ -195,14 +197,14 @@ const LaunchSnakefile = async (dispatch, folderinfo: string): Promise<void> => {
 };
 
 const QueryJobStatus = async (dispatch, folderinfo: string): Promise<void> => {
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/jobstatus",
     data: {
       format: "Snakefile",
       content: JSON.parse(folderinfo).foldername,
     },
   };
-  const callback = (content: Record<string, unknown>) => {
+  const callback = (content: Query) => {
     dispatch(runnerStoreJobStatus(content["body"] as string));
   };
   switch (backend) {
@@ -210,7 +212,7 @@ const QueryJobStatus = async (dispatch, folderinfo: string): Promise<void> => {
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
-      callback((await runnerAPI.JobStatus(query)) as Record<string, unknown>);
+      callback((await runnerAPI.JobStatus(query)) as Query);
       break;
     default:
       console.error("Unknown backend: ", backend);
@@ -219,14 +221,14 @@ const QueryJobStatus = async (dispatch, folderinfo: string): Promise<void> => {
 };
 
 const BuildSnakefile = async (dispatch, serial: string): Promise<void> => {
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/build",
     data: {
       format: "Snakefile",
       content: serial,
     },
   };
-  const callback = (content: Record<string, unknown>) => {
+  const callback = (content: Query) => {
     // Download returned content as file
     const filename = "Snakefile";
     const element = document.createElement("a");
@@ -246,7 +248,7 @@ const BuildSnakefile = async (dispatch, serial: string): Promise<void> => {
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
-      callback((await runnerAPI.Build(query)) as Record<string, unknown>);
+      callback((await runnerAPI.Build(query)) as Query);
       break;
     default:
       console.error("Unknown backend: ", backend);
@@ -254,14 +256,14 @@ const BuildSnakefile = async (dispatch, serial: string): Promise<void> => {
 };
 
 const LintSnakefile = async (dispatch, serial: string): Promise<void> => {
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/lint",
     data: {
       format: "Snakefile",
       content: serial,
     },
   };
-  const callback = (content: Record<string, unknown>) => {
+  const callback = (content: Query) => {
     dispatch(runnerStoreLint(content["body"] as string));
   };
   switch (backend) {
@@ -269,7 +271,7 @@ const LintSnakefile = async (dispatch, serial: string): Promise<void> => {
       SubmitQuery(query, dispatch, callback);
       break;
     case "electron":
-      callback((await runnerAPI.Lint(query)) as Record<string, unknown>);
+      callback((await runnerAPI.Lint(query)) as Query);
       break;
     default:
       console.error("Unknown backend: ", backend);
@@ -278,14 +280,14 @@ const LintSnakefile = async (dispatch, serial: string): Promise<void> => {
 
 const LoadWorkflow = async (dispatch, folderinfo: string): Promise<void> => {
   dispatch(runnerUpdateStatusText("Loading Workflow..."));
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/loadworkflow",
     data: {
       format: "Snakefile",
       content: JSON.parse(folderinfo).foldername,
     },
   };
-  const callback = (content: Record<string, unknown>) => {
+  const callback = (content: Query) => {
     RebuildNodeMap(content, dispatch);
   };
   switch (backend) {
@@ -294,7 +296,7 @@ const LoadWorkflow = async (dispatch, folderinfo: string): Promise<void> => {
       break;
     case "electron":
       callback(
-        (await runnerAPI.LoadWorkflow(query)) as Record<string, unknown>
+        (await runnerAPI.LoadWorkflow(query)) as Query
       );
       break;
     default:
@@ -305,14 +307,14 @@ const LoadWorkflow = async (dispatch, folderinfo: string): Promise<void> => {
 
 const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
   dispatch(runnerUpdateStatusText("Deleting Results..."));
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/deleteresults",
     data: {
       format: "Snakefile",
       content: JSON.parse(folderinfo).foldername,
     },
   };
-  const callback = (content: Record<string, unknown>) => {
+  const callback = (content: Query) => {
     // Refresh folder list
     dispatch(displayGetFolderInfo());
   };
@@ -323,7 +325,7 @@ const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
       break;
     case "electron":
       callback(
-        (await runnerAPI.LoadWorkflow(query)) as Record<string, unknown>
+        (await runnerAPI.LoadWorkflow(query)) as Query
       );
       break;
     default:
@@ -335,11 +337,11 @@ const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
 // Utility functions
 ///////////////////////////////////////////////////////////////////////////////
 
-const RebuildNodeMap = (content: Record<string, any>, dispatch): void => {
+const RebuildNodeMap = (content: Query, dispatch): void => {
   // Rebuild map from returned (segmented) representation
   const nodeMapEngine = RunnerEngine.Instance;
-  nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content["body"]));
-  dispatch(runnerStoreMap(content["body"]));
+  nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content["body"] as string));
+  dispatch(runnerStoreMap(content["body"] as string));
   nodeMapEngine.AddSelectionListeners(
     (x) => {
       dispatch(runnerNodeSelected(x));
@@ -373,9 +375,9 @@ const QueryAndLoadTextFile = (
 };
 
 const SubmitQuery = (
-  query: Record<string, unknown>,
+  query: Query,
   dispatch,
-  callback: (content: Record<string, unknown>) => void
+  callback: (content: Query) => void
 ): void => {
   // POST request handler
   const postRequest = async () => {
@@ -402,7 +404,7 @@ const SubmitQuery = (
       });
   };
 
-  const processResponse = (content: Record<string, unknown>, callback) => {
+  const processResponse = (content: Query, callback) => {
     console.log("Process response: ", content);
     dispatch(runnerUpdateStatusText(""));
     callback(content);

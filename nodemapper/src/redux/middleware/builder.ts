@@ -15,6 +15,8 @@ import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 import { builderSetSettingsVisibility } from "redux/actions";
 
+type Query = Record<string, unknown>;
+
 const API_ENDPOINT = globals.getApiEndpoint();
 
 // TODO
@@ -136,7 +138,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 ///////////////////////////////////////////////////////////////////////////////
 
 interface IPayloadRecord {
-  payload: Record<string, unknown>;
+  payload: Query;
   type: string;
 }
 type TPayloadRecord = (action: IPayloadRecord) => void;
@@ -155,7 +157,7 @@ type TPayloadBool = (action: IPayloadBool) => void;
 
 const CompileToJSON = async () => {
   const app = BuilderEngine.Instance;
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "builder/compile-to-json",
     data: {
       format: "Snakefile",
@@ -200,7 +202,7 @@ const BuildAndRun = async (
     builderUpdateStatusText("Building workflow and launching a test run...")
   );
   const app = BuilderEngine.Instance;
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "builder/build-and-run",
     data: {
       format: "Snakefile",
@@ -235,7 +237,7 @@ const BuildAndRun = async (
 
 const CleanBuildFolder = async (dispatchString: TPayloadString) => {
   const app = BuilderEngine.Instance;
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "builder/clean-build-folder",
     data: {
       format: "Snakefile",
@@ -309,7 +311,7 @@ const CheckNodeDependencies = async (
   const jsDeps = app.nodeScene.getModuleListJSONFromNodeNames(depNodeNames);
 
   // Submit Build request
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/check-node-dependencies",
     data: {
       format: "Snakefile",
@@ -322,7 +324,7 @@ const CheckNodeDependencies = async (
   node.getOptions().color = "rgb(192,192,192)";
   app.engine.repaintCanvas();
 
-  const callback = (data: Record<string, unknown>) => {
+  const callback = (data: Query) => {
     dispatch(builderUpdateStatusText(""));
     console.log(data);
     switch (data["body"]["status"]) {
@@ -445,7 +447,7 @@ const GetRemoteModules = async (
   dispatchString(builderUpdateStatusText("Loading modules..."));
   console.log("Repository settings: ", repo);
   const app = BuilderEngine.Instance;
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "builder/get-remote-modules",
     data: {
       format: "Snakefile",
@@ -490,7 +492,7 @@ const ImportModule = () => {
 ///////////////////////////////////////////////////////////////////////////////
 
 const SubmitQueryExpectZip = (
-  query: Record<string, unknown>,
+  query: Query,
   callback: (content: unknown) => void
 ) => {
   // POST request handler
@@ -539,9 +541,9 @@ const SubmitQueryExpectZip = (
 };
 
 const postRequestCheckNodeDependencies = async (
-  query: Record<string, unknown>,
+  query: Query,
   dispatch: TPayloadString,
-  callback: (data: Record<string, unknown>) => void
+  callback: (data: Query) => void
 ) => {
   const postRequestOptions = {
     method: "POST",
@@ -568,7 +570,7 @@ const postRequestCheckNodeDependencies = async (
     });
 };
 
-const SubmitQuery = (query: Record<string, unknown>, dispatch, callback) => {
+const SubmitQuery = (query: Query, dispatch, callback) => {
   // POST request handler
   const postRequest = async () => {
     const postRequestOptions = {
@@ -621,7 +623,7 @@ const SetSettingsVisibility = (
 
 const ToggleSettingsVisibility = (
   dispatch: TPayloadString,
-  state: Record<string, unknown>
+  state: Query
 ) => {
   SetSettingsVisibility(dispatch, !state.settings_visible);
 };

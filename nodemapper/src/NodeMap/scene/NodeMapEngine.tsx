@@ -12,6 +12,7 @@ import { DefaultPortFactory } from "NodeMap";
 
 import * as globals from "redux/globals";
 
+type Query = Record<string, unknown>;
 const API_ENDPOINT = globals.getApiEndpoint();
 
 interface IPayload {
@@ -259,7 +260,7 @@ export default class NodeMapEngine {
     );
     // Determine number (and names of input ports)
     let input_namespace = {};
-    const params = (data.config as Record<string, any>).config;
+    const params = (data.config as Query).config as Query;
     if (params.input_namespace === undefined) {
       // No input namespace specified - use default unless source
       if (data.type !== "source") {
