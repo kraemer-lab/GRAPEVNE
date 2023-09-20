@@ -12,7 +12,13 @@ const shell =
 const shell_args =
   os.platform() === "win32" ? ["-NonInteractive", "-Command"] : ["-i", "-c"];
 
-const pyrunner = path.join(process.resourcesPath, "app", "dist", "pyrunner", "pyrunner");
+const pyrunner = path.join(
+  process.resourcesPath,
+  "app",
+  "dist",
+  "pyrunner",
+  "pyrunner"
+);
 
 const condaPath = path.join(
   process.resourcesPath,
