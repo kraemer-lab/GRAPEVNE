@@ -1,5 +1,5 @@
 import path from "path";
-import { IpcMainInvokeEvent } from 'electron';
+import { IpcMainInvokeEvent } from "electron";
 import * as os from "node:os";
 import * as child from "child_process";
 
@@ -31,10 +31,7 @@ const condaPath = path.join(
 const pathSeparator = os.platform() === "win32" ? ";" : ":";
 
 // General query processing interface for Python scripts
-export async function ProcessQuery(
-  event: Event,
-  query: Query
-): Promise<Query> {
+export async function ProcessQuery(event: Event, query: Query): Promise<Query> {
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
     let stdout = ""; // collate return data

@@ -19,12 +19,6 @@ type Query = Record<string, unknown>;
 
 const API_ENDPOINT = globals.getApiEndpoint();
 
-// TODO
-// This line permits any function declarations from the window.builderAPI
-// as a workaround. Remove this in favour of a proper typescript-compatible
-// interface. This may require modification to the electron code.
-declare const window: any;
-
 const builderAPI = window.builderAPI;
 const runnerAPI = window.runnerAPI;
 const backend = globals.getBackend();
@@ -214,7 +208,7 @@ const BuildAndRun = async (
       environment_variables: environment_variables,
     },
   };
-  const callback = (content: string) => {
+  const callback = (content: Query) => {
     console.log(content);
     if (content["returncode"] !== 0) {
       // Report error
@@ -456,13 +450,13 @@ const GetRemoteModules = async (
       },
     },
   };
-  const callback = (content: string) => {
+  const callback = (content: Query) => {
     console.log(content);
     if (content["returncode"] !== 0) {
       // Report error
-      dispatchString(builderUpdateStatusText(content["body"]));
+      dispatchString(builderUpdateStatusText(content["body"] as string));
     } else dispatchString(builderUpdateStatusText("Modules loaded."));
-    dispatchString(builderUpdateModulesList(content["body"]));
+    dispatchString(builderUpdateModulesList(content["body"] as string));
   };
   let response: Record<string, undefined>;
   switch (backend as string) {
@@ -471,7 +465,7 @@ const GetRemoteModules = async (
       SubmitQuery(query, dispatchString, callback);
       break;
     case "electron":
-      callback((await builderAPI.GetRemoteModules(query)) as string);
+      callback(await builderAPI.GetRemoteModules(query));
       break;
     default:
       console.error("Unknown backend: ", backend);
@@ -621,10 +615,7 @@ const SetSettingsVisibility = (
   return 0;
 };
 
-const ToggleSettingsVisibility = (
-  dispatch: TPayloadString,
-  state: Query
-) => {
+const ToggleSettingsVisibility = (dispatch: TPayloadString, state: Query) => {
   SetSettingsVisibility(dispatch, !state.settings_visible);
 };
 

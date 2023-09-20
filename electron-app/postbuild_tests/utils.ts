@@ -47,7 +47,8 @@ const WaitForReturnCode = async (
   let msg = undefined;
   let msg_set = undefined;
   console.log("Waiting for return msg...");
-  while (true) {  // eslint-disable-line no-constant-condition
+  while (true) {
+    // eslint-disable-line no-constant-condition
     msg_set = (await driver.executeScript(
       "return _msg_queue.shift()"
     )) as unknown[];
@@ -143,9 +144,13 @@ const BuildAndRunSingleModuleWorkflow = async (
   // Clean build folder (initial); assert target output does not exist
   let msg;
   await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
-  msg = (await WaitForReturnCode(driver, "builder/clean-build-folder"));
+  msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
-  const target_file = path.join(msg.body.path, "results", outfile);
+  const target_file = path.join(
+    (msg.body as Query).path as string,
+    "results",
+    outfile
+  );
   console.log("target_file: ", target_file);
   expect(fs.existsSync(target_file)).toBeFalsy();
 

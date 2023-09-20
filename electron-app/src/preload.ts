@@ -1,4 +1,9 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { ipcRenderer } from "electron";
+import { contextBridge } from "electron";
+import { TerminalAPI } from "./api";
+import { DisplayAPI } from "./api";
+import { BuilderAPI } from "./api";
+import { RunnerAPI } from "./api";
 
 type Event = Electron.IpcRendererEvent;
 type Query = Record<string, unknown>;
@@ -24,7 +29,7 @@ contextBridge.exposeInMainWorld("builderAPI", {
     ipcRenderer.invoke("builder/get-remote-modules", query),
   GetRemoteModuleConfig: (query: Query) =>
     ipcRenderer.invoke("builder/get-remote-module-config", query),
-  logEvent: (callback: (event: Event, data: Query) => void) =>
+  logEvent: (callback: (event: Event, data: string) => void) =>
     ipcRenderer.on("builder/log-event", callback),
 });
 
@@ -43,3 +48,12 @@ contextBridge.exposeInMainWorld("runnerAPI", {
   CheckNodeDependencies: (query: Query) =>
     ipcRenderer.invoke("runner/check-node-dependencies", query),
 });
+
+declare global {
+  interface Window {
+    terminalAPI: TerminalAPI;
+    displayAPI: DisplayAPI;
+    builderAPI: BuilderAPI;
+    runnerAPI: RunnerAPI;
+  }
+}

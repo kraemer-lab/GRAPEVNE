@@ -8,6 +8,7 @@ Many editors support markdown previewing so that you can see the format of your
 documentation as you type. When you are ready to generate a local build of the
 documentation you will require `sphinx` along with several other dependencies.
 The recommended procedure to install and run these dependencies is:
+
 ```shell
 # from the GRAPEVNE repository root (NOT the docs folder)
 python3 -m venv venv && source venv/bin/activate

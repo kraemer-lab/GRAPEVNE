@@ -1,6 +1,6 @@
 import fs from "fs";
 import web from "./web";
-import { IpcMainInvokeEvent } from 'electron';
+import { IpcMainInvokeEvent } from "electron";
 import { RunWorkflow } from "./pyrunner";
 import { ProcessQuery } from "./pyrunner";
 
@@ -16,7 +16,10 @@ const ErrorReturn = (query: string, err: Query) => {
   let body = "";
   if (err === undefined) body = "undefined error";
   else if (err.response !== undefined)
-    body = (err.response as Query).status + ": " + (err.response as Query).statusText;
+    body =
+      (err.response as Query).status +
+      ": " +
+      (err.response as Query).statusText;
   else if (err.message !== undefined) body = ": " + err.message;
   else body = ": " + err;
 
@@ -39,7 +42,8 @@ export async function display_FolderInfo(event: Event, query: Query) {
 export async function builder_GetRemoteModules(event: Event, query: Query) {
   try {
     const modules = await web.GetModulesList(
-      ((query["data"] as Query)["content"] as Query)["url"]);
+      ((query["data"] as Query)["content"] as Query)["url"]
+    );
     return {
       query: "builder/get-remote-modules",
       body: modules,
@@ -50,7 +54,10 @@ export async function builder_GetRemoteModules(event: Event, query: Query) {
   }
 }
 
-export async function builder_GetRemoteModuleConfig(event: Event, query: Query) {
+export async function builder_GetRemoteModuleConfig(
+  event: Event,
+  query: Query
+) {
   const config = await web.GetModuleConfig(
     ((query["data"] as Query)["content"] as Query)["repo"],
     ((query["data"] as Query)["content"] as Query)["snakefile"]
@@ -63,12 +70,9 @@ export async function builder_CompileToJson(event: Event, query: Query) {
   //       (as was the procedure in the REST implementation), we instead rely
   //       on Python saving the zip file to disk, then reading it back in.
   const data = await ProcessQuery(event, query);
-  return fs.readFileSync(
-    (data["body"] as Query)["zipfile"] as string,
-    {
-      encoding: "base64",
-    }
-  );
+  return fs.readFileSync((data["body"] as Query)["zipfile"] as string, {
+    encoding: "base64",
+  });
 }
 
 export async function builder_BuildAndRun(
@@ -89,7 +93,9 @@ export async function builder_BuildAndRun(
     // Query parameters
     const backend = (query["data"] as Query)["backend"] as string;
     const conda_backend = (query["data"] as Query)["conda_backend"] as string;
-    const environment_variables = (query["data"] as Query)["environment_variables"] as string;
+    const environment_variables = (query["data"] as Query)[
+      "environment_variables"
+    ] as string;
 
     // Convert environment variables string to a dictionary
     const envs = environment_variables

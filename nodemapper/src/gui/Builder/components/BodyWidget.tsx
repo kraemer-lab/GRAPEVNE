@@ -27,11 +27,6 @@ import { builderNodeDeselected } from "redux/actions";
 import { ConfigPaneDisplay } from "redux/types";
 import TerminalController from "Terminal/TerminalController";
 
-// TODO
-// This line permits any function declarations from the window.builderAPI
-// as a workaround. Remove this in favour of a proper typescript-compatible
-// interface. This may require modification to the electron code.
-declare const window: any;
 const builderAPI = window.builderAPI;
 
 interface IPayload {

@@ -111,7 +111,7 @@ export class DefaultNodeModel extends NodeModel<DefaultNodeModelGenerics> {
     }) as DefaultPortModel[];
   }
 
-  serialize(): any {
+  serialize() {
     return {
       ...super.serialize(),
       name: this.options.name,

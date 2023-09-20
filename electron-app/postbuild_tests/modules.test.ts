@@ -83,10 +83,7 @@ describe("modules", () => {
     console.log("::: test Get local modules list");
     // Get modules list
     await driver.findElement(By.id("btnBuilderGetModuleList")).click();
-    const msg = (await WaitForReturnCode(
-      driver,
-      "builder/get-remote-modules"
-    ));
+    const msg = await WaitForReturnCode(driver, "builder/get-remote-modules");
     expect(msg.returncode).toEqual(0);
     // Wait for module list to be populated
     await driver.wait(
