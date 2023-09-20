@@ -37,9 +37,10 @@ class Node:
         rulename: str,
         nodetype: str,
         snakefile: Union[
-            str, dict
-        ] = "",  # str | {function: str, args: List, kwargs: dict}
-        config={},
+            str,  # Path to Snakefile
+            dict,  # {function: str, args: List, kwargs: dict}
+        ] = "",
+        config=None,
         input_namespace: Namespace = "",
         output_namespace: str = "",
     ):
@@ -59,7 +60,7 @@ class Node:
         self.rulename = rulename
         self.nodetype = nodetype
         self.snakefile = snakefile
-        self.config = config
+        self.config = {} if not config else config
         self.input_namespace = input_namespace
         self.output_namespace = output_namespace
 

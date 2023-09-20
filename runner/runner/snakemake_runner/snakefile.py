@@ -19,7 +19,7 @@ from typing import Union
 import snakemake.remote.HTTP
 import snakemake.remote.S3
 from snakemake import main as snakemake_main
-from snakemake.remote import AUTO  # noqa: F401
+from snakemake.remote import AUTO  # noqa: F401  # pylint: disable=unused-import
 from snakemake.remote import AutoRemoteProvider
 
 from builder.builder import BuildFromJSON
@@ -395,7 +395,7 @@ def GetFileAndWorkingDirectory(filename: str) -> Tuple[str, str]:
 
 def GetMissingFileDependencies_FromContents(
     content: Union[Tuple[dict, str], str],
-    target_namespaces: List[str] = [],
+    target_namespaces: Union[None, List[str]] = None,
     snakemake_launcher: str = "",
 ) -> List[str]:
     """Get missing file dependencies from snakemake
@@ -407,6 +407,8 @@ def GetMissingFileDependencies_FromContents(
     If target_namespaces is provided, return as soon as any target dependencies
     are found.
     """
+    if not target_namespaces:
+        target_namespaces = []
     if isinstance(content, tuple):
         # Flattern config and Snakemake files together
         workflow_lines = content[1].split("\n")
@@ -425,7 +427,6 @@ def GetMissingFileDependencies_FromContents(
             snakemake_launcher=snakemake_launcher,
         ):
             deps.extend(file_list)
-
             # Return early if target dependencies are not resolved
             if set(deps).intersection(target_namespaces):
                 return deps
