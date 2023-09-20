@@ -1,11 +1,8 @@
-import { Actions } from "selenium-webdriver";
 import { By } from "selenium-webdriver";
-import { execSync } from "child_process";
 import { Select } from "selenium-webdriver/lib/select";
 import { until } from "selenium-webdriver";
 
 import * as chrome from "selenium-webdriver/chrome";
-import * as fs from "fs";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
 
@@ -89,7 +86,7 @@ describe("modules", () => {
     const msg = (await WaitForReturnCode(
       driver,
       "builder/get-remote-modules"
-    )) as any;
+    ));
     expect(msg.returncode).toEqual(0);
     // Wait for module list to be populated
     await driver.wait(

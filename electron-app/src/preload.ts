@@ -1,10 +1,11 @@
 import { contextBridge, ipcRenderer } from "electron";
 
+type Event = Electron.IpcRendererEvent;
 type Query = Record<string, unknown>;
 
 contextBridge.exposeInMainWorld("terminalAPI", {
   sendData: (data: string) => ipcRenderer.send("terminal/send-data", data),
-  receiveData: (callback: any) =>
+  receiveData: (callback: (event: Event, data: Query) => void) =>
     ipcRenderer.on("terminal/receive-data", callback),
 });
 
@@ -23,7 +24,8 @@ contextBridge.exposeInMainWorld("builderAPI", {
     ipcRenderer.invoke("builder/get-remote-modules", query),
   GetRemoteModuleConfig: (query: Query) =>
     ipcRenderer.invoke("builder/get-remote-module-config", query),
-  logEvent: (callback: any) => ipcRenderer.on("builder/log-event", callback),
+  logEvent: (callback: (event: Event, data: Query) => void) =>
+    ipcRenderer.on("builder/log-event", callback),
 });
 
 contextBridge.exposeInMainWorld("runnerAPI", {

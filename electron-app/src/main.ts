@@ -1,7 +1,6 @@
 import { app, BrowserWindow, ipcMain } from "electron";
-import handles from "./handles";
 import path from "path";
-import testsuite from "./testsuite";
+import * as handles from "./handles";
 import * as os from "node:os";
 import * as pty from "node-pty";
 
@@ -59,7 +58,7 @@ app.whenReady().then(() => {
     // Clear line before command and add newline at end of command
     terminal_sendData(clearline + data + "\r\n");
   };
-  ipcMain.on("terminal/send-data", (event, data) => {
+  ipcMain.on("terminal/send-data", (event, data: string) => {
     terminal_sendData(data);
   });
   const sendPtyData = (data: string) => {
