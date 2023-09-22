@@ -151,6 +151,7 @@ export default class NodeMapEngine {
   public AddSelectionListeners(
     select_fn: (payload: IPayload) => void,
     deselect_fn: (payload: IPayload) => void,
+    delete_fn: () => void,
     addlink_fn: (payload: DefaultLinkModel) => void
   ) {
     // Add listeners, noting the following useful resource:
@@ -171,18 +172,30 @@ export default class NodeMapEngine {
     });
     // Add node selection listeners
     model.getNodes().forEach((node) => {
-      node.registerListener({
-        selectionChanged: (e) => {
-          const payload: IPayload = {
-            id: node.getOptions().id,
-          };
-          if (e.isSelected) {
-            select_fn(payload);
-          } else {
-            deselect_fn(payload);
-          }
-        },
-      });
+      this.RegisterNodeListeners(node, select_fn, deselect_fn, delete_fn);
+    });
+  }
+
+  public RegisterNodeListeners(
+    node: NodeModel,
+    select_fn: (payload: IPayload) => void,
+    deselect_fn: (payload: IPayload) => void,
+    delete_fn: () => void
+  ) {
+    node.registerListener({
+      selectionChanged: (e) => {
+        const payload: IPayload = {
+          id: node.getOptions().id,
+        };
+        if (e.isSelected) {
+          select_fn(payload);
+        } else {
+          deselect_fn(payload);
+        }
+      },
+      entityRemoved: (e) => {
+        delete_fn();
+      },
     });
   }
 

@@ -330,12 +330,19 @@ const RebuildNodeMap = (content: Query, dispatch): void => {
   dispatch(runnerStoreMap(content["body"] as string));
   nodeMapEngine.AddSelectionListeners(
     (x) => {
+      // Node selected
       dispatch(runnerNodeSelected(x));
     },
     (x) => {
+      // Node deselected
       dispatch(runnerNodeDeselected(x));
     },
+    () => {
+      // Node deleted
+      dispatch(runnerNodeDeselected({}));
+    },
     (x) => {
+      // Link added
       return;
     }
   );
