@@ -455,8 +455,10 @@ const GetRemoteModules = async (
     if (content["returncode"] !== 0) {
       // Report error
       dispatchString(builderUpdateStatusText(content["body"] as string));
-    } else dispatchString(builderUpdateStatusText("Modules loaded."));
-    dispatchString(builderUpdateModulesList(content["body"] as string));
+    } else {
+      dispatchString(builderUpdateStatusText("Modules loaded."));
+      dispatchString(builderUpdateModulesList(content["body"] as string));
+    }
   };
   let response: Record<string, undefined>;
   switch (backend as string) {
