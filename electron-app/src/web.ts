@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import axios from "axios";
 
-const load_config = false;
+const load_config = true;
 
 const GetModuleConfig = async (
   repo: Record<string, unknown>,

@@ -259,7 +259,8 @@ export default class NodeMapEngine {
       })
     );
     // Determine number (and names of input ports)
-    let input_namespace = {};
+    let input_namespace = {}; // namespace names (for ports)
+    let input_namespace_mapping = {}; // namespace mappings ('_*'=hidden, etc)
     const params = (data.config as Query).config as Query;
     if (params.input_namespace === undefined) {
       // No input namespace specified - use default unless source
@@ -271,12 +272,20 @@ export default class NodeMapEngine {
     } else if (typeof params.input_namespace === "object") {
       // Where the input namespace is an object (probably a dictionary)
       input_namespace = Object.keys(params.input_namespace);
+      input_namespace_mapping = Object.values(params.input_namespace);
     } else {
       // Where the input namespace is not an object (probably a string)
       input_namespace["In"] = "In";
+      input_namespace_mapping["In"] = params.input_namespace;
     }
     // Add input ports
     for (const key in input_namespace) {
+      // Do not display port if it's namespaces starts with '_'
+      if (
+        input_namespace_mapping[key] !== undefined &&
+        input_namespace_mapping[key].startsWith("_")
+      )
+        continue;
       node.addInPort(input_namespace[key]);
     }
     // Add output port (if applicable)

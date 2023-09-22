@@ -1,5 +1,4 @@
 from builder.ImportWorkflow import ImportWorkflowDir
-from builder.ImportWorkflow import ParseFunctionSignature
 
 
 def test_ImportWorkflow_ImportWorkflowDir() -> None:
@@ -10,15 +9,16 @@ def test_ImportWorkflow_ImportWorkflowDir() -> None:
 
     assert m.nodes[0].name == "module1"
     assert (
-        m.nodes[0].snakefile
-        == "builder/tests/workflow_import_test/modules/source/workflow/Snakefile"
+        m.nodes[0].snakefile == "builder/tests/workflow_import_test/modules/source/"
+        "workflow/Snakefile"
     )
     assert m.nodes[0].output_namespace == "module1"
 
     assert m.nodes[1].name == "module2"
     assert (
         m.nodes[1].snakefile
-        == "builder/tests/workflow_import_test/modules/sleep1input/workflow/Snakefile"
+        == "builder/tests/workflow_import_test/modules/sleep1input/"
+        "workflow/Snakefile"
     )
 
     assert m.nodes[1].input_namespace == "module1"
@@ -27,6 +27,7 @@ def test_ImportWorkflow_ImportWorkflowDir() -> None:
     assert m.nodes[2].name == "module3"
     assert (
         m.nodes[2].snakefile
-        == "builder/tests/workflow_import_test/modules/sleep2inputs/workflow/Snakefile"
+        == "builder/tests/workflow_import_test/modules/sleep2inputs/"
+        "workflow/Snakefile"
     )
     assert m.nodes[2].input_namespace == {"in1": "module1", "in2": "module2"}
