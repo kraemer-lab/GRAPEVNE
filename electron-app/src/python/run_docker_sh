@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Halt upon error
+set -eoux pipefail
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Provide a name for the container here
+NAME="grapevne-build"
+
+# Construct image
+docker build -t "${NAME}" "${SCRIPT_DIR}"
+
+# Launch image
+docker run \
+    -v "${SCRIPT_DIR}"/results:/results \
+    -v "${SCRIPT_DIR}"/benchmark:/benchmark \
+    "${NAME}"

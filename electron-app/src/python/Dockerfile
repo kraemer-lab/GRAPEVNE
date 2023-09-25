@@ -17,11 +17,11 @@ RUN conda config --set channel_priority strict
 RUN python -m pip install snakemake==7.32
 
 # Copy workflow files to container
-COPY build .
+COPY . .
 
 # Set-up the workflow conda environments
-RUN snakemake --conda-create-envs-only --use-conda --cores 1 $(snakemake --list)
 ENV TERM=xterm-color
+RUN snakemake --conda-create-envs-only --use-conda --cores 1 $(snakemake --list)
 
 # Run the workflow script
 CMD ["bash", "-i", "-c", "./run.sh"]
