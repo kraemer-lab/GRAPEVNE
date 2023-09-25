@@ -19,12 +19,19 @@ const NodeManager = () => {
   const dispatch = useAppDispatch();
   app.AddSelectionListeners(
     (x) => {
+      // On node selected
       dispatch(builderNodeSelected(x));
     },
     (x) => {
+      // On node deselected
       dispatch(builderNodeDeselected(x));
     },
+    () => {
+      // On node deleted
+      dispatch(builderNodeDeselected({}));
+    },
     (x) => {
+      // On link added
       dispatch(builderAddLink(x));
     }
   );

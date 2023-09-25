@@ -4,14 +4,10 @@ import { FitAddon } from "xterm-addon-fit";
 
 import "./../../node_modules/xterm/css/xterm.css";
 
-// TODO
-// This line permits any function declarations from the window.builderAPI
-// as a workaround. Remove this in favour of a proper typescript-compatible
-// interface. This may require modification to the electron code.
-declare const window: any;
+// Ensure that the terminal is only mounted once
 let terminal_mounted = false;
 
-// Single instance of a terminal
+// Singleton instance of a terminal
 class TerminalController {
   private static _instance: TerminalController;
 

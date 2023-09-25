@@ -8,18 +8,14 @@ import { builderLogEvent } from "redux/actions";
 import { LazyLog } from "react-lazylog";
 import { ScrollFollow } from "react-lazylog";
 
-// TODO
-// This line permits any function declarations from the window.builderAPI
-// as a workaround. Remove this in favour of a proper typescript-compatible
-// interface. This may require modification to the electron code.
-declare const window: any;
+const builderAPI = window.builderAPI;
 
+// Ensure we only mount the log listener once
 let log_listener_mounted = false;
 
 const Logger = () => {
   const logtext = useAppSelector((state) => state.builder.logtext);
   const dispatch = useAppDispatch();
-  const builderAPI = window.builderAPI;
 
   if (!log_listener_mounted && builderAPI !== undefined) {
     // ensure this is only run once

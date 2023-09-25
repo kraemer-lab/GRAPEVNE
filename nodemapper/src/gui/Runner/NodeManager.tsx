@@ -33,12 +33,19 @@ const NodeManager = () => {
   const UpdateActionListeners = () => {
     nodeMapEngine.AddSelectionListeners(
       (x) => {
+        // On node select
         dispatch(runnerNodeSelected(x));
       },
       (x) => {
+        // On node deselect
         dispatch(runnerNodeDeselected(x));
       },
+      () => {
+        // On node deleted
+        dispatch(runnerNodeDeselected({}));
+      },
       (x) => {
+        // On link added
         return;
       }
     );

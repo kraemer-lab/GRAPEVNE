@@ -4,6 +4,8 @@ import * as fs from "fs";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
 
+type Query = Record<string, unknown>;
+
 const RedirectConsoleLog = async (driver: webdriver.ThenableWebDriver) => {
   // Capture console.log messages for backend return values
   console.log("::: RedirectConsoleLog");
@@ -39,16 +41,17 @@ const FlushConsoleLog = async (driver: webdriver.ThenableWebDriver) => {
 const WaitForReturnCode = async (
   driver: webdriver.ThenableWebDriver,
   query: string
-): Promise<Record<string, any>> => {
+): Promise<Query> => {
   console.log("::: WaitForReturnCode");
   // Monitor console.log until a returncode is received
   let msg = undefined;
   let msg_set = undefined;
   console.log("Waiting for return msg...");
   while (true) {
+    // eslint-disable-line no-constant-condition
     msg_set = (await driver.executeScript(
       "return _msg_queue.shift()"
-    )) as any[];
+    )) as unknown[];
     if (msg_set === undefined || msg_set === null) continue;
     msg = msg_set.shift();
     if (typeof msg === "object" && msg != null) {
@@ -56,7 +59,7 @@ const WaitForReturnCode = async (
         Object.prototype.hasOwnProperty.call(msg, "query") &&
         Object.prototype.hasOwnProperty.call(msg, "returncode")
       ) {
-        msg = msg as Record<string, any>;
+        msg = msg as Query;
         if (msg.query === query && msg.returncode != undefined) {
           console.log("return msg received: ", msg);
           console.log("<<< WaitForReturnCode");
@@ -141,9 +144,13 @@ const BuildAndRunSingleModuleWorkflow = async (
   // Clean build folder (initial); assert target output does not exist
   let msg;
   await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
-  msg = (await WaitForReturnCode(driver, "builder/clean-build-folder")) as any;
+  msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
-  const target_file = path.join(msg.body.path, "results", outfile);
+  const target_file = path.join(
+    (msg.body as Query).path as string,
+    "results",
+    outfile
+  );
   console.log("target_file: ", target_file);
   expect(fs.existsSync(target_file)).toBeFalsy();
 

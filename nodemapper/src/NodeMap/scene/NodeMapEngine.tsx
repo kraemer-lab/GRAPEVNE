@@ -10,8 +10,10 @@ import { DefaultNodeModel } from "NodeMap";
 import { DefaultNodeFactory } from "NodeMap";
 import { DefaultPortFactory } from "NodeMap";
 
-// TODO: Replace with webpack proxy (problems getting this to work)
-const API_ENDPOINT = "http://127.0.0.1:5000/api";
+import * as globals from "redux/globals";
+
+type Query = Record<string, unknown>;
+const API_ENDPOINT = globals.getApiEndpoint();
 
 interface IPayload {
   id: string;
@@ -149,6 +151,7 @@ export default class NodeMapEngine {
   public AddSelectionListeners(
     select_fn: (payload: IPayload) => void,
     deselect_fn: (payload: IPayload) => void,
+    delete_fn: () => void,
     addlink_fn: (payload: DefaultLinkModel) => void
   ) {
     // Add listeners, noting the following useful resource:
@@ -169,18 +172,30 @@ export default class NodeMapEngine {
     });
     // Add node selection listeners
     model.getNodes().forEach((node) => {
-      node.registerListener({
-        selectionChanged: (e) => {
-          const payload: IPayload = {
-            id: node.getOptions().id,
-          };
-          if (e.isSelected) {
-            select_fn(payload);
-          } else {
-            deselect_fn(payload);
-          }
-        },
-      });
+      this.RegisterNodeListeners(node, select_fn, deselect_fn, delete_fn);
+    });
+  }
+
+  public RegisterNodeListeners(
+    node: NodeModel,
+    select_fn: (payload: IPayload) => void,
+    deselect_fn: (payload: IPayload) => void,
+    delete_fn: () => void
+  ) {
+    node.registerListener({
+      selectionChanged: (e) => {
+        const payload: IPayload = {
+          id: node.getOptions().id,
+        };
+        if (e.isSelected) {
+          select_fn(payload);
+        } else {
+          deselect_fn(payload);
+        }
+      },
+      entityRemoved: (e) => {
+        delete_fn();
+      },
     });
   }
 
@@ -257,8 +272,9 @@ export default class NodeMapEngine {
       })
     );
     // Determine number (and names of input ports)
-    let input_namespace = {};
-    const params = (data.config as Record<string, any>).config;
+    let input_namespace = {}; // namespace names (for ports)
+    let input_namespace_mapping = {}; // namespace mappings ('_*'=hidden, etc)
+    const params = (data.config as Query).config as Query;
     if (params.input_namespace === undefined) {
       // No input namespace specified - use default unless source
       if (data.type !== "source") {
@@ -269,12 +285,20 @@ export default class NodeMapEngine {
     } else if (typeof params.input_namespace === "object") {
       // Where the input namespace is an object (probably a dictionary)
       input_namespace = Object.keys(params.input_namespace);
+      input_namespace_mapping = Object.values(params.input_namespace);
     } else {
       // Where the input namespace is not an object (probably a string)
       input_namespace["In"] = "In";
+      input_namespace_mapping["In"] = params.input_namespace;
     }
     // Add input ports
     for (const key in input_namespace) {
+      // Do not display port if it's namespaces starts with '_'
+      if (
+        input_namespace_mapping[key] !== undefined &&
+        input_namespace_mapping[key].startsWith("_")
+      )
+        continue;
       node.addInPort(input_namespace[key]);
     }
     // Add output port (if applicable)

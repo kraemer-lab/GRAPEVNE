@@ -15,13 +15,9 @@ import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 import { builderSetSettingsVisibility } from "redux/actions";
 
-const API_ENDPOINT = globals.getApiEndpoint();
+type Query = Record<string, unknown>;
 
-// TODO
-// This line permits any function declarations from the window.builderAPI
-// as a workaround. Remove this in favour of a proper typescript-compatible
-// interface. This may require modification to the electron code.
-declare const window: any;
+const API_ENDPOINT = globals.getApiEndpoint();
 
 const builderAPI = window.builderAPI;
 const runnerAPI = window.runnerAPI;
@@ -136,7 +132,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 ///////////////////////////////////////////////////////////////////////////////
 
 interface IPayloadRecord {
-  payload: Record<string, unknown>;
+  payload: Query;
   type: string;
 }
 type TPayloadRecord = (action: IPayloadRecord) => void;
@@ -155,7 +151,7 @@ type TPayloadBool = (action: IPayloadBool) => void;
 
 const CompileToJSON = async () => {
   const app = BuilderEngine.Instance;
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "builder/compile-to-json",
     data: {
       format: "Snakefile",
@@ -200,7 +196,7 @@ const BuildAndRun = async (
     builderUpdateStatusText("Building workflow and launching a test run...")
   );
   const app = BuilderEngine.Instance;
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "builder/build-and-run",
     data: {
       format: "Snakefile",
@@ -212,7 +208,7 @@ const BuildAndRun = async (
       environment_variables: environment_variables,
     },
   };
-  const callback = (content: string) => {
+  const callback = (content: Query) => {
     console.log(content);
     if (content["returncode"] !== 0) {
       // Report error
@@ -235,7 +231,7 @@ const BuildAndRun = async (
 
 const CleanBuildFolder = async (dispatchString: TPayloadString) => {
   const app = BuilderEngine.Instance;
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "builder/clean-build-folder",
     data: {
       format: "Snakefile",
@@ -309,7 +305,7 @@ const CheckNodeDependencies = async (
   const jsDeps = app.nodeScene.getModuleListJSONFromNodeNames(depNodeNames);
 
   // Submit Build request
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "runner/check-node-dependencies",
     data: {
       format: "Snakefile",
@@ -322,7 +318,7 @@ const CheckNodeDependencies = async (
   node.getOptions().color = "rgb(192,192,192)";
   app.engine.repaintCanvas();
 
-  const callback = (data: Record<string, unknown>) => {
+  const callback = (data: Query) => {
     dispatch(builderUpdateStatusText(""));
     console.log(data);
     switch (data["body"]["status"]) {
@@ -445,7 +441,7 @@ const GetRemoteModules = async (
   dispatchString(builderUpdateStatusText("Loading modules..."));
   console.log("Repository settings: ", repo);
   const app = BuilderEngine.Instance;
-  const query: Record<string, unknown> = {
+  const query: Query = {
     query: "builder/get-remote-modules",
     data: {
       format: "Snakefile",
@@ -454,13 +450,15 @@ const GetRemoteModules = async (
       },
     },
   };
-  const callback = (content: string) => {
+  const callback = (content: Query) => {
     console.log(content);
     if (content["returncode"] !== 0) {
       // Report error
-      dispatchString(builderUpdateStatusText(content["body"]));
-    } else dispatchString(builderUpdateStatusText("Modules loaded."));
-    dispatchString(builderUpdateModulesList(content["body"]));
+      dispatchString(builderUpdateStatusText(content["body"] as string));
+    } else {
+      dispatchString(builderUpdateStatusText("Modules loaded."));
+      dispatchString(builderUpdateModulesList(content["body"] as string));
+    }
   };
   let response: Record<string, undefined>;
   switch (backend as string) {
@@ -469,7 +467,7 @@ const GetRemoteModules = async (
       SubmitQuery(query, dispatchString, callback);
       break;
     case "electron":
-      callback((await builderAPI.GetRemoteModules(query)) as string);
+      callback(await builderAPI.GetRemoteModules(query));
       break;
     default:
       console.error("Unknown backend: ", backend);
@@ -490,7 +488,7 @@ const ImportModule = () => {
 ///////////////////////////////////////////////////////////////////////////////
 
 const SubmitQueryExpectZip = (
-  query: Record<string, unknown>,
+  query: Query,
   callback: (content: unknown) => void
 ) => {
   // POST request handler
@@ -539,9 +537,9 @@ const SubmitQueryExpectZip = (
 };
 
 const postRequestCheckNodeDependencies = async (
-  query: Record<string, unknown>,
+  query: Query,
   dispatch: TPayloadString,
-  callback: (data: Record<string, unknown>) => void
+  callback: (data: Query) => void
 ) => {
   const postRequestOptions = {
     method: "POST",
@@ -568,7 +566,7 @@ const postRequestCheckNodeDependencies = async (
     });
 };
 
-const SubmitQuery = (query: Record<string, unknown>, dispatch, callback) => {
+const SubmitQuery = (query: Query, dispatch, callback) => {
   // POST request handler
   const postRequest = async () => {
     const postRequestOptions = {
@@ -619,10 +617,7 @@ const SetSettingsVisibility = (
   return 0;
 };
 
-const ToggleSettingsVisibility = (
-  dispatch: TPayloadString,
-  state: Record<string, unknown>
-) => {
+const ToggleSettingsVisibility = (dispatch: TPayloadString, state: Query) => {
   SetSettingsVisibility(dispatch, !state.settings_visible);
 };
 

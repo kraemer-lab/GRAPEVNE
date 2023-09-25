@@ -73,6 +73,9 @@ const ExpandButton = (props: ExpandProps) => {
               dispatch(builderNodeDeselected(payload));
             }
           },
+          entityRemoved: (e) => {
+            dispatch(builderNodeDeselected({}));
+          },
         });
       });
       // Ensure the expanded node is deselected (and no longer editable)

@@ -1,5 +1,5 @@
 :root {
-  --color-background-code: rgba(0, 0, 0, 0.35);
+  --color-background-code: rgb(0 0 0 / 35%);
   --color-background-default: #081120;
   --color-button-background: #2a3343;
   --color-button-background-hover: #454950;
@@ -11,7 +11,7 @@
   --color-panel-background: #192230;
   --color-panel-background-alternate: #202124;
   --color-solid-resize-bar: #454950;
-  --color-solid-resize-bar-handle: rgba(255, 255, 255, 0.2);
+  --color-solid-resize-bar-handle: rgb(255 255 255 / 20%);
 }
 
 html,
@@ -20,10 +20,8 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
-
   background-color: var(--color-background-default);
   color: var(--color-default);
-
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
 }

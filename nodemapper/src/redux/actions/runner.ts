@@ -1,7 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 
 export const runnerAddNode = createAction("runner/add-node");
-export const runnerStoreMap = createAction("runner/store-map");
+export const runnerStoreMap = createAction<string>("runner/store-map");
 export const runnerStoreLint = createAction<string>("runner/store-lint");
 export const runnerSelectNone = createAction("runner/select-none");
 export const runnerViewSettings = createAction("runner/view-settings");

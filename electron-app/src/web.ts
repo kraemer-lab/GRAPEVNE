@@ -77,8 +77,8 @@ const GetModulesList = async (url: Record<string, unknown>) => {
 const GetFolders = (root_folder: string): Array<string> =>
   fs
     .readdirSync(root_folder, { withFileTypes: true })
-    .filter((f: any) => f.isDirectory())
-    .map((f: any) => f.name);
+    .filter((f) => f.isDirectory())
+    .map((f) => f.name);
 
 const GetLocalModules = (
   root_folder: string
@@ -201,14 +201,6 @@ const GetRemoteModulesGithubDirectoryListing = async (
 
       // Third-level (module/workflow) listing
       for (const workflow of workflows) {
-        const url_workflow = path.join(
-          repo,
-          "workflows",
-          org,
-          module_type,
-          workflow,
-          "workflow/Snakefile"
-        );
         const url_config = path.join(
           "https://raw.githubusercontent.com",
           repo,

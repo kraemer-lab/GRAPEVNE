@@ -22,3 +22,17 @@ To publish the GRAPEVNE Builder follow these steps:
 Publishing the tag will trigger the github action `Publish` creating a new
 _draft_ release (e.g. v1.0.0) and populates it with builds as configured in
 `forge.config.js`.
+
+## Upgrading electron
+
+GRAPEVNE was originally built using electron v26, which supports chrome M116
+(see [Electron Releases](https://www.electronjs.org/docs/latest/tutorial/electron-timelines)).
+As such the version of chromedriver used for end-to-end testing needs to be
+pegged to chromedriver 116 in a number of locations:
+- `./electron-app/postbuild_tests/modules.test.ts`
+  - `driver = new webdriver.Builder().forBrowser("chrome", "116")`
+- Github workflows (github runners update their chromedriver regularly):
+  - Line `chromedriver-version: '116.0.5845.96'` in:
+      - `./.github/workflows/postbuildchecks.yml`
+      - `./.github/workflows/publish.yml`
+      - `./.github/workflows/nightly.yml`

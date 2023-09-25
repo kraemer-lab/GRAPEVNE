@@ -1,0 +1,41 @@
+type Event = unknown;
+type Query = Record<string, unknown>;
+
+export type TerminalAPI = {
+  sendData: (data: string) => void;
+  receiveData: (callback: (event: Event, data: Query) => void) => void;
+};
+
+export type DisplayAPI = {
+  FolderInfo: (query: Query) => Promise<Query>;
+};
+
+export type BuilderAPI = {
+  CompileToJson: (query: Query) => Promise<Query>;
+  BuildAndRun: (query: Query) => Promise<Query>;
+  CleanBuildFolder: (query: Query) => Promise<Query>;
+  GetRemoteModules: (query: Query) => Promise<Query>;
+  GetRemoteModuleConfig: (query: Query) => Promise<Query>;
+  logEvent: (callback: (event: Event, data: string) => void) => void;
+};
+
+export type RunnerAPI = {
+  Build: (query: Query) => Promise<Query>;
+  DeleteResults: (query: Query) => Promise<Query>;
+  Lint: (query: Query) => Promise<Query>;
+  LoadWorkflow: (query: Query) => Promise<Query>;
+  Tokenize: (query: Query) => Promise<Query>;
+  TokenizeLoad: (query: Query) => Promise<Query>;
+  JobStatus: (query: Query) => Promise<Query>;
+  Launch: (query: Query) => Promise<Query>;
+  CheckNodeDependencies: (query: Query) => Promise<Query>;
+};
+
+declare global {
+  interface Window {
+    terminalAPI: TerminalAPI;
+    displayAPI: DisplayAPI;
+    builderAPI: BuilderAPI;
+    runnerAPI: RunnerAPI;
+  }
+}

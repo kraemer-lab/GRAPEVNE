@@ -211,7 +211,7 @@ def GetRemoteModulesGithubBranchListing(repo: str) -> List[dict]:
     for branch in r_base.json():
         if branch["name"] == "main":
             continue
-        [module_type, module_org_and_name] = branch["name"].split("/", 1)
+        [module_type, _] = branch["name"].split("/", 1)
         if module_type not in module_types:
             raise Exception(
                 f"Invalid module type '{module_type}' in branch '{branch['name']}'."

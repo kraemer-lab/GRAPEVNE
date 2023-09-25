@@ -1,8 +1,10 @@
 import * as React from "react";
 import styled from "@emotion/styled";
 
+type Query = Record<string, unknown>;
+
 export interface TrayItemWidgetProps {
-  model: any;
+  model: Query;
   color?: string;
   name: string;
 }

@@ -12,9 +12,9 @@ import { MouseEvent } from "react";
 export interface DefaultLinkProps {
   link: DefaultLinkModel;
   diagramEngine: DiagramEngine;
-  pointAdded?: (point: PointModel, event: MouseEvent) => any;
+  pointAdded?: (point: PointModel, event: MouseEvent) => unknown;
   renderPoints?: boolean;
-  selected?: (event: MouseEvent) => any;
+  selected?: (event: MouseEvent) => unknown;
 }
 
 export interface DefaultLinkState {
@@ -83,7 +83,7 @@ export class DefaultLinkWidget extends React.Component<
     return (
       <DefaultLinkPointWidget
         key={point.getID()}
-        point={point as any}
+        point={point as PointModel}
         colorSelected={this.props.link.getOptions().selectedColor}
         color={this.props.link.getOptions().color}
       />
@@ -92,7 +92,7 @@ export class DefaultLinkWidget extends React.Component<
 
   generateLink(
     path: string,
-    extraProps: any,
+    extraProps: unknown,
     id: string | number
   ): JSX.Element {
     const ref = React.createRef<SVGPathElement>();
@@ -109,7 +109,7 @@ export class DefaultLinkWidget extends React.Component<
         onSelection={(selected) => {
           this.setState({ selected: selected });
         }}
-        extras={extraProps}
+        extras={extraProps as DefaultLinkSegmentWidget}
       />
     );
   }
