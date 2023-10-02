@@ -101,21 +101,43 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 minWidth: "150px",
               }}
             >
-              <EasyEdit
-                type={Types.TEXT}
-                onHoverCssClass="easyedit-hover"
-                saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-                cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-                value={value}
-                onFocus={(e) => props.onEditFocus()}
-                onBlur={(e) => props.onEditBlur()}
-                onSave={(value) => {
-                  setValue(value);
-                  props.onEditBlur();
-                }}
-                onCancel={() => props.onEditBlur()}
-                saveOnBlur={true}
-              />
+              {valueType === "boolean" ? (
+                <EasyEdit
+                  type={Types.SELECT}
+                  onHoverCssClass="easyedit-hover"
+                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
+                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                  value={value}
+                  options={[
+                    { label: "true", value: true },
+                    { label: "false", value: false },
+                  ]}
+                  onFocus={(e) => props.onEditFocus()}
+                  onBlur={(e) => props.onEditBlur()}
+                  onSave={(value) => {
+                    setValue(value);
+                    props.onEditBlur();
+                  }}
+                  onCancel={() => props.onEditBlur()}
+                  saveOnBlur={true}
+                />
+              ) : (
+                <EasyEdit
+                  type={Types.TEXT}
+                  onHoverCssClass="easyedit-hover"
+                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
+                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                  value={value}
+                  onFocus={(e) => props.onEditFocus()}
+                  onBlur={(e) => props.onEditBlur()}
+                  onSave={(value) => {
+                    setValue(value);
+                    props.onEditBlur();
+                  }}
+                  onCancel={() => props.onEditBlur()}
+                  saveOnBlur={true}
+                />
+              )}
             </span>
           ) : (
             <HighlightJSON keylist={[...keylist, key]} />
