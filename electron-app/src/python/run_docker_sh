@@ -12,6 +12,6 @@ docker build -t "${NAME}" "${SCRIPT_DIR}"
 
 # Launch image
 docker run \
-    -v "${SCRIPT_DIR}"/results:/results \
-    -v "${SCRIPT_DIR}"/benchmark:/benchmark \
+    -v "${SCRIPT_DIR}"/results:/workflow/results \
+    -v "${SCRIPT_DIR}"/benchmark:/workflow/benchmark \
     "${NAME}"

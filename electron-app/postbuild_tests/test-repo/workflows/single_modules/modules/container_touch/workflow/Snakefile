@@ -1,0 +1,12 @@
+configfile: "config/config.yaml"
+
+module utility_touch:
+    snakefile:
+        eval(
+            f'{config["utility_touch"]["snakefile"]["function"]}'
+            '(*config["utility_touch"]["snakefile"]["args"],'
+            '**config["utility_touch"]["snakefile"]["kwargs"])'
+        )
+    config:
+        config["utility_touch"]["config"]
+use rule * from utility_touch as utility_touch_*

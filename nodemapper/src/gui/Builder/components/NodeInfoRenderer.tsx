@@ -85,7 +85,7 @@ const ExpandButton = (props: ExpandProps) => {
 
   if (showExpand) {
     return (
-      <button className="btn" onClick={btnExpand}>
+      <button id="btnBuilderExpand" className="btn" onClick={btnExpand}>
         Expand
       </button>
     );

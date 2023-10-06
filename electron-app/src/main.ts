@@ -21,6 +21,17 @@ const createWindow = () => {
     win.loadURL("http://localhost:5001"); //dev
     win.webContents.openDevTools();
   }
+
+  const downloadpath = app.commandLine.getSwitchValue("downloadpath");
+  if (downloadpath) {
+    const ses = win.webContents.session;
+    // eslint-disable-next-line no-unused-vars
+    ses.on("will-download", (event, item, webContents) => {
+      // Set the save path, which bypasses the save dialog
+      item.setSavePath(path.join(downloadpath, item.getFilename()));
+    });
+  }
+
   return win;
 };
 

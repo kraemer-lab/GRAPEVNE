@@ -17,7 +17,8 @@ RUN conda config --set channel_priority strict
 RUN python -m pip install snakemake==7.32
 
 # Copy workflow files to container
-COPY . .
+COPY . /workflow
+WORKDIR /workflow
 
 # Set-up the workflow conda environments
 ENV TERM=xterm-color

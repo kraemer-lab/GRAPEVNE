@@ -2,7 +2,9 @@ import React from "react";
 import styled from "@emotion/styled";
 import { TrayWidget } from "./TrayWidget";
 import { TrayItemWidget } from "./TrayItemWidget";
+import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
+import { builderUpdateStatusText } from "redux/actions";
 
 import BuilderEngine from "../BuilderEngine";
 import styles from "./styles.module.css";
@@ -42,6 +44,7 @@ const SelectStyled = styled.select({
 });
 
 const RepoBrowser = () => {
+  const dispatch = useAppDispatch();
   const modules = useAppSelector((state) => state.builder.modules_list);
   const [filterSelection, setFilterSelection] = React.useState("");
   const [searchterm, setSearchterm] = React.useState("");
@@ -49,12 +52,12 @@ const RepoBrowser = () => {
 
   // Check for a valid module list
   if (modules_list === undefined) {
-    console.debug(
-      "ALERT: Modules failed to load - check that the repository name is " +
-        "correct and is reachable"
+    dispatch(
+      builderUpdateStatusText(
+        "ERROR: Module list failed to load - check that the repository name is " +
+          "correct and is reachable"
+      )
     );
-    // Need a mechanism to queue messages back to the user (status bar is
-    //  overwritten at the end of this render process)
     modules_list = "[]";
   }
 

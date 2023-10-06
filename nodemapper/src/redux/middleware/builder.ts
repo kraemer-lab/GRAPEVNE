@@ -189,6 +189,10 @@ const CompileToJSON = async (
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+    // Report success (this should be returned by the backend, but that is currently
+    // set-up to return the [binary] zip file); console.logs are important for
+    // post-build tests
+    console.log({ query: query["query"], returncode: 0 });
     // Update status
     dispatchString(builderUpdateStatusText(" ")); // Idle
   };
