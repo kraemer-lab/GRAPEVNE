@@ -226,7 +226,6 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   expect(fs.existsSync(buildfile)).toBeFalsy();
 
   // Build, outputs zip-file
-  driver.executeScript("window.confirm = function(msg) { return true; }");
   await driver.findElement(By.id("btnBuilderBuildAndZip")).click();
   const msg = await WaitForReturnCode(driver, "builder/compile-to-json");
   expect(msg.returncode).toEqual(0);

@@ -133,31 +133,34 @@ describe("modules", () => {
     5 * ONE_MINUTE
   ); // long timeout
 
-  test("Set snakemake arguments list to use conda", async () => {
-    console.log("::: test Set snakemake arguments list to use conda");
-    // Open settings pane
-    await driver.findElement(By.id("btnBuilderSettings")).click();
+  runif(shell.exec("conda --version", { silent: true }).code == 0)(
+    "Set snakemake arguments list to use conda",
+    async () => {
+      console.log("::: test Set snakemake arguments list to use conda");
+      // Open settings pane
+      await driver.findElement(By.id("btnBuilderSettings")).click();
 
-    // Set snakemake command line arguments
-    const args = await driver.findElement(
-      webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
-    );
-    await args.clear();
-    await args.sendKeys("--cores 1 --use-conda");
-
-    // Set conda environment path --- passthrough from test environment
-    if (process.env.CONDA_PATH != undefined) {
+      // Set snakemake command line arguments
       const args = await driver.findElement(
-        webdriver.By.id("inputBuilderSettingsEnvironmentVars")
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
       );
       await args.clear();
-      await args.sendKeys(`PATH=${process.env.CONDA_PATH}`);
-    }
+      await args.sendKeys("--cores 1 --use-conda");
 
-    // Close settings pane
-    await driver.findElement(By.id("btnBuilderSettings")).click();
-    console.log("<<< test Set snakemake arguments list to use conda");
-  });
+      // Set conda environment path --- passthrough from test environment
+      if (process.env.CONDA_PATH != undefined) {
+        const args = await driver.findElement(
+          webdriver.By.id("inputBuilderSettingsEnvironmentVars")
+        );
+        await args.clear();
+        await args.sendKeys(`PATH=${process.env.CONDA_PATH}`);
+      }
+
+      // Close settings pane
+      await driver.findElement(By.id("btnBuilderSettings")).click();
+      console.log("<<< test Set snakemake arguments list to use conda");
+    }
+  );
 
   // Basic workflow tests (those that do not require conda)
   test.skip.each([
