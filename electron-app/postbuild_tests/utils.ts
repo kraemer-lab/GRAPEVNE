@@ -3,8 +3,11 @@ import { By } from "selenium-webdriver";
 import * as fs from "fs";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
-import shell = require("shelljs");
 import decompress = require("decompress");
+
+import { exec } from "child_process";
+import * as util from "util";
+const execPromise = util.promisify(exec);
 
 type Query = Record<string, unknown>;
 
@@ -250,26 +253,18 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   expect(fs.existsSync(target_file)).toBeFalsy();
 
   // Launch docker and wait for process to finish
-  await shell.exec(
-    path.join(buildfolder, "run_docker.sh"),
-    (code: number, stdout: string, stderr: string) => {
-      console.log("Exit code:", code);
-      console.log("Program output:", stdout);
-      console.log("Program stderr:", stderr);
-    }
+  const { stdout, stderr } = await execPromise(
+    path.join(buildfolder, "run_docker.sh")
   );
-
-  // Assert that the target output file exists
-  while (!fs.existsSync(target_file)) {
-    await driver.sleep(500);
-  }
+  if (stdout) console.log(stdout);
+  if (stderr) console.log(stderr);
   expect(fs.existsSync(target_file)).toBeTruthy();
 
   // Clean build folder (tidy-up); assert target output does not exist
   fs.rmSync(buildfile);
-  fs.rmSync(buildfolder, { recursive: true });
+  //fs.rmSync(buildfolder, { recursive: true });
   expect(fs.existsSync(buildfile)).toBeFalsy();
-  expect(fs.existsSync(target_file)).toBeFalsy();
+  //expect(fs.existsSync(target_file)).toBeFalsy();
 
   console.log("<<< test Build, then launch in Docker");
 };

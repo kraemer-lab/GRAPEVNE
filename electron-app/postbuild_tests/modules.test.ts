@@ -158,7 +158,7 @@ describe("modules", () => {
     await driver.findElement(By.id("btnBuilderSettings")).click();
     console.log("<<< test Set snakemake arguments list to use conda");
   });
-  
+
   // Basic workflow tests (those that do not require conda)
   test.skip.each([
     // placeholder (empty and skipped at present)
@@ -172,9 +172,7 @@ describe("modules", () => {
   ); // long timeout
 
   // Conda tests
-  runif(
-    shell.exec("conda --version", { silent: true }).code == 0
-  ).each([
+  runif(shell.exec("conda --version", { silent: true }).code == 0).each([
     ["(single_modules) conda", path.join("single_modules_conda", "data.csv")],
   ])(
     "Build and Test the conda workflow: module '%s'",
@@ -185,9 +183,7 @@ describe("modules", () => {
   ); // long timeout
 
   // Container tests
-  runif(
-    shell.exec("docker --version", { silent: true }).code == 0
-  ).each([
+  runif(shell.exec("docker --version", { silent: true }).code == 0).each([
     [
       // NOTE: This test relies on the remote module jsbrittain/snakeshack (Utilty) touch
       "(single_modules) container_touch",

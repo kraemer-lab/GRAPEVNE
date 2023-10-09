@@ -16,9 +16,14 @@ RUN conda config --set channel_priority strict
 # Install snakemake
 RUN python -m pip install snakemake==7.32
 
+# Pass UID to container (ensures appropriate permissions for created files/directories)
+ARG HOST_UID
+RUN useradd --uid ${HOST_UID} --create-home user
+USER user
+
 # Copy workflow files to container
-COPY . /workflow
-WORKDIR /workflow
+COPY --chown=user . /home/user/workflow
+WORKDIR /home/user/workflow
 
 # Set-up the workflow conda environments
 ENV TERM=xterm-color
