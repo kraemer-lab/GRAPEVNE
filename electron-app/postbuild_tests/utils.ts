@@ -5,9 +5,38 @@ import * as path from "path";
 import * as webdriver from "selenium-webdriver";
 import decompress = require("decompress");
 
+import * as shell from "shelljs";
 import { exec } from "child_process";
 import * as util from "util";
 const execPromise = util.promisify(exec);
+
+// Test runner conditionals
+const runif = (condition: boolean) => (condition ? it : it.skip);
+const runif_installed = (programs: string[], condition = "all") => {
+  /* Check if a list of programs is present
+   * User may specify when any or all of the programs are installed
+   *
+   * program: list of programs to seach for (e.g. ['mamba', 'conda'])
+   * condition: condition for test passing ('all', 'any' are present)
+   */
+  let returncode = true;
+  for (const program of programs) {
+    const program_check =
+      shell.exec(`${program} --version`, { silent: true }).code == 0;
+    switch (condition) {
+      case "any":
+        returncode ||= program_check;
+        break;
+      case "all":
+        returncode &&= program_check;
+        break;
+      default:
+        console.error(`Unknown program check requested: ${condition}`);
+        returncode = false;
+    }
+  }
+  return runif(returncode);
+};
 
 type Query = Record<string, unknown>;
 
@@ -269,6 +298,8 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
 };
 
 export {
+  runif,
+  runif_installed,
   RedirectConsoleLog,
   FlushConsoleLog,
   WaitForReturnCode,

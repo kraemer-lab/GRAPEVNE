@@ -5,8 +5,8 @@ import { until } from "selenium-webdriver";
 import * as chrome from "selenium-webdriver/chrome";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
-import * as shell from "shelljs";
 
+import { runif_installed } from "./utils";
 import { DragAndDrop } from "./utils";
 import { FlushConsoleLog } from "./utils";
 import { RedirectConsoleLog } from "./utils";
@@ -21,7 +21,6 @@ const ONE_MINUTE = 60 * ONE_SEC;
 /*
  * Note: These tests chain together, so they must be run in order.
  */
-const runif = (condition: boolean) => (condition ? it : it.skip);
 describe("modules", () => {
   let driver: webdriver.ThenableWebDriver;
 
@@ -133,7 +132,7 @@ describe("modules", () => {
     5 * ONE_MINUTE
   ); // long timeout
 
-  runif(shell.exec("conda --version", { silent: true }).code == 0)(
+  runif_installed(["mamba", "conda"], "any")(
     "Set snakemake arguments list to use conda",
     async () => {
       console.log("::: test Set snakemake arguments list to use conda");
@@ -175,7 +174,7 @@ describe("modules", () => {
   ); // long timeout
 
   // Conda tests
-  runif(shell.exec("conda --version", { silent: true }).code == 0).each([
+  runif_installed(["mamba", "conda"], "any").each([
     ["(single_modules) conda", path.join("single_modules_conda", "data.csv")],
   ])(
     "Build and Test the conda workflow: module '%s'",
@@ -186,7 +185,7 @@ describe("modules", () => {
   ); // long timeout
 
   // Container tests
-  runif(shell.exec("docker --version", { silent: true }).code == 0).each([
+  runif_installed(["docker"]).each([
     [
       // NOTE: This test relies on the remote module jsbrittain/snakeshack (Utilty) touch
       "(single_modules) container_touch",
