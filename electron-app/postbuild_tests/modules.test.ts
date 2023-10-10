@@ -6,7 +6,9 @@ import * as chrome from "selenium-webdriver/chrome";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
 
-import { runif_installed } from "./utils";
+import { runif } from "./utils";
+import { is_installed } from "./utils";
+import { is_not_windows } from "./utils";
 import { DragAndDrop } from "./utils";
 import { FlushConsoleLog } from "./utils";
 import { RedirectConsoleLog } from "./utils";
@@ -132,7 +134,7 @@ describe("modules", () => {
     5 * ONE_MINUTE
   ); // long timeout
 
-  runif_installed(["mamba", "conda"], "any")(
+  runif(is_installed(["mamba", "conda"], "any"))(
     "Set snakemake arguments list to use conda",
     async () => {
       console.log("::: test Set snakemake arguments list to use conda");
@@ -174,7 +176,7 @@ describe("modules", () => {
   ); // long timeout
 
   // Conda tests
-  runif_installed(["mamba", "conda"], "any").each([
+  runif(is_installed(["mamba", "conda"], "any")).each([
     ["(single_modules) conda", path.join("single_modules_conda", "data.csv")],
   ])(
     "Build and Test the conda workflow: module '%s'",
@@ -185,7 +187,7 @@ describe("modules", () => {
   ); // long timeout
 
   // Container tests
-  runif_installed(["docker"]).each([
+  runif(is_installed(["docker"])).each([
     [
       // NOTE: This test relies on the remote module jsbrittain/snakeshack (Utilty) touch
       "(single_modules) container_touch",

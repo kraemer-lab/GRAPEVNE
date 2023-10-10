@@ -12,7 +12,7 @@ const execPromise = util.promisify(exec);
 
 // Test runner conditionals
 const runif = (condition: boolean) => (condition ? it : it.skip);
-const runif_installed = (programs: string[], condition = "all") => {
+const is_installed = (programs: string[], condition = "all") => {
   /* Check if a list of programs is present
    * User may specify when any or all of the programs are installed
    *
@@ -35,8 +35,10 @@ const runif_installed = (programs: string[], condition = "all") => {
         returncode = false;
     }
   }
-  return runif(returncode);
+  return returncode;
 };
+const is_windows = process.platform === "win32";
+const is_not_windows = !is_windows;
 
 type Query = Record<string, unknown>;
 
@@ -221,6 +223,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   console.log("::: test Build, then launch in Docker");
 
   // Drag-and-drop module from modules-list into scene
+  console.log("Drag-and-drop module from modules-list into scene");
   await driver.findElement(By.id("btnBuilderClearScene")).click();
   const module = await driver.findElement(
     By.id("modulelist-" + wranglename(modulename))
@@ -242,6 +245,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
 
   // Click on the canvas module element. This actually finds both the repository entry
   // and the canvas element, so we click on both as we cannot guarantee ordering.
+  console.log("Click the canvas module element");
   const elements = await driver.findElements(
     By.xpath(`//div[text()='${modulename}']`)
   );
@@ -250,56 +254,81 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   await driver.findElement(By.id("btnBuilderExpand")).click();
 
   // Assert that build file does not exist
+  console.log("Assert that build file does not exist");
   const buildfile = path.join(__dirname, "downloads", "build.zip");
   if (fs.existsSync(buildfile)) fs.unlinkSync(buildfile);
   expect(fs.existsSync(buildfile)).toBeFalsy();
 
   // Build, outputs zip-file
+  console.log("Build, outputs zip-file");
   await driver.findElement(By.id("btnBuilderBuildAndZip")).click();
   const msg = await WaitForReturnCode(driver, "builder/compile-to-json");
   expect(msg.returncode).toEqual(0);
 
-  // Wait for build file to be downloaded --- test will timeout if this fails repeatedly
+  // Wait for build file to be downloaded
+  console.log("Wait for build file to be downloaded");
+  console.log("Build file: ", buildfile);
   while (!fs.existsSync(buildfile)) {
-    await driver.sleep(500);
+    await driver.sleep(500);  // test will timeout if this fails repeatedly
   }
   expect(fs.existsSync(buildfile)).toBeTruthy();
 
   // Unzip build file
+  console.log("Unzip build file");
   const buildfolder = path.join(__dirname, "downloads", "build");
   if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true });
   fs.mkdirSync(buildfolder);
   await unzip(buildfile, buildfolder);
 
   // Build and launch docker container; assert that workflow output file exists
+  console.log("Build and launch docker container");
   const dockerfile = path.join(buildfolder, "Dockerfile");
   expect(fs.existsSync(dockerfile)).toBeTruthy();
 
-  // Assert that the target output file does not exist
-  const target_file = path.join(buildfolder, "results", outfile);
-  console.log("target_file: ", target_file);
-  expect(fs.existsSync(target_file)).toBeFalsy();
+  // WINDOWS TEST STOPS HERE
+  //
+  // To this point the Windows test builds the docker file. However, these files will
+  // not run on the Windows platform and are instead tested on linux and macos through
+  // their respective runners.
+  //
+  // While the build process is consistent for Windows (i.e. the workflow
+  // is produced), the launch scripts have not been translated, and the Dockerfile
+  // itself relies on Docker images (notably mambaforge), that are not available for the
+  // Windows platform at this time.
+  if (is_windows) {
+    console.log("Windows platform detected: skipping container launch test...");
+  } else {
+    // Assert that the target output file does not exist
+    console.log("Assert that the target output file does not exist");
+    const target_file = path.join(buildfolder, "results", outfile);
+    console.log("target_file: ", target_file);
+    expect(fs.existsSync(target_file)).toBeFalsy();
 
-  // Launch docker and wait for process to finish
-  const { stdout, stderr } = await execPromise(
-    path.join(buildfolder, "run_docker.sh")
-  );
-  if (stdout) console.log(stdout);
-  if (stderr) console.log(stderr);
-  expect(fs.existsSync(target_file)).toBeTruthy();
+    // Launch docker and wait for process to finish
+    console.log("Launch docker and wait for process to finish");
+    const { stdout, stderr } = await execPromise(
+      path.join(buildfolder, "run_docker.sh")
+    );
+    if (stdout) console.log(stdout);
+    if (stderr) console.log(stderr);
+    console.log("Check that target file has been created");
+    expect(fs.existsSync(target_file)).toBeTruthy();
 
-  // Clean build folder (tidy-up); assert target output does not exist
-  fs.rmSync(buildfile);
-  //fs.rmSync(buildfolder, { recursive: true });
-  expect(fs.existsSync(buildfile)).toBeFalsy();
-  //expect(fs.existsSync(target_file)).toBeFalsy();
+    // Clean build folder (tidy-up); assert target output does not exist
+    fs.rmSync(buildfile);
+    fs.rmSync(buildfolder, { recursive: true });
+    expect(fs.existsSync(buildfile)).toBeFalsy();
+    expect(fs.existsSync(target_file)).toBeFalsy();
+  }
 
   console.log("<<< test Build, then launch in Docker");
 };
 
 export {
   runif,
-  runif_installed,
+  is_installed,
+  is_windows,
+  is_not_windows,
   RedirectConsoleLog,
   FlushConsoleLog,
   WaitForReturnCode,

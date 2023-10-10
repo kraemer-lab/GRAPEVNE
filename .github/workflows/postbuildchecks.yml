@@ -40,17 +40,18 @@ jobs:
           yarn build
           yarn package
       - name: install docker (MacOS)
+        shell: bash
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
             brew install docker
             colima start
           fi
-      # Enable tmate debugging of manually-triggered workflows if the input option was provided
-      - name: tmate debugging
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       - name: postbuild-tests
         working-directory: ./electron-app
         shell: bash
         run: |
           ./run_postbuild_tests.sh
+      # Enable tmate debugging of manually-triggered workflows if the input option was provided
+      - name: tmate debugging
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
