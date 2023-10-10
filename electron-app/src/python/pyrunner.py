@@ -4,6 +4,8 @@ import logging
 import os
 import sys
 import tempfile
+from zipfile import ZipFile
+from zipfile import ZipInfo
 
 import filesystem
 import snakemake
@@ -12,6 +14,7 @@ import builder
 import runner
 
 
+shell_launch = "#!/usr/bin/env bash"
 default_build_path = tempfile.gettempdir() + "/workflows/build"
 default_testbuild_path = tempfile.gettempdir() + "/workflows/testbuild"
 logfile = os.path.expanduser("~") + "/GRAPEVNE.log"
@@ -23,6 +26,134 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 logging.info("Working directory: %s", os.getcwd())
+
+
+def BuildAndRun(
+    data: dict,
+    build_path: str,
+    clean_build=True,
+    create_zip=True,
+    containerize=False,
+):
+    # First, build the workflow
+    logging.info("Building workflow")
+    js = data["content"]
+    # dump config file to disk for debug
+    # with open("workflow.json", "w") as f:
+    #     json.dump(js, f, indent=4)
+    logging.info("BuildFromJSON")
+    _, m, zipfilename = builder.BuildFromJSON(
+        js,
+        build_path=build_path,
+        clean_build=clean_build,  # clean build folder before build
+        create_zip=create_zip,  # create zip file
+    )
+    targets = data.get("targets", [])
+    target_modules = m.LookupRuleNames(targets)
+    logging.debug("target module (rulenames): %s", target_modules)
+
+    # Get list of snakemake rules, cross-reference with target_modules
+    # and select 'target' or all rules, then pass on to command
+    data_list = runner.Launch_cmd(
+        {
+            "format": data["format"],
+            "content": build_path,
+            "args": "--list",
+        },
+        terminal=False,
+    )
+    # Stringify command
+    data_list["command"] = " ".join(data_list["command"])
+    logging.info("List command: %s", data_list["command"])
+    response = runner.SnakemakeRun(
+        {
+            "format": data["format"],
+            "content": {
+                "command": data_list["command"],
+                "workdir": data_list["workdir"],
+                "capture_output": True,
+                "backend": data.get("backend", ""),
+            },
+        }
+    )
+    snakemake_list = response["stdout"].split("\n")
+    logging.debug("snakemake --list output: %s", snakemake_list)
+    target_rules = []
+    for target in target_modules:
+        if not target:
+            # No equivalent rulename found, target is (presumably) a
+            # module containing sub-modules
+            ...
+            raise NotImplementedError(
+                "Cannot determine target rulenames for module containing sub-modules"
+            )
+        target_rule = f"{target}_target"
+        if target_rule in snakemake_list:
+            # {rulename}_target appears in workflow,
+            # add rule to target list
+            target_rules.append(target_rule)
+        else:
+            # _target rule does not appear in workflow, add all rules
+            # starting with the module name to the target list
+            target_rules.extend(
+                [rulename for rulename in snakemake_list if rulename.startswith(target)]
+            )
+
+    # Second, return the launch command
+    logging.info("Generating launch command")
+    data = runner.Launch_cmd(
+        {
+            "format": data["format"],
+            "content": build_path,
+            "targets": target_rules,
+            "args": data.get("args", ""),
+        },
+        terminal=False,
+    )
+    # Stringify command
+    data["command"] = " ".join(data["command"])
+    logging.info("Launch command: %s", data["command"])
+    # Add target script to zipfile
+    if create_zip:
+        logging.info("Adding target script to zipfile")
+        # Add launch script (first, strip path from launch command)
+        launch_command = data["command"].replace(build_path + "/", "")
+        # Ensure --use-conda is set when building containers
+        if "--use-conda" not in launch_command:
+            launch_command_list = launch_command.split(" ")
+            launch_command_list.insert(1, "--use-conda")
+            launch_command = " ".join(launch_command_list)
+        # Write launch script to zip
+        with ZipFile(zipfilename, "a") as zipfile:
+            info = ZipInfo("run.sh")
+            info.external_attr = 0o0100777 << 16  # give rwx permissions
+            zipfile.writestr(info, shell_launch + "\n\n" + launch_command)
+        # Add container files to zip
+        if containerize:
+            # Read Dockerfile and launch script templates
+            with open(os.path.join(os.path.dirname(__file__), "Dockerfile"), "r") as f:
+                Dockerfile = f.read()
+            with open(
+                os.path.join(os.path.dirname(__file__), "run_docker_sh"), "r"
+            ) as f:
+                docker_launcher = f.read()
+            # Write Dockerfile and launch script to zip
+            with ZipFile(zipfilename, "a") as zipfile:
+                zipfile.writestr(
+                    "Dockerfile",
+                    Dockerfile.replace(
+                        "$(snakemake --list)",
+                        " ".join(target_rules),
+                    ),
+                )
+                info = ZipInfo("run_docker.sh")
+                info.external_attr = 0o0100777 << 16  # give rwx permissions
+                zipfile.writestr(
+                    info,
+                    docker_launcher.replace("#!/usr/bin/env bash", shell_launch),
+                )
+        data["zipfile"] = zipfilename
+    return data
 
 
 def post(request):
@@ -57,110 +188,28 @@ def post(request):
 
         # Builder queries
         elif query == "builder/compile-to-json":
-            js = data["content"]
-            # with open(default_build_path + "/workflow.json", "w") as f:  # dump config file to disk for debug
-            #     json.dump(js, f, indent=4)
-            _, _, zipfilename = builder.BuildFromJSON(
-                js,
-                build_path=default_build_path,
-            )
-            # Binary return is not used when passing the information over stdout.
-            # Instead, the zip file is read back off the disk and forwarded by
-            # electron / nodejs.
             data = {
                 "query": query,
-                "body": {
-                    "zipfile": zipfilename,
-                },
+                "body": BuildAndRun(
+                    data,
+                    default_build_path,
+                    clean_build=True,
+                    create_zip=True,
+                    containerize=True,
+                ),
+                "returncode": 0,
             }
         elif query == "builder/build-and-run":
-            # First, build the workflow
-            logging.info("Building workflow")
-            js = data["content"]
-            # with open("workflow.json", "w") as f:  # dump config file to disk for debug
-            #     json.dump(js, f, indent=4)
-            build_path = default_testbuild_path
-            logging.info("BuildFromJSON")
-            _, m, _ = builder.BuildFromJSON(
-                js,
-                build_path=build_path,
-                clean_build=False,  # Do not overwrite existing build
-                create_zip=False,
-            )
-            targets = data.get("targets", [])
-            target_modules = m.LookupRuleNames(targets)
-            logging.debug("target module (rulenames): %s", target_modules)
-
-            # Get list of snakemake rules, cross-reference with target_modules
-            # and select 'target' or all rules, then pass on to command
-            data_list = runner.Launch_cmd(
-                {
-                    "format": data["format"],
-                    "content": build_path,
-                    "args": "--list",
-                },
-                terminal=False,
-            )
-            # Stringify command
-            data_list["command"] = " ".join(data_list["command"])
-            logging.info("List command: %s", data_list["command"])
-            response = runner.SnakemakeRun(
-                {
-                    "format": data["format"],
-                    "content": {
-                        "command": data_list["command"],
-                        "workdir": data_list["workdir"],
-                        "capture_output": True,
-                        "backend": data.get("backend", ""),
-                    },
-                }
-            )
-            snakemake_list = response["stdout"].split("\n")
-            logging.debug("snakemake --list output: %s", snakemake_list)
-            target_rules = []
-            for target in target_modules:
-                if not target:
-                    # No equivalent rulename found, target is (presumably) a
-                    # module containing sub-modules
-                    ...
-                    raise NotImplementedError(
-                        "Cannot determine target rulenames for module "
-                        "containing sub-modules"
-                    )
-                target_rule = f"{target}_target"
-                if target_rule in snakemake_list:
-                    # {rulename}_target appears in workflow,
-                    # add rule to target list
-                    target_rules.append(target_rule)
-                else:
-                    # _target rule does not appear in workflow, add all rules
-                    # starting with the module name to the target list
-                    target_rules.extend(
-                        [
-                            rulename
-                            for rulename in snakemake_list
-                            if rulename.startswith(target)
-                        ]
-                    )
-
-            # Second, return the launch command
-            logging.info("Generating launch command")
-            data = runner.Launch_cmd(
-                {
-                    "format": data["format"],
-                    "content": build_path,
-                    "targets": target_rules,
-                    "args": data.get("args", ""),
-                },
-                terminal=False,
-            )
-            # Stringify command
-            data["command"] = " ".join(data["command"])
-            logging.info("Launch command: %s", data["command"])
-            # Return the launch command
             data = {
                 "query": query,
-                "body": data,
+                "body": BuildAndRun(
+                    data,
+                    default_testbuild_path,
+                    clean_build=False,
+                    create_zip=False,
+                    containerize=False,
+                ),
+                "returncode": 0,
             }
         elif query == "builder/clean-build-folder":
             data = {

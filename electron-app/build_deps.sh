@@ -28,7 +28,9 @@ python -m PyInstaller src/python/pyrunner.py \
     --hidden-import smart_open.http \
     --hidden-import smart_open.s3 \
     --hidden-import smart_open.ssh \
-    --hidden-import smart_open.webhdfs
+    --hidden-import smart_open.webhdfs \
+    --add-data "src/python/Dockerfile:." \
+    --add-data "src/python/run_docker_sh:."
 
 # Check for presence of yarn
 if ! command -v yarn &> /dev/null

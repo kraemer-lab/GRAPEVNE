@@ -39,6 +39,14 @@ const Layer = styled.div`
   flex-grow: 1;
 `;
 
+/**
+ * Main display body for the Builder application.
+ *
+ * Divides the main display into three sections:
+ * 1. Left (repository browser)
+ * 2. Central (workflow graph)
+ * 3. Right (configuration pane)
+ */
 export const BodyWidget = (props: BodyWidgetProps) => {
   const configPaneOpen = useAppSelector(
     (state) => state.builder.config_pane_display

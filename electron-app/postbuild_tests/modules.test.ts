@@ -6,32 +6,38 @@ import * as chrome from "selenium-webdriver/chrome";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
 
+import { runif } from "./utils";
+import { is_installed } from "./utils";
+import { is_not_windows } from "./utils";
 import { DragAndDrop } from "./utils";
 import { FlushConsoleLog } from "./utils";
 import { RedirectConsoleLog } from "./utils";
 import { WaitForReturnCode } from "./utils";
-import { BuildAndRunSingleModuleWorkflow } from "./utils";
+import { BuildAndRun_SingleModuleWorkflow } from "./utils";
+import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
 
 const ONE_SEC = 1000;
 const TEN_SECS = 10 * ONE_SEC;
 const ONE_MINUTE = 60 * ONE_SEC;
 
-const wranglename = (name: string) => {
-  // Wrangle name to remove spaces and special characters
-  return name.replace(/ /g, "_").replace(/\(/g, "_").replace(/\)/g, "_");
-};
-
+/*
+ * Note: These tests chain together, so they must be run in order.
+ */
 describe("modules", () => {
   let driver: webdriver.ThenableWebDriver;
 
   beforeAll(async () => {
     console.log("::: beforeAll");
+
+    // Start webdriver
     const options = new chrome.Options();
     options.debuggerAddress("localhost:9515");
     driver = new webdriver.Builder()
       .forBrowser("chrome", "116")
       .setChromeOptions(options)
       .build();
+    console.log("Webdriver started.");
+
     await RedirectConsoleLog(driver);
     console.log("<<< beforeAll");
   }, ONE_MINUTE);
@@ -113,57 +119,89 @@ describe("modules", () => {
 
   test.each([
     [
-      wranglename("(single_modules) copy shell"),
+      "(single_modules) copy shell",
       path.join("single_modules_copy_shell", "data.csv"),
     ],
     [
-      wranglename("(single_modules) copy run"),
+      "(single_modules) copy run",
       path.join("single_modules_copy_run", "data.csv"),
     ],
   ])(
     "Build and Test the workflow: module '%s'",
     async (modulename, outfile) => {
-      await BuildAndRunSingleModuleWorkflow(driver, modulename, outfile);
+      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
     },
     5 * ONE_MINUTE
   ); // long timeout
 
-  test("Set snakemake arguments list to use conda", async () => {
-    console.log("::: test Set snakemake arguments list to use conda");
-    // Open settings pane
-    await driver.findElement(By.id("btnBuilderSettings")).click();
+  runif(is_installed(["mamba", "conda"], "any"))(
+    "Set snakemake arguments list to use conda",
+    async () => {
+      console.log("::: test Set snakemake arguments list to use conda");
+      // Open settings pane
+      await driver.findElement(By.id("btnBuilderSettings")).click();
 
-    // Set snakemake command line arguments
-    const args = await driver.findElement(
-      webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
-    );
-    await args.clear();
-    await args.sendKeys("--cores 1 --use-conda");
-
-    // Set conda environment path --- passthrough from test environment
-    if (process.env.CONDA_PATH != undefined) {
+      // Set snakemake command line arguments
       const args = await driver.findElement(
-        webdriver.By.id("inputBuilderSettingsEnvironmentVars")
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
       );
       await args.clear();
-      await args.sendKeys(`PATH=${process.env.CONDA_PATH}`);
+      await args.sendKeys("--cores 1 --use-conda");
+
+      // Set conda environment path --- passthrough from test environment
+      if (process.env.CONDA_PATH != undefined) {
+        const args = await driver.findElement(
+          webdriver.By.id("inputBuilderSettingsEnvironmentVars")
+        );
+        await args.clear();
+        await args.sendKeys(`PATH=${process.env.CONDA_PATH}`);
+      }
+
+      // Close settings pane
+      await driver.findElement(By.id("btnBuilderSettings")).click();
+      console.log("<<< test Set snakemake arguments list to use conda");
     }
+  );
 
-    // Close settings pane
-    await driver.findElement(By.id("btnBuilderSettings")).click();
-    console.log("<<< test Set snakemake arguments list to use conda");
-  });
-
-  test.each([
-    [
-      wranglename("(single_modules) conda"),
-      path.join("single_modules_conda", "data.csv"),
-    ],
+  // Basic workflow tests (those that do not require conda)
+  test.skip.each([
+    // placeholder (empty and skipped at present)
+    ["PLACEHOLDER", ""],
   ])(
     "Build and Test the workflow: module '%s'",
     async (modulename, outfile) => {
-      await BuildAndRunSingleModuleWorkflow(driver, modulename, outfile);
+      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
     },
     10 * ONE_MINUTE
+  ); // long timeout
+
+  // Conda tests
+  runif(is_installed(["mamba", "conda"], "any")).each([
+    ["(single_modules) conda", path.join("single_modules_conda", "data.csv")],
+  ])(
+    "Build and Test the conda workflow: module '%s'",
+    async (modulename, outfile) => {
+      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
+    },
+    10 * ONE_MINUTE
+  ); // long timeout
+
+  // Container tests
+  runif(is_installed(["docker"])).each([
+    [
+      // NOTE: This test relies on the remote module jsbrittain/snakeshack (Utilty) touch
+      "(single_modules) container_touch",
+      path.join("utility_touch", "data.csv"),
+    ],
+  ])(
+    "Build, extract zip, run in Docker: module '%s'",
+    async (modulename, outfile) => {
+      await Build_RunWithDocker_SingleModuleWorkflow(
+        driver,
+        modulename,
+        outfile
+      );
+    },
+    20 * ONE_MINUTE
   ); // long timeout
 });

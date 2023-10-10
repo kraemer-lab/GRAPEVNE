@@ -32,7 +32,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
       }
       switch (action.type) {
         case "builder/compile-to-json":
-          CompileToJSON();
+          CompileToJSON(
+            dispatch,
+            getState().builder.snakemake_args,
+            getState().builder.snakemake_backend,
+            getState().builder.conda_backend,
+            getState().builder.environment_variables
+          );
           break;
 
         case "builder/build-and-run":
@@ -149,13 +155,25 @@ interface IPayloadBool {
 }
 type TPayloadBool = (action: IPayloadBool) => void;
 
-const CompileToJSON = async () => {
+const CompileToJSON = async (
+  dispatchString: TPayloadString,
+  snakemake_args: string,
+  snakemake_backend: string,
+  conda_backend: string,
+  environment_variables: string
+) => {
+  dispatchString(builderUpdateStatusText("Building workflow..."));
   const app = BuilderEngine.Instance;
   const query: Query = {
     query: "builder/compile-to-json",
     data: {
       format: "Snakefile",
       content: app.GetModuleListJSON(),
+      targets: app.GetLeafNodeNames(),
+      args: snakemake_args,
+      backend: snakemake_backend,
+      conda_backend: conda_backend,
+      environment_variables: environment_variables,
     },
   };
   const callback = (result) => {
@@ -171,6 +189,12 @@ const CompileToJSON = async () => {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+    // Report success (this should be returned by the backend, but that is currently
+    // set-up to return the [binary] zip file); console.logs are important for
+    // post-build tests
+    console.log({ query: query["query"], returncode: 0 });
+    // Update status
+    dispatchString(builderUpdateStatusText(" ")); // Idle
   };
   switch (backend as string) {
     case "rest":
@@ -213,6 +237,7 @@ const BuildAndRun = async (
     if (content["returncode"] !== 0) {
       // Report error
       dispatchString(builderUpdateStatusText("Workflow run FAILED."));
+      return;
     }
     dispatchString(builderUpdateStatusText(" ")); // Idle
   };

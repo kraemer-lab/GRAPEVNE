@@ -55,6 +55,16 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
   event.preventDefault();
 };
 
+/**
+ * Canvas display area for the Builder application.
+ *
+ * This is the main display area for the Builder application. It contains
+ * the workflow graph and the configuration pane.
+ *
+ * Elements:
+ * 1. Canvas (contains the workflow graph)
+ * 2. Panel group (tabbed panel group for e.g. log display)
+ */
 const Canvas = (props: CanvasProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
   const repo = JSON.parse(useAppSelector((state) => state.builder.repo));

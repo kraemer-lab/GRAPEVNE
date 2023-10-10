@@ -44,19 +44,16 @@ const Header = () => {
   // Run - build and run the workflow
   const btnRun = () => {
     dispatch(builderBuildAndRun());
-    dispatch(builderOpenTerminal());
   };
 
   // Clean build folder
   const btnCleanBuildFolder = () => {
     dispatch(builderCleanBuildFolder());
-    dispatch(builderOpenTerminal());
   };
 
   // Build - compile config to workflow zip and download
   const btnBuild = () => {
     dispatch(builderCompileToJson());
-    dispatch(builderOpenTerminal());
   };
 
   // Distribute model (visual)
