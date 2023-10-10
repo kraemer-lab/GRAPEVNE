@@ -16,7 +16,7 @@ fastjsonschema==2.16.3
 Flask==2.2.5
 Flask-Cors==3.0.10
 gitdb==4.0.10
-GitPython==3.1.35
+GitPython==3.1.37
 humanfriendly==10.0
 idna==3.4
 importlib-metadata==6.8.0
