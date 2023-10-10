@@ -39,6 +39,12 @@ jobs:
           yarn
           yarn build
           yarn package
+      - name: install docker (MacOS)
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            brew install docker
+            colima start
+          fi
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       - name: tmate debugging
         uses: mxschmitt/action-tmate@v3
