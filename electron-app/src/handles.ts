@@ -65,7 +65,17 @@ export async function builder_GetRemoteModuleConfig(
   return config;
 }
 
-export async function builder_CompileToJson(event: Event, query: Query) {
+export async function builder_BuildAsModule(event: Event, query: Query) {
+  // Note: Instead of returning the zip file as a base64 string from Python
+  //       (as was the procedure in the REST implementation), we instead rely
+  //       on Python saving the zip file to disk, then reading it back in.
+  const data = await ProcessQuery(event, query);
+  return fs.readFileSync((data["body"] as Query)["zipfile"] as string, {
+    encoding: "base64",
+  });
+}
+
+export async function builder_BuildAsWorkflow(event: Event, query: Query) {
   // Note: Instead of returning the zip file as a base64 string from Python
   //       (as was the procedure in the REST implementation), we instead rely
   //       on Python saving the zip file to disk, then reading it back in.

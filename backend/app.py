@@ -30,7 +30,18 @@ def post():
             }
 
         # Builder queries
-        elif request.json["query"] == "builder/compile-to-json":
+        elif request.json["query"] == "builder/build-as-module":
+            data = request.json["data"]
+            js = json.loads(data["content"])
+            with open("workflow.json", "w") as f:  # dump config file to disk for debug
+                json.dump(js, f, indent=4)
+            memory_zip, _ = builder.BuildFromJSON(js)
+            return Response(
+                base64.b64encode(memory_zip),
+                mimetype="application/zip",
+                headers={"Content-Disposition": "attachment;filename=workflow.zip"},
+            )
+        elif request.json["query"] == "builder/build-as-workflow":
             data = request.json["data"]
             js = json.loads(data["content"])
             with open("workflow.json", "w") as f:  # dump config file to disk for debug

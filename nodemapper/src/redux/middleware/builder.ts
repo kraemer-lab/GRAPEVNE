@@ -8,7 +8,8 @@ import { DefaultNodeModel } from "NodeMap";
 
 import { builderRedraw } from "redux/actions";
 import { builderLogEvent } from "redux/actions";
-import { builderCompileToJson } from "redux/actions";
+import { builderBuildAsModule } from "redux/actions";
+import { builderBuildAsWorkflow } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
@@ -31,13 +32,27 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         console.log("Middleware [builder]: ", action);
       }
       switch (action.type) {
-        case "builder/compile-to-json":
-          CompileToJSON(
+        case "builder/build-as-module":
+          BuildAs(
+            "builder/build-as-module",
+            builderAPI.BuildAsModule,
             dispatch,
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables
+            getState().builder.environment_variables,
+          );
+          break;
+        
+        case "builder/build-as-workflow":
+          BuildAs(
+            "builder/build-as-workflow",
+            builderAPI.BuildAsWorkflow,
+            dispatch,
+            getState().builder.snakemake_args,
+            getState().builder.snakemake_backend,
+            getState().builder.conda_backend,
+            getState().builder.environment_variables,
           );
           break;
 
@@ -155,17 +170,19 @@ interface IPayloadBool {
 }
 type TPayloadBool = (action: IPayloadBool) => void;
 
-const CompileToJSON = async (
+const BuildAs = async (
+  query_name: string,
+  builder_api_fcn: (query: Query) => Promise<Query>,
   dispatchString: TPayloadString,
   snakemake_args: string,
   snakemake_backend: string,
   conda_backend: string,
-  environment_variables: string
+  environment_variables: string,
 ) => {
   dispatchString(builderUpdateStatusText("Building workflow..."));
   const app = BuilderEngine.Instance;
   const query: Query = {
-    query: "builder/compile-to-json",
+    query: query_name,
     data: {
       format: "Snakefile",
       content: app.GetModuleListJSON(),
@@ -202,7 +219,7 @@ const CompileToJSON = async (
       SubmitQueryExpectZip(query, callback);
       break;
     case "electron":
-      callback(await builderAPI.CompileToJson(query));
+      callback(await builder_api_fcn(query));
       break;
     default:
       console.error("Unknown backend: ", backend);

@@ -34,7 +34,10 @@ def BuildAndRun(
     clean_build=True,
     create_zip=True,
     containerize=False,
+    create_launch_script=False,
 ):
+    # Validate inputs
+    create_launch_script |= containerize
     # First, build the workflow
     logging.info("Building workflow")
     js = data["content"]
@@ -115,43 +118,44 @@ def BuildAndRun(
     logging.info("Launch command: %s", data["command"])
     # Add target script to zipfile
     if create_zip:
-        logging.info("Adding target script to zipfile")
-        # Add launch script (first, strip path from launch command)
-        launch_command = data["command"].replace(build_path + "/", "")
-        # Ensure --use-conda is set when building containers
-        if "--use-conda" not in launch_command:
-            launch_command_list = launch_command.split(" ")
-            launch_command_list.insert(1, "--use-conda")
-            launch_command = " ".join(launch_command_list)
-        # Write launch script to zip
-        with ZipFile(zipfilename, "a") as zipfile:
-            info = ZipInfo("run.sh")
-            info.external_attr = 0o0100777 << 16  # give rwx permissions
-            zipfile.writestr(info, shell_launch + "\n\n" + launch_command)
-        # Add container files to zip
-        if containerize:
-            # Read Dockerfile and launch script templates
-            with open(os.path.join(os.path.dirname(__file__), "Dockerfile"), "r") as f:
-                Dockerfile = f.read()
-            with open(
-                os.path.join(os.path.dirname(__file__), "run_docker_sh"), "r"
-            ) as f:
-                docker_launcher = f.read()
-            # Write Dockerfile and launch script to zip
+        if create_launch_script:
+            logging.info("Adding target script to zipfile")
+            # Add launch script (first, strip path from launch command)
+            launch_command = data["command"].replace(build_path + "/", "")
+            # Ensure --use-conda is set when building containers
+            if "--use-conda" not in launch_command:
+                launch_command_list = launch_command.split(" ")
+                launch_command_list.insert(1, "--use-conda")
+                launch_command = " ".join(launch_command_list)
+            # Write launch script to zip
             with ZipFile(zipfilename, "a") as zipfile:
-                zipfile.writestr(
-                    "Dockerfile",
-                    Dockerfile.replace(
-                        "$(snakemake --list)",
-                        " ".join(target_rules),
-                    ),
-                )
-                info = ZipInfo("run_docker.sh")
+                info = ZipInfo("run.sh")
                 info.external_attr = 0o0100777 << 16  # give rwx permissions
-                zipfile.writestr(
-                    info,
-                    docker_launcher.replace("#!/usr/bin/env bash", shell_launch),
-                )
+                zipfile.writestr(info, shell_launch + "\n\n" + launch_command)
+            # Add container files to zip
+            if containerize:
+                # Read Dockerfile and launch script templates
+                with open(os.path.join(os.path.dirname(__file__), "Dockerfile"), "r") as f:
+                    Dockerfile = f.read()
+                with open(
+                    os.path.join(os.path.dirname(__file__), "run_docker_sh"), "r"
+                ) as f:
+                    docker_launcher = f.read()
+                # Write Dockerfile and launch script to zip
+                with ZipFile(zipfilename, "a") as zipfile:
+                    zipfile.writestr(
+                        "Dockerfile",
+                        Dockerfile.replace(
+                            "$(snakemake --list)",
+                            " ".join(target_rules),
+                        ),
+                    )
+                    info = ZipInfo("run_docker.sh")
+                    info.external_attr = 0o0100777 << 16  # give rwx permissions
+                    zipfile.writestr(
+                        info,
+                        docker_launcher.replace("#!/usr/bin/env bash", shell_launch),
+                    )
         data["zipfile"] = zipfilename
     return data
 
@@ -187,7 +191,19 @@ def post(request):
             }
 
         # Builder queries
-        elif query == "builder/compile-to-json":
+        elif query == "builder/build-as-module":
+            data = {
+                "query": query,
+                "body": BuildAndRun(
+                    data,
+                    default_build_path,
+                    clean_build=True,
+                    create_zip=True,
+                    containerize=False,
+                ),
+                "returncode": 0,
+            }
+        elif query == "builder/build-as-workflow":
             data = {
                 "query": query,
                 "body": BuildAndRun(

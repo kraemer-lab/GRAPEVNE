@@ -12,7 +12,9 @@ export const builderToggleAutoValidateConnections = createAction(
   "builder/toggle-auto-validate-connections"
 );
 
-export const builderCompileToJson = createAction("builder/compile-to-json");
+export const builderBuildAsModule = createAction("builder/build-as-module");
+
+export const builderBuildAsWorkflow = createAction("builder/build-as-workflow");
 
 export const builderOpenTerminal = createAction("builder/open-terminal");
 

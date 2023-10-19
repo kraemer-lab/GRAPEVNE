@@ -12,7 +12,8 @@ import { builderSaveNodemap } from "redux/actions";
 import { builderImportModule } from "redux/actions";
 import { builderBuildAndRun } from "redux/actions";
 import { builderOpenTerminal } from "redux/actions";
-import { builderCompileToJson } from "redux/actions";
+import { builderBuildAsModule } from "redux/actions";
+import { builderBuildAsWorkflow } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderCleanBuildFolder } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
@@ -51,9 +52,14 @@ const Header = () => {
     dispatch(builderCleanBuildFolder());
   };
 
-  // Build - compile config to workflow zip and download
-  const btnBuild = () => {
-    dispatch(builderCompileToJson());
+  // Build as module
+  const btnBuildAsModule = () => {
+    dispatch(builderBuildAsModule());
+  };
+  
+  // Build as workflow
+  const btnBuildAsWorkflow = () => {
+    dispatch(builderBuildAsWorkflow());
   };
 
   // Distribute model (visual)
@@ -107,7 +113,7 @@ const Header = () => {
         */}
         GRAPEVNE
         <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
-          BUILD AND TEST
+          TEST BUILD
         </button>
         <button
           id="btnBuilderCleanBuildFolder"
@@ -116,8 +122,19 @@ const Header = () => {
         >
           DELETE TEST BUILD
         </button>
-        <button id="btnBuilderBuildAndZip" className="btn" onClick={btnBuild}>
-          BUILD / ZIP
+        <button
+          id="btnBuilderBuildAsModule"
+          className="btn"
+          onClick={btnBuildAsModule}
+        >
+          BUILD AS MODULE
+        </button>
+        <button
+          id="btnBuilderBuildAsWorkflow"
+          className="btn"
+          onClick={btnBuildAsWorkflow}
+        >
+          BUILD AS WORKFLOW
         </button>
         |
         <button
