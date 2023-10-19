@@ -68,6 +68,6 @@ throttler==1.2.2
 toposort==1.10
 traitlets==5.9.0
 typing_extensions==4.7.1
-urllib3==1.26.17
+urllib3==1.26.18
 wrapt==1.15.0
 yte==1.5.1
