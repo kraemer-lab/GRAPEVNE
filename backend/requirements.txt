@@ -60,7 +60,7 @@ types-Jinja2==2.11.9
 types-MarkupSafe==1.1.10
 types-Werkzeug==1.0.9
 urllib3==1.26.18
-Werkzeug==2.2.3
+Werkzeug==3.0.1
 wrapt==1.15.0
 yte==1.5.1
 zipp==3.16.2
