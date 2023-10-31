@@ -2527,10 +2527,10 @@ eastasianwidth@^0.2.0:
   resolved "https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz#696ce2ec0aa0e6ea93a397ffcf24aa7840c827cb"
   integrity sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==
 
-electron-chromedriver@^26.2.4:
-  version "26.3.0"
-  resolved "https://registry.yarnpkg.com/electron-chromedriver/-/electron-chromedriver-26.3.0.tgz#e92a46b46fcfc80887fa7f34399de7dcce506502"
-  integrity sha512-5pxxe6hk9Xa+FhgV8M7QnBTIJKd8KVS+ayxA9cNJP8rC54F6vU8ZDW4aoSl1xVo1ZyHKKKtit/nmyVlhurtgqA==
+electron-chromedriver@27:
+  version "27.0.2"
+  resolved "https://registry.yarnpkg.com/electron-chromedriver/-/electron-chromedriver-27.0.2.tgz#d5dee0cc0ba4b8314fee7f6c7a4297611f75f1b9"
+  integrity sha512-t0DmKyfM94FZL3ZrgJDpVFPym4UDL7myenw6fhAV9oziX+f6mj0fvZKWYy27xhFOprGszAJ6UhjEAUw5ZwsChQ==
   dependencies:
     "@electron/get" "^2.0.1"
     extract-zip "^2.0.0"
@@ -2627,10 +2627,10 @@ electron-winstaller@^5.0.0:
     lodash.template "^4.2.2"
     temp "^0.9.0"
 
-electron@26:
-  version "26.3.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-26.3.0.tgz#3267773d170310384db76819cf6375bd98b3cc76"
-  integrity sha512-7ZpvSHu+jmqialSvywTZnOQZZGLqlyj+yV5HGDrEzFnMiFaXBRpbByHgoUhaExJ/8t/0xKQjKlMRAY65w+zNZQ==
+electron@27:
+  version "27.0.2"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-27.0.2.tgz#5465475e4e5c4de7371dc06e1872b46265a340f0"
+  integrity sha512-4fbcHQ40ZDlqhr5Pamm+M5BF7ry2lGqjFTWTJ/mrBwuiPWu6xhV/RWgUhKBaLqKNfAaNl3eMxV3Jc82gv6JauQ==
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^18.11.18"
