@@ -70,5 +70,14 @@ cd GRAPEVNE
 ./build.sh
 ```
 
+```{note}
+On modern MacOS machines with M1/M2 processors you will likely need to install the
+following additional dependencies in order to allow `node-canvas` to compile. These can
+be installed via homebrew:
+`brew install pkg-config pixman cairo glib pango`
+or conda:
+`conda install pkg-config pixman cairo glib pango`
+```
+
 This will generate the GRAPEVNE Builder app for your system, located in
 an appropriately named subfolder of `electron-app/out`.
