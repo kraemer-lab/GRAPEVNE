@@ -106,26 +106,38 @@ in this, GRAPEVNE provides a `Build and Test` button (at the top of the screen)
 that will first build the workflow file(s), and then execute them in a reserved
 directory.
 
+Before we run our workflow you will need to tell `snakemake` to make use of `conda`
+environments - these are preconfigured as part of our modules, but we need to tell
+`snakemake` to use them (as opposed to running natively, through `singularity`
+containers, or even in the cloud). To do this, click on `Settings`, then ensure that
+`Snakemake` - `arguments` says:
+```
+--cores 1 --use-conda --force
+```
+- `--cores 1` indicates that we are using one CPU core (we can specify more to process
+our pipeline branches in parallel)
+- `--use-conda` tells `snakemake` to make use of `conda` environments (these can be
+turned off, or replaced with `singularity` containers, depending on the environment in
+which we run our workflows).
+- `--force` forces snakemake to re-run the full workflow, even if all of the output files
+are already present. We don't generally use this, but for the tutorial it is useful as
+it recreates the diagram each time we click `Build & Run`.
+
 ```{note}
 We are about to run a workflow, but as this is the first time the workflow has
 run on your computer, it first needs to download the environment files, set-up
 its runtime environment, and then launch the various steps of your workflow.
 This can take a few minutes on a first run (but is very much quicker after that).
-In order to keep an eye on progress during the build process, we recommend that
-you click on the `Terminal` button at the top of the screen, which will open
-a command prompt / terminal at the bottom of the screen so that you can monitor
-progress. This is a fully functioning terminal and we will make use of it later
-to demonstrate some other features by manually changing some files.
 ```
 
-Try this now: click `Build and Test`. Remember to open the `Terminal` in order
+Try this now: click `Build and Test` and keep an eye on the `Log`
 to monitor progress. This is the perfect time to grab a fresh cup of tea while
-the environment loads - we will discuss why this takes so long shortly...
+the environment loads...
 
 ## Your first graph
 
-You can monitor the status of your workflow from the `Terminal`, but if all
-goes well then you should see a figure pop-up onto your screed displaying
+You can monitor the status of your workflow from the `Log`, but if all
+goes well then you should see a figure pop-up onto your screen displaying
 the number of new Covid-19 cases that were reported to the WHO over an extended
 period of time. Since this plot is being displayed as part of the `Plot` module,
 the workflow will pause at this point until you close the figure. Do this now.
@@ -193,23 +205,20 @@ Although this extends slightly beyond the basic usage of GRAPEVNE, it is useful
 to consider two scenarios where we may want to build a workflow and distribute
 it. The first is building the workflow for others to use, outside of GRAPEVNE.
 
-Once you are happy with your workflow you can click `Clean Build`. This will
+Once you are happy with your workflow you can click `Build as Workflow`. This will
 produce a zip file containing a Snakefile (the default Snakemake workflow
-format), and the accompanying configuration files to allow your workflow to be
+format), and the accompanying configuration files that to allow your workflow to be
 run outside of GRAPEVNE.
 
 For example, to run your newly created workflow called `build.zip` outside of
-GRAPEVNE, simply unzip it, move into the `build` folder and type:
+GRAPEVNE, simply unzip it, move into the `build` folder launch the workflow by typing
+`./run.sh` (.
 
-```
-snakemake --cores 1 $(snakemake --list)
-```
-
-in the terminal (or command prompt). This will launch the same series of steps
-as you executed with the `Build and Test` button, but without needing the
-GRAPEVNE application. These can therefore be run locally, or remotely, as
-required and demonstrates another principal of GRAPEVNE: that workflows remains
-entirely compatible with modern Snakemake.
+This will launch the same series of steps
+as the `Build and Test` button, but without needing the
+GRAPEVNE application.  There is also a `./run_docker.sh` script for launching a `docker`
+container that will pre-configure itself before launchign your workflow. These can be
+run locally, or remotely, as required.
 
 ## Building workflows for use as modules
 
@@ -219,6 +228,9 @@ make module from existing modules. Thankfully this is incredibly straightforward
 since there are no special requirements to build a workflow for use as a module.
 In other words, any workflow build that you create can be imported and used as
 a module (so long as the graph is _valid_, more on this in a future tutorial).
+Clicking `Build as Module` creates a module, which is identical to the `Build as Workflow`
+button, except that we do not include the launch scripts `run.sh` and `run_docker.sh`,
+as modules are not intended to be launched independently.
 Once you build the module and unzip it, GRAPEVNE is able to read the
 configuration file and load the module ready for use. If all of the workflows
 input ports were connected then the resulting module will have no input ports
