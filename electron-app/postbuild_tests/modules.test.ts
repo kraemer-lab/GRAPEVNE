@@ -33,7 +33,7 @@ describe("modules", () => {
     const options = new chrome.Options();
     options.debuggerAddress("localhost:9515");
     driver = new webdriver.Builder()
-      .forBrowser("chrome", "116")
+      .forBrowser("chrome", "118")
       .setChromeOptions(options)
       .build();
     console.log("Webdriver started.");
