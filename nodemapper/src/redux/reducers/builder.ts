@@ -55,7 +55,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderSaveNodemap, (state, action) => {
       console.info("[Reducer] " + action.type);
     })
-    .addCase(actions.builderCompileToJson, (state, action) => {
+    .addCase(actions.builderBuildAsModule, (state, action) => {
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderBuildAsWorkflow, (state, action) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderRedraw, (state, action) => {

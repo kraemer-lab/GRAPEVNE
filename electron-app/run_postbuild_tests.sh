@@ -19,7 +19,7 @@ if [[ "$RUNNER_OS" == "Windows" ]]; then
     cd /c/Users/runneradmin/electron-app
     echo "Launching GRAPEVNE in the background and in debug mode"
     DOWNLOADPATH="${PWD}/postbuild_tests/downloads"
-    echo $DOWNLOADPATH
+    echo "$DOWNLOADPATH"
     ./out/"${PKG}"/GRAPEVNE.exe --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" &
 elif [[ "$RUNNER_OS" == "Linux" ]]; then
     export DISPLAY=:99

@@ -19,8 +19,10 @@ contextBridge.exposeInMainWorld("displayAPI", {
 });
 
 contextBridge.exposeInMainWorld("builderAPI", {
-  CompileToJson: (query: Query) =>
-    ipcRenderer.invoke("builder/compile-to-json", query),
+  BuildAsModule: (query: Query) =>
+    ipcRenderer.invoke("builder/build-as-module", query),
+  BuildAsWorkflow: (query: Query) =>
+    ipcRenderer.invoke("builder/build-as-workflow", query),
   BuildAndRun: (query: Query) =>
     ipcRenderer.invoke("builder/build-and-run", query),
   CleanBuildFolder: (query: Query) =>

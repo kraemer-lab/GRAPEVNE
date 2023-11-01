@@ -26,7 +26,7 @@ const createWindow = () => {
   if (downloadpath) {
     const ses = win.webContents.session;
     // eslint-disable-next-line no-unused-vars
-    ses.on("will-download", (event, item, webContents) => {
+    ses.on("will-download", (event, item) => {
       // Set the save path, which bypasses the save dialog
       item.setSavePath(path.join(downloadpath, item.getFilename()));
     });
@@ -104,7 +104,8 @@ app.whenReady().then(() => {
     "builder/get-remote-module-config",
     handles.builder_GetRemoteModuleConfig
   );
-  ipcMain.handle("builder/compile-to-json", handles.builder_CompileToJson);
+  ipcMain.handle("builder/build-as-module", handles.builder_BuildAsModule);
+  ipcMain.handle("builder/build-as-workflow", handles.builder_BuildAsWorkflow);
   ipcMain.handle("builder/build-and-run", (event, data) =>
     handles.builder_BuildAndRun(
       event,

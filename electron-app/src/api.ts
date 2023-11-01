@@ -11,7 +11,8 @@ export type DisplayAPI = {
 };
 
 export type BuilderAPI = {
-  CompileToJson: (query: Query) => Promise<Query>;
+  BuildAsModule: (query: Query) => Promise<Query>;
+  BuildAsWorkflow: (query: Query) => Promise<Query>;
   BuildAndRun: (query: Query) => Promise<Query>;
   CleanBuildFolder: (query: Query) => Promise<Query>;
   GetRemoteModules: (query: Query) => Promise<Query>;

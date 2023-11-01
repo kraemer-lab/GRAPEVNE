@@ -261,8 +261,8 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
 
   // Build, outputs zip-file
   console.log("Build, outputs zip-file");
-  await driver.findElement(By.id("btnBuilderBuildAndZip")).click();
-  const msg = await WaitForReturnCode(driver, "builder/compile-to-json");
+  await driver.findElement(By.id("btnBuilderBuildAsWorkflow")).click();
+  const msg = await WaitForReturnCode(driver, "builder/build-as-workflow");
   expect(msg.returncode).toEqual(0);
 
   // Wait for build file to be downloaded
