@@ -27,6 +27,11 @@ interface DocStringProps {
 }
 
 const DocString = (props: DocStringProps) => {
+  /*
+   * Docstring rendering
+   * 
+   * Apply custom styling to docstring
+   */
   return(
     <div
       className="docstring"
@@ -80,7 +85,7 @@ const NodeInfo = (props: NodeInfoProps) => {
               <Panel
                 className={styles.Panel}
                 order={0}
-                defaultSize={50}
+                defaultSize={40}
                 collapsible={true}
                 style={{
                   overflowY: "auto",

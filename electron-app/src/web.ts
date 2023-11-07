@@ -130,8 +130,20 @@ const ParseDocstring = (snakefile: string): string => {
   return docstring;
 }
 
-const GetModulesList = async (url: Record<string, unknown>) => {
-  console.log("GetModulesList: ", url);
+const GetModulesList = async (
+  url: Record<string, unknown> | Record<string, unknown>[]
+): Promise<Array<Record<string, unknown>>> => {
+  // Process multiple urls if input is an array
+  if (Array.isArray(url)) {
+    console.log("GetModulesList (parsing repository list): ", url);
+    const modules = [];
+    for (const u of url) {
+      modules.push(await GetModulesList(u));
+    }
+    return modules.flat();
+  }
+  // Process single url if input is a dict
+  console.log("GetModulesList (loading modules from repository): ", url);
   switch (url["type"]) {
     case "github":
       return GetRemoteModulesGithub(
