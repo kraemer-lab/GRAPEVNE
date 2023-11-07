@@ -122,15 +122,24 @@ containers, or even in the cloud). To do this, click on `Settings`, then ensure 
   turned off, or replaced with `singularity` containers, depending on the environment in
   which we run our workflows).
 - `--force` forces snakemake to re-run the full workflow, even if all of the output files
-  are already present. We don't generally use this, but for the tutorial it is useful as
+  are already present. You won't typically use this, but for the tutorial it is useful as
   it recreates the diagram each time we click `Build & Run`.
 
 ```{note}
+The software packages that we use and specify in our `conda` environments are
+available on a range of different platforms. However, it seems as
+though some of the software that we depend on has not yet been built for the latest
+Apple Mac hardware. Specifically, if you are using an Apple Silicon device (those with
+'M'-series chips), and are having problems running the tutorial, then try adding
+`CONDA_SUBDIR=osx-64` to the snakemake arguments list (as described above). This will
+force conda to use the Mac Intel-chip builds on your computer - these should run fine,
+although may not be as performant as native code.
+```
+
 We are about to run a workflow, but as this is the first time the workflow has
 run on your computer, it first needs to download the environment files, set-up
 its runtime environment, and then launch the various steps of your workflow.
 This can take a few minutes on a first run (but is very much quicker after that).
-```
 
 Try this now: click `Build and Test` and keep an eye on the `Log`
 to monitor progress. This is the perfect time to grab a fresh cup of tea while
