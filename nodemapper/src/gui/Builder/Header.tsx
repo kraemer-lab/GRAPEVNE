@@ -55,7 +55,7 @@ const Header = () => {
   const btnBuildAsModule = () => {
     dispatch(builderBuildAsModule());
   };
-  
+
   // Build as workflow
   const btnBuildAsWorkflow = () => {
     dispatch(builderBuildAsWorkflow());

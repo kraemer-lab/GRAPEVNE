@@ -10,10 +10,13 @@ const GetModuleConfig = async (
   snakefile: Record<string, unknown> | string
 ) => {
   /* Returns both the config file, and the workflow docstring, if it exists */
-  const config = await GetModuleConfigFile(repo, snakefile) as Record<string, unknown>;
-  config["docstring"] = await GetModuleDocstring(repo, snakefile) as string;
+  const config = (await GetModuleConfigFile(repo, snakefile)) as Record<
+    string,
+    unknown
+  >;
+  config["docstring"] = (await GetModuleDocstring(repo, snakefile)) as string;
   return config;
-}
+};
 
 const GetModuleConfigFile = async (
   repo: Record<string, unknown>,
@@ -125,10 +128,10 @@ const ParseDocstring = (snakefile: string): string => {
     if (line === '"""') {
       break;
     }
-    docstring += '\n' + line;
+    docstring += "\n" + line;
   }
   return docstring;
-}
+};
 
 const GetModulesList = async (
   url: Record<string, unknown> | Record<string, unknown>[]

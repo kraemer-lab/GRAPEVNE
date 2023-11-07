@@ -111,13 +111,14 @@ const Canvas = (props: CanvasProps) => {
       // Module was not provided with a configuration - attempt to load now
       dispatch(builderUpdateStatusText(`Loading module ${module_name}...`));
       // Get repository details from module
-      const repo = {}
+      const repo = {};
       if (typeof workflow["snakefile"] === "string") {
-        repo["type"] = "local"
-        repo["repo"] = workflow["snakefile"]
-      } else {  // TODO: Assumes github directory listing (not compatible with branch listing)
-        repo["type"] = "github"
-        repo["repo"] = workflow["snakefile"]["args"][0]
+        repo["type"] = "local";
+        repo["repo"] = workflow["snakefile"];
+      } else {
+        // TODO: Assumes github directory listing (not compatible with branch listing)
+        repo["type"] = "github";
+        repo["repo"] = workflow["snakefile"]["args"][0];
       }
       const query: Record<string, unknown> = {
         query: "builder/get-remote-module-config",

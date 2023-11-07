@@ -72,13 +72,16 @@ const RepoOptions: React.FC = () => {
         style={{ width: "100%" }}
       >
         {repoSettings.map((repo) => (
-          <option key={repo.label}>{repo.label} [{repo.repo}]</option>
+          <option key={repo.label}>
+            {repo.label} [{repo.repo}]
+          </option>
         ))}
       </select>
       <button>REMOVE</button>
       <p>Add repository</p>
       <div>
-        Type: <select
+        Type:{" "}
+        <select
           id="selectBuilderSettingsRepositoryType"
           defaultValue={listingType}
           onChange={(e) => selectRepositoryTarget(e.target.value)}
@@ -89,7 +92,8 @@ const RepoOptions: React.FC = () => {
           <option value="BranchListing">Branch Listing (Github)</option>
         </select>
       </div>
-      URL: <input
+      URL:{" "}
+      <input
         id="inputBuilderSettingsRepositoryURL"
         type="text"
         size={default_input_size}

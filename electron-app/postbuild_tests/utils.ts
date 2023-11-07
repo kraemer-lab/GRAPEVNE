@@ -269,7 +269,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   console.log("Wait for build file to be downloaded");
   console.log("Build file: ", buildfile);
   while (!fs.existsSync(buildfile)) {
-    await driver.sleep(500);  // test will timeout if this fails repeatedly
+    await driver.sleep(500); // test will timeout if this fails repeatedly
   }
   expect(fs.existsSync(buildfile)).toBeTruthy();
 

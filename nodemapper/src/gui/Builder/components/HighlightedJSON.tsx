@@ -36,7 +36,9 @@ interface HighlightedJSONProps {
 
 const HighlightedJSON = (props: HighlightedJSONProps) => {
   const dispatch = useAppDispatch();
-  const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
+  const display_module_settings = useAppSelector(
+    (state) => state.builder.display_module_settings
+  );
 
   // Parse JSON string
   const json_str: string = props.json;
@@ -72,7 +74,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         value = "(null)";
         valueType = null;
       }
-      const isHiddenValue = (!display_module_settings && protectedNames.includes(key));
+      const isHiddenValue =
+        !display_module_settings && protectedNames.includes(key);
       if (isHiddenValue) {
         return <></>;
       }
@@ -156,7 +159,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
   // Render the JSON tree
   return (
-    <div className="json"
+    <div
+      className="json"
       style={{
         borderStyle: "solid",
         borderWidth: "1px 0px 0px 0px",

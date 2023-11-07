@@ -29,10 +29,10 @@ interface DocStringProps {
 const DocString = (props: DocStringProps) => {
   /*
    * Docstring rendering
-   * 
+   *
    * Apply custom styling to docstring
    */
-  return(
+  return (
     <div
       className="docstring"
       style={{
@@ -43,7 +43,7 @@ const DocString = (props: DocStringProps) => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "top",
-        whiteSpace: "pre-wrap",  // preserves newlines in docstring
+        whiteSpace: "pre-wrap", // preserves newlines in docstring
         color: "#cccccc",
         borderColor: "#ffffff",
       }}
@@ -51,7 +51,7 @@ const DocString = (props: DocStringProps) => {
       <p>{props.docstring}</p>
     </div>
   );
-}
+};
 
 interface NodeInfoProps {
   onEditFocus: () => void;
@@ -80,7 +80,7 @@ const NodeInfo = (props: NodeInfoProps) => {
     <>
       <Content>
         <PanelGroup direction="vertical">
-          { (docstring === "") ? null : (
+          {docstring === "" ? null : (
             <>
               <Panel
                 className={styles.Panel}
@@ -91,9 +91,7 @@ const NodeInfo = (props: NodeInfoProps) => {
                   overflowY: "auto",
                 }}
               >
-                <DocString
-                  docstring={docstring}
-                />
+                <DocString docstring={docstring} />
               </Panel>
               <ResizeHandle />
             </>
