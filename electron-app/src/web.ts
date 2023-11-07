@@ -9,6 +9,16 @@ const GetModuleConfig = async (
   repo: Record<string, unknown>,
   snakefile: Record<string, unknown> | string
 ) => {
+  /* Returns both the config file, and the workflow docstring, if it exists */
+  const config = await GetModuleConfigFile(repo, snakefile) as Record<string, unknown>;
+  config["docstring"] = await GetModuleDocstring(repo, snakefile) as string;
+  return config;
+}
+
+const GetModuleConfigFile = async (
+  repo: Record<string, unknown>,
+  snakefile: Record<string, unknown> | string
+) => {
   console.log("GetModuleConfig: ", repo);
   let workflow_url = "";
   let config_url = "";
@@ -58,6 +68,67 @@ const GetModuleConfig = async (
       throw new Error("Invalid url type: " + repo["type"]);
   }
 };
+
+const GetModuleDocstring = async (
+  repo: Record<string, unknown>,
+  snakefile: Record<string, unknown> | string
+) => {
+  console.log("GetModuleConfig: ", repo);
+  let workflow_url = "";
+  let snakefile_str = "";
+  switch (repo["type"]) {
+    case "github":
+      snakefile_str = (snakefile as Record<string, Record<string, string>>)[
+        "kwargs"
+      ]["path"];
+      workflow_url =
+        "https://raw.githubusercontent.com/" +
+        (repo.repo as string) +
+        "/main/" +
+        snakefile_str;
+      return await axios
+        .get(workflow_url)
+        .then((response) => {
+          return ParseDocstring(response.data);
+        })
+        .catch(() => {
+          console.log("No (or invalid) workflow file.");
+          return {};
+        });
+      break;
+    case "local":
+      workflow_url = snakefile as string;
+      try {
+        return ParseDocstring(fs.readFileSync(workflow_url, "utf8"));
+      } catch (err) {
+        console.log("No (or invalid) workflow file.");
+      }
+      break;
+    default:
+      throw new Error("Invalid url type: " + repo["type"]);
+  }
+};
+
+const ParseDocstring = (snakefile: string): string => {
+  /*
+   * Parse docstring from workflow file contents
+   */
+  let docstring = "";
+  const lines = snakefile.split("\n");
+  // docstring must be at the top of the file
+  if (!lines[0].startsWith('"""')) {
+    return docstring;
+  }
+  docstring += lines[0].split('"""')[1];
+  lines.shift();
+  for (const line of lines) {
+    if (line === '"""') {
+      break;
+    }
+    docstring += '\n' + line;
+  }
+  return docstring;
+}
 
 const GetModulesList = async (url: Record<string, unknown>) => {
   console.log("GetModulesList: ", url);
@@ -338,12 +409,18 @@ const GetModuleClassification = (config: Record<string, unknown>): string => {
 
 export {
   GetModuleConfig,
+  GetModuleConfigFile,
+  GetModuleDocstring,
+  ParseDocstring,
   GetLocalModules,
   GetModulesList,
   GetRemoteModulesGithubDirectoryListing,
 };
 module.exports = {
   GetModuleConfig,
+  GetModuleConfigFile,
+  GetModuleDocstring,
+  ParseDocstring,
   GetLocalModules,
   GetModulesList,
   GetRemoteModulesGithubDirectoryListing,

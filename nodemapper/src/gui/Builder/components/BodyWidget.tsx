@@ -75,7 +75,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
             <Panel
               className={styles.Panel}
               order={2}
-              defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 60}
+              defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 50}
             >
               <div className={styles.BottomRow}>
                 <Canvas engine={props.engine} />
@@ -88,7 +88,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
                 <Panel
                   className={styles.Panel}
                   order={3}
-                  defaultSize={20}
+                  defaultSize={30}
                   collapsible={true}
                 >
                   <div className={styles.PanelContent}>

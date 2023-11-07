@@ -6,6 +6,7 @@ import { builderSetSnakemakeArgs } from "redux/actions";
 import { builderSetEnvironmentVars } from "redux/actions";
 import { builderSetRepositoryTarget } from "redux/actions";
 import { builderSelectSnakemakeBackend } from "redux/actions";
+import { builderSetDisplayModuleSettings } from "redux/actions";
 import { builderSetAutoValidateConnections } from "redux/actions";
 
 const default_input_size = 35;
@@ -94,6 +95,9 @@ const BuilderSettings = () => {
   const environment_vars = useAppSelector(
     (state) => state.builder.environment_variables
   );
+  const display_module_settings = useAppSelector(
+    (state) => state.builder.display_module_settings
+  );
   const auto_validate_connections = useAppSelector(
     (state) => state.builder.auto_validate_connections
   );
@@ -108,6 +112,10 @@ const BuilderSettings = () => {
 
   const selectSnakemakeBackend = (value: string) => {
     dispatch(builderSelectSnakemakeBackend(value));
+  };
+
+  const SetDisplayModuleSettings = (value: boolean) => {
+    dispatch(builderSetDisplayModuleSettings(value));
   };
 
   const SetAutoValidateConnections = (value: boolean) => {
@@ -171,7 +179,21 @@ const BuilderSettings = () => {
           </p>
         </div>
         <div>
-          <p>Validation</p>
+          <p>Interface</p>
+          <p>display settings</p>
+          <p>
+            <input
+              type="checkbox"
+              id="display_module_settings"
+              checked={display_module_settings}
+              onChange={(e) => SetDisplayModuleSettings(e.target.checked)}
+            />
+            <label htmlFor="display_module_settings">
+              {" "}
+              Display module settings
+            </label>
+          </p>
+          <p>validation</p>
           <p>
             <input
               type="checkbox"

@@ -131,7 +131,7 @@ const NodeInfoRenderer = (props) => {
       <div
         style={{
           borderStyle: "solid",
-          borderWidth: "1px 0px 1px 0px",
+          borderWidth: "1px 0px 0px 0px",
           flex: "0 0 auto",
           display: "flex",
           justifyContent: "space-between",

@@ -126,7 +126,11 @@ const Canvas = (props: CanvasProps) => {
       };
       getConfig(query)
         .then((config) => {
+          // Extract docstring
+          const docstring = config["docstring"];
+          delete config["docstring"];
           (data.config as Query).config = config;
+          (data.config as Query).docstring = docstring;
           const node = app.AddNodeToGraph(data, point, color);
           // Broadcast new node (cannot call react hooks from non-react functions)
           setNewnode(node);

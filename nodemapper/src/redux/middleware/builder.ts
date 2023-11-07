@@ -123,10 +123,6 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateModulesList(dispatch);
           break;
 
-        case "builder/import-module":
-          ImportModule();
-          break;
-
         case "builder/set-settings-visibility":
           SetSettingsVisibility(dispatch, action.payload);
           break;
@@ -519,10 +515,6 @@ const GetRemoteModules = async (
 const UpdateModulesList = (dispatch: TPayloadString) => {
   // Update list of modules - done in reducer
   dispatch(builderUpdateStatusText(""));
-};
-
-const ImportModule = () => {
-  // Query user for config file and import module
 };
 
 ///////////////////////////////////////////////////////////////////////////////

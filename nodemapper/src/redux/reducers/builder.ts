@@ -15,6 +15,7 @@ interface IBuilderState {
   snakemake_args: string;
   conda_backend: string;
   environment_variables: string;
+  display_module_settings: boolean;
   auto_validate_connections: boolean;
   config_pane_display: string;
   logtext: string;
@@ -38,9 +39,10 @@ const builderStateInit: IBuilderState = {
   terminal_visibile: false,
   settings_visible: false,
   snakemake_backend: "builtin", // builtin | system
-  snakemake_args: "--cores 1", // --use-conda $(snakemake --list)
+  snakemake_args: "--cores 1 --use-conda --force", // $(snakemake --list)
   conda_backend: "builtin", // builtin | system
   environment_variables: "",
+  display_module_settings: false,
   auto_validate_connections: false,
   config_pane_display: ConfigPaneDisplay.None,
   logtext: " ",
@@ -127,6 +129,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
       state.snakemake_args = action.payload;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetDisplayModuleSettings, (state, action) => {
+      state.display_module_settings = action.payload;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetAutoValidateConnections, (state, action) => {
