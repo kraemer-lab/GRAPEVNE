@@ -155,6 +155,21 @@ describe("modules", () => {
   ])(
     "Build and Test the workflow: module '%s'",
     async (modulename, outfile) => {
+      // Open settings pane
+      await driver.findElement(By.id("btnBuilderSettings")).click();
+
+      // Set snakemake command line arguments
+      const args = await driver.findElement(
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
+      );
+      await args.clear();
+      await args.sendKeys("--cores 1");
+      
+      // Close settings pane
+      await driver.findElement(By.id("btnBuilderSettings")).click();
+      console.log("<<< test Set snakemake arguments list to use conda");
+
+      // Build and run workflow
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
     },
     5 * ONE_MINUTE
