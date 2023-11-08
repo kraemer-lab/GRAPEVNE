@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Environment (please complete the following information):**
  - Operating System: [e.g. MacOS Sonoma 14.0]
  - Processor / chip: [e.g. Apple M2]
- - GRAPEVNE version (see Settings pane): [e.g. 22]
+ - GRAPEVNE version (see the 'About GRAPEVNE' dialog box): [e.g. 0.2.1]
 
 **Additional context**
 Add any other context about the problem here.
