@@ -1,110 +1,15 @@
 import React from "react";
-import { useState } from "react";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
 import { builderSetSnakemakeArgs } from "redux/actions";
 import { builderSetEnvironmentVars } from "redux/actions";
-import { builderSetRepositoryTarget } from "redux/actions";
 import { builderSelectSnakemakeBackend } from "redux/actions";
 import { builderSetDisplayModuleSettings } from "redux/actions";
 import { builderSetAutoValidateConnections } from "redux/actions";
+import RepoOptions from "./RepoOptions";
 
 const default_input_size = 35;
 const panel_background_color = "#2e3746";
-
-const RepoOptions: React.FC = () => {
-  const dispatch = useAppDispatch();
-  const repoSettings = JSON.parse(
-    useAppSelector((state) => state.builder.repo)
-  );
-  const listingType = repoSettings.listing_type;
-  const [repoURL, setRepoURL] = useState(repoSettings.repo);
-
-  const selectRepositoryTarget = (target) => {
-    let repo = {};
-    switch (target) {
-      case "LocalFilesystem":
-        repo = {
-          type: "local",
-          listing_type: "DirectoryListing",
-          repo: "/",
-        };
-        break;
-      case "DirectoryListing":
-        repo = {
-          type: "github",
-          listing_type: "DirectoryListing",
-          repo: "kraemer-lab/vneyard",
-        };
-        break;
-      case "BranchListing":
-        repo = {
-          type: "github",
-          listing_type: "BranchListing",
-          repo: "jsbrittain/snakeshack",
-        };
-        break;
-      default:
-        console.error("Unknown repository type selected: ", target);
-    }
-    setRepoURL(repo["repo"]);
-    dispatch(builderSetRepositoryTarget(repo));
-  };
-
-  const handleChange = (url) => {
-    const repo_settings = { ...repoSettings };
-    repo_settings.repo = url;
-    setRepoURL(url);
-    dispatch(builderSetRepositoryTarget(repo_settings));
-  };
-
-  return (
-    <div
-      style={{
-        backgroundColor: panel_background_color,
-        padding: "5px",
-      }}
-    >
-      <select
-        id="selectBuilderSettingsRepositoryList"
-        size={8}
-        multiple={true}
-        style={{ width: "100%" }}
-      >
-        {repoSettings.map((repo) => (
-          <option key={repo.label}>
-            {repo.label} [{repo.repo}]
-          </option>
-        ))}
-      </select>
-      <button>REMOVE</button>
-      <p>Add repository</p>
-      <div>
-        Type:{" "}
-        <select
-          id="selectBuilderSettingsRepositoryType"
-          defaultValue={listingType}
-          onChange={(e) => selectRepositoryTarget(e.target.value)}
-          style={{ width: "100%" }}
-        >
-          <option value="LocalFilesystem">Local filesystem</option>
-          <option value="DirectoryListing">Directory Listing (Github)</option>
-          <option value="BranchListing">Branch Listing (Github)</option>
-        </select>
-      </div>
-      URL:{" "}
-      <input
-        id="inputBuilderSettingsRepositoryURL"
-        type="text"
-        size={default_input_size}
-        value={repoURL}
-        onChange={(e) => handleChange(e.target.value)}
-        style={{ width: "100%" }}
-      />
-      <button>ADD</button>
-    </div>
-  );
-};
 
 const BuilderSettings = () => {
   const dispatch = useAppDispatch();

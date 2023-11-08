@@ -67,7 +67,3 @@ Don't worry if the developers can't reproduce the issue right away. They will si
 
 If you are interested in writing code to fix issues, please see our
 [contributing guide for developers](https://github.com/kraemer-lab/GRAPEVNE/tree/main/dev).
-
-# Thank You!
-
-Your contributions to open source, large or small, make great projects like this possible. Thank you for taking the time to contribute.
