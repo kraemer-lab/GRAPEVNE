@@ -13,6 +13,7 @@ With GRAPEVNE, our aim is to create a dynamic, user-driven ecosystem where users
 While initially motivated by the need to streamline the analysis of large genomic datasets (>100K sequences) [link to brief introduction of phylogenetics] and to accelerate outbreak analytics, the design of GRAPEVNE is such that it can be used as a part of the solution for any problems involving multiple sequential steps and processes, irrespective of the nature of analysis and data types. The applicability of GRAPEVNE is (at least currently) only constrained by the requirement that any analysis that the users would like to incorporate must be callable within the Snakemake framework.
 
 Here is a list of potential use cases for GRAPEVNE and links to relevant documented examples:
+
 - ETL (Extract, Transform, Load) and data cleaning
 - Real-time phylogenetic trees estimation (continuous deployment as new data becomes available)
 - Large-scale phylogeographic reconstruction

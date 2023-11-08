@@ -12,86 +12,81 @@ const RepoOptions: React.FC = () => {
   const repoSettings = JSON.parse(
     useAppSelector((state) => state.builder.repo)
   );
-  const listingType = repoSettings.listing_type;
-  const [repoURL, setRepoURL] = useState(repoSettings.repo);
-  const [RepoListSelectItems, SetRepoListSelectedItems] = useState([]);
+
+  const [repoLabel, setRepoLabel] = useState("");
+  const [repoURL, setRepoURL] = useState("");
+  // Repo type is (type, listing_type)
+  const [repoFormType, setRepoFormType] = useState("GithubDirectory");
+  const [repoLocale, setRepoLocale] = useState("github");
+  const [repoListingType, setRepoListingType] = useState("DirectoryListing");
+
+  const [repoListSelectedItems, setRepoListSelectedItems] = useState("");
 
   const selectRepositoryTarget = (target) => {
+    console.log(target);
     let repo = {};
     switch (target) {
       case "LocalFilesystem":
         repo = {
           type: "local",
           listing_type: "DirectoryListing",
-          repo: "/",
         };
         break;
-      case "DirectoryListing":
+      case "GithubDirectory":
         repo = {
           type: "github",
           listing_type: "DirectoryListing",
-          repo: "kraemer-lab/vneyard",
         };
         break;
-      case "BranchListing":
+      case "GithubBranch":
         repo = {
           type: "github",
           listing_type: "BranchListing",
-          repo: "jsbrittain/snakeshack",
         };
         break;
       default:
         console.error("Unknown repository type selected: ", target);
     }
-    setRepoURL(repo["repo"]);
+    setRepoListingType(repo["listing_type"]);
+    setRepoLocale(repo["type"]);
+    setRepoFormType(target);
   };
-
-  const OnChangeURL = (url) => {
-    setRepoURL(url);
-  };
-
-  const OnChangeRepoListSelectItems = (e) => {
-    console.log("OnChangeRepoListSelectItems: ", e);
-    //setState({values: value});
-    //SetRepoListSelectedItems(value);
-  }
 
   const OnClickAddItem = () => {
-    console.log("Add item:");
-    console.log("repoSettings: ", repoSettings);
-    const select = document.getElementById(
-      "selectBuilderSettingsRepositoryList"
-    ) as HTMLSelectElement;
-    const repo_settings = { ...repoSettings };
-    repo_settings.repo.push({
-      label: repoURL,
-      repo: repoURL,
-      type: listingType,
+    repoSettings.push({
+      type: repoLocale, // github | local
+      label: repoLabel, // user label for the repo
+      listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
+      repo: repoURL, // github repo or local path
     });
-    console.log("Add new:");
-    console.log("repoSettings: ", repoSettings);
-    console.log("repo_settings: ", repo_settings);
-    dispatch(builderSetRepositoryTarget(repo_settings));
+    dispatch(builderSetRepositoryTarget(repoSettings));
   };
 
   const OnClickRemoveItem = () => {
-    console.log("Remove item:");
-    console.log("repoSettings: ", repoSettings);
-    const select = document.getElementById(
-      "selectBuilderSettingsRepositoryList"
-    ) as HTMLSelectElement;
-    const repo_settings = { ...repoSettings };
-    const new_repo_list = [];
-    for (let i = 0; i < repo_settings.repo.length; i++) {
-      if (!RepoListSelectItems.includes(i.toString())) {
-        new_repo_list.push(repo_settings.repo[i]);
-      }
+    console.log("Remove item:", repoListSelectedItems);
+    const newRepoSettings = repoSettings.filter(
+      (repo) => repo.label !== repoListSelectedItems
+    );
+    dispatch(builderSetRepositoryTarget(newRepoSettings));
+  };
+
+  const RepoListSelectItem = (value) => {
+    console.log("RepoListSelectItem:", value);
+    const selected_repo = repoSettings.filter(
+      (repo) => repo.label !== repoListSelectedItems
+    )[0];
+    // Display repo settings On form
+    setRepoLocale(selected_repo.type);
+    setRepoLabel(selected_repo.label);
+    setRepoListingType(selected_repo.listing_type);
+    if (selected_repo.type === "local") {
+      setRepoFormType("LocalFilesystem");
+    } else {
+      setRepoFormType("GithubDirectory");
     }
-    repo_settings.repo = new_repo_list;
-    console.log("Remove new:");
-    console.log("repoSettings: ", repoSettings);
-    console.log("repo_settings: ", repo_settings);
-    dispatch(builderSetRepositoryTarget(repo_settings));
+    setRepoURL(selected_repo.repo);
+    // Set the selected item
+    setRepoListSelectedItems(value);
   };
 
   return (
@@ -101,17 +96,18 @@ const RepoOptions: React.FC = () => {
         padding: "5px",
       }}
     >
+      <p>
+        <b>Repository list</b>
+      </p>
       <select
         id="selectBuilderSettingsRepositoryList"
         size={8}
         // multiple={true}
         style={{ width: "100%" }}
-        onChange={(e) => OnChangeRepoListSelectItems(e.target.value)}
+        onChange={(e) => RepoListSelectItem(e.target.value)}
       >
         {repoSettings.map((repo) => (
-          <option key={repo.label}>
-            {repo.label} [{repo.repo}]
-          </option>
+          <option key={repo.label}>{repo.label}</option>
         ))}
       </select>
       <div
@@ -139,6 +135,7 @@ const RepoOptions: React.FC = () => {
           <button
             id="buttonBuilderSettingsRepositoryListAddItem"
             onClick={() => OnClickAddItem()}
+            style={{ marginRight: "5px" }}
           >
             ADD
           </button>
@@ -168,6 +165,8 @@ const RepoOptions: React.FC = () => {
         <input
           id="inputBuilderSettingsRepositoryLabel"
           type="text"
+          value={repoLabel}
+          onChange={(e) => setRepoLabel(e.target.value)}
           size={default_input_size}
           style={{ width: "100%" }}
         />
@@ -189,13 +188,13 @@ const RepoOptions: React.FC = () => {
         </div>
         <select
           id="selectBuilderSettingsRepositoryType"
-          defaultValue={listingType}
+          value={repoFormType}
           onChange={(e) => selectRepositoryTarget(e.target.value)}
           style={{ width: "100%" }}
         >
+          <option value="GithubDirectory">Github (Directory Listing)</option>
           <option value="LocalFilesystem">Local filesystem</option>
-          <option value="DirectoryListing">Directory Listing (Github)</option>
-          <option value="BranchListing">Branch Listing (Github)</option>
+          {/*<option value="GithubBranch">Github (Branch Listing)</option>*/}
         </select>
       </div>
       <div
@@ -218,7 +217,7 @@ const RepoOptions: React.FC = () => {
           type="text"
           size={default_input_size}
           value={repoURL}
-          onChange={(e) => OnChangeURL(e.target.value)}
+          onChange={(e) => setRepoURL(e.target.value)}
           style={{ width: "100%" }}
         />
       </div>

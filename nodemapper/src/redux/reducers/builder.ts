@@ -24,17 +24,12 @@ interface IBuilderState {
 // State
 const builderStateInit: IBuilderState = {
   repo: JSON.stringify([
+    // Default - should be overwritten by master list (downloaded from url)
     {
       type: "github", // local | github
       label: "Kraemer Lab",
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: "kraemer-lab/vneyard",
-    },
-    {
-      type: "local",
-      label: "Local snakeshack",
-      listing_type: "LocalFilesystem",
-      repo: "/Users/jsb/repos/jsbrittain/snakeshack",
     },
   ]),
   modules_list: "[]",

@@ -64,18 +64,19 @@ const BuilderSettings = () => {
         }}
       >
         <div>
-          <p>Repository list</p>
           <RepoOptions />
         </div>
         <div>
-          <p>Snakemake</p>
           <div
             style={{
               backgroundColor: panel_background_color,
               padding: "5px",
             }}
           >
-            <p>backend</p>
+            <p>
+              <b>Snakemake</b>
+            </p>
+            <p>Backend</p>
             <p>
               <select
                 defaultValue={snakemake_backend}
@@ -86,7 +87,7 @@ const BuilderSettings = () => {
                 <option value="system">System</option>
               </select>
             </p>
-            <p>arguments</p>
+            <p>Arguments</p>
             <p>
               <input
                 id="inputBuilderSettingsSnakemakeArgs"
@@ -100,14 +101,16 @@ const BuilderSettings = () => {
           </div>
         </div>
         <div>
-          <p>Environment</p>
           <div
             style={{
               backgroundColor: panel_background_color,
               padding: "5px",
             }}
           >
-            <p>variables</p>
+            <p>
+              <b>Environment</b>
+            </p>
+            <p>Variables</p>
             <p>
               <input
                 id="inputBuilderSettingsEnvironmentVars"
@@ -121,13 +124,15 @@ const BuilderSettings = () => {
           </div>
         </div>
         <div>
-          <p>Interface</p>
           <div
             style={{
               backgroundColor: panel_background_color,
               padding: "5px",
             }}
           >
+            <p>
+              <b>Interface</b>
+            </p>
             <p>
               <input
                 type="checkbox"
