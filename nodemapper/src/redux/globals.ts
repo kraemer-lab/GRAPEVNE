@@ -10,5 +10,5 @@ export const getBackend = () => {
 };
 
 export const getMasterRepoListURL = () => {
-  return "https://raw.githubusercontent.com/kraemer-lab/GRAPEVNE/main/repos/index.json";
+  return "https://raw.githubusercontent.com/kraemer-lab/GRAPEVNE/repos/repos/index.json";
 };

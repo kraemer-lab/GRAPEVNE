@@ -8,3 +8,7 @@ export const getBackend = () => {
   // However, both backends are still supported for now.
   return "rest"; // rest | electron
 };
+
+export const getMasterRepoListURL = () => {
+  return "https://raw.githubusercontent.com/kraemer-lab/GRAPEVNE/repos/repos/index.json";
+};
