@@ -27,6 +27,7 @@ maxdepth: 1
 getting_started/installation
 getting_started/quickstart
 getting_started/tutorial
+getting_started/python2module
 ```
 
 ```{toctree}
