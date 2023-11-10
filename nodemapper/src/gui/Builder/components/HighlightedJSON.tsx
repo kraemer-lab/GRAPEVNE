@@ -5,6 +5,7 @@ import BuilderEngine from "../BuilderEngine";
 import { Types } from "react-easy-edit";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { builderUpdateNodeInfoKey } from "redux/actions";
@@ -16,7 +17,7 @@ import "./HighlightedJSON.css";
  * https://codepen.io/benshope/pen/BxVpjo
  */
 
-const protectedNames = ["input_namespace", "output_namespace"];
+const protectedNames = ["input_namespace", "output_namespace", "snakefile"];
 
 interface IHighlightJSONProps {
   keylist: string[];
@@ -35,6 +36,9 @@ interface HighlightedJSONProps {
 
 const HighlightedJSON = (props: HighlightedJSONProps) => {
   const dispatch = useAppDispatch();
+  const display_module_settings = useAppSelector(
+    (state) => state.builder.display_module_settings
+  );
 
   // Parse JSON string
   const json_str: string = props.json;
@@ -69,6 +73,11 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       if (isProtectedValue && valueType === "null") {
         value = "(null)";
         valueType = null;
+      }
+      const isHiddenValue =
+        !display_module_settings && protectedNames.includes(key);
+      if (isHiddenValue) {
+        return <></>;
       }
 
       // Callback to update field in central state (triggers re-render)
@@ -150,7 +159,13 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
   // Render the JSON tree
   return (
-    <div className="json">
+    <div
+      className="json"
+      style={{
+        borderStyle: "solid",
+        borderWidth: "1px 0px 0px 0px",
+      }}
+    >
       <HighlightJSON keylist={[]} />
     </div>
   );

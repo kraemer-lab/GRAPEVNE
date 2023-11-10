@@ -67,18 +67,44 @@ describe("modules", () => {
     // Open settings pane
     await driver.findElement(By.id("btnBuilderSettings")).click();
 
-    // Select local repository
+    // Clear repository list
+    const repo_list = new Select(
+      await driver.findElement(By.id("selectBuilderSettingsRepositoryList"))
+    );
+    let options = await repo_list.getOptions();
+    for (let i = 0; i < options.length; i++) {
+      await repo_list.selectByIndex(0);
+      await driver
+        .findElement(By.id("buttonBuilderSettingsRepositoryListRemoveItem"))
+        .click();
+    }
+    options = await repo_list.getOptions();
+    expect(options.length).toEqual(0);
+
+    // Set new (local) repository type
     const repo_type = new Select(
       await driver.findElement(By.id("selectBuilderSettingsRepositoryType"))
     );
     await repo_type.selectByVisibleText("Local filesystem");
 
-    // Set local repository path
+    // Set new (local) repository label
+    const repo_label = await driver.findElement(
+      webdriver.By.id("inputBuilderSettingsRepositoryLabel")
+    );
+    await repo_label.clear();
+    await repo_label.sendKeys("test-repo");
+
+    // Set new (local) repository path
     const repo_path = await driver.findElement(
       webdriver.By.id("inputBuilderSettingsRepositoryURL")
     );
     await repo_path.clear();
     await repo_path.sendKeys(path.join(__dirname, "test-repo"));
+
+    // Add repository to repository list
+    await driver
+      .findElement(By.id("buttonBuilderSettingsRepositoryListAddItem"))
+      .click();
 
     // Close settings pane
     await driver.findElement(By.id("btnBuilderSettings")).click();
@@ -129,6 +155,21 @@ describe("modules", () => {
   ])(
     "Build and Test the workflow: module '%s'",
     async (modulename, outfile) => {
+      // Open settings pane
+      await driver.findElement(By.id("btnBuilderSettings")).click();
+
+      // Set snakemake command line arguments
+      const args = await driver.findElement(
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
+      );
+      await args.clear();
+      await args.sendKeys("--cores 1");
+      
+      // Close settings pane
+      await driver.findElement(By.id("btnBuilderSettings")).click();
+      console.log("<<< test Set snakemake arguments list to use conda");
+
+      // Build and run workflow
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
     },
     5 * ONE_MINUTE

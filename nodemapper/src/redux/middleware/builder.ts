@@ -40,10 +40,10 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables,
+            getState().builder.environment_variables
           );
           break;
-        
+
         case "builder/build-as-workflow":
           BuildAs(
             "builder/build-as-workflow",
@@ -52,7 +52,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables,
+            getState().builder.environment_variables
           );
           break;
 
@@ -123,10 +123,6 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateModulesList(dispatch);
           break;
 
-        case "builder/import-module":
-          ImportModule();
-          break;
-
         case "builder/set-settings-visibility":
           SetSettingsVisibility(dispatch, action.payload);
           break;
@@ -177,7 +173,7 @@ const BuildAs = async (
   snakemake_args: string,
   snakemake_backend: string,
   conda_backend: string,
-  environment_variables: string,
+  environment_variables: string
 ) => {
   dispatchString(builderUpdateStatusText("Building workflow..."));
   const app = BuilderEngine.Instance;
@@ -519,10 +515,6 @@ const GetRemoteModules = async (
 const UpdateModulesList = (dispatch: TPayloadString) => {
   // Update list of modules - done in reducer
   dispatch(builderUpdateStatusText(""));
-};
-
-const ImportModule = () => {
-  // Query user for config file and import module
 };
 
 ///////////////////////////////////////////////////////////////////////////////

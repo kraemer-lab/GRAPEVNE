@@ -111,24 +111,35 @@ environments - these are preconfigured as part of our modules, but we need to te
 `snakemake` to use them (as opposed to running natively, through `singularity`
 containers, or even in the cloud). To do this, click on `Settings`, then ensure that
 `Snakemake` - `arguments` says:
+
 ```
 --cores 1 --use-conda --force
 ```
+
 - `--cores 1` indicates that we are using one CPU core (we can specify more to process
-our pipeline branches in parallel)
+  our pipeline branches in parallel)
 - `--use-conda` tells `snakemake` to make use of `conda` environments (these can be
-turned off, or replaced with `singularity` containers, depending on the environment in
-which we run our workflows).
+  turned off, or replaced with `singularity` containers, depending on the environment in
+  which we run our workflows).
 - `--force` forces snakemake to re-run the full workflow, even if all of the output files
-are already present. We don't generally use this, but for the tutorial it is useful as
-it recreates the diagram each time we click `Build & Run`.
+  are already present. You won't typically use this, but for the tutorial it is useful as
+  it recreates the diagram each time we click `Build & Run`.
 
 ```{note}
+The software packages that we use and specify in our `conda` environments are
+available on a range of different platforms. However, it seems as
+though some of the software that we depend on has not yet been built for the latest
+Apple Mac hardware. Specifically, if you are using an Apple Silicon device (those with
+'M'-series chips), and are having problems running the tutorial, then try adding
+`CONDA_SUBDIR=osx-64` to the snakemake arguments list (as described above). This will
+force conda to use the Mac Intel-chip builds on your computer - these should run fine,
+although may not be as performant as native code.
+```
+
 We are about to run a workflow, but as this is the first time the workflow has
 run on your computer, it first needs to download the environment files, set-up
 its runtime environment, and then launch the various steps of your workflow.
 This can take a few minutes on a first run (but is very much quicker after that).
-```
 
 Try this now: click `Build and Test` and keep an eye on the `Log`
 to monitor progress. This is the perfect time to grab a fresh cup of tea while
@@ -216,7 +227,7 @@ GRAPEVNE, simply unzip it, move into the `build` folder launch the workflow by t
 
 This will launch the same series of steps
 as the `Build and Test` button, but without needing the
-GRAPEVNE application.  There is also a `./run_docker.sh` script for launching a `docker`
+GRAPEVNE application. There is also a `./run_docker.sh` script for launching a `docker`
 container that will pre-configure itself before launchign your workflow. These can be
 run locally, or remotely, as required.
 

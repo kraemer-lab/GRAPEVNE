@@ -9,7 +9,6 @@ import { displayUpdateNodeInfo } from "redux/actions";
 
 import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
-import { builderImportModule } from "redux/actions";
 import { builderBuildAndRun } from "redux/actions";
 import { builderOpenTerminal } from "redux/actions";
 import { builderBuildAsModule } from "redux/actions";
@@ -56,7 +55,7 @@ const Header = () => {
   const btnBuildAsModule = () => {
     dispatch(builderBuildAsModule());
   };
-  
+
   // Build as workflow
   const btnBuildAsWorkflow = () => {
     dispatch(builderBuildAsWorkflow());

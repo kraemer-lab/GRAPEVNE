@@ -43,6 +43,7 @@ class Node:
         config=None,
         input_namespace: Namespace = "",
         output_namespace: str = "",
+        docstring: str = "",  # passthrough (unused in builds)
     ):
         """Initialise a Node object, the parent class for Modules
 

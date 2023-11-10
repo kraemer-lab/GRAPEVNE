@@ -27,7 +27,7 @@ _draft_ release (e.g. v1.0.0) and populates it with builds as configured in
 
 GRAPEVNE was originally built using electron v26, which supports chrome M116
 (see [Electron Releases](https://www.electronjs.org/docs/latest/tutorial/electron-timelines)).
-As such the version of chromedriver used for end-to-end testing was pegged 
+As such the version of chromedriver used for end-to-end testing was pegged
 to chromedriver 116 in a number of locations:
 
 - Update `package.json` in `./electron-app`:

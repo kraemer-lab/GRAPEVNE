@@ -67,7 +67,6 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
  */
 const Canvas = (props: CanvasProps) => {
   const modules = useAppSelector((state) => state.builder.modules_list);
-  const repo = JSON.parse(useAppSelector((state) => state.builder.repo));
   const configPaneOpen = useAppSelector(
     (state) => state.builder.config_pane_display
   );
@@ -111,6 +110,16 @@ const Canvas = (props: CanvasProps) => {
     if (_.isEmpty(workflow_config)) {
       // Module was not provided with a configuration - attempt to load now
       dispatch(builderUpdateStatusText(`Loading module ${module_name}...`));
+      // Get repository details from module
+      const repo = {};
+      if (typeof workflow["snakefile"] === "string") {
+        repo["type"] = "local";
+        repo["repo"] = workflow["snakefile"];
+      } else {
+        // TODO: Assumes github directory listing (not compatible with branch listing)
+        repo["type"] = "github";
+        repo["repo"] = workflow["snakefile"]["args"][0];
+      }
       const query: Record<string, unknown> = {
         query: "builder/get-remote-module-config",
         data: {
@@ -126,7 +135,11 @@ const Canvas = (props: CanvasProps) => {
       };
       getConfig(query)
         .then((config) => {
+          // Extract docstring
+          const docstring = config["docstring"];
+          delete config["docstring"];
           (data.config as Query).config = config;
+          (data.config as Query).docstring = docstring;
           const node = app.AddNodeToGraph(data, point, color);
           // Broadcast new node (cannot call react hooks from non-react functions)
           setNewnode(node);

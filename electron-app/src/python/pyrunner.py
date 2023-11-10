@@ -135,7 +135,9 @@ def BuildAndRun(
             # Add container files to zip
             if containerize:
                 # Read Dockerfile and launch script templates
-                with open(os.path.join(os.path.dirname(__file__), "Dockerfile"), "r") as f:
+                with open(
+                    os.path.join(os.path.dirname(__file__), "Dockerfile"), "r"
+                ) as f:
                     Dockerfile = f.read()
                 with open(
                     os.path.join(os.path.dirname(__file__), "run_docker_sh"), "r"
