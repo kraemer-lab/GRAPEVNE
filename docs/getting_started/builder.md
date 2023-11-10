@@ -175,7 +175,7 @@ it, although we will leave those parameters set to their defaults for now.
 Finally, connect a _second_ `Plot` module to the output of `AggregateByMonth`.
 Your graph should now look (very similar) to this:
 
-```{figure} Tutorial-Builder-Complete.png
+```{figure} RWI_ProcAndAgg.png
 :alt: Complete layout for the Builder Tutorial
 ```
 
