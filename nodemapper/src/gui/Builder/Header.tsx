@@ -110,7 +110,6 @@ const Header = () => {
           SAVE
         </button>
         */}
-        GRAPEVNE
         <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
           TEST BUILD
         </button>

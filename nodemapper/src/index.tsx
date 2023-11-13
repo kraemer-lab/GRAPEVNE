@@ -3,6 +3,7 @@ import store from "./redux/store";
 
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
+import { StrictMode } from "react";
 
 import App from "./gui/App";
 import "./root.css";
@@ -13,6 +14,8 @@ import "./root.css";
 const root = createRoot(document.getElementById("app"));
 root.render(
   <Provider store={store}>
-    <App />
+    <StrictMode>
+      <App />
+    </StrictMode>
   </Provider>
 );

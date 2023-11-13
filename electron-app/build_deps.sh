@@ -45,11 +45,12 @@ then
 fi
 
 # Ensure nodemapper has the most up-to-date electron api file
-cp src/api.ts ../nodemapper/src
+# cp src/api.ts ../nodemapper/src
 
 # Build nodemapper (front-end)
 pushd ../nodemapper
-cp src/redux/globals_electron.ts src/redux/globals.ts
+# cp src/redux/globals_electron.ts src/redux/globals.ts
+rm -rf dist
 yarn
 yarn build
 popd
