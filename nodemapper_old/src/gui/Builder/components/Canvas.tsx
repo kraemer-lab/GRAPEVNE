@@ -6,6 +6,7 @@ import InfoPanel from "./InfoPanel";
 import ResizeHandle from "./ResizeHandle";
 import TerminalController from "Terminal/TerminalController";
 
+import Flow from "./Flow";
 import { NodeModel } from "@projectstorm/react-diagrams";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
@@ -165,9 +166,7 @@ const Canvas = (props: CanvasProps) => {
         <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
           <PanelGroup direction="vertical">
             <Panel className={styles.Panel} defaultSize={70}>
-              <GridCanvasWidget>
-                <CanvasWidget engine={props.engine} />
-              </GridCanvasWidget>
+              <Flow />
             </Panel>
             <ResizeHandle />
             <Panel
