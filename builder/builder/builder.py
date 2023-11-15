@@ -185,7 +185,7 @@ class Model:
     def BuildSnakefileConfig(self) -> str:
         """Builds the workflow configuration as YAML"""
         c = self.ConstructSnakefileConfig()
-        return yaml.dump(c)
+        return yaml.dump(c, sort_keys=False)
 
     def BuildConfigUtil(self) -> str:
         """Builds the configutil.py file"""
