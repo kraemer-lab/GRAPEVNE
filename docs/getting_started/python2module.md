@@ -568,7 +568,7 @@ python packages) do not provide native builds for these processors. If you have
 difficulty running the workflow and are receiving an error similar to:
 `This error originates from a subprocess, and is likely not a problem with pip` then
 you can try forcing conda to use the Intel versions of software by specifying
-`CODA_SUBDIR=osx-64 snakemake --cores 1 --use-conda`.
+`CONDA_SUBDIR=osx-64 snakemake --cores 1 --use-conda`.
 ```
 
 You will find the resulting file in the `output_namespace` folder, namely
@@ -607,7 +607,16 @@ We are now ready to `Build and Test` run your workflow. After waiting a minute o
 for the `conda` environments to download, you will see a Log message stating that your
 conda environment has been activated. The script itself takes several minutes to run,
 but when it is finished you should see `Workflow complete` and you will have access to
-your analysed shapefile in the `results` folder. You can switch to the build-in
+your analysed shapefile in the `results` folder.
+
+```{note}
+As above, you may experience an issue loading packages on newer Apple Mac computers.
+To resolve this issue within GRAPEVNE open the `Settings` pane and enter the following
+under `Environment` - `variables`: `CONDA_SUBDIR=osx-64`. You can add multiple
+environment variables here by separating them with semicolons.
+```
+
+You can switch to the build-in
 `Terminal` to open the image. On MacOS the command will be similar to:
 `open results/tutorials_rwi_procandagg/rwi_weight_admin3.png`.
 Congratulations, you are now equipped to convert your standalone scripts into
