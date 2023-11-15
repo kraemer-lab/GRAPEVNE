@@ -198,9 +198,7 @@ class Model:
     def BuildConfigUtil(self) -> str:
         """Builds the configutil.py file"""
         with open(
-            os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "configutil.py")
-            ),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "configutil.py")),
             "r",
         ) as file:
             return file.read()
