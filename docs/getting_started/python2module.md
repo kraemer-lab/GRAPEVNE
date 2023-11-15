@@ -3,8 +3,9 @@
 We are going to convert a script designed for geospatial analysis into a GRAPEVNE module.
 The specifics of the script are not important, although if you would like to run the
 analysis yourself you will need the following additional files:
+
 - `vnm_general_2020.csv` ([zip file](https://data.humdata.org/dataset/191b04c5-3dc7-4c2a-8e00-9c0bdfdfbf9d/resource/fade8620-0935-4d26-b0c6-15515dd4bf8b/download/vnm_general_2020_geotiff.zip) available
-from the [Humanitariuan Data Exchange](https://data.humdata.org/)).
+  from the [Humanitariuan Data Exchange](https://data.humdata.org/)).
 - `vnm_relative_wealth_index.csv` ([csv file](https://data.humdata.org/dataset/76f2a2ea-ba50-40f5-b79c-db95d668b843/resource/06d29bc0-5a4c-4be0-be1a-c546a9be540c/download/vnm_relative_wealth_index.csv) available from [Humanitariuan Data Exchange](https://data.humdata.org/)).
 - [Vietnam shape files](https://geodata.ucdavis.edu/gadm/gadm4.1/shp/gadm41_VNM_shp.zip) available from [GADM](https://gadm.org)
 
@@ -16,7 +17,7 @@ The script will produce as output a map file in `.png` format:
 # Author: Prathyush Sambaturu
 # Purpose: Python script to preprocess and aggregate relative wealth index scores for administrative regions (admin2 or admin3)
 # of Vietnam. The code for aggregated is adapted from the following tutorial:
-# https://dataforgood.facebook.com/dfg/docs/tutorial-calculating-population-weighted-relative-wealth-index. 
+# https://dataforgood.facebook.com/dfg/docs/tutorial-calculating-population-weighted-relative-wealth-index.
 
 #Load necessary packages
 import pandas as pd
@@ -51,7 +52,7 @@ def get_rwi_dataframe_from_csv(rwi_csv_file):
 	rwi = rwi[rwi['geo_id'] != 'null']
 	return rwi
 
-# Function to take a csv file with population data from Meta and generates a dataframe with total population for tiles 
+# Function to take a csv file with population data from Meta and generates a dataframe with total population for tiles
 # of zoom level 14 (Bing tiles) using quadkeys
 def get_bing_tile_z14_pop(pop_file):
 	"""
@@ -65,10 +66,10 @@ def get_bing_tile_z14_pop(pop_file):
 	bing_tile_z14_pop["quadkey"]=bing_tile_z14_pop["quadkey"].astype(np.int64)
 	return bing_tile_z14_pop
 
-# Function to return the id of administrative region in which the center (given by latitude and longitude) of a 
-# 2.4km^2 gridcell. This function is from the tutorial 
+# Function to return the id of administrative region in which the center (given by latitude and longitude) of a
+# 2.4km^2 gridcell. This function is from the tutorial
 def get_point_in_polygon(lat, lon, polygons):
-	""" 
+	"""
 		@param lat: double
         	@param lon: double
         	@param polygons: dict
@@ -115,7 +116,7 @@ it can be adopted into other research projects with minimal complexity.
 
 Our first decision relates to the function of this script. The script performs two
 functions at present, it processes the incoming data (shape file and relative wealth
-index), producing a shape file as output, but it also *plots* the shape file. There are
+index), producing a shape file as output, but it also _plots_ the shape file. There are
 also references to specific column names that may need to be altered in a
 datafile-specific way. For maximum flexibility we might consider separating out these
 functions, but for now we will process and display the data as described in the script.
@@ -128,6 +129,7 @@ the script.
 
 To parameterise the script we need to identify which aspects may change in future usage.
 This is not always a straightforward decision, but here we will isolate the following:
+
 - Shape file location (`shpfile`)
 - Relative wealth index file location (`rwifile`)
 - Population file location (`popfile`)
@@ -138,23 +140,26 @@ Let's focus on the shape file for now, because the logic of parameterising the o
 options is similar. We want to be able to run this script with any shape file
 (corresponding to potentially any country). To do this at the moment requires us to
 alter the script itself. We need to generalise the script in order to take the name
-of the shape file as an *input*. For some parameters, such as `gid_id` we can provide
+of the shape file as an _input_. For some parameters, such as `gid_id` we can provide
 them with default values, while for others we may wish to make their specification
 compulsory.
 
 A well-established and straightforward mechanism to achieve parameterisation is by passing
 command-line arguments to the script. For example, instead of launching the script
 using:
+
 ```bash
 python rwi_proc_and_agg.py
 ```
+
 we might instead launch the script using:
+
 ```bash
 python rwi_proc_and_agg.py --shpfile="data/gadm41_VNM_shp/gadm41_VNM_2.shp"
 ```
 
 While this may look more complicated to launch, it affords us a mechanism to control the
-script *without changing the code directly*, and thus provides flexibilty. Note also that by the
+script _without changing the code directly_, and thus provides flexibilty. Note also that by the
 time we have modularised this script into GRAPEVNE, these parameters will form part of
 the module configuration, so there will be no need for us to memorise the parameter
 names, or any need to type out the above command to launch it!
@@ -169,6 +174,7 @@ parameterise this function with the parameters of interest (in this case `shpfil
 script). We also replace the two instances of `"GID_2"` with `gid_id`.
 
 Briefly:
+
 ```python
 # Keep all the import statements here
 
@@ -191,6 +197,7 @@ module that comes with python. There are many options that you can use here, but
 only need to accept strings for file locations and for `gid_id`. First, add
 `import argparse` to the top of your script, then expand the `main` call
 as follows:
+
 ```python
 if __name__ == "__main__":
     # Command-line argument parser
@@ -207,6 +214,7 @@ if __name__ == "__main__":
 ```
 
 The full file now looks like this:
+
 ```python
 #Load necessary packages
 import pandas as pd
@@ -311,6 +319,7 @@ if __name__ == "__main__":
 ```
 
 We can now launch this script from the command-line with the following call:
+
 ```bash
 python rwi_proc_and_agg.py \
     --shpfile="data/gadm41_VNM_shp/gadm41_VNM_2.shp" \
@@ -330,6 +339,7 @@ re-use. Next, we will package the script into a GRAPEVNE module.
 GRAPEVNE modules are essentially `snakemake` workflows that conform to our extended
 specification. To wrap the above script into a module, we create the following folder
 structure, placing our script into the `resources/scripts` folder:
+
 ```
 RWI_ProcAndAgg
 └── config
@@ -357,6 +367,7 @@ input files (you may wonder why we have separated these into three distinct fold
 that is to replicate the three input namespaces, as detailed below).
 The folder structure we use for modules follows [Snakemake's Distribution and Reproducibility](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html) guidelines.
 There are three new files we need to consider:
+
 - `Snakefile` contains our module rule(s)
 - `config.yaml` contains the configuration for our module
 - `conda.yaml` provides the dependency specification for our module
@@ -375,6 +386,7 @@ to provide these files to our module from another module (the other module could
 a `Download` module, or `Local file` module, or `Database` module - the point is that
 the user can (re)configure this themselves in GRAPEVNE). To specify this, we use the
 following `config.yaml` file:
+
 ```yaml
 input_namespace:
   shape: "shape_in"
@@ -403,12 +415,12 @@ case-by-case basis. By wrapping our parameter names in quotes we can use human r
 expressions. Since the parameter names are exposed to the user, this is a good
 opportunity to make the user-facing information more friendly.
 
-
 ### Snakefile
 
 Next, we define the 'rules' of our module (most of this is boilerplate
 supporting the script call in the `shell` directive). We specify the following workflow
 file:
+
 ```python
 """Relative Wealth Index Preprocessing and aggregation
 
@@ -518,20 +530,21 @@ python-package dependencies that we will install using `pip` . We obtain `python
 `pip` from the `bioconda` channel. Then, we use `pip` to install the package
 dependencies (the specific packages are those listed in the `import` statements of our
 script).
+
 ```yaml
 channels:
   - bioconda
 dependencies:
   - python
   - pip:
-    - pandas
-    - matplotlib
-    - descartes
-    - geopandas
-    - shapely
-    - contextily
-    - numpy
-    - pyquadkey2
+      - pandas
+      - matplotlib
+      - descartes
+      - geopandas
+      - shapely
+      - contextily
+      - numpy
+      - pyquadkey2
 ```
 
 ## Integration with GRAPEVNE
@@ -543,6 +556,7 @@ under the `Tutorials` project, named `RWI_ProcAndAgg`.
 
 It's always useful to be able to run your workflow directly from the command-line to
 look for errors. There are actually a few useful tools that will help you here:
+
 - `snakemake --lint` performs linting of your workflow
 - `snakemake --d3dag` will determine and report the directed acyclic graph (DAG) structure of your workflow; this is useful when linking multiple rules, but also verifies that the workflow is valid, builds in the way that you are expecting, and that all input files are present (when testing).
 - `snakemake --cores 1 --use-conda` will launch the workflow. The `use-conda` argument informs snakemake to make use of the `conda` configuration to set-up the module environment prior to execution.
@@ -584,6 +598,7 @@ shape files. Now, connect the `Local folder`s to the appropriate inputs of the
 `RWI_ProcAndAgg` module and the `Local folder` module to the `shape` input.
 
 Your final workflow should look something like this:
+
 ```{figure} RWI_ProcAndAgg.png
 :alt: Complete layout for the Builder Tutorial
 ```

@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "proxy": "http://localhost:5000",
+  "type": "module",
   "scripts": {
     "start": "webpack serve --open",
     "build": "webpack",
