@@ -161,11 +161,15 @@ class Model:
     def BuildSnakefile(
         self,
         configfile: str = "config/config.yaml",
+        add_configutil: bool = True,
     ) -> str:
         """Builds the workflow Snakefile (links modules)"""
         s = ""
         if configfile:
             s = f'configfile: "{configfile}"\n'
+        if add_configutil:
+            s += "import configutil\n"
+            s += "config = configutil.remap_params(config)\n"
         # Build Snakefile
         for node in self.nodes:
             s += "\n"
@@ -190,6 +194,16 @@ class Model:
         """Builds the workflow configuration as YAML"""
         c = self.ConstructSnakefileConfig()
         return yaml.dump(c)
+
+    def BuildConfigUtil(self) -> str:
+        """Builds the configutil.py file"""
+        with open(
+            os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "configutil.py")
+            ),
+            "r",
+        ) as file:
+            return file.read()
 
     def ConstructSnakefileConfig(self) -> dict:
         """Builds the workflow configuration as a dictionary"""
@@ -465,9 +479,12 @@ class Model:
             self.PackageModules(build_path)
         # Write config and snakefile
         with open(f"{build_path}/workflow/Snakefile", "w") as file:
-            file.write(self.BuildSnakefile())
+            file.write(self.BuildSnakefile(add_configutil=add_configutil))
         with open(f"{build_path}/config/config.yaml", "w") as file:
             file.write(self.BuildSnakefileConfig())
+        if add_configutil:
+            with open(f"{build_path}/workflow/configutil.py", "w") as file:
+                file.write(self.BuildConfigUtil())
         return build_path
 
     def WrangleName(self, basename: str, subname: str = "") -> str:
@@ -919,7 +936,8 @@ def BuildFromJSON(
         # Return composite string
         logging.debug("Returning single file build...")
         logging.debug(f"{m.BuildSnakefileConfig()}, {m.BuildSnakefile()}")
-        return ((m.BuildSnakefileConfig(), m.BuildSnakefile())), m, ""
+        return ((m.BuildSnakefileConfig(),
+                 m.BuildSnakefile())), m, ""
     else:
         # Create (zipped) workflow and return as binary object
         build_path = m.SaveWorkflow(build_path, clean_build, package_modules)
