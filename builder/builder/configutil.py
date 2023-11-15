@@ -23,17 +23,17 @@ def remap_params(config: dict) -> dict:
     # Find top-level modules
     modules = []
     for name, d in config.items():
-        if isinstance(d, dict) and d.get('config', None) is not None:
+        if isinstance(d, dict) and d.get("config", None) is not None:
             modules.append(name)
 
     # Find parameter_maps
     for name in modules:
         d = config[name]
-        if d.get('parameter_map', None) is not None:
-            for mapitem in d['parameter_map']:
+        if d.get("parameter_map", None) is not None:
+            for mapitem in d["parameter_map"]:
                 # Get the source and destination indexlists
-                value = get_item(mapitem['from'], config)
-                set_item(mapitem['to'], config, value)
+                value = get_item(mapitem["from"], config)
+                set_item(mapitem["to"], config, value)
     return config
 
 

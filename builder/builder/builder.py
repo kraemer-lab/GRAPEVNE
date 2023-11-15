@@ -190,9 +190,7 @@ class Model:
     def BuildConfigUtil(self) -> str:
         """Builds the configutil.py file"""
         with open(
-            os.path.abspath(
-                os.path.join(os.path.dirname(__file__), "configutil.py")
-            ),
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "configutil.py")),
             "r",
         ) as file:
             return file.read()
@@ -724,14 +722,21 @@ def BuildFromJSON(
         # Return composite string
         logging.debug("Returning single file build...")
         logging.debug(f"{m.BuildSnakefileConfig()}, {m.BuildSnakefile()}")
-        return ((m.BuildSnakefileConfig(),
-                 m.BuildSnakefile(add_configutil=add_configutil))), m, ""
+        return (
+            (
+                (
+                    m.BuildSnakefileConfig(),
+                    m.BuildSnakefile(add_configutil=add_configutil),
+                )
+            ),
+            m,
+            "",
+        )
     else:
         # Create (zipped) workflow and return as binary object
         build_path = m.SaveWorkflow(
-            build_path,
-            clean_build,
-            add_configutil=add_configutil)
+            build_path, clean_build, add_configutil=add_configutil
+        )
         zipfilename = tempfile.gettempdir() + "/build"
         if create_zip:
             logging.debug("Creating zip file...")
