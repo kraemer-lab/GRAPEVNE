@@ -65,7 +65,7 @@ describe("modules", () => {
   test("Select test repository", async () => {
     console.log("::: test Select test repository");
     // Open settings pane
-    await driver.findElement(By.id("btnBuilderSettings")).click();
+    await driver.findElement(By.id("btnSidenavSettings")).click();
 
     // Clear repository list
     const repo_list = new Select(
@@ -107,7 +107,7 @@ describe("modules", () => {
       .click();
 
     // Close settings pane
-    await driver.findElement(By.id("btnBuilderSettings")).click();
+    await driver.findElement(By.id("btnSidenavBuilder")).click();
     console.log("<<< test Select test repository");
   });
 
@@ -156,7 +156,7 @@ describe("modules", () => {
     "Build and Test the workflow: module '%s'",
     async (modulename, outfile) => {
       // Open settings pane
-      await driver.findElement(By.id("btnBuilderSettings")).click();
+      await driver.findElement(By.id("btnSidenavSettings")).click();
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
@@ -164,9 +164,9 @@ describe("modules", () => {
       );
       await args.clear();
       await args.sendKeys("--cores 1");
-      
+
       // Close settings pane
-      await driver.findElement(By.id("btnBuilderSettings")).click();
+      await driver.findElement(By.id("btnSidenavBuilder")).click();
       console.log("<<< test Set snakemake arguments list to use conda");
 
       // Build and run workflow
@@ -179,8 +179,8 @@ describe("modules", () => {
     "Set snakemake arguments list to use conda",
     async () => {
       console.log("::: test Set snakemake arguments list to use conda");
-      // Open settings pane
-      await driver.findElement(By.id("btnBuilderSettings")).click();
+      // Open settings panel
+      await driver.findElement(By.id("btnSidenavSettings")).click();
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
@@ -199,7 +199,7 @@ describe("modules", () => {
       }
 
       // Close settings pane
-      await driver.findElement(By.id("btnBuilderSettings")).click();
+      await driver.findElement(By.id("btnSidenavBuilder")).click();
       console.log("<<< test Set snakemake arguments list to use conda");
     }
   );
