@@ -27,6 +27,7 @@ def test_Workflow_Imports(name: Tuple[List[str], str]):
         f"{workflow_folder}/workflow_imports/{modules}.json",
         singlefile=True,
         expand=True,
+        add_configutil=False,
     )
     configfile: str = str(build[0])
     snakefile: str = str(build[1])
