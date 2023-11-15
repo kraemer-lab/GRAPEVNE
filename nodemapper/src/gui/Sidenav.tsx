@@ -4,6 +4,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import TravelExploreIcon from '@mui/icons-material/TravelExplore';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
+import DirectionsRun from '@mui/icons-material/DirectionsRun';
 
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
@@ -16,7 +17,7 @@ export const navData = [
         text: "Home",
         link: "/"
     },
-    {
+    /*{
         id: 1,
         icon: <TravelExploreIcon/>,
         text: "Explore",
@@ -24,12 +25,18 @@ export const navData = [
     },
     {
         id: 2,
-        icon: <BarChartIcon/>,
-        text: "Statistics",
-        link: "statistics"
+        icon: <DirectionsRun/>,
+        text: "Monitor",
+        link: "monitor"
     },
     {
         id: 3,
+        icon: <BarChartIcon/>,
+        text: "Statistics",
+        link: "statistics"
+    },*/
+    {
+        id: 1,
         icon: <SettingsIcon/>,
         text: "Settings",
         link: "settings"
