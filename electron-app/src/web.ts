@@ -257,6 +257,18 @@ const GetRemoteModulesGithubDirectoryListing = async (
     return await response.data;
   }
 
+  // Get latest commit of main branch
+  const commit = await get(
+    path.join(url_github, repo, "commits", branch)
+  ).then((data) => {
+    console.log(data);
+    console.log("Latest commit: ", data["sha"]);
+    return data["sha"];
+  }).catch(() => {
+    console.log("Could not identify latest commit.");
+    return "";
+  });
+
   // First-level (organisation) listing
   const orgs = await get(url_base).then((data) => {
     return data
@@ -311,18 +323,33 @@ const GetRemoteModulesGithubDirectoryListing = async (
             });
           module_classification = GetModuleClassification(config);
         }
+        let snakefile = {};
+        // If commit is specified, use that, otherwise use branch
+        if (commit !== "") {
+          snakefile = {
+            function: "github",
+            args: [repo],
+            kwargs: {
+              path: `workflows/${org}/${module_type}/${workflow}/workflow/Snakefile`,
+              commit: commit,
+            },
+          };
+        } else {
+          snakefile = {
+            function: "github",
+            args: [repo],
+            kwargs: {
+              path: `workflows/${org}/${module_type}/${workflow}/workflow/Snakefile`,
+              branch: branch,
+            },
+          };
+        }
+        // Module specification
         const module = {
           name: "(" + org + ") " + FormatName(workflow),
           type: module_classification,
           config: {
-            snakefile: {
-              function: "github",
-              args: [repo],
-              kwargs: {
-                path: `workflows/${org}/${module_type}/${workflow}/workflow/Snakefile`,
-                branch: branch,
-              },
-            },
+            snakefile: snakefile,
             config: config,
           },
         };
