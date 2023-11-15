@@ -7,7 +7,7 @@ import BuilderSettings from "./Builder/components/BuilderSettings";
  
 import Sidenav from './Sidenav';
 
-const Home = () => <MainPage />;
+const Builder = () => <MainPage />;
 const Monitor = () => <h1>Monitor</h1>;
 const Explore = () => <h1>Explore</h1>;
 const Statistics = () => <h1>Statistics</h1>;
@@ -31,7 +31,7 @@ function App() {
         }}
       >
         <Routes>
-          <Route path="/" element={<Home />}/>
+          <Route path="/" element={<Builder />}/>
           <Route path="/monitor" element={<h1>Monitor</h1>} />
           <Route path="/explore" element={<Explore />} />
           <Route path="/statistics" element={<Statistics />}/>

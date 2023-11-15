@@ -12,9 +12,10 @@ import styles from 'Sidenav.module.css';
  
 export const navData = [
     {
-        id: 0,
+        key: 0,
+        id: "btnSidenavBuilder",
         icon: <HomeIcon/>,
-        text: "Home",
+        text: "Builder",
         link: "/"
     },
     /*{
@@ -36,7 +37,8 @@ export const navData = [
         link: "statistics"
     },*/
     {
-        id: 1,
+        key: 1,
+        id: "btnSidenavSettings",
         icon: <SettingsIcon/>,
         text: "Settings",
         link: "settings"
@@ -54,7 +56,12 @@ export default function Sidenav() {
       </button>
       {navData.map((item) => {
         return (
-          <NavLink key={item.id} className={styles.sideitem} to={item.link}>
+          <NavLink
+            id={item.id}
+            key={item.key}
+            className={styles.sideitem}
+            to={item.link}
+          >
             {item.icon}
             <span
               className={open ? styles.linkText : styles.linkTextClosed}
