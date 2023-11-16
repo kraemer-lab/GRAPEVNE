@@ -10,16 +10,12 @@ import { StrictMode } from "react";
 import "./App.css";
 
 const Containers = () => {
-  return (
-    <div>Containers</div>
-  );
-}
+  return <div>Containers</div>;
+};
 
 const Settings = () => {
-  return (
-    <div>Settings</div>
-  );
-}
+  return <div>Settings</div>;
+};
 
 const App = () => {
   return (
@@ -36,6 +32,6 @@ const App = () => {
       </BrowserRouter>
     </div>
   );
-}
+};
 
 export default App;

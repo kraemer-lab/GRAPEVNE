@@ -21,7 +21,7 @@ interface IBuilderState {
   // react-flow parameters (experimental)
   nodes: Node[];
   edges: Edge[];
-  
+
   // Settings -- TODO: Move to separate reducer
   repo: string;
   modules_list: string;
@@ -38,27 +38,76 @@ interface IBuilderState {
 
 const default_nodes = [
   {
-    id: '1',
-    type: 'input',
-    data: { label: 'Input' },
-    position: { x: 250, y: 25 },
+    // Source
+    id: "0",
+    type: "standard",
+    data: {
+      config: {
+        name: "test-s1",
+        type: "source",
+        snakefile: "Snakefile",
+        config: {
+          input_namespace: null,
+          output_namespace: "out",
+          params: {
+            param1: "value1",
+            param2: "value2",
+          },
+        },
+      },
+    },
+    position: { x: 100, y: 50 },
   },
   {
-    id: '2',
-    data: { label: 'Default' },
-    position: { x: 100, y: 125 },
+    // Module (one output_namespace)
+    id: "1",
+    type: "standard",
+    data: {
+      config: {
+        name: "test-m1",
+        type: "module",
+        snakefile: "Snakefile",
+        config: {
+          input_namespace: "in",
+          output_namespace: "out",
+          params: {
+            param1: "value1",
+            param2: "value2",
+          },
+        },
+      },
+    },
+    position: { x: 300, y: 50 },
   },
   {
-    id: '3',
-    type: 'output',
-    data: { label: 'Output' },
-    position: { x: 250, y: 250 },
+    // Module (two output_namespaces)
+    id: "2",
+    type: "standard",
+    data: {
+      config: {
+        name: "test-m2",
+        type: "module",
+        snakefile: "Snakefile",
+        config: {
+          input_namespace: {
+            in1key: "in1value",
+            in2key: "in2value",
+          },
+          output_namespace: "out",
+          params: {
+            param1: "value1",
+            param2: "value2",
+          },
+        },
+      },
+    },
+    position: { x: 500, y: 50 },
   },
 ] as Node[];
 
 const default_edges = [
-  { id: 'e1-2', source: '1', target: '2' },
-  { id: 'e2-3', source: '2', target: '3' },
+  { id: "e1-2", source: "0", target: "1" },
+  { id: "e2-3", source: "1", target: "2" },
 ] as Edge[];
 
 // State
@@ -70,19 +119,25 @@ const builderStateInit: IBuilderState = {
   terminal_visibile: false,
   config_pane_display: ConfigPaneDisplay.None,
   logtext: " ",
-  
+
   // react-flow parameters (experimental)
   nodes: default_nodes,
   edges: default_edges,
-  
+
   // Settings -- TODO: Move to separate reducer
   repo: JSON.stringify([
     // Default - should be overwritten by master list (downloaded from url)
-    {
+    /*{
       type: "github", // local | github
       label: "Kraemer Lab",
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: "kraemer-lab/vneyard",
+    },*/
+    {
+      type: "local", // local | github
+      label: "Snakeshack",
+      listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
+      repo: "/Users/jsb/repos/jsbrittain/snakeshack",
     },
   ]),
   modules_list: "[]",
@@ -92,7 +147,7 @@ const builderStateInit: IBuilderState = {
   environment_variables: "",
   display_module_settings: false,
   auto_validate_connections: false,
-  
+
   // TODO: Remove these options
   settings_visible: false,
 };
@@ -102,6 +157,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
   builder
     .addCase(actions.builderSetNodes, (state, action) => {
       state.nodes = action.payload as Node[];
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderAddNode, (state, action) => {
+      state.nodes = state.nodes.concat(action.payload as Node);
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetEdges, (state, action) => {

@@ -7,10 +7,12 @@ import ResizeHandle from "./ResizeHandle";
 import TerminalController from "Terminal/TerminalController";
 
 import Flow from "./Flow";
+import { Node } from "reactflow";
 import { NodeModel } from "@projectstorm/react-diagrams";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 import { DiagramEngine } from "@projectstorm/react-diagrams";
+import { builderAddNode } from "redux/actions";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
@@ -72,28 +74,14 @@ const Canvas = (props: CanvasProps) => {
     (state) => state.builder.config_pane_display
   );
 
-  const [newnode, setNewnode] = React.useState<NodeModel>(null);
+  const [newnode, setNewnode] = React.useState<Node>(null);
   const dispatch = useAppDispatch();
 
   // Register listener for new node
   React.useEffect(() => {
     if (newnode) {
-      newnode.registerListener({
-        selectionChanged: (e) => {
-          const payload: IPayload = {
-            id: newnode.getOptions().id,
-          };
-          if (e.isSelected) {
-            dispatch(builderNodeSelected(payload));
-          } else {
-            dispatch(builderNodeDeselected(payload));
-          }
-        },
-        entityRemoved: (e) => {
-          dispatch(builderNodeDeselected({}));
-        },
-      });
       setNewnode(null);
+      dispatch(builderAddNode(newnode));
     }
   }, [newnode]);
 
@@ -101,8 +89,9 @@ const Canvas = (props: CanvasProps) => {
     const app = BuilderEngine.Instance;
     const engine = app.engine;
     const data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
-    const point = engine.getRelativeMousePoint(event);
-    const color = BuilderEngine.GetModuleTypeColor(data.type as string);
+    //const point = engine.getRelativeMousePoint(event);
+    //const color = BuilderEngine.GetModuleTypeColor(data.type as string);
+    const color="red";
     // Isolate configuration
     const module_name = data.name as string;
     const workflow = data.config as Query;
@@ -141,9 +130,22 @@ const Canvas = (props: CanvasProps) => {
           delete config["docstring"];
           (data.config as Query).config = config;
           (data.config as Query).docstring = docstring;
-          const node = app.AddNodeToGraph(data, point, color);
+
+          // Add node to graph
+          data.config.name = data.name;
+          data.config.type = data.type;
+          data.config.snakefile = data.snakefile;
+          const newnode = {
+            id: "0",
+            type: "standard",
+            data: {
+              config: data.config,
+            },
+            position: { x: 10, y: 10 },
+          } as Node;
+
           // Broadcast new node (cannot call react hooks from non-react functions)
-          setNewnode(node);
+          setNewnode(newnode);
           dispatch(builderUpdateStatusText(`Module loaded.`));
         })
         .catch((error) => {
@@ -154,9 +156,20 @@ const Canvas = (props: CanvasProps) => {
         });
     } else {
       // Module already contains a valid configuration
-      const node = app.AddNodeToGraph(data, point, color);
+      // Add node to graph
+      data.config.name = data.name;
+      data.config.type = data.type;
+      data.config.snakefile = data.snakefile;
+      const newnode = {
+        id: "0",
+        type: "standard",
+        data: {
+          config: data.config,
+        },
+        position: { x: 10, y: 10 },
+      } as Node;
       // Broadcast new node (cannot call react hooks from non-react functions)
-      setNewnode(node);
+      setNewnode(newnode);
     }
   };
 

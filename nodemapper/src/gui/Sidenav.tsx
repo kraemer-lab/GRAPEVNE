@@ -3,8 +3,8 @@ import HomeIcon from "@mui/icons-material/Home";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import SettingsIcon from "@mui/icons-material/Settings";
-import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
 import { NavLink } from "react-router-dom";
 
@@ -42,18 +42,21 @@ const Sidenav = () => {
   return (
     <div className={open ? "sidenav" : "sidenavClosed"}>
       <button className="menuBtn" onClick={toggleOpen}>
-        {open
-          ? <KeyboardDoubleArrowLeftIcon />
-          : <KeyboardDoubleArrowRightIcon />
-        }
+        {open ? (
+          <KeyboardDoubleArrowLeftIcon />
+        ) : (
+          <KeyboardDoubleArrowRightIcon />
+        )}
       </button>
-      {navData.map(item => {
+      {navData.map((item) => {
         return (
           <NavLink key={item.id} className="sideitem" to={item.path}>
             {item.icon}
-            <span className={open ? "linkText" : "linkTextClosed"}>{item.label}</span>
+            <span className={open ? "linkText" : "linkTextClosed"}>
+              {item.label}
+            </span>
           </NavLink>
-        )
+        );
       })}
     </div>
   );

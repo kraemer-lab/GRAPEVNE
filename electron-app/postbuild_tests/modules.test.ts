@@ -164,7 +164,7 @@ describe("modules", () => {
       );
       await args.clear();
       await args.sendKeys("--cores 1");
-      
+
       // Close settings pane
       await driver.findElement(By.id("btnBuilderSettings")).click();
       console.log("<<< test Set snakemake arguments list to use conda");

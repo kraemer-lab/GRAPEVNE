@@ -1,0 +1,8 @@
+.TextUpdaterNode {
+  min-height: 18px;
+  min-width: 100px;
+  border: 1px solid #eee;
+  padding: 5px;
+  border-radius: 5px;
+  background: white;
+}
