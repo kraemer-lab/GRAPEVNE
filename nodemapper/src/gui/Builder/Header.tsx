@@ -71,11 +71,6 @@ const Header = () => {
     dispatch(builderGetRemoteModules());
   };
 
-  // Open settings pane
-  const btnSettings = () => {
-    dispatch(builderToggleSettingsVisibility());
-  };
-
   return (
     <>
       <link
@@ -148,17 +143,6 @@ const Header = () => {
           onClick={btnArrange}
         >
           ARRANGE GRAPH
-        </button>
-        |
-        <button
-          id="btnBuilderGetModuleList"
-          className="btn"
-          onClick={btnGetModuleList}
-        >
-          GET MODULE LIST
-        </button>
-        <button id="btnBuilderSettings" className="btn" onClick={btnSettings}>
-          SETTINGS
         </button>
       </div>
     </>

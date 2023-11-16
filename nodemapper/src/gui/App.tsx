@@ -1,37 +1,45 @@
 import React from "react";
 import Sidenav from "./Sidenav";
 import MainPage from "./MainPage";
-
-import { Route } from "react-router-dom";
-import { Routes } from "react-router-dom";
 import { BrowserRouter } from "react-router-dom";
-import { StrictMode } from "react";
+import { Routes } from "react-router-dom";
+import { Route } from "react-router-dom";
+import BuilderSettings from "./Builder/components/BuilderSettings";
 
-import "./App.css";
+import Sidenav from "./Sidenav";
 
-const Containers = () => {
-  return <div>Containers</div>;
-};
+const Builder = () => <MainPage />;
+const Monitor = () => <h1>Monitor</h1>;
+const Explore = () => <h1>Explore</h1>;
+const Statistics = () => <h1>Statistics</h1>;
 
-const Settings = () => {
-  return <div>Settings</div>;
-};
-
-const App = () => {
+function App() {
   return (
-    <div className="App" style={{ height: "100vh" }}>
-      <BrowserRouter>
-        <Sidenav />
-        <main>
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/containers" element={<Containers />} />
-            <Route path="/settings" element={<Settings />} />
-          </Routes>
-        </main>
-      </BrowserRouter>
+    <div
+      className="App"
+      style={{
+        display: "flex",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      <Sidenav />
+      <main
+        style={{
+          width: "100vw",
+          height: "100vh",
+        }}
+      >
+        <Routes>
+          <Route path="/" element={<Builder />} />
+          <Route path="/monitor" element={<h1>Monitor</h1>} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/settings" element={<BuilderSettings />} />
+        </Routes>
+      </main>
     </div>
   );
-};
-
+}
 export default App;

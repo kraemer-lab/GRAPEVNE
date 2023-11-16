@@ -1,7 +1,8 @@
 const path = require("path");
-const production = process.env.NODE_ENV === "production";
 const TerserPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+const production = process.env.NODE_ENV === "production";
 
 module.exports = {
   mode: production ? "production" : "development",

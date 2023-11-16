@@ -54,109 +54,119 @@ const BuilderSettings = () => {
     <>
       <div
         style={{
-          display: "flex",
           width: "100%",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignSelf: "flex-start",
-          padding: "10px",
-          gap: "10px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <div>
-          <RepoOptions />
-        </div>
-        <div>
-          <div
-            style={{
-              backgroundColor: panel_background_color,
-              padding: "5px",
-            }}
-          >
-            <p>
-              <b>Snakemake</b>
-            </p>
-            <p>Backend</p>
-            <p>
-              <select
-                defaultValue={snakemake_backend}
-                onChange={(e) => selectSnakemakeBackend(e.target.value)}
-                style={{ width: "100%" }}
-              >
-                <option value="builtin">Built-in</option>
-                <option value="system">System</option>
-              </select>
-            </p>
-            <p>Arguments</p>
-            <p>
-              <input
-                id="inputBuilderSettingsSnakemakeArgs"
-                type="text"
-                size={default_input_size}
-                value={snakemake_args}
-                onChange={(e) => SetSnakemakeArgs(e.target.value)}
-                style={{ width: "100%" }}
-              />
-            </p>
+        <div
+          style={{
+            display: "flex",
+            width: "100%",
+            maxWidth: "600px",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignSelf: "flex-start",
+            padding: "10px",
+            gap: "10px",
+          }}
+        >
+          <div>
+            <RepoOptions />
           </div>
-        </div>
-        <div>
-          <div
-            style={{
-              backgroundColor: panel_background_color,
-              padding: "5px",
-            }}
-          >
-            <p>
-              <b>Environment</b>
-            </p>
-            <p>Variables</p>
-            <p>
-              <input
-                id="inputBuilderSettingsEnvironmentVars"
-                type="text"
-                size={default_input_size}
-                value={environment_vars}
-                onChange={(e) => SetEnvironmentVars(e.target.value)}
-                style={{ width: "100%" }}
-              />
-            </p>
+          <div>
+            <div
+              style={{
+                backgroundColor: panel_background_color,
+                padding: "5px",
+              }}
+            >
+              <p>
+                <b>Snakemake</b>
+              </p>
+              <p>Backend</p>
+              <p>
+                <select
+                  defaultValue={snakemake_backend}
+                  onChange={(e) => selectSnakemakeBackend(e.target.value)}
+                  style={{ width: "100%" }}
+                >
+                  <option value="builtin">Built-in</option>
+                  <option value="system">System</option>
+                </select>
+              </p>
+              <p>Arguments</p>
+              <p>
+                <input
+                  id="inputBuilderSettingsSnakemakeArgs"
+                  type="text"
+                  size={default_input_size}
+                  value={snakemake_args}
+                  onChange={(e) => SetSnakemakeArgs(e.target.value)}
+                  style={{ width: "100%" }}
+                />
+              </p>
+            </div>
           </div>
-        </div>
-        <div>
-          <div
-            style={{
-              backgroundColor: panel_background_color,
-              padding: "5px",
-            }}
-          >
-            <p>
-              <b>Interface</b>
-            </p>
-            <p>
-              <input
-                type="checkbox"
-                id="display_module_settings"
-                checked={display_module_settings}
-                onChange={(e) => SetDisplayModuleSettings(e.target.checked)}
-              />
-              <label htmlFor="display_module_settings">
-                {" "}
-                Display module settings
-              </label>
-            </p>
-            <p>
-              <input
-                type="checkbox"
-                id="auto_validate_connections"
-                checked={auto_validate_connections}
-                onChange={(e) => SetAutoValidateConnections(e.target.checked)}
-              />
-              <label htmlFor="auto_validate_connections">
-                {" "}
-                Auto-validate connections
-              </label>
-            </p>
+          <div>
+            <div
+              style={{
+                backgroundColor: panel_background_color,
+                padding: "5px",
+              }}
+            >
+              <p>
+                <b>Environment</b>
+              </p>
+              <p>Variables</p>
+              <p>
+                <input
+                  id="inputBuilderSettingsEnvironmentVars"
+                  type="text"
+                  size={default_input_size}
+                  value={environment_vars}
+                  onChange={(e) => SetEnvironmentVars(e.target.value)}
+                  style={{ width: "100%" }}
+                />
+              </p>
+            </div>
+          </div>
+          <div>
+            <div
+              style={{
+                backgroundColor: panel_background_color,
+                padding: "5px",
+              }}
+            >
+              <p>
+                <b>Interface</b>
+              </p>
+              <p>
+                <input
+                  type="checkbox"
+                  id="display_module_settings"
+                  checked={display_module_settings}
+                  onChange={(e) => SetDisplayModuleSettings(e.target.checked)}
+                />
+                <label htmlFor="display_module_settings">
+                  {" "}
+                  Display module settings
+                </label>
+              </p>
+              <p>
+                <input
+                  type="checkbox"
+                  id="auto_validate_connections"
+                  checked={auto_validate_connections}
+                  onChange={(e) => SetAutoValidateConnections(e.target.checked)}
+                />
+                <label htmlFor="auto_validate_connections">
+                  {" "}
+                  Auto-validate connections
+                </label>
+              </p>
+            </div>
           </div>
         </div>
       </div>
