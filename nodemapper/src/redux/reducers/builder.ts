@@ -72,7 +72,7 @@ const builderStateInit: IBuilderState = {
   ]),
   modules_list: "[]",
   snakemake_backend: "builtin", // builtin | system
-  snakemake_args: "--cores 1 --use-conda $(snakemake --list)",
+  snakemake_args: "--cores 1 --use-conda",
   conda_backend: "builtin", // builtin | system
   environment_variables: "",
   display_module_settings: false,

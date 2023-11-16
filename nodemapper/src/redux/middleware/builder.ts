@@ -195,7 +195,7 @@ const BuildAs = async (
     data: {
       format: "Snakefile",
       content: app.GetModuleListJSON(nodes, edges),
-      targets: app.GetLeafNodeNames(),
+      targets: app.GetLeafNodeNames(nodes, edges),
       args: snakemake_args,
       backend: snakemake_backend,
       conda_backend: conda_backend,
@@ -253,7 +253,7 @@ const BuildAndRun = async (
     data: {
       format: "Snakefile",
       content: app.GetModuleListJSON(nodes, edges),
-      targets: app.GetLeafNodeNames(),
+      targets: app.GetLeafNodeNames(nodes, edges),
       args: snakemake_args,
       backend: snakemake_backend,
       conda_backend: conda_backend,
