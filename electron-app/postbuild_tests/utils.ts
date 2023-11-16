@@ -181,7 +181,7 @@ const BuildAndRun_SingleModuleWorkflow = async (
   const module = await driver.findElement(
     By.id("modulelist-" + wranglename(modulename))
   );
-  const canvas = await driver.findElement(By.id("nodemapper-canvas"));
+  const canvas = await driver.findElement(By.className("react-flow__pane"));
   DragAndDrop(driver, module, canvas);
   // Give time for the module to be created on the canvas,
   // and for the config to load
@@ -228,7 +228,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   const module = await driver.findElement(
     By.id("modulelist-" + wranglename(modulename))
   );
-  const canvas = await driver.findElement(By.id("nodemapper-canvas"));
+  const canvas = await driver.findElement(By.className("react-flow__pane"));
   DragAndDrop(driver, module, canvas);
   // Give time for the config to load and for the module to be created on the canvas
   await driver.sleep(5000);

@@ -133,7 +133,7 @@ describe("modules", () => {
     const module = await driver.findElement(
       By.id("modulelist-_single_modules__copy_shell")
     );
-    const canvas = await driver.findElement(By.id("nodemapper-canvas"));
+    const canvas = await driver.findElement(By.className("react-flow__pane"));
     DragAndDrop(driver, module, canvas);
     // Give time for the module to be created on the canvas,
     // and for the config to load
