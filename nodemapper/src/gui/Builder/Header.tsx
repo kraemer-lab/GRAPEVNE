@@ -105,6 +105,14 @@ const Header = () => {
           SAVE
         </button>
         */}
+        <button
+          id="btnBuilderGetModuleList"
+          className="btn"
+          onClick={btnGetModuleList}
+        >
+          GET MODULE LIST
+        </button>
+        |
         <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
           TEST BUILD
         </button>

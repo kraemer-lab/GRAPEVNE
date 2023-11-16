@@ -128,6 +128,27 @@ const nodeTypes = {
   standard: ModuleNode,
 };
 
+export const getNodeById = (id: string, nodes: Node[]): Node | null => {
+  for (const node of nodes) {
+    if (node.id === id) {
+      return node;
+    }
+  }
+  return null;
+}
+
+export const setNodeWorkflow = (nodes: Node[], id: string, workflow: Record<string, unknown>): Node[] =>
+  nodes.map((node) => {
+    if (node.id === id) {
+      const ix = nodes.indexOf(node);
+      const newnode = JSON.parse(JSON.stringify(node));
+      newnode.data.config.config = workflow;
+      return newnode;
+    } else {
+      return node;
+    }
+  });
+
 const Flow = () => {
   const dispatch = useAppDispatch();
   const nodes = useAppSelector((state) => state.builder.nodes);
@@ -147,7 +168,7 @@ const Flow = () => {
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
     const payload = {
-      id: node.data.id,
+      id: node.id,
       name: node.data.config.name,
       type: node.data.config.type,
       code: JSON.stringify(node.data.config.config, null, 2),

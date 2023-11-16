@@ -90,8 +90,7 @@ const Canvas = (props: CanvasProps) => {
     const engine = app.engine;
     const data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
     //const point = engine.getRelativeMousePoint(event);
-    //const color = BuilderEngine.GetModuleTypeColor(data.type as string);
-    const color="red";
+    const color = BuilderEngine.GetModuleTypeColor(data.type as string);
     // Isolate configuration
     const module_name = data.name as string;
     const workflow = data.config as Query;
@@ -132,11 +131,14 @@ const Canvas = (props: CanvasProps) => {
           (data.config as Query).docstring = docstring;
 
           // Add node to graph
-          data.config.name = data.name;
-          data.config.type = data.type;
-          data.config.snakefile = data.snakefile;
+          for (const key in data) {
+            if (key === "config") {
+              continue;
+            }
+            data.config[key] = data[key];
+          }
           const newnode = {
-            id: "0",
+            id: "3",
             type: "standard",
             data: {
               config: data.config,

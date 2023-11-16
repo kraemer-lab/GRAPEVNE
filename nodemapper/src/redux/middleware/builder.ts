@@ -7,6 +7,7 @@ import { DefaultLinkModel } from "NodeMap";
 import { DefaultNodeModel } from "NodeMap";
 
 import { builderRedraw } from "redux/actions";
+import { builderSetNodes } from "redux/actions";
 import { builderLogEvent } from "redux/actions";
 import { builderBuildAsModule } from "redux/actions";
 import { builderBuildAsWorkflow } from "redux/actions";
@@ -15,6 +16,10 @@ import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 import { builderSetSettingsVisibility } from "redux/actions";
+
+import { Node } from "reactflow";
+import { getNodeById } from "gui/Builder/components/Flow";
+import { setNodeWorkflow } from "gui/Builder/components/Flow";
 
 type Query = Record<string, unknown>;
 
@@ -99,7 +104,8 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateNodeInfoKey(
             action,
             dispatch,
-            JSON.parse(getState().builder.nodeinfo)
+            JSON.parse(getState().builder.nodeinfo),
+            getState().builder.nodes,
           );
           break;
 
@@ -393,14 +399,14 @@ const NodeDeselected = (dispatch: TNodeDeselectedDispatch) => {
 const UpdateNodeInfoKey = (
   action: IPayloadRecord,
   dispatch,
-  nodeinfo
+  nodeinfo,
+  nodes: Node[],
 ): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoKey");
-  const builder = BuilderEngine.Instance;
-  const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
+  const node = getNodeById(nodeinfo.id, nodes) as Node;
   if (node !== null) {
-    const workflow = builder.nodeScene.getNodeWorkflow(node);
+    const workflow = JSON.parse(JSON.stringify(node.data.config.config));
     const keys = action.payload.keys as string[];
     const indexInto = (obj, indexlist, value) => {
       if (indexlist.length == 1) {
@@ -410,7 +416,12 @@ const UpdateNodeInfoKey = (
       }
     };
     indexInto(workflow, keys, action.payload.value);
-    builder.nodeScene.setNodeWorkflow(node, workflow);
+    const newnodes = setNodeWorkflow(nodes, node.id, workflow);
+    console.log("New nodes: ", newnodes);
+    if (newnodes !== null)
+      dispatch(builderSetNodes(newnodes));
+    else
+      console.error("Failed to update node workflow: ", nodeinfo, workflow);
   } else {
     console.log("Node not found: ", nodeinfo);
   }
