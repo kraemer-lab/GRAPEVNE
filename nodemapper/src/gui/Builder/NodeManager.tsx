@@ -20,7 +20,7 @@ const NodeManager = () => {
   app.AddSelectionListeners(
     (x) => {
       // On node selected
-      dispatch(builderNodeSelected(x));
+      dispatch(builderNodeSelected());
     },
     (x) => {
       // On node deselected

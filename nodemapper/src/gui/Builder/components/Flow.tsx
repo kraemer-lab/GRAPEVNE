@@ -21,6 +21,8 @@ import { applyEdgeChanges } from "reactflow";
 
 import { Handle, Position } from "reactflow";
 
+import { builderNodeSelected } from "redux/actions/builder";
+import { builderUpdateNodeInfo } from "redux/actions/builder";
 import { builderSetNodes } from "redux/actions/builder";
 import { builderSetEdges } from "redux/actions/builder";
 
@@ -143,6 +145,21 @@ const Flow = () => {
     dispatch(builderSetEdges(addEdge(connection, edges)));
   };
 
+  const onNodeClick = (event: React.MouseEvent, node: Node) => {
+    const payload = {
+      id: node.data.id,
+      name: node.data.config.name,
+      type: node.data.config.type,
+      code: JSON.stringify(node.data.config.config, null, 2),
+    };
+    dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+    dispatch(builderNodeSelected());
+  };
+
+  const onNodeContextMenu = (event: React.MouseEvent, node: Node) => {
+    console.log("context menu");
+  };
+
   return (
     <ReactFlow
       nodeTypes={nodeTypes}
@@ -151,6 +168,8 @@ const Flow = () => {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
+      onNodeClick={onNodeClick}
+      onNodeContextMenu={onNodeContextMenu}
       proOptions={proOptions}
     >
       <Controls />

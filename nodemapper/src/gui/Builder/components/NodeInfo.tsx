@@ -53,12 +53,7 @@ const DocString = (props: DocStringProps) => {
   );
 };
 
-interface NodeInfoProps {
-  onEditFocus: () => void;
-  onEditBlur: () => void;
-}
-
-const NodeInfo = (props: NodeInfoProps) => {
+const NodeInfo = () => {
   const [codesnippet, setCodesnippet] = useState("");
   const [docstring, setDocstring] = useState("");
   const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
@@ -80,7 +75,7 @@ const NodeInfo = (props: NodeInfoProps) => {
     <>
       <Content>
         <PanelGroup direction="vertical">
-          {docstring === "" ? null : (
+          {(docstring === undefined || docstring === null || docstring === "") ? null : (
             <>
               <Panel
                 className={styles.Panel}
@@ -105,8 +100,6 @@ const NodeInfo = (props: NodeInfoProps) => {
           >
             <HighlightedJSON
               json={codesnippet}
-              onEditFocus={props.onEditFocus}
-              onEditBlur={props.onEditBlur}
             />
           </Panel>
         </PanelGroup>

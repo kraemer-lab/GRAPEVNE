@@ -68,7 +68,7 @@ const ExpandButton = (props: ExpandProps) => {
               id: newnode.getOptions().id,
             };
             if (e.isSelected) {
-              dispatch(builderNodeSelected(payload));
+              dispatch(builderNodeSelected());
             } else {
               dispatch(builderNodeDeselected(payload));
             }
@@ -114,10 +114,6 @@ const NodeInfoRenderer = (props) => {
   // Get node to lock/unlock it during text edits
   const app = BuilderEngine.Instance;
   const node = app.getNodeByName(nodeinfo.name as string);
-  // Node is not locked by default
-  node.setLocked(false);
-  const onEditFocus = () => node.setLocked(true);
-  const onEditBlur = () => node.setLocked(false);
 
   return (
     <div
@@ -145,13 +141,9 @@ const NodeInfoRenderer = (props) => {
             value={nodeinfo.name}
             saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
             cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-            onFocus={(e) => onEditFocus()}
-            onBlur={(e) => onEditBlur()}
             onSave={(value) => {
               SetNodeName(value);
-              onEditBlur();
             }}
-            onCancel={() => onEditBlur()}
             saveOnBlur={true}
           />
         </div>
@@ -168,10 +160,7 @@ const NodeInfoRenderer = (props) => {
           overflowY: "auto",
         }}
       >
-        <NodeInfo
-          onEditFocus={() => onEditFocus()}
-          onEditBlur={() => onEditBlur()}
-        />
+        <NodeInfo />
       </div>
     </div>
   );
