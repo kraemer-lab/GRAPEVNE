@@ -130,18 +130,14 @@ const Canvas = (props: CanvasProps) => {
           (data.config as Query).config = config;
           (data.config as Query).docstring = docstring;
 
+          console.log(data);
+
           // Add node to graph
-          for (const key in data) {
-            if (key === "config") {
-              continue;
-            }
-            data.config[key] = data[key];
-          }
           const newnode = {
-            id: "3",
+            id: data.name,
             type: "standard",
             data: {
-              config: data.config,
+              config: data,
             },
             position: { x: 10, y: 10 },
           } as Node;

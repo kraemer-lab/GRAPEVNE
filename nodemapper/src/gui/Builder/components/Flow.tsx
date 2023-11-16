@@ -41,22 +41,24 @@ export type ModuleData = {
   config: {
     name: string;
     type: string;
-    snakefile: string | Record<string, string>;
-    docstring?: string | null;
-    parameter_map: Record<string, string[]>[];
     config: {
-      input_namespace: string | Record<string, string> | null;
-      output_namespace: string | null;
-      params?: Record<string, unknown> | null;
+      snakefile: string | Record<string, string>;
+      docstring?: string | null;
+      parameter_map?: Record<string, string[]>[];
+      config: {
+        input_namespace: string | Record<string, string> | null;
+        output_namespace: string | null;
+        params?: Record<string, unknown> | null;
+      };
     };
-  };
+  }
 };
 
 const ModuleNode = (props: NodeProps<ModuleData>) => {
   //const [name, setLabel] = useState(props.data?.label ?? "none");
 
   // Extract input_namespace and wrap as list as necessary
-  const input_namespace = props.data?.config?.config.input_namespace ?? null;
+  const input_namespace = props.data?.config?.config?.config.input_namespace ?? null;
   let input_namespaces: string[];
   if (typeof input_namespace === "string") {
     input_namespaces = [input_namespace];
@@ -103,7 +105,7 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
 
         {input_namespaces.map((name) => (
           <Handle
-            id="in"
+            id={name}
             key={name}
             type="target"
             position={Position.Left}
@@ -137,10 +139,20 @@ export const getNodeById = (id: string, nodes: Node[]): Node | null => {
   return null;
 }
 
+export const setNodeName = (nodes: Node[], id: string, name: string): Node[] =>
+  nodes.map((node) => {
+    if (node.id === id) {
+      const newnode = JSON.parse(JSON.stringify(node));
+      newnode.data.config.name = name;
+      return newnode;
+    } else {
+      return node;
+    }
+  });
+
 export const setNodeWorkflow = (nodes: Node[], id: string, workflow: Record<string, unknown>): Node[] =>
   nodes.map((node) => {
     if (node.id === id) {
-      const ix = nodes.indexOf(node);
       const newnode = JSON.parse(JSON.stringify(node));
       newnode.data.config.config = workflow;
       return newnode;

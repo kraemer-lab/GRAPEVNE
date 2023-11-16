@@ -45,8 +45,8 @@ class NodeScene {
     return link;
   }
 
-  getNodeUserProperties(node: DefaultNodeModel): Record<string, unknown> {
-    return JSON.parse(node.getOptions().extras);
+  getNodeUserProperties(node): Record<string, unknown> {
+    return node.data.config;
   }
 
   setNodeUserProperties(
@@ -141,26 +141,20 @@ class NodeScene {
     return JSON.stringify(this.engine.getModel().serialize());
   }
 
-  getNodeInputNodes(node: DefaultNodeModel): Record<string, string> {
+  getNodeInputNodes(node, edges): Record<string, string> {
     // Returns a dictionary of input port names and the nodes they are connected
+    //
+    // Example outputs:
+    //  { "In": "from_node" }
+    //  { "seeds": "get_seeds_source", "file": "download_datafile_source"}
     const nodes: Record<string, string> = {};
-    node.getInPorts().forEach((port: DefaultPortModel) => {
-      // Links return a dictionary, indexed by connected node
-      if (Object.keys(port.getLinks()).length > 0) {
-        if (Object.keys(port.getLinks()).length > 1) {
-          throw new Error("Input port has more than one link" + node);
-        }
-        const link = port.getLinks()[Object.keys(port.getLinks())[0]];
-        const node_from =
-          link.getTargetPort().getNode() == node
-            ? link.getSourcePort().getNode()
-            : link.getTargetPort().getNode();
-        const input_port_config = this.getNodeUserProperties(
-          node_from as DefaultNodeModel
-        );
-        nodes[port.getName()] = input_port_config.name as string;
-      }
-    });
+    const in_conns = edges.filter((edge) => edge.target === node.data.config.name);
+    for (const conn in in_conns) {
+      let portname = "in";
+      if ("targetHandle" in in_conns[conn])
+        portname = in_conns[conn].targetHandle;
+      nodes[portname] = in_conns[conn].source;
+    }
     return nodes;
   }
 
@@ -196,14 +190,16 @@ class NodeScene {
     return nodes;
   }
 
-  getModuleListJSON(): Record<string, unknown>[] {
-    return this.getModuleListJSONFromNodes(this.engine.getModel().getNodes());
+  getModuleListJSON(nodes, edges): Record<string, unknown>[] {
+    return this.getModuleListJSONFromNodes(nodes, edges);
   }
 
   getModuleListJSONFromNodeNames(
     nodenames: string[]
   ): Record<string, unknown>[] {
-    const nodes = nodenames.map((name) => {
+    throw new Error("Not implemented error.");
+
+    /*const nodes = nodenames.map((name) => {
       let node = null;
       for (const n of this.engine.getModel().getNodes()) {
         if (this.getNodeName(n as DefaultNodeModel) === name) {
@@ -213,25 +209,34 @@ class NodeScene {
       }
       return node;
     });
-    return this.getModuleListJSONFromNodes(nodes);
+    return this.getModuleListJSONFromNodes(nodes);*/
   }
 
-  getModuleListJSONFromNodes(nodes): Record<string, unknown>[] {
+  getNodeInputPortCount(node): number {
+    // Return the number of input ports for a given node //
+    const input_namespace = node.data.config.config.config.input_namespace;
+    if (input_namespace === null || input_namespace === undefined) return 0;
+    if (typeof input_namespace === "string") return 1;
+    return Object.keys(input_namespace).length;
+  }
+
+  getModuleListJSONFromNodes(nodes, edges): Record<string, unknown>[] {
     // Input provides a list of target nodes to generate workflow modules and
     // connectors from.
     const js = [];
 
     // Add nodes
-    nodes.forEach((node: DefaultNodeModel) => {
+    nodes.forEach((node: Node) => {
       js.push(this.getNodeUserProperties(node));
     });
 
     // Add connectors
-    nodes.forEach((node: DefaultNodeModel) => {
+    nodes.forEach((node) => {
       const map = [null, null];
-      map[0] = this.getNodeInputNodes(node);
-      if (node.getInPorts().length > 0) {
-        if (node.getInPorts().length == 1) {
+      map[0] = this.getNodeInputNodes(node, edges);
+      const in_ports_count = this.getNodeInputPortCount(node);
+      if (in_ports_count > 0) {
+        if (in_ports_count == 1) {
           // If singleton, return string instead of list
           map[0] = map[0][Object.keys(map[0])[0]];
         }

@@ -18,7 +18,9 @@ import { builderUpdateModulesList } from "redux/actions";
 import { builderSetSettingsVisibility } from "redux/actions";
 
 import { Node } from "reactflow";
+import { Edge } from "reactflow";
 import { getNodeById } from "gui/Builder/components/Flow";
+import { setNodeName } from "gui/Builder/components/Flow";
 import { setNodeWorkflow } from "gui/Builder/components/Flow";
 
 type Query = Record<string, unknown>;
@@ -45,7 +47,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables
+            getState().builder.environment_variables,
+            getState().builder.nodes,
+            getState().builder.edges,
           );
           break;
 
@@ -57,7 +61,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables
+            getState().builder.environment_variables,
+            getState().builder.nodes,
+            getState().builder.edges,
           );
           break;
 
@@ -67,7 +73,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables
+            getState().builder.environment_variables,
+            getState().builder.nodes,
+            getState().builder.edges,
           );
           break;
 
@@ -113,7 +121,8 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateNodeInfoName(
             action,
             dispatch,
-            JSON.parse(getState().builder.nodeinfo)
+            JSON.parse(getState().builder.nodeinfo),
+            getState().builder.nodes,
           );
           break;
 
@@ -175,7 +184,9 @@ const BuildAs = async (
   snakemake_args: string,
   snakemake_backend: string,
   conda_backend: string,
-  environment_variables: string
+  environment_variables: string,
+  nodes: Node[],
+  edges: Edge[],
 ) => {
   dispatchString(builderUpdateStatusText("Building workflow..."));
   const app = BuilderEngine.Instance;
@@ -183,7 +194,7 @@ const BuildAs = async (
     query: query_name,
     data: {
       format: "Snakefile",
-      content: app.GetModuleListJSON(),
+      content: app.GetModuleListJSON(nodes, edges),
       targets: app.GetLeafNodeNames(),
       args: snakemake_args,
       backend: snakemake_backend,
@@ -229,7 +240,9 @@ const BuildAndRun = async (
   snakemake_args: string,
   snakemake_backend: string,
   conda_backend: string,
-  environment_variables: string
+  environment_variables: string,
+  nodes: Node[],
+  edges: Edge[],
 ) => {
   dispatchString(
     builderUpdateStatusText("Building workflow and launching a test run...")
@@ -239,7 +252,7 @@ const BuildAndRun = async (
     query: "builder/build-and-run",
     data: {
       format: "Snakefile",
-      content: app.GetModuleListJSON(),
+      content: app.GetModuleListJSON(nodes, edges),
       targets: app.GetLeafNodeNames(),
       args: snakemake_args,
       backend: snakemake_backend,
@@ -337,6 +350,9 @@ const CheckNodeDependencies = async (
 ) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
+  throw new Error("Not implemented");
+
+  /*
   const app = BuilderEngine.Instance;
   const node = app.getNodeByName(nodename) as DefaultNodeModel;
   const inputNodes = app.nodeScene.getNodeInputNodes(node);
@@ -385,6 +401,7 @@ const CheckNodeDependencies = async (
     default:
       console.error("Unknown backend: ", backend);
   }
+  */
 };
 
 interface INodeDeselectedDispatch {
@@ -417,7 +434,6 @@ const UpdateNodeInfoKey = (
     };
     indexInto(workflow, keys, action.payload.value);
     const newnodes = setNodeWorkflow(nodes, node.id, workflow);
-    console.log("New nodes: ", newnodes);
     if (newnodes !== null)
       dispatch(builderSetNodes(newnodes));
     else
@@ -430,17 +446,22 @@ const UpdateNodeInfoKey = (
 const UpdateNodeInfoName = (
   action: IPayloadString,
   dispatch,
-  nodeinfo
+  nodeinfo,
+  nodes: Node[],
 ): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoName");
   const builder = BuilderEngine.Instance;
-  const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
+  const node = getNodeById(nodeinfo.id, nodes) as Node;
   if (node !== null) {
-    const name = builder.EnsureUniqueName(action.payload);
-    builder.nodeScene.setNodeName(node, name);
-    node.setName(name);
-    builder.engine.repaintCanvas();
+    //const name = builder.EnsureUniqueName(action.payload);  // TODO: Check for uniqueness
+    const name = action.payload;
+
+    const newnodes = setNodeName(nodes, node.id, name);
+    if (newnodes !== null)
+      dispatch(builderSetNodes(newnodes));
+    else
+      console.error("Failed to update node name: ", nodeinfo, name);
   } else {
     console.log("Node not found: ", nodeinfo);
   }

@@ -36,79 +36,9 @@ interface IBuilderState {
   settings_visible: boolean;
 }
 
-const default_nodes = [
-  {
-    // Source
-    id: "0",
-    type: "standard",
-    data: {
-      config: {
-        name: "test-s1",
-        type: "source",
-        snakefile: "Snakefile",
-        config: {
-          input_namespace: null,
-          output_namespace: "out",
-          params: {
-            param1: "value1",
-            param2: "value2",
-          },
-        },
-      },
-    },
-    position: { x: 100, y: 50 },
-  },
-  {
-    // Module (one output_namespace)
-    id: "1",
-    type: "standard",
-    data: {
-      config: {
-        name: "test-m1",
-        type: "module",
-        snakefile: "Snakefile",
-        config: {
-          input_namespace: "in",
-          output_namespace: "out",
-          params: {
-            param1: "value1",
-            param2: "value2",
-          },
-        },
-      },
-    },
-    position: { x: 300, y: 50 },
-  },
-  {
-    // Module (two output_namespaces)
-    id: "2",
-    type: "standard",
-    data: {
-      config: {
-        name: "test-m2",
-        type: "module",
-        snakefile: "Snakefile",
-        config: {
-          input_namespace: {
-            in1key: "in1value",
-            in2key: "in2value",
-          },
-          output_namespace: "out",
-          params: {
-            param1: "value1",
-            param2: "value2",
-          },
-        },
-      },
-    },
-    position: { x: 500, y: 50 },
-  },
-] as Node[];
+const default_nodes = [] as Node[];
 
-const default_edges = [
-  { id: "e1-2", source: "0", target: "1" },
-  { id: "e2-3", source: "1", target: "2" },
-] as Edge[];
+const default_edges = [] as Edge[];
 
 // State
 const builderStateInit: IBuilderState = {
@@ -142,7 +72,7 @@ const builderStateInit: IBuilderState = {
   ]),
   modules_list: "[]",
   snakemake_backend: "builtin", // builtin | system
-  snakemake_args: "--cores 1 --use-conda", // $(snakemake --list)
+  snakemake_args: "--cores 1 --use-conda $(snakemake --list)",
   conda_backend: "builtin", // builtin | system
   environment_variables: "",
   display_module_settings: false,

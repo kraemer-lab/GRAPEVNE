@@ -144,8 +144,8 @@ export default class NodeMapEngine {
     this.nodeScene.distributeModel(this.engine.getModel());
   }
 
-  public GetModuleListJSON() {
-    return this.nodeScene.getModuleListJSON();
+  public GetModuleListJSON(nodes, edges) {
+    return this.nodeScene.getModuleListJSON(nodes, edges);
   }
 
   public AddSelectionListeners(
@@ -333,6 +333,9 @@ export default class NodeMapEngine {
   }
 
   public ExpandNodeByName(name: string): DefaultNodeModel[] {
+    throw new Error("ExpandNodeByName not yet implemented.");
+
+    /*
     const node = this.getNodeByName(name);
     if (!node) return null;
     const json = this.getNodePropertiesAsJSON(node);
@@ -544,6 +547,7 @@ export default class NodeMapEngine {
     // Redraw and return new nodes
     this.engine.repaintCanvas();
     return newnodes;
+    */
   }
 
   public static GetModuleType(config: Record<string, unknown>): string {

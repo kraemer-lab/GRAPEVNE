@@ -7,6 +7,7 @@ import { useAppSelector } from "redux/store/hooks";
 
 import { displayUpdateNodeInfo } from "redux/actions";
 
+import { builderSetNodes } from "redux/actions";
 import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderBuildAndRun } from "redux/actions";
@@ -36,9 +37,9 @@ const Header = () => {
 
   // Load nodemap from file
   const btnClearScene = () => {
-    BuilderEngine.Instance.ClearScene();
-    //dispatch(displayUpdateNodeInfo(""));
+    //BuilderEngine.Instance.ClearScene();
     dispatch(builderNodeDeselected(""));
+    dispatch(builderSetNodes([]));
   };
 
   // Run - build and run the workflow
@@ -113,7 +114,11 @@ const Header = () => {
           GET MODULE LIST
         </button>
         |
-        <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
+        <button
+          id="btnBuilderBuildAndTest"
+          className="btn"
+          onClick={btnRun}
+        >
           TEST BUILD
         </button>
         <button
@@ -149,6 +154,7 @@ const Header = () => {
           id="btnBuilderArrangeGraph"
           className="btn"
           onClick={btnArrange}
+          disabled
         >
           ARRANGE GRAPH
         </button>
