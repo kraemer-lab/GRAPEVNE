@@ -3,26 +3,79 @@ import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "../actions";
 import { ConfigPaneDisplay } from "redux/types";
 
+import { Node } from "reactflow";
+import { Edge } from "reactflow";
+import { OnNodesChange } from "reactflow";
+import { OnEdgesChange } from "reactflow";
+import { OnConnect } from "reactflow";
+
 interface IBuilderState {
-  repo: string;
-  modules_list: string;
+  // Builder state
   statustext: string;
   nodeinfo: string;
   can_selected_expand: boolean;
   terminal_visibile: boolean;
-  settings_visible: boolean;
+  config_pane_display: string;
+  logtext: string;
+
+  // react-flow parameters (experimental)
+  nodes: Node[];
+  edges: Edge[];
+  
+  // Settings -- TODO: Move to separate reducer
+  repo: string;
+  modules_list: string;
   snakemake_backend: string;
   snakemake_args: string;
   conda_backend: string;
   environment_variables: string;
   display_module_settings: boolean;
   auto_validate_connections: boolean;
-  config_pane_display: string;
-  logtext: string;
+
+  // TODO: Remove these options
+  settings_visible: boolean;
 }
+
+const default_nodes = [
+  {
+    id: '1',
+    type: 'input',
+    data: { label: 'Input' },
+    position: { x: 250, y: 25 },
+  },
+  {
+    id: '2',
+    data: { label: 'Default' },
+    position: { x: 100, y: 125 },
+  },
+  {
+    id: '3',
+    type: 'output',
+    data: { label: 'Output' },
+    position: { x: 250, y: 250 },
+  },
+] as Node[];
+
+const default_edges = [
+  { id: 'e1-2', source: '1', target: '2' },
+  { id: 'e2-3', source: '2', target: '3' },
+] as Edge[];
 
 // State
 const builderStateInit: IBuilderState = {
+  // Builder state
+  statustext: "Idle",
+  nodeinfo: "{}", // {} required to be a valid JSON string
+  can_selected_expand: true,
+  terminal_visibile: false,
+  config_pane_display: ConfigPaneDisplay.None,
+  logtext: " ",
+  
+  // react-flow parameters (experimental)
+  nodes: default_nodes,
+  edges: default_edges,
+  
+  // Settings -- TODO: Move to separate reducer
   repo: JSON.stringify([
     // Default - should be overwritten by master list (downloaded from url)
     {
@@ -33,24 +86,28 @@ const builderStateInit: IBuilderState = {
     },
   ]),
   modules_list: "[]",
-  statustext: "Idle",
-  nodeinfo: "{}", // {} required to be a valid JSON string
-  can_selected_expand: true,
-  terminal_visibile: false,
-  settings_visible: false,
   snakemake_backend: "builtin", // builtin | system
   snakemake_args: "--cores 1 --use-conda --force", // $(snakemake --list)
   conda_backend: "builtin", // builtin | system
   environment_variables: "",
   display_module_settings: false,
   auto_validate_connections: false,
-  config_pane_display: ConfigPaneDisplay.None,
-  logtext: " ",
+  
+  // TODO: Remove these options
+  settings_visible: false,
 };
 
 // Nodemap
 const builderReducer = createReducer(builderStateInit, (builder) => {
   builder
+    .addCase(actions.builderSetNodes, (state, action) => {
+      state.nodes = action.payload as Node[];
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetEdges, (state, action) => {
+      state.edges = action.payload as Edge[];
+      console.info("[Reducer] " + action.type);
+    })
     .addCase(actions.builderLoadNodemap, (state, action) => {
       console.info("[Reducer] " + action.type);
     })

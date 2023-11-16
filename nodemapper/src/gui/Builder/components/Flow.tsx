@@ -1,43 +1,47 @@
 import React from "react";
 import { useCallback } from "react";
-import ReactFlow, {
-  Node,
-  addEdge,
-  Background,
-  Edge,
-  Controls,
-  Connection,
-  MiniMap,
-  useNodesState,
-  useEdgesState
-} from "reactflow";
+import { useAppSelector } from "redux/store/hooks";
+import { useAppDispatch } from "redux/store/hooks";
 
+import ReactFlow from "reactflow";
+import { Node } from "reactflow";
+import { Edge } from "reactflow";
+import { addEdge } from "reactflow";
+import { Controls } from "reactflow";
+import { Background } from "reactflow";
+import { Connection } from "reactflow";
+import { NodeChange } from "reactflow";
+import { EdgeChange } from "reactflow";
+import { useNodesState } from "reactflow";
+import { useEdgesState } from "reactflow";
+import { applyNodeChanges } from "reactflow";
+import { applyEdgeChanges } from "reactflow";
+
+import { builderSetNodes } from "redux/actions/builder";
+import { builderSetEdges } from "redux/actions/builder";
 
 import "reactflow/dist/style.css";
 
-const initialNodes: Node[] = [
-  {
-    id: "1",
-    type: "input",
-    data: { label: "Node 1" },
-    position: { x: 250, y: 5 },
-  },
-  { id: "2", data: { label: "Node 2" }, position: { x: 100, y: 100 } },
-  { id: "3", data: { label: "Node 3" }, position: { x: 400, y: 100 } },
-];
-
-const initialEdges: Edge[] = [
-  { id: "e1-2", source: "1", target: "2" },
-  { id: "e1-3", source: "1", target: "3" }
-];
+const proOptions = {
+  hideAttribution: true,
+};
 
 const BasicFlow = () => {
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const onConnect = useCallback(
-    (params: Edge | Connection) => setEdges((els) => addEdge(params, els)),
-    [setEdges]
-  );
+  const dispatch = useAppDispatch();
+  const nodes = useAppSelector((state) => state.builder.nodes);
+  const edges = useAppSelector((state) => state.builder.edges);
+  
+  const onNodesChange = (changes: NodeChange[]) => {
+    dispatch(builderSetNodes(applyNodeChanges(changes, nodes)));
+  };
+
+  const onEdgesChange = (changes: EdgeChange[]) => {
+    dispatch(builderSetEdges(applyEdgeChanges(changes, edges)));
+  };
+
+  const onConnect = (connection: Connection) => {
+    dispatch(builderSetEdges(addEdge(connection, edges)));
+  };
 
   return (
     <ReactFlow
@@ -46,10 +50,9 @@ const BasicFlow = () => {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
-      fitView
+      proOptions={proOptions}
     >
       <Controls />
-      <MiniMap />
       <Background />
     </ReactFlow>
   );
