@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
   push:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
+      - "**.md"
+      - "docs/**"
 
 jobs:
   es-lint-nodemapper:

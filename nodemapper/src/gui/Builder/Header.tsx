@@ -114,11 +114,7 @@ const Header = () => {
           GET MODULE LIST
         </button>
         |
-        <button
-          id="btnBuilderBuildAndTest"
-          className="btn"
-          onClick={btnRun}
-        >
+        <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
           TEST BUILD
         </button>
         <button

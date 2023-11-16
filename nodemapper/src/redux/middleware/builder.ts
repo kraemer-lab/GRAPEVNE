@@ -49,7 +49,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.conda_backend,
             getState().builder.environment_variables,
             getState().builder.nodes,
-            getState().builder.edges,
+            getState().builder.edges
           );
           break;
 
@@ -63,7 +63,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.conda_backend,
             getState().builder.environment_variables,
             getState().builder.nodes,
-            getState().builder.edges,
+            getState().builder.edges
           );
           break;
 
@@ -75,7 +75,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.conda_backend,
             getState().builder.environment_variables,
             getState().builder.nodes,
-            getState().builder.edges,
+            getState().builder.edges
           );
           break;
 
@@ -113,7 +113,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             action,
             dispatch,
             JSON.parse(getState().builder.nodeinfo),
-            getState().builder.nodes,
+            getState().builder.nodes
           );
           break;
 
@@ -122,7 +122,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             action,
             dispatch,
             JSON.parse(getState().builder.nodeinfo),
-            getState().builder.nodes,
+            getState().builder.nodes
           );
           break;
 
@@ -186,7 +186,7 @@ const BuildAs = async (
   conda_backend: string,
   environment_variables: string,
   nodes: Node[],
-  edges: Edge[],
+  edges: Edge[]
 ) => {
   dispatchString(builderUpdateStatusText("Building workflow..."));
   const app = BuilderEngine.Instance;
@@ -242,7 +242,7 @@ const BuildAndRun = async (
   conda_backend: string,
   environment_variables: string,
   nodes: Node[],
-  edges: Edge[],
+  edges: Edge[]
 ) => {
   dispatchString(
     builderUpdateStatusText("Building workflow and launching a test run...")
@@ -417,7 +417,7 @@ const UpdateNodeInfoKey = (
   action: IPayloadRecord,
   dispatch,
   nodeinfo,
-  nodes: Node[],
+  nodes: Node[]
 ): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoKey");
@@ -434,10 +434,8 @@ const UpdateNodeInfoKey = (
     };
     indexInto(workflow, keys, action.payload.value);
     const newnodes = setNodeWorkflow(nodes, node.id, workflow);
-    if (newnodes !== null)
-      dispatch(builderSetNodes(newnodes));
-    else
-      console.error("Failed to update node workflow: ", nodeinfo, workflow);
+    if (newnodes !== null) dispatch(builderSetNodes(newnodes));
+    else console.error("Failed to update node workflow: ", nodeinfo, workflow);
   } else {
     console.log("Node not found: ", nodeinfo);
   }
@@ -447,7 +445,7 @@ const UpdateNodeInfoName = (
   action: IPayloadString,
   dispatch,
   nodeinfo,
-  nodes: Node[],
+  nodes: Node[]
 ): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoName");
@@ -458,10 +456,8 @@ const UpdateNodeInfoName = (
     const name = action.payload;
 
     const newnodes = setNodeName(nodes, node.id, name);
-    if (newnodes !== null)
-      dispatch(builderSetNodes(newnodes));
-    else
-      console.error("Failed to update node name: ", nodeinfo, name);
+    if (newnodes !== null) dispatch(builderSetNodes(newnodes));
+    else console.error("Failed to update node name: ", nodeinfo, name);
   } else {
     console.log("Node not found: ", nodeinfo);
   }

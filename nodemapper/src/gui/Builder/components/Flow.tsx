@@ -51,14 +51,15 @@ export type ModuleData = {
         params?: Record<string, unknown> | null;
       };
     };
-  }
+  };
 };
 
 const ModuleNode = (props: NodeProps<ModuleData>) => {
   //const [name, setLabel] = useState(props.data?.label ?? "none");
 
   // Extract input_namespace and wrap as list as necessary
-  const input_namespace = props.data?.config?.config?.config.input_namespace ?? null;
+  const input_namespace =
+    props.data?.config?.config?.config.input_namespace ?? null;
   let input_namespaces: string[];
   if (typeof input_namespace === "string") {
     input_namespaces = [input_namespace];
@@ -110,16 +111,15 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
             type="target"
             position={Position.Left}
             style={{
-              top: `${(100 / (input_namespaces.length + 1)) * (input_namespaces.indexOf(name) + 1)}%`,
+              top: `${
+                (100 / (input_namespaces.length + 1)) *
+                (input_namespaces.indexOf(name) + 1)
+              }%`,
             }}
           />
         ))}
 
-        <Handle
-          id="out"
-          type="source"
-          position={Position.Right}
-        />
+        <Handle id="out" type="source" position={Position.Right} />
       </div>
     </div>
   );
@@ -137,7 +137,7 @@ export const getNodeById = (id: string, nodes: Node[]): Node | null => {
     }
   }
   return null;
-}
+};
 
 export const setNodeName = (nodes: Node[], id: string, name: string): Node[] =>
   nodes.map((node) => {
@@ -150,7 +150,11 @@ export const setNodeName = (nodes: Node[], id: string, name: string): Node[] =>
     }
   });
 
-export const setNodeWorkflow = (nodes: Node[], id: string, workflow: Record<string, unknown>): Node[] =>
+export const setNodeWorkflow = (
+  nodes: Node[],
+  id: string,
+  workflow: Record<string, unknown>
+): Node[] =>
   nodes.map((node) => {
     if (node.id === id) {
       const newnode = JSON.parse(JSON.stringify(node));

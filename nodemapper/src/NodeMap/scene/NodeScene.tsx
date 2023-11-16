@@ -148,7 +148,9 @@ class NodeScene {
     //  { "In": "from_node" }
     //  { "seeds": "get_seeds_source", "file": "download_datafile_source"}
     const nodes: Record<string, string> = {};
-    const in_conns = edges.filter((edge) => edge.target === node.data.config.name);
+    const in_conns = edges.filter(
+      (edge) => edge.target === node.data.config.name
+    );
     for (const conn in in_conns) {
       let portname = "in";
       if ("targetHandle" in in_conns[conn])

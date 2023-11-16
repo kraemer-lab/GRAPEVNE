@@ -75,7 +75,9 @@ const NodeInfo = () => {
     <>
       <Content>
         <PanelGroup direction="vertical">
-          {(docstring === undefined || docstring === null || docstring === "") ? null : (
+          {docstring === undefined ||
+          docstring === null ||
+          docstring === "" ? null : (
             <>
               <Panel
                 className={styles.Panel}
@@ -98,9 +100,7 @@ const NodeInfo = () => {
               overflowY: "auto",
             }}
           >
-            <HighlightedJSON
-              json={codesnippet}
-            />
+            <HighlightedJSON json={codesnippet} />
           </Panel>
         </PanelGroup>
       </Content>

@@ -214,10 +214,9 @@ export default class NodeMapEngine {
       });
     return leafNodes;
   }
-  
+
   public GetLeafNodeNames(nodes, edges): string[] {
-    const source_names = edges
-      .map((edge) => edge.source);
+    const source_names = edges.map((edge) => edge.source);
     const leaf_node_names = nodes
       .map((node) => node.data.config.name)
       .filter((name) => !source_names.includes(name));
