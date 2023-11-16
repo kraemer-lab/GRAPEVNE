@@ -1,5 +1,4 @@
 import React from "react";
-import Sidenav from "./Sidenav";
 import MainPage from "./MainPage";
 import { BrowserRouter } from "react-router-dom";
 import { Routes } from "react-router-dom";
