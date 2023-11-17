@@ -38,7 +38,7 @@ const Header = () => {
   // Load nodemap from file
   const btnClearScene = () => {
     //BuilderEngine.Instance.ClearScene();
-    dispatch(builderNodeDeselected(""));
+    dispatch(builderNodeDeselected());
     dispatch(builderSetNodes([]));
   };
 

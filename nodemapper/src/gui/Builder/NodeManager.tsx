@@ -24,11 +24,11 @@ const NodeManager = () => {
     },
     (x) => {
       // On node deselected
-      dispatch(builderNodeDeselected(x));
+      dispatch(builderNodeDeselected());
     },
     () => {
       // On node deleted
-      dispatch(builderNodeDeselected({}));
+      dispatch(builderNodeDeselected());
     },
     (x) => {
       // On link added

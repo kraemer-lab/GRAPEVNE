@@ -1,33 +1,42 @@
 import React from "react";
+import { useRef } from "react";
 import { useState } from "react";
 import { useCallback } from "react";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 
+import { builderSetNodes } from "redux/actions/builder";
+import { builderSetEdges } from "redux/actions/builder";
+import { builderNodeSelected } from "redux/actions/builder";
+import { builderNodeDeselected } from "redux/actions/builder";
+import { builderUpdateNodeInfo } from "redux/actions/builder";
+
 import ReactFlow from "reactflow";
 import { Node } from "reactflow";
 import { Edge } from "reactflow";
+import { Handle } from "reactflow";
 import { addEdge } from "reactflow";
+import { BaseEdge } from "reactflow";
 import { Controls } from "reactflow";
+import { Position } from "reactflow";
+import { NodeProps } from "reactflow";
+import { EdgeProps } from "reactflow";
 import { Background } from "reactflow";
 import { Connection } from "reactflow";
 import { NodeChange } from "reactflow";
-import { NodeProps } from "reactflow";
 import { EdgeChange } from "reactflow";
+import { getBezierPath } from "reactflow";
 import { useNodesState } from "reactflow";
 import { useEdgesState } from "reactflow";
 import { applyNodeChanges } from "reactflow";
 import { applyEdgeChanges } from "reactflow";
+import { EdgeLabelRenderer } from "reactflow";
 
-import { Handle, Position } from "reactflow";
-
-import { builderNodeSelected } from "redux/actions/builder";
-import { builderUpdateNodeInfo } from "redux/actions/builder";
-import { builderSetNodes } from "redux/actions/builder";
-import { builderSetEdges } from "redux/actions/builder";
+import ContextMenu from "./ContextMenu";
 
 import "reactflow/dist/style.css";
 import styles from "./flow.module.css";
+import "./flow.css";
 
 const proOptions = {
   hideAttribution: true,
@@ -54,8 +63,6 @@ export type ModuleData = {
 };
 
 const ModuleNode = (props: NodeProps<ModuleData>) => {
-  //const [name, setLabel] = useState(props.data?.label ?? "none");
-
   // Extract input_namespace and wrap as list as necessary
   const input_namespace =
     props.data?.config?.config?.config.input_namespace ?? null;
@@ -116,6 +123,10 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
                 type="target"
                 position={Position.Left}
                 style={{ top: `${input_namespaces.indexOf(name) * 18 + 38}px` }}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  console.log("Input handle clicked: ", event.target);
+                }}
               >
                 <div className={styles.InputPortLabel}>{name}</div>
               </Handle>
@@ -136,9 +147,63 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
   );
 };
 
+const onEdgeClick = (evt, id) => {
+  evt.stopPropagation();
+  alert(`Edge button selected ${id}`);
+};
+
+export const ButtonEdge = ({
+  id,
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  markerEnd,
+}: EdgeProps) => {
+  const [edgePath, labelX, labelY] = getBezierPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+
+  return (
+    <>
+      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <EdgeLabelRenderer>
+      <div
+        style={{
+          position: 'absolute',
+          transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+          fontSize: 12,
+          pointerEvents: 'all',
+        }}
+        className="nodrag nopan"
+      >
+        <button
+          className={styles.ButtonEdge}
+          onClick={(event) => onEdgeClick(event, id)}
+        >
+          -
+        </button>
+      </div>
+      </EdgeLabelRenderer>
+    </>
+  );
+}
+
 // Remember to useMemo if this is moved inside a component
 const nodeTypes = {
   standard: ModuleNode,
+};
+
+const edgeTypes = {
+  buttonedge: ButtonEdge,
 };
 
 export const getNodeById = (id: string, nodes: Node[]): Node | null => {
@@ -165,8 +230,8 @@ export const setNodeWorkflow = (
   nodes: Node[],
   id: string,
   workflow: Record<string, unknown>
-): Node[] =>
-  nodes.map((node) => {
+): Node[] => {
+  return nodes.map((node) => {
     if (node.id === id) {
       const newnode = JSON.parse(JSON.stringify(node));
       newnode.data.config.config = workflow;
@@ -175,6 +240,7 @@ export const setNodeWorkflow = (
       return node;
     }
   });
+}
 
 const Flow = () => {
   const dispatch = useAppDispatch();
@@ -190,7 +256,12 @@ const Flow = () => {
   };
 
   const onConnect = (connection: Connection) => {
-    dispatch(builderSetEdges(addEdge(connection, edges)));
+    dispatch(builderSetEdges(
+      addEdge(
+        {...connection, type: "buttonedge"},
+        edges
+      )
+    ));
   };
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
@@ -200,17 +271,45 @@ const Flow = () => {
       type: node.data.config.type,
       code: JSON.stringify(node.data.config.config, null, 2),
     };
+    // Close context menu (if open)
+    setMenu(null);
+    // Open module parameters pane
     dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
     dispatch(builderNodeSelected());
   };
 
+  const [menu, setMenu] = useState(null);
+  const ref = useRef(null);
   const onNodeContextMenu = (event: React.MouseEvent, node: Node) => {
-    console.log("context menu");
+    // Prevent native context menu from showing
+    event.preventDefault();
+    // Close module parameters pane (if open)
+    dispatch(builderNodeDeselected());
+    // Open context menu
+    const pane = ref.current.getBoundingClientRect();
+    // Position context menu; right-align if it is too close to the edge of the pane
+    setMenu({
+      id: node.id,
+      top: (event.clientY - pane.top) < pane.height - 200 && (event.clientY - pane.top),
+      bottom: (event.clientY - pane.top) >= pane.height - 200 && pane.height - (event.clientY - pane.top),
+      left: (event.clientX - pane.left) < pane.width - 200 && (event.clientX - pane.left),
+      right: (event.clientX - pane.left) >= pane.width - 200 && pane.width - (event.clientX - pane.left),
+    });
   };
+
+  const onPaneClick = useCallback(() => {
+    console.log("Pane clicked");
+    // Close context menu (if open)
+    setMenu(null);
+    // Close module parameters pane (if open)
+    dispatch(builderNodeDeselected());
+  }, [setMenu]);
 
   return (
     <ReactFlow
+      ref={ref}
       nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
@@ -218,11 +317,13 @@ const Flow = () => {
       onConnect={onConnect}
       onNodeClick={onNodeClick}
       onNodeContextMenu={onNodeContextMenu}
+      onPaneClick={onPaneClick}
       proOptions={proOptions}
       snapToGrid={true}
     >
       <Controls />
       <Background />
+      {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
     </ReactFlow>
   );
 };

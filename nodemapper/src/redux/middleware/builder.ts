@@ -636,7 +636,7 @@ const SetSettingsVisibility = (
 ) => {
   if (new_state) {
     // Close node info pane
-    dispatch(builderNodeDeselected(""));
+    dispatch(builderNodeDeselected());
     const app = BuilderEngine.Instance;
     app.DeselectAll();
   }

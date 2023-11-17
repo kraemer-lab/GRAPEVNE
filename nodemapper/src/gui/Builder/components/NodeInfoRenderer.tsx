@@ -70,16 +70,16 @@ const ExpandButton = (props: ExpandProps) => {
             if (e.isSelected) {
               dispatch(builderNodeSelected());
             } else {
-              dispatch(builderNodeDeselected(payload));
+              dispatch(builderNodeDeselected());
             }
           },
           entityRemoved: (e) => {
-            dispatch(builderNodeDeselected({}));
+            dispatch(builderNodeDeselected());
           },
         });
       });
       // Ensure the expanded node is deselected (and no longer editable)
-      dispatch(builderNodeDeselected(""));
+      dispatch(builderNodeDeselected());
     }
   }, [newnodes]);
 
