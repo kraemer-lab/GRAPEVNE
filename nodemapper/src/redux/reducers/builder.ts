@@ -36,7 +36,187 @@ interface IBuilderState {
   settings_visible: boolean;
 }
 
-const default_nodes = [] as Node[];
+const default_nodes = [
+  {
+    id: "0",
+    type: "standard",
+    position: { x: 50, y: 50 },
+    data: {
+      color: "#8b8c89",
+      config: {
+        name: "Source",
+        type: "source",
+        config: {
+          snakefile: "Snakefile",
+          docstring: null,
+          config: {
+            input_namespace: null,
+            output_namespace: "out",
+            params: {
+              param1: "value1",
+              param2: "value2",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    id: "1",
+    type: "standard",
+    position: { x: 50, y: 150 },
+    data: {
+      color: "#006daa",
+      config: {
+        name: "Single input",
+        type: "module",
+        config: {
+          snakefile: "Snakefile",
+          docstring: null,
+          config: {
+            input_namespace: "in",
+            output_namespace: "out",
+            params: {
+              param1: "value1",
+              param2: "value2",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    id: "11",
+    type: "standard",
+    position: { x: 50, y: 250 },
+    data: {
+      color: "#005599",
+      config: {
+        name: "a",
+        type: "module",
+        config: {
+          snakefile: "Snakefile",
+          docstring: null,
+          config: {
+            input_namespace: "in",
+            output_namespace: "out",
+            params: {
+              param1: "value1",
+              param2: "value2",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    id: "-1",
+    type: "standard",
+    position: { x: 50, y: 320 },
+    data: {
+      color: "#44aa44",
+      config: {
+        name: "Here is a really long name for a source",
+        type: "source",
+        config: {
+          snakefile: "Snakefile",
+          docstring: null,
+          config: {
+            input_namespace: null,
+            output_namespace: "out",
+            params: {
+              param1: "value1",
+              param2: "value2",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    id: "2",
+    type: "standard",
+    position: { x: 300, y: 50 },
+    data: {
+      color: "#006daa",
+      config: {
+        name: "Multiple inputs (even count)",
+        type: "module",
+        config: {
+          snakefile: "Snakefile",
+          docstring: null,
+          config: {
+            input_namespace: {
+              in1: "in1value",
+              in2: "in2value",
+              in3: "in3value",
+              in4: "in4value",
+            },
+            output_namespace: "out",
+            params: {
+              param1: "value1",
+              param2: "value2",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    id: "3",
+    type: "standard",
+    position: { x: 300, y: 190 },
+    data: {
+      color: "#006daa",
+      config: {
+        name: "Multiple inputs (odd count)",
+        type: "module",
+        config: {
+          snakefile: "Snakefile",
+          docstring: null,
+          config: {
+            input_namespace: {
+              in1: "in1value",
+              in2: "in2value",
+              in3: "in3value",
+              in4: "in4value",
+              in5: "in5value",
+            },
+            output_namespace: "out",
+            params: {
+              param1: "value1",
+              param2: "value2",
+            },
+          },
+        },
+      },
+    },
+  },
+  {
+    id: "12",
+    type: "standard",
+    position: { x: 300, y: 350 },
+    data: {
+      color: "#006daa",
+      config: {
+        name: "Here is a really long name for a module",
+        type: "module",
+        config: {
+          snakefile: "Snakefile",
+          docstring: null,
+          config: {
+            input_namespace: "in",
+            output_namespace: "out",
+            params: {
+              param1: "value1",
+              param2: "value2",
+            },
+          },
+        },
+      },
+    },
+  },
+] as Node[];
 
 const default_edges = [] as Edge[];
 
@@ -57,12 +237,12 @@ const builderStateInit: IBuilderState = {
   // Settings -- TODO: Move to separate reducer
   repo: JSON.stringify([
     // Default - should be overwritten by master list (downloaded from url)
-    /*{
+    {
       type: "github", // local | github
       label: "Kraemer Lab",
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: "kraemer-lab/vneyard",
-    },*/
+    },
     {
       type: "local", // local | github
       label: "Snakeshack",
@@ -87,6 +267,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
   builder
     .addCase(actions.builderSetNodes, (state, action) => {
       state.nodes = action.payload as Node[];
+      console.log("Set nodes: ", state.nodes);
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderAddNode, (state, action) => {

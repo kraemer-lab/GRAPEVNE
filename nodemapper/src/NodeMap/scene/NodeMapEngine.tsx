@@ -564,12 +564,16 @@ export default class NodeMapEngine {
   public static GetModuleTypeColor(type: string): string {
     let color = "";
     switch (type) {
+      case "disabled": {
+        color = "#8b8c89";
+        break;
+      }
       case "source": {
-        color = "rgb(192,255,0)";
+        color = "#44aa44";
         break;
       }
       case "module": {
-        color = "rgb(0,192,255)";
+        color = "#006daa";
         break;
       }
       case "connector": {

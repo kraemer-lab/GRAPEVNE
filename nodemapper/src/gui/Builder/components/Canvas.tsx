@@ -130,13 +130,12 @@ const Canvas = (props: CanvasProps) => {
           (data.config as Query).config = config;
           (data.config as Query).docstring = docstring;
 
-          console.log(data);
-
           // Add node to graph
           const newnode = {
             id: data.name,
             type: "standard",
             data: {
+              color: color,
               config: data,
             },
             position: { x: 10, y: 10 },
@@ -155,14 +154,11 @@ const Canvas = (props: CanvasProps) => {
     } else {
       // Module already contains a valid configuration
       // Add node to graph
-      data.config.name = data.name;
-      data.config.type = data.type;
-      data.config.snakefile = data.snakefile;
       const newnode = {
         id: "0",
         type: "standard",
         data: {
-          config: data.config,
+          config: data,
         },
         position: { x: 10, y: 10 },
       } as Node;

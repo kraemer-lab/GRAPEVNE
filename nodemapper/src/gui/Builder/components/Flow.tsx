@@ -34,17 +34,16 @@ const proOptions = {
 };
 
 export type ModuleData = {
-  // Place graphical settings here
-  //
+  // Place graphical only settings here
+  color: string;
 
   // Keep GRAPEVNE module configuration isolated from any graphical settings
   config: {
     name: string;
     type: string;
     config: {
-      snakefile: string | Record<string, string>;
+      snakefile: string;
       docstring?: string | null;
-      parameter_map?: Record<string, string[]>[];
       config: {
         input_namespace: string | Record<string, string> | null;
         output_namespace: string | null;
@@ -61,66 +60,78 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
   const input_namespace =
     props.data?.config?.config?.config.input_namespace ?? null;
   let input_namespaces: string[];
+  let named_inputs = false;
   if (typeof input_namespace === "string") {
     input_namespaces = [input_namespace];
   } else if (input_namespace === null) {
     input_namespaces = [];
   } else {
+    named_inputs = true;
     input_namespaces = Object.keys(input_namespace);
   }
 
   return (
-    <div className={styles.TextUpdaterNode}>
-      <div>
-        <label
-          htmlFor="text"
-          style={{
-            display: "block",
-            color: "#777",
-            fontSize: "12px",
-          }}
-        >
-          {props.data.config.name}
-        </label>
+    <div
+      className={styles.Node}
+      style={{
+        backgroundColor: props.data.color,
+      }}
+    >
+      <div className={styles.HeaderPanel}>
+        <div className={styles.HeaderText}>{props.data.config.name}</div>
       </div>
-      <div
-        style={{
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <label
-          htmlFor="text"
+      {!named_inputs ? (
+        <>
+          {input_namespaces.length == 1 ? (
+            <Handle
+              className={styles.HandleInput}
+              id={input_namespaces[0]}
+              key={input_namespaces[0]}
+              type="target"
+              position={Position.Left}
+              style={{ top: "50%" }}
+            />
+          ) : null}
+          <Handle
+            className={styles.HandleOutput}
+            id="out"
+            type="source"
+            position={Position.Right}
+            style={{ top: "50%" }}
+          />
+        </>
+      ) : (
+        <div
+          className={styles.BodyPanel}
           style={{
-            display: "block",
-            color: "#777",
-            fontSize: "12px",
+            height: `${input_namespaces.length * 18 - 4}px`,
           }}
         >
           {input_namespaces.map((name) => (
-            <div key={name}>{name}</div>
+            <div key={"div-" + name}>
+              <Handle
+                className={styles.HandleInput}
+                id={name}
+                key={name}
+                type="target"
+                position={Position.Left}
+                style={{ top: `${input_namespaces.indexOf(name) * 18 + 38}px` }}
+              >
+                <div className={styles.InputPortLabel}>{name}</div>
+              </Handle>
+            </div>
           ))}
-        </label>
-
-        {input_namespaces.map((name) => (
           <Handle
-            id={name}
-            key={name}
-            type="target"
-            position={Position.Left}
+            className={styles.HandleOutput}
+            id="out"
+            type="source"
+            position={Position.Right}
             style={{
-              top: `${
-                (100 / (input_namespaces.length + 1)) *
-                (input_namespaces.indexOf(name) + 1)
-              }%`,
+              top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
             }}
           />
-        ))}
-
-        <Handle id="out" type="source" position={Position.Right} />
-      </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -208,6 +219,7 @@ const Flow = () => {
       onNodeClick={onNodeClick}
       onNodeContextMenu={onNodeContextMenu}
       proOptions={proOptions}
+      snapToGrid={true}
     >
       <Controls />
       <Background />
