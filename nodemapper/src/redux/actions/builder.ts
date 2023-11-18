@@ -5,6 +5,7 @@ import { Connection } from "reactflow";
 
 export const builderSetNodes = createAction<Node[]>("builder/set-nodes");
 export const builderAddNode = createAction<Node>("builder/add-node");
+export const builderAddNodes = createAction<Node[]>("builder/add-nodes");
 export const builderSetEdges = createAction<Edge[]>("builder/set-edges");
 
 export const builderLoadNodemap = createAction("builder/load-nodemap");

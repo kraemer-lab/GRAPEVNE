@@ -8,6 +8,7 @@ import { useAppSelector } from "redux/store/hooks";
 import { displayUpdateNodeInfo } from "redux/actions";
 
 import { builderSetNodes } from "redux/actions";
+import { builderSetEdges } from "redux/actions";
 import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderBuildAndRun } from "redux/actions";
@@ -40,6 +41,7 @@ const Header = () => {
     //BuilderEngine.Instance.ClearScene();
     dispatch(builderNodeDeselected());
     dispatch(builderSetNodes([]));
+    dispatch(builderSetEdges([]));
   };
 
   // Run - build and run the workflow

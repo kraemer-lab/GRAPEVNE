@@ -10,6 +10,9 @@ import { DefaultNodeModel } from "NodeMap";
 import { DefaultNodeFactory } from "NodeMap";
 import { DefaultPortFactory } from "NodeMap";
 
+import { Node } from "reactflow";
+import { Edge } from "reactflow";
+
 import * as globals from "redux/globals";
 
 type Query = Record<string, unknown>;
@@ -104,23 +107,32 @@ export default class NodeMapEngine {
     return returnNode;
   }
 
-  public getNodeByName(name: string): NodeModel {
+  public getNodeName(node: Node): string {
+    return node.data.config.name;
+  }
+
+  public setNodeName(node: Node, newname: string) {
+    node.data.config.name = newname;
+  }
+
+  public getNodeByName(name: string, nodes): Node {
     let returnNode = null;
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((item) => {
-        if (this.getProperty(item, "name") === name) returnNode = item;
-      });
+    nodes.forEach((item) => {
+      if (item.data.config.name === name) returnNode = item;
+    });
     return returnNode;
   }
 
-  public getNodePropertiesAsJSON(node: NodeModel): Record<string, undefined> {
-    return JSON.parse(node.getOptions().extras);
+  public getNodePropertiesAsJSON(node): Record<string, undefined> {
+    return node.data.config;
+  }
+
+  public setNodePropertiesAsJSON(node, json) {
+    node.data.config = json;
   }
 
   public getNodePropertiesAsStr(node: NodeModel): string {
-    return node.getOptions().extras;
+    return JSON.stringify(this.getNodePropertiesAsJSON(node));
   }
 
   public getProperty(node: NodeModel, prop: string): string {
@@ -215,7 +227,7 @@ export default class NodeMapEngine {
     return leafNodes;
   }
 
-  public GetLeafNodeNames(nodes, edges): string[] {
+  public GetLeafNodeNames(nodes: Node[], edges: Edge[]): string[] {
     const source_names = edges.map((edge) => edge.source);
     const leaf_node_names = nodes
       .map((node) => node.data.config.name)
@@ -223,29 +235,23 @@ export default class NodeMapEngine {
     return leaf_node_names;
   }
 
-  public DoesNodeNameClash(name: string): boolean {
-    let clash = false;
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((node) => {
-        if (this.getProperty(node, "name") === name) clash = true;
-      });
-    return clash;
+  public DoesNodeNameClash(name: string, nodes: Node[]): boolean {
+    return name in nodes.map((node) => node.data.config.name);
   }
 
-  public GetUniqueName(name: string): string {
+  public GetUniqueName(name: string, nodes: Node[]): string {
     // Adds a postfix to the name to make it unique
     // Note: this function always adds a postfix, use EnsureUniqueName to
     //       preserve existing name if possible
     let nodePostfix = 0;
-    while (this.DoesNodeNameClash(name + "_" + ++nodePostfix));
+    while (this.DoesNodeNameClash(name + "_" + ++nodePostfix, nodes));
     return (name += "_" + nodePostfix);
   }
 
-  public EnsureUniqueName(name: string): string {
+  public EnsureUniqueName(name: string, nodes: Node[]): string {
     // Preserves existing name if no clashes, otherwise adds a postfix
-    if (this.DoesNodeNameClash(name)) return this.GetUniqueName(name);
+    if (this.DoesNodeNameClash(name, nodes))
+      return this.GetUniqueName(name, nodes);
     return name;
   }
 
@@ -253,12 +259,13 @@ export default class NodeMapEngine {
     data: Record<string, unknown>,
     point,
     color,
-    uniquenames = true
+    uniquenames = true,
+    nodes = null
   ): DefaultNodeModel {
-    let node: DefaultNodeModel = null;
+    let node = null;
     let node_name = data.name as string;
     // Unique name
-    if (uniquenames) node_name = this.EnsureUniqueName(node_name);
+    if (uniquenames) node_name = this.EnsureUniqueName(node_name, nodes);
     // Create node
     node = new DefaultNodeModel(
       node_name,
@@ -290,32 +297,11 @@ export default class NodeMapEngine {
       input_namespace["In"] = "In";
       input_namespace_mapping["In"] = params.input_namespace;
     }
-    // Add input ports
-    for (const key in input_namespace) {
-      // Do not display port if it's namespaces starts with '_'
-      if (
-        input_namespace_mapping[key] !== undefined &&
-        input_namespace_mapping[key].startsWith("_")
-      )
-        continue;
-      node.addInPort(input_namespace[key]);
-    }
-    // Add output port (if applicable)
-    switch (data.type) {
-      case "source":
-      case "module":
-      case "connector":
-        node.addOutPort("Out");
-        break;
-    }
-    node.setPosition(point);
-    this.engine.getModel().addNode(node);
-    this.engine.repaintCanvas();
     return node;
   }
 
-  public CanNodeExpand(name: string): boolean {
-    const node = this.getNodeByName(name);
+  public CanNodeExpand(name: string, nodes): boolean {
+    const node = this.getNodeByName(name, nodes);
     if (!node) return false;
     const json = this.getNodePropertiesAsJSON(node);
     if (!json.config) return false;
@@ -331,25 +317,72 @@ export default class NodeMapEngine {
     return can_node_expand;
   }
 
-  public ExpandNodeByName(name: string): DefaultNodeModel[] {
-    throw new Error("ExpandNodeByName not yet implemented.");
+  public getNodePosition(node) {
+    return node.position;
+  }
 
-    /*
-    const node = this.getNodeByName(name);
-    if (!node) return null;
+  public getUniqueID(elements: Node[] | Edge[]) {
+    const ids = elements.map((element) => element.id);
+    let id = 0;
+    while (id.toString() in ids) id++;
+    return id.toString();
+  }
+
+  public getNodeInputNodes(node: Node, nodes: Node[], edges: Edge[]) {
+    const from_nodes = edges
+      .filter((edge) => edge.target === node.data.config.name)
+      .map((edge) => edge.source);
+    return [...new Set(from_nodes)]; // Remove duplicates
+  }
+
+  public getNodeNameFromID(id: string, nodes: Node[]) {
+    const node = nodes.filter((node) => node.id === id)[0];
+    return node.data.config.name;
+  }
+
+  public getNodeOutputNodes(node: Node, nodes: Node[], edges: Edge[]) {
+    const nodes_and_ports = [];
+    const from_edges = edges.filter(
+      (edge) => edge.source === node.data.config.name
+    );
+    from_edges.forEach((edge) => {
+      nodes_and_ports.push([
+        this.getNodeNameFromID(edge.target, nodes),
+        edge.targetHandle,
+      ]);
+    });
+    return nodes_and_ports;
+  }
+
+  public ExpandNodeByName(
+    name: string,
+    nodes: Node[],
+    edges: Edge[]
+  ): [Node[], Edge[]] {
+    console.log("ExpandNodeByName");
+
+    const node = this.getNodeByName(name, nodes);
+    if (!node) return [null, null];
     const json = this.getNodePropertiesAsJSON(node);
-    if (!json.config) return null;
-    if (!json.config["config"]) return null;
+    if (!json.config) return [null, null];
+    if (!json.config["config"]) return [null, null];
+
+    // Initialise returned nodes and edges structures
+    let all_nodes = JSON.parse(JSON.stringify(nodes));
+    let all_edges = JSON.parse(JSON.stringify(edges));
 
     // Modules list
     const modules = json.config["config"] as Record<string, unknown>;
-    if (!modules) return null; // Do not expand if no modules
+    if (!modules) return [null, null];
 
     // Create sub-nodes from modules list
-    const newnodes: DefaultNodeModel[] = [] as DefaultNodeModel[];
+    const newnodes = [];
     const namemap: Record<string, string> = {};
     let offset = 0.0;
     for (const item in modules) {
+      console.log("item:");
+      console.log(item);
+
       if (modules[item] === null || modules[item] === undefined) continue;
       if (modules[item]["config"] === undefined) continue;
       const params = modules[item]["config"] as Record<string, unknown>;
@@ -369,24 +402,29 @@ export default class NodeMapEngine {
         type: (modules[item] as Record<string, unknown>).type,
         config: config,
       };
-      const newpoint = node.getPosition().clone();
+      const newpoint = { ...this.getNodePosition(node) };
       newpoint.x += offset;
       newpoint.y += offset;
-      offset += 5.0;
+      offset += 15.0;
       // Determine unique name (but don't substitute yet)
-      const uniquename = this.EnsureUniqueName(data.name);
+      const uniquename = this.EnsureUniqueName(data.name, nodes);
       if (uniquename !== data.name) namemap[data.name] = uniquename;
       // Call AddNodeToGraph with uniquenames = false to prevent node renaming
       // (at least until after the graph is expanded)
       const module_type = NodeMapEngine.GetModuleType(
         data.config.config as Record<string, unknown>
       );
-      const newnode = this.AddNodeToGraph(
-        data,
-        newpoint,
-        NodeMapEngine.GetModuleTypeColor(module_type),
-        false
-      );
+
+      // New node
+      const newnode = {
+        id: this.getUniqueID(nodes.concat(newnodes)),
+        type: "standard",
+        position: newpoint,
+        data: {
+          color: NodeMapEngine.GetModuleTypeColor(module_type),
+          config: data,
+        },
+      };
       newnodes.push(newnode);
     }
 
@@ -406,19 +444,27 @@ export default class NodeMapEngine {
         if (typeof input_namespace === "string") {
           // string = single input port
           if (output_namespace === input_namespace) {
-            const link = new DefaultLinkModel();
-            link.setSourcePort(node_from.getPort("Out"));
-            link.setTargetPort(node_to.getPort("In"));
-            this.engine.getModel().addLink(link);
+            const newedge = {
+              id: this.getUniqueID(edges),
+              source: node_from.id,
+              sourceHandle: "Out",
+              target: node_to.id,
+              targetHandle: "In",
+            };
+            all_edges.push(newedge);
           }
         } else {
           // record = multiple input ports
           for (const key in input_namespace) {
             if (output_namespace === input_namespace[key]) {
-              const link = new DefaultLinkModel();
-              link.setSourcePort(node_from.getPort("Out"));
-              link.setTargetPort(node_to.getPort(key));
-              this.engine.getModel().addLink(link);
+              const newedge = {
+                id: this.getUniqueID(edges),
+                source: node_from.id,
+                sourceHandle: "Out",
+                target: node_to.id,
+                targetHandle: key,
+              };
+              all_edges.push(newedge);
             }
           }
         }
@@ -426,13 +472,13 @@ export default class NodeMapEngine {
     });
 
     // Map input connections to sub-graph
-    const ports = this.nodeScene.getNodeInputNodes(node as DefaultNodeModel);
-    for (const port_label in ports) {
-      const node_name = ports[port_label];
-      const node_from = this.getNodeByName(node_name);
+    const from_nodes = this.getNodeInputNodes(node, nodes, edges);
+    for (const node_label in from_nodes) {
+      const node_name = from_nodes[node_label];
+      const node_from = this.getNodeByName(node_name, nodes);
       if (!node_from) continue;
       // Lookup target port in sub-graph
-      const port_name_list = port_label.split("$");
+      const port_name_list = node_label.split("$");
       const targetnode_name = port_name_list[0];
       let port_name = "";
       if (port_name_list.length == 1) {
@@ -446,13 +492,15 @@ export default class NodeMapEngine {
       } else {
         throw new Error("Recursive port naming not yet supported.");
       }
-      const target_node = this.getNodeByName(targetnode_name);
-      const target_port = target_node.getPort(port_name);
-      // Create link
-      const link = new DefaultLinkModel();
-      link.setSourcePort(node_from.getPort("Out"));
-      link.setTargetPort(target_port);
-      this.engine.getModel().addLink(link);
+      const target_node = this.getNodeByName(targetnode_name, nodes);
+      const newedge = {
+        id: this.getUniqueID(edges),
+        source: node_from.id,
+        sourceHandle: "Out",
+        target: target_node.id,
+        targetHandle: port_name,
+      };
+      all_edges.push(newedge);
     }
 
     // Map output connections from sub-graph
@@ -461,9 +509,7 @@ export default class NodeMapEngine {
       unknown
     >;
     const output_namespace = config["config"]["output_namespace"];
-    const target_node_and_port = this.nodeScene.getNodeOutputNodes(
-      node as DefaultNodeModel
-    );
+    const target_node_and_port = this.getNodeOutputNodes(node, nodes, edges);
     for (let i = 0; i < target_node_and_port.length; i++) {
       const target_node = target_node_and_port[i][0];
       const target_port = target_node_and_port[i][1];
@@ -474,28 +520,23 @@ export default class NodeMapEngine {
         ] as Record<string, unknown>;
         const namespace = config["config"]["output_namespace"];
         if (namespace == output_namespace) {
-          const source_port = node_from.getPort("Out");
-          const link = new DefaultLinkModel();
-          link.setSourcePort(source_port);
-          link.setTargetPort(target_port);
-          this.engine.getModel().addLink(link);
+          const newedge = {
+            id: this.getUniqueID(edges),
+            source: node_from.id,
+            sourceHandle: "Out",
+            target: target_node.id,
+            targetHandle: target_port,
+          };
+          all_edges.push(newedge);
         }
       });
     }
 
-    // Delete expanded node (be sure to delete links first)
-    const links = this.engine.getModel().getLinks();
-    links.forEach((link) => {
-      if (
-        link.getSourcePort().getParent() === node ||
-        link.getTargetPort().getParent() === node
-      ) {
-        link.getSourcePort().removeLink(link);
-        link.getTargetPort().removeLink(link);
-        this.engine.getModel().removeLink(link);
-      }
-    });
-    this.engine.getModel().removeNode(node);
+    // Delete expanded node (and connected edges)
+    all_nodes = all_nodes.filter((item) => item.data.config.name !== name);
+    all_edges = all_edges
+      .filter((item) => item.source !== name)
+      .filter((item) => item.target !== name);
 
     // Ensure unique names (subgraph was expanded without renaming so may
     //   clash with existing nodes)
@@ -529,24 +570,22 @@ export default class NodeMapEngine {
         }
       }
       // Save changes back to node
-      this.nodeScene.setNodeUserProperties(node, json);
+      this.setNodePropertiesAsJSON(node, json);
     });
     // Finally, substitute node names
     newnodes.forEach((node) => {
-      const nodename = this.nodeScene.getNodeName(node);
+      const nodename = this.getNodeName(node);
       if (Object.keys(namemap).includes(nodename)) {
         console.log(
           "(expand) substitution: " + nodename + " -> " + namemap[nodename]
         );
-        this.nodeScene.setNodeName(node, namemap[nodename]);
-        node.setName(namemap[nodename]);
+        this.setNodeName(node, namemap[nodename]);
       }
     });
 
-    // Redraw and return new nodes
-    this.engine.repaintCanvas();
-    return newnodes;
-    */
+    // Concatenate new nodes with existing nodes
+    all_nodes = all_nodes.concat(newnodes);
+    return [all_nodes, all_edges];
   }
 
   public static GetModuleType(config: Record<string, unknown>): string {

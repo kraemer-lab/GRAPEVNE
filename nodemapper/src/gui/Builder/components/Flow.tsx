@@ -176,26 +176,26 @@ export const ButtonEdge = ({
     <>
       <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
       <EdgeLabelRenderer>
-      <div
-        style={{
-          position: 'absolute',
-          transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-          fontSize: 12,
-          pointerEvents: 'all',
-        }}
-        className="nodrag nopan"
-      >
-        <button
-          className={styles.ButtonEdge}
-          onClick={(event) => onEdgeClick(event, id)}
+        <div
+          style={{
+            position: "absolute",
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            fontSize: 12,
+            pointerEvents: "all",
+          }}
+          className="nodrag nopan"
         >
-          -
-        </button>
-      </div>
+          <button
+            className={styles.ButtonEdge}
+            onClick={(event) => onEdgeClick(event, id)}
+          >
+            -
+          </button>
+        </div>
       </EdgeLabelRenderer>
     </>
   );
-}
+};
 
 // Remember to useMemo if this is moved inside a component
 const nodeTypes = {
@@ -240,7 +240,7 @@ export const setNodeWorkflow = (
       return node;
     }
   });
-}
+};
 
 const Flow = () => {
   const dispatch = useAppDispatch();
@@ -256,12 +256,9 @@ const Flow = () => {
   };
 
   const onConnect = (connection: Connection) => {
-    dispatch(builderSetEdges(
-      addEdge(
-        {...connection, type: "buttonedge"},
-        edges
-      )
-    ));
+    dispatch(
+      builderSetEdges(addEdge({ ...connection, type: "buttonedge" }, edges))
+    );
   };
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
@@ -290,10 +287,18 @@ const Flow = () => {
     // Position context menu; right-align if it is too close to the edge of the pane
     setMenu({
       id: node.id,
-      top: (event.clientY - pane.top) < pane.height - 200 && (event.clientY - pane.top),
-      bottom: (event.clientY - pane.top) >= pane.height - 200 && pane.height - (event.clientY - pane.top),
-      left: (event.clientX - pane.left) < pane.width - 200 && (event.clientX - pane.left),
-      right: (event.clientX - pane.left) >= pane.width - 200 && pane.width - (event.clientX - pane.left),
+      top:
+        event.clientY - pane.top < pane.height - 200 &&
+        event.clientY - pane.top,
+      bottom:
+        event.clientY - pane.top >= pane.height - 200 &&
+        pane.height - (event.clientY - pane.top),
+      left:
+        event.clientX - pane.left < pane.width - 200 &&
+        event.clientX - pane.left,
+      right:
+        event.clientX - pane.left >= pane.width - 200 &&
+        pane.width - (event.clientX - pane.left),
     });
   };
 

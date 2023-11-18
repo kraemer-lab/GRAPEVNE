@@ -231,18 +231,18 @@ const builderStateInit: IBuilderState = {
   logtext: " ",
 
   // react-flow parameters (experimental)
-  nodes: default_nodes,
+  nodes: [], // default_nodes,
   edges: default_edges,
 
   // Settings -- TODO: Move to separate reducer
   repo: JSON.stringify([
     // Default - should be overwritten by master list (downloaded from url)
-    {
+    /*{
       type: "github", // local | github
       label: "Kraemer Lab",
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: "kraemer-lab/vneyard",
-    },
+    },*/
     {
       type: "local", // local | github
       label: "Snakeshack",
@@ -274,8 +274,13 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       state.nodes = state.nodes.concat(action.payload as Node);
       console.info("[Reducer] " + action.type);
     })
+    .addCase(actions.builderAddNodes, (state, action) => {
+      state.nodes = state.nodes.concat(action.payload as Node[]);
+      console.info("[Reducer] " + action.type);
+    })
     .addCase(actions.builderSetEdges, (state, action) => {
       state.edges = action.payload as Edge[];
+      console.log("Set edges: ", state.nodes);
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderLoadNodemap, (state, action) => {

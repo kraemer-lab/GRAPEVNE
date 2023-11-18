@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
+import React, { useCallback } from "react";
 import { useAppSelector } from "redux/store/hooks";
-import { useReactFlow } from 'reactflow';
+import { useReactFlow } from "reactflow";
 import { getNodeById } from "./Flow";
 
 export default function ContextMenu({
@@ -36,7 +36,7 @@ export default function ContextMenu({
       className="context-menu"
       {...props}
     >
-      <p style={{ margin: '0.5em' }}>
+      <p style={{ margin: "0.5em" }}>
         <small>{node_name}</small>
       </p>
       <button onClick={duplicateNode}>duplicate</button>
