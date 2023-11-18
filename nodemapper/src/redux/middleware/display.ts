@@ -1,4 +1,3 @@
-import RunnerEngine from "gui/Runner/RunnerEngine";
 import * as globals from "redux/globals";
 
 import { runnerSelectNone } from "redux/actions";
@@ -18,9 +17,6 @@ export const displayMiddleware = ({ getState, dispatch }) => {
       switch (action.type) {
         case "display/close-settings":
           CloseSettings(dispatch);
-          break;
-        case "display/zoom-to-fit":
-          ZoomToFit();
           break;
         case "display/get-folder-info":
           GetFolderInfo(dispatch, getState);
@@ -42,11 +38,6 @@ export const displayMiddleware = ({ getState, dispatch }) => {
 
 const CloseSettings = (dispatch) => {
   dispatch(runnerSelectNone());
-};
-
-const ZoomToFit = () => {
-  const runner = RunnerEngine.Instance;
-  runner.ZoomToFit();
 };
 
 const GetFolderInfo = async (dispatch, getState) => {

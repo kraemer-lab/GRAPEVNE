@@ -1,14 +1,4 @@
-import NodeScene from "./NodeScene";
-
 import { keys } from "lodash";
-import { NodeModel } from "@projectstorm/react-diagrams";
-import { DiagramEngine } from "@projectstorm/react-diagrams";
-
-import { DefaultLinkModel } from "NodeMap";
-import { DefaultPortModel } from "NodeMap";
-import { DefaultNodeModel } from "NodeMap";
-import { DefaultNodeFactory } from "NodeMap";
-import { DefaultPortFactory } from "NodeMap";
 
 import { Node } from "reactflow";
 import { Edge } from "reactflow";
@@ -23,28 +13,6 @@ interface IPayload {
 }
 
 export default class NodeMapEngine {
-  nodeScene: NodeScene = null;
-  engine: DiagramEngine = null;
-
-  constructor() {
-    this.nodeScene = new NodeScene();
-    this.engine = this.nodeScene.engine;
-    // Register custom factories
-    this.engine.getNodeFactories().clearFactories();
-    this.engine.getNodeFactories().registerFactory(new DefaultNodeFactory());
-    this.engine.getPortFactories().clearFactories();
-    this.engine.getPortFactories().registerFactory(new DefaultPortFactory());
-  }
-
-  public NodesSelectNone() {
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((item) => {
-        item.setSelected(false);
-      });
-  }
-
   public QueryAndLoadTextFile(onLoad: (result) => void) {
     // Opens a file dialog, then executes readerEvent
     const input = document.createElement("input");
@@ -58,22 +26,6 @@ export default class NodeMapEngine {
     input.click();
   }
 
-  public ClearScene() {
-    this.nodeScene.clearModel();
-  }
-
-  public LoadScene() {
-    const onLoad = (content) => {
-      this.nodeScene.loadModel(content);
-    };
-    this.QueryAndLoadTextFile(onLoad);
-  }
-
-  public SaveScene() {
-    const str = this.nodeScene.serializeModel();
-    this.Download("model.json", str);
-  }
-
   public Download(filename, text) {
     const element = document.createElement("a");
     element.setAttribute(
@@ -85,26 +37,6 @@ export default class NodeMapEngine {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-  }
-
-  public DeselectAll() {
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((item) => {
-        item.setSelected(false);
-      });
-  }
-
-  public getNodeById(id: string): NodeModel {
-    let returnNode = null;
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((item) => {
-        if (item.getOptions().id === id) returnNode = item;
-      });
-    return returnNode;
   }
 
   public getNodeName(node: Node): string {
@@ -131,100 +63,8 @@ export default class NodeMapEngine {
     node.data.config = json;
   }
 
-  public getNodePropertiesAsStr(node: NodeModel): string {
+  public getNodePropertiesAsStr(node: Node): string {
     return JSON.stringify(this.getNodePropertiesAsJSON(node));
-  }
-
-  public getProperty(node: NodeModel, prop: string): string {
-    const json = this.getNodePropertiesAsJSON(node);
-    return json[prop];
-  }
-
-  public ConstructMapFromBlocks(data: JSON) {
-    this.nodeScene.buildMapWithSnippets(data);
-  }
-
-  public MarkNodesWithoutConnectionsAsComplete(data: JSON) {
-    this.nodeScene.markNodesWithoutConnectionsAsComplete(data);
-  }
-
-  public ZoomToFit() {
-    this.engine.zoomToFit();
-  }
-
-  public RedistributeModel() {
-    this.nodeScene.distributeModel(this.engine.getModel());
-  }
-
-  public GetModuleListJSON(nodes, edges) {
-    return this.nodeScene.getModuleListJSON(nodes, edges);
-  }
-
-  public AddSelectionListeners(
-    select_fn: (payload: IPayload) => void,
-    deselect_fn: (payload: IPayload) => void,
-    delete_fn: () => void,
-    addlink_fn: (payload: DefaultLinkModel) => void
-  ) {
-    // Add listeners, noting the following useful resource:
-    // https://github.com/projectstorm/react-diagrams/issues/164
-    const model = this.engine.getModel();
-    // Clear listeners on base model (link listeners)
-    model.clearListeners();
-    // New link listener
-    model.registerListener({
-      linksUpdated: (event) => {
-        const link = event.link as DefaultLinkModel;
-        link.registerListener({
-          targetPortChanged: (event) => {
-            addlink_fn(link);
-          },
-        });
-      },
-    });
-    // Add node selection listeners
-    model.getNodes().forEach((node) => {
-      this.RegisterNodeListeners(node, select_fn, deselect_fn, delete_fn);
-    });
-  }
-
-  public RegisterNodeListeners(
-    node: NodeModel,
-    select_fn: (payload: IPayload) => void,
-    deselect_fn: (payload: IPayload) => void,
-    delete_fn: () => void
-  ) {
-    node.registerListener({
-      selectionChanged: (e) => {
-        const payload: IPayload = {
-          id: node.getOptions().id,
-        };
-        if (e.isSelected) {
-          select_fn(payload);
-        } else {
-          deselect_fn(payload);
-        }
-      },
-      entityRemoved: (e) => {
-        delete_fn();
-      },
-    });
-  }
-
-  public GetLeafNodes(): NodeModel[] {
-    const leafNodes = [];
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((node) => {
-        if (
-          Object.keys(
-            this.nodeScene.getNodeOutputNodes(node as DefaultNodeModel)
-          ).length == 0
-        )
-          leafNodes.push(node);
-      });
-    return leafNodes;
   }
 
   public GetLeafNodeNames(nodes: Node[], edges: Edge[]): string[] {
@@ -253,51 +93,6 @@ export default class NodeMapEngine {
     if (this.DoesNodeNameClash(name, nodes))
       return this.GetUniqueName(name, nodes);
     return name;
-  }
-
-  public AddNodeToGraph(
-    data: Record<string, unknown>,
-    point,
-    color,
-    uniquenames = true,
-    nodes = null
-  ): DefaultNodeModel {
-    let node = null;
-    let node_name = data.name as string;
-    // Unique name
-    if (uniquenames) node_name = this.EnsureUniqueName(node_name, nodes);
-    // Create node
-    node = new DefaultNodeModel(
-      node_name,
-      color,
-      JSON.stringify({
-        id: "idcode", // TODO
-        name: node_name,
-        type: data.type,
-        config: data.config,
-      })
-    );
-    // Determine number (and names of input ports)
-    let input_namespace = {}; // namespace names (for ports)
-    let input_namespace_mapping = {}; // namespace mappings ('_*'=hidden, etc)
-    const params = (data.config as Query).config as Query;
-    if (params.input_namespace === undefined) {
-      // No input namespace specified - use default unless source
-      if (data.type !== "source") {
-        input_namespace["In"] = "In";
-      }
-    } else if (params.input_namespace === null) {
-      // Null input namespace specified - no input ports
-    } else if (typeof params.input_namespace === "object") {
-      // Where the input namespace is an object (probably a dictionary)
-      input_namespace = Object.keys(params.input_namespace);
-      input_namespace_mapping = Object.values(params.input_namespace);
-    } else {
-      // Where the input namespace is not an object (probably a string)
-      input_namespace["In"] = "In";
-      input_namespace_mapping["In"] = params.input_namespace;
-    }
-    return node;
   }
 
   public CanNodeExpand(name: string, nodes): boolean {
@@ -352,6 +147,54 @@ export default class NodeMapEngine {
       ]);
     });
     return nodes_and_ports;
+  }
+
+  getNodeInputPortCount(node): number {
+    // Return the number of input ports for a given node //
+    const input_namespace = node.data.config.config.config.input_namespace;
+    if (input_namespace === null || input_namespace === undefined) return 0;
+    if (typeof input_namespace === "string") return 1;
+    return Object.keys(input_namespace).length;
+  }
+
+  public GetModuleListJSON(
+    nodes: Node[],
+    edges: Edge[]
+  ): Record<string, unknown>[] {
+    // Input provides a list of target nodes to generate workflow modules and
+    // connectors from.
+    const js = [];
+
+    // Add nodes
+    nodes.forEach((node: Node) => {
+      js.push(this.getNodePropertiesAsJSON(node));
+    });
+
+    // Add connectors
+    nodes.forEach((node) => {
+      const map = [null, null];
+      map[0] = this.getNodeInputNodes(node, nodes, edges);
+      const in_ports_count = this.getNodeInputPortCount(node);
+      if (in_ports_count > 0) {
+        if (in_ports_count == 1) {
+          // If singleton, return string instead of list
+          map[0] = map[0][Object.keys(map[0])[0]];
+        }
+        // Add connector
+        if (map[0] !== null && map[0] !== undefined) {
+          map[1] = this.getNodePropertiesAsJSON(node).name;
+          const conn = {
+            name: "Join [" + map[1] + "]",
+            type: "connector",
+            config: {
+              map: map,
+            },
+          };
+          js.push(conn);
+        }
+      }
+    });
+    return js;
   }
 
   public ExpandNodeByName(

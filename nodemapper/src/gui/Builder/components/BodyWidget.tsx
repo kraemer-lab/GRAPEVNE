@@ -1,8 +1,6 @@
 import React from "react";
 import styled from "@emotion/styled";
 
-import { DiagramEngine } from "@projectstorm/react-diagrams";
-
 import RepoBrowser from "./RepoBrowser";
 import Canvas from "./Canvas";
 import ConfigPane from "./ConfigPane";
@@ -14,10 +12,6 @@ import styles from "./styles.module.css";
 
 import { useAppSelector } from "redux/store/hooks";
 import { ConfigPaneDisplay } from "redux/types";
-
-interface BodyWidgetProps {
-  engine: DiagramEngine;
-}
 
 const Body = styled.div`
   flex-grow: 1;
@@ -47,7 +41,7 @@ const Layer = styled.div`
  * 2. Central (workflow graph)
  * 3. Right (configuration pane)
  */
-export const BodyWidget = (props: BodyWidgetProps) => {
+export const BodyWidget = () => {
   const configPaneOpen = useAppSelector(
     (state) => state.builder.config_pane_display
   );
@@ -78,7 +72,7 @@ export const BodyWidget = (props: BodyWidgetProps) => {
               defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 50}
             >
               <div className={styles.BottomRow}>
-                <Canvas engine={props.engine} />
+                <Canvas />
               </div>
             </Panel>
 

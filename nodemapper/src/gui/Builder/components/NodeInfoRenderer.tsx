@@ -6,11 +6,9 @@ import BuilderEngine from "../BuilderEngine";
 import { Types } from "react-easy-edit";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { NodeModel } from "@projectstorm/react-diagrams";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DefaultNodeModel } from "NodeMap";
 import { builderSetNodes } from "redux/actions";
 import { builderSetEdges } from "redux/actions";
 import { builderNodeSelected } from "redux/actions";
@@ -62,7 +60,6 @@ const ExpandButton = (props: ExpandProps) => {
   const btnExpand = () => {
     // Expand the selected node into it's constituent modules
     const app = BuilderEngine.Instance;
-    const engine = app.engine;
     const [newnodes, newedges] = app.ExpandNodeByName(
       props.nodeinfo.name as string,
       nodes,

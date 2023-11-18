@@ -8,18 +8,14 @@ import TerminalController from "Terminal/TerminalController";
 
 import Flow from "./Flow";
 import { Node } from "reactflow";
-import { NodeModel } from "@projectstorm/react-diagrams";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
-import { DiagramEngine } from "@projectstorm/react-diagrams";
 import { builderAddNode } from "redux/actions";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { Panel } from "react-resizable-panels";
 import { PanelGroup } from "react-resizable-panels";
-import { GridCanvasWidget } from "./GridCanvasWidget";
-import { CanvasWidget } from "@projectstorm/react-diagrams";
 
 import styles from "./styles.module.css";
 
@@ -28,10 +24,6 @@ type Query = Record<string, unknown>;
 
 interface IPayload {
   id: string;
-}
-
-interface CanvasProps {
-  engine: DiagramEngine;
 }
 
 const Body = styled.div`
@@ -68,7 +60,7 @@ const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
  * 1. Canvas (contains the workflow graph)
  * 2. Panel group (tabbed panel group for e.g. log display)
  */
-const Canvas = (props: CanvasProps) => {
+const Canvas = () => {
   const modules = useAppSelector((state) => state.builder.modules_list);
   const configPaneOpen = useAppSelector(
     (state) => state.builder.config_pane_display
@@ -87,8 +79,7 @@ const Canvas = (props: CanvasProps) => {
 
   const onWidgetDrag_Drop = (event: React.DragEvent<HTMLDivElement>) => {
     const app = BuilderEngine.Instance;
-    const engine = app.engine;
-    const data = JSON.parse(event.dataTransfer.getData("storm-diagram-node"));
+    const data = JSON.parse(event.dataTransfer.getData("flow-diagram-node"));
     //const point = engine.getRelativeMousePoint(event);
     const color = BuilderEngine.GetModuleTypeColor(data.type as string);
     // Isolate configuration

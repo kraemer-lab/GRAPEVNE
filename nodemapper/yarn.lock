@@ -1118,7 +1118,7 @@
   resolved "https://registry.yarnpkg.com/@emotion/sheet/-/sheet-1.2.2.tgz#d58e788ee27267a14342303e1abb3d508b6d0fec"
   integrity sha512-0QBtGvaqtWi+nx6doRwDdBIzhNdZrXUppvTM4dtZZWEGTXL/XE/yJxLMGlDT1Gt+UHH5IX1n+jkXyytE/av7OA==
 
-"@emotion/styled@^11.*", "@emotion/styled@^11.11.0":
+"@emotion/styled@^11.11.0":
   version "11.11.0"
   resolved "https://registry.yarnpkg.com/@emotion/styled/-/styled-11.11.0.tgz#26b75e1b5a1b7a629d7c0a8b708fbf5a9cdce346"
   integrity sha512-hM5Nnvu9P3midq5aaXj4I+lnSfNi7Pmd4EWk1fOZ3pxookaQTNew6bp4JaCBYM4HVFZF9g7UjJmsUmC2JlxOng==
@@ -1674,74 +1674,6 @@
   version "2.11.8"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
-
-"@projectstorm/geometry@7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/geometry/-/geometry-7.0.2.tgz#5604b0a901102c6138bc00ebf9b5d57576c6dbd2"
-  integrity sha512-dLysSZGkYYCstgz0NW8FNFcQPqlNsX8svRznrVFvWDFqFNerqAepYa1qSSEaXibsNfcv/lZ6DNtyBCM1GqN2bA==
-  dependencies:
-    lodash "^4.17.21"
-
-"@projectstorm/react-canvas-core@7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-canvas-core/-/react-canvas-core-7.0.2.tgz#b101efef0f782af1428cb5289305a74aa0f22112"
-  integrity sha512-VkLsxiMtkufwx39ycaqWKD1OlFai6NFujsT2jC85RxP0Jl3XYd+kYCTz40VYlHGdklAjoaznwNTSdeOthz8IMw==
-  dependencies:
-    "@emotion/react" "^11.11.1"
-    "@emotion/styled" "^11.11.0"
-    "@projectstorm/geometry" "7.0.2"
-    lodash "^4.17.21"
-    react "^18.2.0"
-
-"@projectstorm/react-diagrams-core@7.0.2":
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-core/-/react-diagrams-core-7.0.2.tgz#6f7da72c2c4a759da6bd9b635ecf3c7565a663eb"
-  integrity sha512-vEyBUVb7XHwrQ6HuD6PMtZBzoJTvNsvmLDzE2jmFx5R5nBy10wYf91ghzb7Y8PLfmgZayFarWWcjEWmmdrEcvg==
-  dependencies:
-    "@emotion/styled" "^11.11.0"
-    "@projectstorm/geometry" "7.0.2"
-    "@projectstorm/react-canvas-core" "7.0.2"
-    lodash "^4.17.21"
-    react "^18.2.0"
-    resize-observer-polyfill "^1.5.1"
-
-"@projectstorm/react-diagrams-defaults@7.1.2":
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-defaults/-/react-diagrams-defaults-7.1.2.tgz#35dc9b60bd372fd56705f5628adadc0c2aa00fe9"
-  integrity sha512-UV/cm8rBPPDkFTC3adFkN7fHEqSnS9Yja3GqFJXoZjK2xqAi8sWD4j2hl3fR0S5JPPPIHGgedO2CsF7N0KoSNg==
-  dependencies:
-    "@emotion/react" "^11.11.1"
-    "@emotion/styled" "^11.*"
-    "@projectstorm/geometry" "7.0.2"
-    "@projectstorm/react-canvas-core" "7.0.2"
-    "@projectstorm/react-diagrams-core" "7.0.2"
-    lodash "^4.17.21"
-    react "^18.2.0"
-
-"@projectstorm/react-diagrams-routing@7.1.2":
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams-routing/-/react-diagrams-routing-7.1.2.tgz#31c8906bd33804583575bff657770a8a2270ef28"
-  integrity sha512-spnGyQ3PGuY7x/ot2OCPdvUbUMnL6dVnuUOjSphc0WlPBh4eRI3kbNbIYWHFU5Cuz3YlA4h94JKuSQZeOi2+bQ==
-  dependencies:
-    "@projectstorm/geometry" "7.0.2"
-    "@projectstorm/react-canvas-core" "7.0.2"
-    "@projectstorm/react-diagrams-core" "7.0.2"
-    "@projectstorm/react-diagrams-defaults" "7.1.2"
-    dagre "^0.8.5"
-    lodash "^4.17.21"
-    pathfinding "^0.4.18"
-    paths-js "^0.4.11"
-    react "^18.2.0"
-
-"@projectstorm/react-diagrams@^7.0.1":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@projectstorm/react-diagrams/-/react-diagrams-7.0.3.tgz#0b3450e6b744b6c515ee37f2cd9f73219c152f48"
-  integrity sha512-latfSxchvd7CiyKWPnblfuC4yeSBW/fKu3aMKhlqhET/eeQOoDtX16hBI1Hu7z+s9/mv3X3ggrJacKxHqjriVg==
-  dependencies:
-    "@projectstorm/react-canvas-core" "7.0.2"
-    "@projectstorm/react-diagrams-core" "7.0.2"
-    "@projectstorm/react-diagrams-defaults" "7.1.2"
-    "@projectstorm/react-diagrams-routing" "7.1.2"
 
 "@reactflow/background@11.3.6":
   version "11.3.6"
@@ -3825,14 +3757,6 @@ d3-zoom@^3.0.0:
     d3-selection "2 - 3"
     d3-transition "2 - 3"
 
-dagre@^0.8.5:
-  version "0.8.5"
-  resolved "https://registry.yarnpkg.com/dagre/-/dagre-0.8.5.tgz#ba30b0055dac12b6c1fcc247817442777d06afee"
-  integrity sha512-/aTqmnRta7x7MCCpExk7HQL2O4owCT2h8NT//9I1OQ9vt29Pa0BzSAkR5lwFUcQ7491yVi/3CXU9jQ5o0Mn2Sw==
-  dependencies:
-    graphlib "^2.1.8"
-    lodash "^4.17.15"
-
 data-urls@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/data-urls/-/data-urls-3.0.2.tgz#9cf24a477ae22bcef5cd5f6f0bfbc1d2d3be9143"
@@ -5228,13 +5152,6 @@ graphemer@^1.4.0:
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
   integrity sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==
 
-graphlib@^2.1.8:
-  version "2.1.8"
-  resolved "https://registry.yarnpkg.com/graphlib/-/graphlib-2.1.8.tgz#5761d414737870084c92ec7b5dbcb0592c9d35da"
-  integrity sha512-jcLLfkpoVGmH7/InMC/1hIvOPSUh38oJtGhvrOFGzioE1DZ+0YW16RgmOJhHiuWTvGiJQ9Z1Ik43JvkRPRvE+A==
-  dependencies:
-    lodash "^4.17.15"
-
 handle-thing@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/handle-thing/-/handle-thing-2.0.1.tgz#857f79ce359580c340d43081cc648970d0bb234e"
@@ -5295,11 +5212,6 @@ he@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
-
-heap@0.2.5:
-  version "0.2.5"
-  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.5.tgz#713b65590ebcc40fcbeeaf55e851694092b39af1"
-  integrity sha512-G7HLD+WKcrOyJP5VQwYZNC3Z6FcQ7YYjEFiFoIj8PfEr73mu421o8B1N5DKUcc8K37EsJ2XXWA8DtrDz/2dReg==
 
 hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.1, hoist-non-react-statics@^3.3.2:
   version "3.3.2"
@@ -6564,7 +6476,7 @@ lodash.merge@^4.6.2:
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
-lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.4:
+lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.4:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -7354,18 +7266,6 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pathfinding@^0.4.18:
-  version "0.4.18"
-  resolved "https://registry.yarnpkg.com/pathfinding/-/pathfinding-0.4.18.tgz#a9990f6fa22b7ef196e5651b049165403a045fe8"
-  integrity sha512-R0TGEQ9GRcFCDvAWlJAWC+KGJ9SLbW4c0nuZRcioVlXVTlw+F5RvXQ8SQgSqI9KXWC1ew95vgmIiyaWTlCe9Ag==
-  dependencies:
-    heap "0.2.5"
-
-paths-js@^0.4.11:
-  version "0.4.11"
-  resolved "https://registry.yarnpkg.com/paths-js/-/paths-js-0.4.11.tgz#b2a9d5f94ee9949aa8fee945f78a12abff44599e"
-  integrity sha512-3mqcLomDBXOo7Fo+UlaenG6f71bk1ZezPQy2JCmYHy2W2k5VKpP+Jbin9H0bjXynelTbglCqdFhSEkeIkKTYUA==
-
 picocolors@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.0.0.tgz#cb5bdc74ff3f51892236eaf79d68bc44564ab81c"
@@ -8019,11 +7919,6 @@ reserved-words@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/reserved-words/-/reserved-words-0.1.2.tgz#00a0940f98cd501aeaaac316411d9adc52b31ab1"
   integrity sha512-0S5SrIUJ9LfpbVl4Yzij6VipUdafHrOTzvmfazSw/jeZrZtQK303OPZW+obtkaw7jQlTQppy0UvZWm9872PbRw==
-
-resize-observer-polyfill@^1.5.1:
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
-  integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
 
 resolve-cwd@^3.0.0:
   version "3.0.0"

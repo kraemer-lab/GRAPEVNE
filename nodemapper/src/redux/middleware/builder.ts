@@ -2,11 +2,6 @@ import React from "react";
 import BuilderEngine from "gui/Builder/BuilderEngine";
 import * as globals from "redux/globals";
 
-import { DefaultPortModel } from "NodeMap";
-import { DefaultLinkModel } from "NodeMap";
-import { DefaultNodeModel } from "NodeMap";
-
-import { builderRedraw } from "redux/actions";
 import { builderSetNodes } from "redux/actions";
 import { builderLogEvent } from "redux/actions";
 import { builderBuildAsModule } from "redux/actions";
@@ -83,17 +78,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           CleanBuildFolder(dispatch);
           break;
 
-        case "builder/redraw":
-          Redraw();
-          break;
-
         case "builder/add-link":
-          AddLink(
+          /*AddLink(
             action,
             getState().builder.auto_validate_connections,
             getState().builder.snakemake_backend,
             dispatch
-          );
+          );*/
           break;
 
         case "builder/check-node-dependencies":
@@ -307,40 +298,6 @@ const CleanBuildFolder = async (dispatchString: TPayloadString) => {
     default:
       console.error("Unknown backend: ", backend);
   }
-};
-
-const Redraw = () => {
-  const app = BuilderEngine.Instance;
-  app.engine.repaintCanvas();
-};
-
-interface IPayloadLink {
-  payload: DefaultLinkModel; // Non-serialisable object; consider alternatives
-}
-const AddLink = async (
-  action: IPayloadLink,
-  auto_validate_connections: boolean,
-  snakemake_backend: string,
-  dispatch: TPayloadString
-) => {
-  // Skip check if auto-validation is disabled
-  if (!auto_validate_connections) {
-    return;
-  }
-  // Determine which is the input (vs output) port (ordering is drag-dependent)
-  const app = BuilderEngine.Instance;
-  const link = action.payload;
-  let targetPort = null;
-  if ((link.getTargetPort() as DefaultPortModel).isIn()) {
-    targetPort = link.getTargetPort() as DefaultPortModel;
-  } else {
-    targetPort = link.getSourcePort() as DefaultPortModel;
-  }
-  const node = targetPort.getParent();
-  const nodename = JSON.parse(node.getOptions().extras)["name"];
-
-  // Check node dependencies
-  CheckNodeDependencies(nodename, dispatch, snakemake_backend);
 };
 
 const CheckNodeDependencies = async (
@@ -637,8 +594,6 @@ const SetSettingsVisibility = (
   if (new_state) {
     // Close node info pane
     dispatch(builderNodeDeselected());
-    const app = BuilderEngine.Instance;
-    app.DeselectAll();
   }
   return 0;
 };

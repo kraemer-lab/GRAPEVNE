@@ -66,7 +66,7 @@ const Header = () => {
 
   // Distribute model (visual)
   const btnArrange = () => {
-    BuilderEngine.Instance.RedistributeModel();
+    //
   };
 
   // Load modules from repository

@@ -48,8 +48,6 @@ export const builderCleanBuildFolder = createAction(
   "builder/clean-build-folder"
 );
 
-export const builderRedraw = createAction("builder/redraw");
-
 export const builderGetRemoteModules = createAction(
   "builder/get-remote-modules"
 );

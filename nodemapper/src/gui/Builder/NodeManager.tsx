@@ -13,30 +13,8 @@ import { builderUpdateModulesList } from "redux/actions";
 const NodeManager = () => {
   // Link to singleton instance
   const app = BuilderEngine.Instance;
-  const engine = app.engine;
 
-  // Initialise (add selection listeners to nodes)
-  const dispatch = useAppDispatch();
-  app.AddSelectionListeners(
-    (x) => {
-      // On node selected
-      dispatch(builderNodeSelected());
-    },
-    (x) => {
-      // On node deselected
-      dispatch(builderNodeDeselected());
-    },
-    () => {
-      // On node deleted
-      dispatch(builderNodeDeselected());
-    },
-    (x) => {
-      // On link added
-      dispatch(builderAddLink(x));
-    }
-  );
-
-  return <BodyWidget engine={engine} />;
+  return <BodyWidget />;
 };
 
 export default NodeManager;

@@ -295,9 +295,6 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderBuildAsWorkflow, (state, action) => {
       console.info("[Reducer] " + action.type);
     })
-    .addCase(actions.builderRedraw, (state, action) => {
-      console.info("[Reducer] " + action.type);
-    })
     .addCase(actions.builderAddLink, (state, action) => {
       console.info("[Reducer] " + action.type);
     })
