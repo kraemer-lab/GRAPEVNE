@@ -90,6 +90,8 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case "builder/check-node-dependencies":
           CheckNodeDependencies(
             action.payload,
+            getState().builder.nodes,
+            getState().builder.edges,
             dispatch,
             getState().builder.snakemake_backend
           );
@@ -302,20 +304,19 @@ const CleanBuildFolder = async (dispatchString: TPayloadString) => {
 
 const CheckNodeDependencies = async (
   nodename: string,
-  dispatch: TPayloadString,
-  snakemake_backend: string
+  nodes: Node[],
+  edges: Edge[],
+  dispatch,
+  snakemake_backend: string,
 ) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
-  throw new Error("Not implemented");
-
-  /*
   const app = BuilderEngine.Instance;
-  const node = app.getNodeByName(nodename) as DefaultNodeModel;
-  const inputNodes = app.nodeScene.getNodeInputNodes(node);
+  const node = app.getNodeByName(nodename, nodes);
+  const inputNodes = app.getNodeInputNodes(node, nodes, edges);
   const depNodeNames = Object.values(inputNodes) as string[];
   depNodeNames.unshift(nodename);
-  const jsDeps = app.nodeScene.getModuleListJSONFromNodeNames(depNodeNames);
+  const jsDeps = app.getModuleListJSONFromNodeNames(depNodeNames, nodes, edges);
 
   // Submit Build request
   const query: Query = {
@@ -327,29 +328,25 @@ const CheckNodeDependencies = async (
     },
   };
   // Set node grey to indicate checking
-  const node_type = app.getProperty(node, "type");
-  node.getOptions().color = "rgb(192,192,192)";
-  app.engine.repaintCanvas();
+  const node_type = app.getNodeType(node);
+  const all_nodes = app.setNodeColor(node, "rgb(192,192,192)", nodes);
+  dispatch(builderSetNodes(all_nodes));
 
   const callback = (data: Query) => {
     dispatch(builderUpdateStatusText(""));
-    console.log(data);
     switch (data["body"]["status"]) {
       case "ok":
-        node.getOptions().color = BuilderEngine.GetModuleTypeColor(node_type);
+        dispatch(builderSetNodes(app.setNodeColor(node, BuilderEngine.GetModuleTypeColor(node_type), nodes)));
         break;
       case "missing":
-        node.getOptions().color = "red";
+        dispatch(builderSetNodes(app.setNodeColor(node, "red", nodes)));
         break;
       default:
         console.error("Unexpected response: ", data["body"]);
     }
-    app.engine.repaintCanvas();
-    dispatch(builderRedraw());
   };
   switch (backend as string) {
     case "rest":
-      // query["data"]["content"] = JSON.stringify(query["data"]["content"]);
       postRequestCheckNodeDependencies(query, dispatch, callback);
       break;
     case "electron":
@@ -358,7 +355,6 @@ const CheckNodeDependencies = async (
     default:
       console.error("Unknown backend: ", backend);
   }
-  */
 };
 
 interface INodeDeselectedDispatch {

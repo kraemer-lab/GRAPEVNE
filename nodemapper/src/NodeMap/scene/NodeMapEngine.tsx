@@ -47,6 +47,15 @@ export default class NodeMapEngine {
     node.data.config.name = newname;
   }
 
+  public setNodeColor(node: Node, newcolor: string, nodes: Node[]) {
+    const newnode = JSON.parse(JSON.stringify(node));
+    newnode.data.color = newcolor;
+    return nodes.map((item) => {
+      if (item.id === node.id) return newnode;
+      return item;
+    });
+  }
+
   public getNodeByName(name: string, nodes): Node {
     let returnNode = null;
     nodes.forEach((item) => {
@@ -65,6 +74,71 @@ export default class NodeMapEngine {
 
   public getNodePropertiesAsStr(node: Node): string {
     return JSON.stringify(this.getNodePropertiesAsJSON(node));
+  }
+
+  public getNodeColor(node: Node): string {
+    return node.data.color;
+  }
+
+  public getNodeType(node: Node): string {
+    return node.data.config.type;
+  }
+
+  public getModuleListJSONFromNodeNames(nodenames: string[], nodes: Node[], edges: Edge[]): Record<string, unknown>[] {
+    const newnodes = nodenames.map((name) => {
+      let node = null;
+      for (const n of nodes) {
+        if (this.getNodeName(n) === name) {
+          node = n;
+          break;
+        }
+      }
+      return node;
+    });
+    return this.getModuleListJSONFromNodes(newnodes, edges);
+  }
+
+  public getInPorts(node: Node, edges: Edge[]): string[] {
+    const inports = edges
+      .filter((edge) => edge.target === node.data.config.name)
+      .map((edge) => edge.targetHandle);
+    return [...new Set(inports)]; // Remove duplicates
+  }
+
+  public getModuleListJSONFromNodes(nodes: Node[], edges: Edge[]): Record<string, unknown>[] {
+    // Input provides a list of target nodes to generate workflow modules and
+    // connectors from.
+    const js = [];
+
+    // Add nodes
+    nodes.forEach((node: Node) => {
+      js.push(this.getNodePropertiesAsJSON(node));
+    });
+
+    // Add connectors
+    nodes.forEach((node: Node) => {
+      const map = [null, null];
+      map[0] = this.getNodeInputNodes(node, nodes, edges);
+      if (this.getInPorts(node, edges).length > 0) {
+        if (this.getInPorts(node, edges).length == 1) {
+          // If singleton, return string instead of list
+          map[0] = map[0][Object.keys(map[0])[0]];
+        }
+        // Add connector
+        if (map[0] !== null && map[0] !== undefined) {
+          map[1] = this.getNodePropertiesAsJSON(node).name;
+          const conn = {
+            name: "Join [" + map[1] + "]",
+            type: "connector",
+            config: {
+              map: map,
+            },
+          };
+          js.push(conn);
+        }
+      }
+    });
+    return js;
   }
 
   public GetLeafNodeNames(nodes: Node[], edges: Edge[]): string[] {
