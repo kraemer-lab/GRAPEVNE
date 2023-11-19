@@ -280,7 +280,8 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetEdges, (state, action) => {
       state.edges = action.payload as Edge[];
-      console.log("Set edges: ", state.nodes);
+      /* Warning: Logging to console reports a Proxy object when [], causing e2e tests to fail */
+      //console.log("Set edges: ", state.nodes);
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderLoadNodemap, (state, action) => {

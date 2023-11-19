@@ -87,6 +87,9 @@ const WaitForReturnCode = async (
   query: string
 ): Promise<Query> => {
   console.log("::: WaitForReturnCode");
+
+  /* Warning: This routine can fail if the message object is a Proxy */
+
   // Monitor console.log until a returncode is received
   let msg = undefined;
   let msg_set = undefined;
