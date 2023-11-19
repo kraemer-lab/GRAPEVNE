@@ -1,15 +1,19 @@
+import _ from "lodash";
 import React from "react";
+import BuilderEngine from "../BuilderEngine";
 import { useRef } from "react";
 import { useState } from "react";
 import { useCallback } from "react";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 
-import { builderSetNodes } from "redux/actions/builder";
-import { builderSetEdges } from "redux/actions/builder";
-import { builderNodeSelected } from "redux/actions/builder";
-import { builderNodeDeselected } from "redux/actions/builder";
-import { builderUpdateNodeInfo } from "redux/actions/builder";
+import { builderAddNode } from "redux/actions";
+import { builderSetNodes } from "redux/actions";
+import { builderSetEdges } from "redux/actions";
+import { builderNodeSelected } from "redux/actions";
+import { builderNodeDeselected } from "redux/actions";
+import { builderUpdateNodeInfo } from "redux/actions";
+import { builderUpdateStatusText } from "redux/actions";
 
 import ReactFlow from "reactflow";
 import { Node } from "reactflow";
@@ -37,6 +41,9 @@ import ContextMenu from "./ContextMenu";
 import "reactflow/dist/style.css";
 import styles from "./flow.module.css";
 import "./flow.css";
+
+const builderAPI = window.builderAPI;
+type Query = Record<string, unknown>;
 
 const proOptions = {
   hideAttribution: true,
@@ -246,6 +253,7 @@ const Flow = () => {
   const dispatch = useAppDispatch();
   const nodes = useAppSelector((state) => state.builder.nodes);
   const edges = useAppSelector((state) => state.builder.edges);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   const onNodesChange = (changes: NodeChange[]) => {
     dispatch(builderSetNodes(applyNodeChanges(changes, nodes)));
@@ -310,6 +318,101 @@ const Flow = () => {
     dispatch(builderNodeDeselected());
   }, [setMenu]);
 
+  const onDrop = useCallback(
+    (event) => {
+      event.preventDefault();
+      const type = event.dataTransfer.getData("flow-diagram-node");
+      // check if the dropped element is valid
+      if (typeof type === "undefined" || !type) {
+        return;
+      }
+      const data = JSON.parse(event.dataTransfer.getData("flow-diagram-node"));
+      const point = reactFlowInstance.screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      const color = BuilderEngine.GetModuleTypeColor(data.type as string);
+      // Isolate configuration
+      const module_name = data.name as string;
+      const workflow = data.config as Query;
+      const workflow_config = workflow.config as Query;
+      // Check if module was provided with a configuration
+      if (_.isEmpty(workflow_config)) {
+        // Module was not provided with a configuration - attempt to load now
+        dispatch(builderUpdateStatusText(`Loading module ${module_name}...`));
+        // Get repository details from module
+        const repo = {};
+        if (typeof workflow["snakefile"] === "string") {
+          repo["type"] = "local";
+          repo["repo"] = workflow["snakefile"];
+        } else {
+          // TODO: Assumes github directory listing (not compatible with branch listing)
+          repo["type"] = "github";
+          repo["repo"] = workflow["snakefile"]["args"][0];
+        }
+        const query: Record<string, unknown> = {
+          query: "builder/get-remote-module-config",
+          data: {
+            format: "Snakefile",
+            content: {
+              repo: repo,
+              snakefile: workflow["snakefile"],
+            },
+          },
+        };
+        const getConfig = async (query) => {
+          return await builderAPI.GetRemoteModuleConfig(query);
+        };
+        getConfig(query)
+          .then((config) => {
+            // Extract docstring
+            const docstring = config["docstring"];
+            delete config["docstring"];
+            (data.config as Query).config = config;
+            (data.config as Query).docstring = docstring;
+
+            // Add node to graph
+            const newnode = {
+              id: data.name,
+              type: "standard",
+              data: {
+                color: color,
+                config: data,
+              },
+              position: point,
+            } as Node;
+
+            // Add node to graph
+            dispatch(builderAddNode(newnode));
+            dispatch(builderUpdateStatusText(`Module loaded.`));
+          })
+          .catch((error) => {
+            console.log(error);
+            dispatch(
+              builderUpdateStatusText(`FAILED to load module ${module_name}.`)
+            );
+          });
+      } else {
+        // Module already contains a valid configuration
+        const newnode = {
+          id: data.name,
+          type: "standard",
+          data: {
+            config: data,
+          },
+          position: point,
+        } as Node;
+        dispatch(builderAddNode(newnode));
+      }
+    },
+    [reactFlowInstance]
+  );
+
+  const onDragOver = useCallback((event) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  }, []);
+
   return (
     <ReactFlow
       ref={ref}
@@ -317,12 +420,15 @@ const Flow = () => {
       edgeTypes={edgeTypes}
       nodes={nodes}
       edges={edges}
+      onInit={setReactFlowInstance}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
       onNodeClick={onNodeClick}
       onNodeContextMenu={onNodeContextMenu}
       onPaneClick={onPaneClick}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
       proOptions={proOptions}
       snapToGrid={true}
     >

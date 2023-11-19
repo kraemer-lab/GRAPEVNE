@@ -84,7 +84,11 @@ export default class NodeMapEngine {
     return node.data.config.type;
   }
 
-  public getModuleListJSONFromNodeNames(nodenames: string[], nodes: Node[], edges: Edge[]): Record<string, unknown>[] {
+  public getModuleListJSONFromNodeNames(
+    nodenames: string[],
+    nodes: Node[],
+    edges: Edge[]
+  ): Record<string, unknown>[] {
     const newnodes = nodenames.map((name) => {
       let node = null;
       for (const n of nodes) {
@@ -105,7 +109,10 @@ export default class NodeMapEngine {
     return [...new Set(inports)]; // Remove duplicates
   }
 
-  public getModuleListJSONFromNodes(nodes: Node[], edges: Edge[]): Record<string, unknown>[] {
+  public getModuleListJSONFromNodes(
+    nodes: Node[],
+    edges: Edge[]
+  ): Record<string, unknown>[] {
     // Input provides a list of target nodes to generate workflow modules and
     // connectors from.
     const js = [];

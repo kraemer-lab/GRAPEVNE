@@ -3,6 +3,14 @@ import { useAppSelector } from "redux/store/hooks";
 import { useReactFlow } from "reactflow";
 import { getNodeById } from "./Flow";
 
+interface ContextMenuProps {
+  id: string;
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+}
+
 export default function ContextMenu({
   id,
   top,
@@ -10,7 +18,7 @@ export default function ContextMenu({
   right,
   bottom,
   ...props
-}) {
+}: ContextMenuProps) {
   const { getNode, setNodes, addNodes, setEdges } = useReactFlow();
   const nodes = useAppSelector((state) => state.builder.nodes);
   const node_name = getNodeById(id, nodes).data.config.name;

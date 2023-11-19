@@ -307,7 +307,7 @@ const CheckNodeDependencies = async (
   nodes: Node[],
   edges: Edge[],
   dispatch,
-  snakemake_backend: string,
+  snakemake_backend: string
 ) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
@@ -336,7 +336,15 @@ const CheckNodeDependencies = async (
     dispatch(builderUpdateStatusText(""));
     switch (data["body"]["status"]) {
       case "ok":
-        dispatch(builderSetNodes(app.setNodeColor(node, BuilderEngine.GetModuleTypeColor(node_type), nodes)));
+        dispatch(
+          builderSetNodes(
+            app.setNodeColor(
+              node,
+              BuilderEngine.GetModuleTypeColor(node_type),
+              nodes
+            )
+          )
+        );
         break;
       case "missing":
         dispatch(builderSetNodes(app.setNodeColor(node, "red", nodes)));

@@ -46,10 +46,6 @@ const Layer = styled.div`
   flex-grow: 1;
 `;
 
-const onWidgetDrag_DragOver = (event: React.DragEvent<HTMLDivElement>) => {
-  event.preventDefault();
-};
-
 /**
  * Canvas display area for the Builder application.
  *
@@ -66,102 +62,10 @@ const Canvas = () => {
     (state) => state.builder.config_pane_display
   );
 
-  const [newnode, setNewnode] = React.useState<Node>(null);
-  const dispatch = useAppDispatch();
-
-  // Register listener for new node
-  React.useEffect(() => {
-    if (newnode) {
-      setNewnode(null);
-      dispatch(builderAddNode(newnode));
-    }
-  }, [newnode]);
-
-  const onWidgetDrag_Drop = (event: React.DragEvent<HTMLDivElement>) => {
-    const app = BuilderEngine.Instance;
-    const data = JSON.parse(event.dataTransfer.getData("flow-diagram-node"));
-    //const point = engine.getRelativeMousePoint(event);
-    const color = BuilderEngine.GetModuleTypeColor(data.type as string);
-    // Isolate configuration
-    const module_name = data.name as string;
-    const workflow = data.config as Query;
-    const workflow_config = workflow.config as Query;
-    // Check if module was provided with a configuration
-    if (_.isEmpty(workflow_config)) {
-      // Module was not provided with a configuration - attempt to load now
-      dispatch(builderUpdateStatusText(`Loading module ${module_name}...`));
-      // Get repository details from module
-      const repo = {};
-      if (typeof workflow["snakefile"] === "string") {
-        repo["type"] = "local";
-        repo["repo"] = workflow["snakefile"];
-      } else {
-        // TODO: Assumes github directory listing (not compatible with branch listing)
-        repo["type"] = "github";
-        repo["repo"] = workflow["snakefile"]["args"][0];
-      }
-      const query: Record<string, unknown> = {
-        query: "builder/get-remote-module-config",
-        data: {
-          format: "Snakefile",
-          content: {
-            repo: repo,
-            snakefile: workflow["snakefile"],
-          },
-        },
-      };
-      const getConfig = async (query) => {
-        return await builderAPI.GetRemoteModuleConfig(query);
-      };
-      getConfig(query)
-        .then((config) => {
-          // Extract docstring
-          const docstring = config["docstring"];
-          delete config["docstring"];
-          (data.config as Query).config = config;
-          (data.config as Query).docstring = docstring;
-
-          // Add node to graph
-          const newnode = {
-            id: data.name,
-            type: "standard",
-            data: {
-              color: color,
-              config: data,
-            },
-            position: { x: 10, y: 10 },
-          } as Node;
-
-          // Broadcast new node (cannot call react hooks from non-react functions)
-          setNewnode(newnode);
-          dispatch(builderUpdateStatusText(`Module loaded.`));
-        })
-        .catch((error) => {
-          console.log(error);
-          dispatch(
-            builderUpdateStatusText(`FAILED to load module ${module_name}.`)
-          );
-        });
-    } else {
-      // Module already contains a valid configuration
-      // Add node to graph
-      const newnode = {
-        id: "0",
-        type: "standard",
-        data: {
-          config: data,
-        },
-        position: { x: 10, y: 10 },
-      } as Node;
-      // Broadcast new node (cannot call react hooks from non-react functions)
-      setNewnode(newnode);
-    }
-  };
-
   return (
     <Body>
       <Content>
-        <Layer onDrop={onWidgetDrag_Drop} onDragOver={onWidgetDrag_DragOver}>
+        <Layer>
           <PanelGroup direction="vertical">
             <Panel className={styles.Panel} defaultSize={70}>
               <Flow />
