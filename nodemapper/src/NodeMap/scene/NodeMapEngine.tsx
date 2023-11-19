@@ -157,7 +157,7 @@ export default class NodeMapEngine {
   }
 
   public DoesNodeNameClash(name: string, nodes: Node[]): boolean {
-    return name in nodes.map((node) => node.data.config.name);
+    return nodes.map((node) => node.data.config.name).includes(name);
   }
 
   public GetUniqueName(name: string, nodes: Node[]): string {
@@ -304,9 +304,6 @@ export default class NodeMapEngine {
     const namemap: Record<string, string> = {};
     let offset = 0.0;
     for (const item in modules) {
-      console.log("item:");
-      console.log(item);
-
       if (modules[item] === null || modules[item] === undefined) continue;
       if (modules[item]["config"] === undefined) continue;
       const params = modules[item]["config"] as Record<string, unknown>;

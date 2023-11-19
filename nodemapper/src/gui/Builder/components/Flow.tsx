@@ -254,6 +254,8 @@ const Flow = () => {
   const nodes = useAppSelector((state) => state.builder.nodes);
   const edges = useAppSelector((state) => state.builder.edges);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [menu, setMenu] = useState(null);
+  const ref = useRef(null);
 
   const onNodesChange = (changes: NodeChange[]) => {
     dispatch(builderSetNodes(applyNodeChanges(changes, nodes)));
@@ -283,8 +285,6 @@ const Flow = () => {
     dispatch(builderNodeSelected());
   };
 
-  const [menu, setMenu] = useState(null);
-  const ref = useRef(null);
   const onNodeContextMenu = (event: React.MouseEvent, node: Node) => {
     // Prevent native context menu from showing
     event.preventDefault();
@@ -318,100 +318,99 @@ const Flow = () => {
     dispatch(builderNodeDeselected());
   }, [setMenu]);
 
-  const onDrop = useCallback(
-    (event) => {
-      event.preventDefault();
-      const type = event.dataTransfer.getData("flow-diagram-node");
-      // check if the dropped element is valid
-      if (typeof type === "undefined" || !type) {
-        return;
-      }
-      const data = JSON.parse(event.dataTransfer.getData("flow-diagram-node"));
-      const point = reactFlowInstance.screenToFlowPosition({
-        x: event.clientX,
-        y: event.clientY,
-      });
-      const color = BuilderEngine.GetModuleTypeColor(data.type as string);
-      // Isolate configuration
-      const module_name = data.name as string;
-      const workflow = data.config as Query;
-      const workflow_config = workflow.config as Query;
-      // Check if module was provided with a configuration
-      if (_.isEmpty(workflow_config)) {
-        // Module was not provided with a configuration - attempt to load now
-        dispatch(builderUpdateStatusText(`Loading module ${module_name}...`));
-        // Get repository details from module
-        const repo = {};
-        if (typeof workflow["snakefile"] === "string") {
-          repo["type"] = "local";
-          repo["repo"] = workflow["snakefile"];
-        } else {
-          // TODO: Assumes github directory listing (not compatible with branch listing)
-          repo["type"] = "github";
-          repo["repo"] = workflow["snakefile"]["args"][0];
-        }
-        const query: Record<string, unknown> = {
-          query: "builder/get-remote-module-config",
-          data: {
-            format: "Snakefile",
-            content: {
-              repo: repo,
-              snakefile: workflow["snakefile"],
-            },
-          },
-        };
-        const getConfig = async (query) => {
-          return await builderAPI.GetRemoteModuleConfig(query);
-        };
-        getConfig(query)
-          .then((config) => {
-            // Extract docstring
-            const docstring = config["docstring"];
-            delete config["docstring"];
-            (data.config as Query).config = config;
-            (data.config as Query).docstring = docstring;
-
-            // Add node to graph
-            const newnode = {
-              id: data.name,
-              type: "standard",
-              data: {
-                color: color,
-                config: data,
-              },
-              position: point,
-            } as Node;
-
-            // Add node to graph
-            dispatch(builderAddNode(newnode));
-            dispatch(builderUpdateStatusText(`Module loaded.`));
-          })
-          .catch((error) => {
-            console.log(error);
-            dispatch(
-              builderUpdateStatusText(`FAILED to load module ${module_name}.`)
-            );
-          });
+  const onDrop = (event) => {
+    event.preventDefault();
+    const type = event.dataTransfer.getData("flow-diagram-node");
+    // check if the dropped element is valid
+    if (typeof type === "undefined" || !type) {
+      return;
+    }
+    const app = BuilderEngine.Instance;
+    const data = JSON.parse(event.dataTransfer.getData("flow-diagram-node"));
+    const point = reactFlowInstance.screenToFlowPosition({
+      x: event.clientX,
+      y: event.clientY,
+    });
+    const color = BuilderEngine.GetModuleTypeColor(data.type as string);
+    // Isolate configuration
+    const module_name = data.name as string;
+    const workflow = data.config as Query;
+    const workflow_config = workflow.config as Query;
+    // Check if module was provided with a configuration
+    if (_.isEmpty(workflow_config)) {
+      // Module was not provided with a configuration - attempt to load now
+      dispatch(builderUpdateStatusText(`Loading module ${module_name}...`));
+      // Get repository details from module
+      const repo = {};
+      if (typeof workflow["snakefile"] === "string") {
+        repo["type"] = "local";
+        repo["repo"] = workflow["snakefile"];
       } else {
-        // Module already contains a valid configuration
-        const newnode = {
-          id: data.name,
-          type: "standard",
-          data: {
-            config: data,
-          },
-          position: point,
-        } as Node;
-        dispatch(builderAddNode(newnode));
+        // TODO: Assumes github directory listing (not compatible with branch listing)
+        repo["type"] = "github";
+        repo["repo"] = workflow["snakefile"]["args"][0];
       }
-    },
-    [reactFlowInstance]
-  );
+      const query: Record<string, unknown> = {
+        query: "builder/get-remote-module-config",
+        data: {
+          format: "Snakefile",
+          content: {
+            repo: repo,
+            snakefile: workflow["snakefile"],
+          },
+        },
+      };
+      const getConfig = async (query) => {
+        return await builderAPI.GetRemoteModuleConfig(query);
+      };
+      getConfig(query)
+        .then((config) => {
+          // Extract docstring
+          const docstring = config["docstring"];
+          delete config["docstring"];
+          (data.config as Query).config = config;
+          (data.config as Query).docstring = docstring;
+          // Add node to graph
+          const newnode = {
+            id: app.getUniqueID(nodes),
+            type: "standard",
+            data: {
+              color: color,
+              config: {
+                ...data,
+                name: app.EnsureUniqueName(module_name, nodes),
+              },
+            },
+            position: point,
+          } as Node;
+          // Add node to graph
+          dispatch(builderAddNode(newnode));
+          dispatch(builderUpdateStatusText(`Module loaded.`));
+        })
+        .catch((error) => {
+          console.log(error);
+          dispatch(
+            builderUpdateStatusText(`FAILED to load module ${module_name}.`)
+          );
+        });
+    } else {
+      // Module already contains a valid configuration
+      const newnode = {
+        id: app.getUniqueID(nodes),
+        type: "standard",
+        data: {
+          config: { ...data, name: app.EnsureUniqueName(module_name, nodes) },
+        },
+        position: point,
+      } as Node;
+      dispatch(builderAddNode(newnode));
+    }
+  };
 
-  const onDragOver = useCallback((event) => {
+  const onDragOver = (event) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
-  }, []);
+  };
 
   return (
     <ReactFlow

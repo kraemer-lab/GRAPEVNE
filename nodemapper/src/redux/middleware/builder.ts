@@ -413,12 +413,18 @@ const UpdateNodeInfoName = (
   const builder = BuilderEngine.Instance;
   const node = getNodeById(nodeinfo.id, nodes) as Node;
   if (node !== null) {
-    //const name = builder.EnsureUniqueName(action.payload);  // TODO: Check for uniqueness
-    const name = action.payload;
-
+    const name = builder.EnsureUniqueName(action.payload, nodes);
     const newnodes = setNodeName(nodes, node.id, name);
-    if (newnodes !== null) dispatch(builderSetNodes(newnodes));
-    else console.error("Failed to update node name: ", nodeinfo, name);
+    if (newnodes !== null) {
+      dispatch(builderSetNodes(newnodes));
+      const payload = {
+        id: node.id,
+        name: name,
+        type: node.data.config.type,
+        code: JSON.stringify(node.data.config.config, null, 2),
+      };
+      dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+    } else console.error("Failed to update node name: ", nodeinfo, name);
   } else {
     console.log("Node not found: ", nodeinfo);
   }
