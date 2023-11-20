@@ -201,12 +201,12 @@ export const ButtonEdge = ({
           }}
           className="nodrag nopan"
         >
-          <button
+          {/*<button
             className={styles.ButtonEdge}
             onClick={(event) => onEdgeClick(event, id)}
           >
             -
-          </button>
+          </button>*/}
         </div>
       </EdgeLabelRenderer>
     </>
