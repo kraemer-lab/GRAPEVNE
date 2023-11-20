@@ -8,12 +8,11 @@ import * as webdriver from "selenium-webdriver";
 
 import { runif } from "./utils";
 import { is_installed } from "./utils";
-import { is_not_windows } from "./utils";
-import { DragAndDrop } from "./utils";
 import { FlushConsoleLog } from "./utils";
 import { RedirectConsoleLog } from "./utils";
 import { WaitForReturnCode } from "./utils";
 import { BuildAndRun_SingleModuleWorkflow } from "./utils";
+import { BuildAndRun_MultiModuleWorkflow } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
 
 const ONE_SEC = 1000;
@@ -119,7 +118,7 @@ describe("modules", () => {
     expect(msg.returncode).toEqual(0);
     // Wait for module list to be populated
     await driver.wait(
-      until.elementLocated(By.id("modulelist-_single_modules__copy_shell")),
+      until.elementLocated(By.id("modulelist-_single_modules__payload_shell")),
       TEN_SECS
     );
     console.log("<<< test Get local modules list");
@@ -131,10 +130,10 @@ describe("modules", () => {
     // Drag-and-drop module from modules-list into scene
     await driver.findElement(By.id("btnBuilderClearScene")).click();
     const module = await driver.findElement(
-      By.id("modulelist-_single_modules__copy_shell")
+      By.id("modulelist-_single_modules__payload_shell")
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
-    DragAndDrop(driver, module, canvas);
+    await driver.actions().dragAndDrop(module, canvas).perform();
     // Give time for the module to be created on the canvas,
     // and for the config to load
     await driver.sleep(500);
@@ -145,12 +144,12 @@ describe("modules", () => {
 
   test.each([
     [
-      "(single_modules) copy shell",
-      path.join("single_modules_copy_shell", "data.csv"),
+      "(single_modules) payload shell",
+      path.join("single_modules_payload_shell", "data.csv"),
     ],
     [
-      "(single_modules) copy run",
-      path.join("single_modules_copy_run", "data.csv"),
+      "(single_modules) payload run",
+      path.join("single_modules_payload_run", "data.csv"),
     ],
   ])(
     "Build and Test the workflow: module '%s'",
@@ -171,6 +170,89 @@ describe("modules", () => {
 
       // Build and run workflow
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
+    },
+    5 * ONE_MINUTE
+  ); // long timeout
+
+  test.each([
+    // Test: 1 (connect two modules)
+    [
+      [
+        // Modules to add to scene
+        "(single_modules) payload shell", // data-nodeid="n0"
+        "(single_modules) copy run", // data-nodeid="n1"
+      ],
+      [
+        // Connections to make between modules
+        ["n0-out-source", "n1-in-target"], // (nodeid)-(portname)-(porttype)
+      ],
+      [
+        // Expected output files
+        path.join("single_modules_copy_run", "data.csv"),
+      ],
+    ],
+    // Test: 2 (connect five modules, including 4 duplicates)
+    [
+      [
+        // Modules to add to scene
+        "(single_modules) payload shell", // data-nodeid="n0"
+        "(single_modules) copy run", // data-nodeid="n1"
+        "(single_modules) copy run", // data-nodeid="n2"
+        "(single_modules) copy run", // data-nodeid="n3"
+        "(single_modules) copy run", // data-nodeid="n4"
+      ],
+      [
+        // Connections to make between modules
+        ["n0-out-source", "n1-in-target"], // (nodeid)-(portname)-(porttype)
+        ["n1-out-source", "n2-in-target"],
+        ["n2-out-source", "n3-in-target"],
+        ["n3-out-source", "n4-in-target"],
+      ],
+      [
+        // Expected output files
+        path.join("single_modules_copy_run_3", "data.csv"),
+      ],
+    ],
+    // Test: 3 (connect source to triple input module)
+    [
+      [
+        // Modules to add to scene
+        "(single_modules) payload shell", // data-nodeid="n0"
+        "(single_modules) copy run multiport", // data-nodeid="n1"
+      ],
+      [
+        // Connections to make between modules
+        ["n0-out-source", "n1-in1-target"], // (nodeid)-(portname)-(porttype)
+      ],
+      [
+        // Expected output files
+        path.join("single_modules_copy_run_multiport", "data.csv"),
+      ],
+    ],
+  ])(
+    "Build and Test the workflow: module '%s'",
+    async (modulenames, connections, outfiles) => {
+      // Open settings pane
+      await driver.findElement(By.id("btnSidenavSettings")).click();
+
+      // Set snakemake command line arguments
+      const args = await driver.findElement(
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
+      );
+      await args.clear();
+      await args.sendKeys("--cores 1");
+
+      // Close settings pane
+      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      console.log("<<< test Set snakemake arguments list to use conda");
+
+      // Build and run workflow
+      await BuildAndRun_MultiModuleWorkflow(
+        driver,
+        modulenames,
+        connections,
+        outfiles
+      );
     },
     5 * ONE_MINUTE
   ); // long timeout

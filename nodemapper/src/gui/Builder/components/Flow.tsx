@@ -43,14 +43,18 @@ import "reactflow/dist/style.css";
 import styles from "./flow.module.css";
 import "./flow.css";
 
-import dagre from 'dagre';
+import dagre from "dagre";
 
-const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
+const getLayoutedElements = (
+  nodes: Node[],
+  edges: Edge[],
+  direction = "TB"
+) => {
   const nodeWidth = 172;
   const nodeHeight = 36;
 
   // Allow dagre to determine layout
-  const isHorizontal = direction === 'LR';
+  const isHorizontal = direction === "LR";
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
   dagreGraph.setGraph({ rankdir: direction });
@@ -101,6 +105,14 @@ export type ModuleData = {
       };
     };
   };
+};
+
+export const wranglename = (name: string) => {
+  return name
+    .replace(/ /g, "_")
+    .replace(/\(/g, "_")
+    .replace(/\)/g, "_")
+    .toLowerCase();
 };
 
 const ModuleNode = (props: NodeProps<ModuleData>) => {
@@ -182,15 +194,17 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
               </Handle>
             </div>
           ))}
-          <Handle
-            className={styles.HandleOutput}
-            id="out"
-            type="source"
-            position={Position.Right}
-            style={{
-              top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
-            }}
-          />
+          <div>
+            <Handle
+              className={styles.HandleOutput}
+              id="out"
+              type="source"
+              position={Position.Right}
+              style={{
+                top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
+              }}
+            />
+          </div>
         </div>
       )}
     </div>
@@ -457,11 +471,7 @@ const Flow = () => {
 
   const onLayout = useCallback(
     (direction) => {
-      const newnodes = getLayoutedElements(
-        nodes,
-        edges,
-        direction
-      );
+      const newnodes = getLayoutedElements(nodes, edges, direction);
       dispatch(builderSetNodes(newnodes));
     },
     [nodes, edges]
@@ -489,7 +499,9 @@ const Flow = () => {
       <Controls />
       <Background />
       <Panel position="top-right">
-        <button onClick={() => onLayout('LR')}>Arrange</button>
+        <button id="buttonReactflowArrange" onClick={() => onLayout("LR")}>
+          Arrange
+        </button>
       </Panel>
       {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
     </ReactFlow>

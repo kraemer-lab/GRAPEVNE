@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "@emotion/styled";
+import { wranglename } from "./Flow";
 
 type Query = Record<string, unknown>;
 
@@ -20,14 +21,6 @@ export const Tray = styled.div<{ color: string }>`
   margin-top: 2px;
   cursor: pointer;
 `;
-
-const wranglename = (name: string) => {
-  return name
-    .replace(/ /g, "_")
-    .replace(/\(/g, "_")
-    .replace(/\)/g, "_")
-    .toLowerCase();
-};
 
 export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
   render() {

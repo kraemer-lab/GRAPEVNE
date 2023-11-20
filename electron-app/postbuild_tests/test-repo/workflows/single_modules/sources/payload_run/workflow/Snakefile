@@ -1,15 +1,14 @@
 configfile: "config/config.yaml"
+
+import os
+import pathlib
 import shutil
 
 params = config["params"]
 
 rule copy:
     input:
-        expand(
-            "results/{indir}/{filename}",
-            indir=config["input_namespace"],
-            filename=params["filename"],
-        )
+        srcdir("../resources/file"),
     output:
         expand(
             "results/{outdir}/{filename}",
@@ -17,4 +16,5 @@ rule copy:
             filename=params["filename"],
         )
     run:
+        pathlib.Path(os.path.dirname(output[0])).mkdir(parents=True, exist_ok=True)
         shutil.copy(input[0], output[0])

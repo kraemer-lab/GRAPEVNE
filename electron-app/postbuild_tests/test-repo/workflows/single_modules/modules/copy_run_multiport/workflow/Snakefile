@@ -1,3 +1,7 @@
+"""
+Input namespaces: [in1, in2, in3]
+Copy file from first input namespace (in1) only
+"""
 configfile: "config/config.yaml"
 import shutil
 
@@ -7,7 +11,7 @@ rule copy:
     input:
         expand(
             "results/{indir}/{filename}",
-            indir=config["input_namespace"],
+            indir=config["input_namespace"]["in1"],
             filename=params["filename"],
         )
     output:

@@ -118,102 +118,74 @@ const WaitForReturnCode = async (
   }
 };
 
-const DragAndDrop = async (
-  driver: webdriver.ThenableWebDriver,
-  elementFrom: webdriver.WebElement,
-  elementTo: webdriver.WebElement
-) => {
-  // Drag and drop replacement for Selenium (due to HTML5 issue)
-  // Solution sourced from:
-  //   https://stackoverflow.com/questions/39436870/why-drag-and-drop-is-not-working-in-selenium-webdriver
-  await driver.executeScript(
-    `
-    function createEvent(typeOfEvent) {
-      var event = document.createEvent("CustomEvent");
-      event.initCustomEvent(typeOfEvent, true, true, null);
-      event.dataTransfer = {
-        data: {},
-        setData: function (key, value) {
-          this.data[key] = value;
-        },
-        getData: function (key) {
-          return this.data[key];
-        }
-      };
-      return event;
-    }
-
-    function dispatchEvent(element, event,transferData) {
-      if (transferData !== undefined) {
-        event.dataTransfer = transferData;
-      }
-      if (element.dispatchEvent) {
-        element.dispatchEvent(event);
-      } else if (element.fireEvent) {
-        element.fireEvent("on" + event.type, event);
-      }
-    }
-
-    function simulateHTML5DragAndDrop(element, destination) {
-      var dragStartEvent = createEvent('dragstart');
-      dispatchEvent(element, dragStartEvent);
-      var dropEvent = createEvent('drop');
-      dispatchEvent(destination, dropEvent, dragStartEvent.dataTransfer);
-      var dragEndEvent = createEvent('dragend');
-      dispatchEvent(element, dragEndEvent, dropEvent.dataTransfer);
-    }
-
-    var source = arguments[0];
-    var destination = arguments[1];
-    simulateHTML5DragAndDrop(source,destination);
-    `,
-    elementFrom,
-    elementTo
-  );
-};
-
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
   modulename: string,
   outfile: string
 ) => {
+  await BuildAndRun_MultiModuleWorkflow(driver, [modulename], [], [outfile]);
+};
+
+const BuildAndRun_MultiModuleWorkflow = async (
+  driver: webdriver.ThenableWebDriver,
+  modulenames: string[],
+  connections: string[][],
+  outfiles: string[]
+) => {
   console.log("::: test Build and Test the workflow");
 
   // Drag-and-drop module from modules-list into scene
   await driver.findElement(By.id("btnBuilderClearScene")).click();
-  const module = await driver.findElement(
-    By.id("modulelist-" + wranglename(modulename))
-  );
-  const canvas = await driver.findElement(By.className("react-flow__pane"));
-  DragAndDrop(driver, module, canvas);
-  // Give time for the module to be created on the canvas,
-  // and for the config to load
-  await driver.sleep(500);
+  // Force modules to be loaded in order
+  for (let k = 0; k < modulenames.length; k++) {
+    const module = await driver.findElement(
+      By.id("modulelist-" + wranglename(modulenames[k]))
+    );
+    const canvas = await driver.findElement(By.className("react-flow__pane"));
+    await driver.actions().dragAndDrop(module, canvas).perform();
+    // Give time for the module to be created on the canvas,
+    // and for the config to load
+    await driver.sleep(500);
+  }
+
+  // Force connections to be connected in order
+  await driver.findElement(By.id("buttonReactflowArrange")).click();
+  for (let k = 0; k < connections.length; k++) {
+    // We can connect modules by first clicking on the source port, then the target port
+    const [fromport, toport] = connections[k];
+    const port1 = await driver.findElement(By.xpath(`//div[@data-id="${fromport}"]`));
+    const port2 = await driver.findElement(By.xpath(`//div[@data-id="${toport}"]`));
+    await driver.actions().dragAndDrop(port1, port2).perform();
+  }
 
   // Clean build folder (initial); assert target output does not exist
-  let msg;
+  let msg: Record<string, unknown>;
   await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
   msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
-  const target_file = path.join(
-    (msg.body as Query).path as string,
-    "results",
-    outfile
-  );
-  console.log("target_file: ", target_file);
-  expect(fs.existsSync(target_file)).toBeFalsy();
+  const target_files = outfiles.map((outfile) => {
+    return path.join((msg.body as Query).path as string, "results", outfile);
+  });
+  console.log("target_files: ", target_files);
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeFalsy();
+  });
 
-  // Build and test; assert output file exists
+  // Build and test; assert output files exist
   await driver.findElement(By.id("btnBuilderBuildAndTest")).click();
   msg = await WaitForReturnCode(driver, "builder/build-and-run");
   expect(msg.returncode).toEqual(0);
-  expect(fs.existsSync(target_file)).toBeTruthy();
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeTruthy();
+  });
 
   // Clean build folder (tidy-up); assert target output does not exist
   await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
   msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
-  expect(fs.existsSync(target_file)).toBeFalsy();
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeFalsy();
+  });
 
   console.log("<<< test Build and Test the workflow");
 };
@@ -232,7 +204,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     By.id("modulelist-" + wranglename(modulename))
   );
   const canvas = await driver.findElement(By.className("react-flow__pane"));
-  DragAndDrop(driver, module, canvas);
+  await driver.actions().dragAndDrop(module, canvas).perform();
   // Give time for the config to load and for the module to be created on the canvas
   await driver.sleep(5000);
 
@@ -335,7 +307,7 @@ export {
   RedirectConsoleLog,
   FlushConsoleLog,
   WaitForReturnCode,
-  DragAndDrop,
   BuildAndRun_SingleModuleWorkflow,
+  BuildAndRun_MultiModuleWorkflow,
   Build_RunWithDocker_SingleModuleWorkflow,
 };
