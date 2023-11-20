@@ -60,14 +60,14 @@ const ExpandButton = (props: ExpandProps) => {
   const btnExpand = () => {
     // Expand the selected node into it's constituent modules
     const app = BuilderEngine.Instance;
-    const [newnodes, newedges] = app.ExpandNodeByName(
+    const [nodes0, edges0] = app.ExpandNodeByName(
       props.nodeinfo.name as string,
       nodes,
       edges
     );
     console.log("newnodes", newnodes);
-    if (newnodes !== null && newnodes !== undefined)
-      setNewNodes({ nodes: newnodes, edges: newedges });
+    if (nodes0 !== null && nodes0 !== undefined)
+      setNewNodes({ nodes: nodes0, edges: edges0 });
   };
 
   React.useEffect(() => {
@@ -92,7 +92,7 @@ const ExpandButton = (props: ExpandProps) => {
 
 const PermitNodeExpand = (nodeinfo: Record<string, unknown>, nodes) => {
   const app = BuilderEngine.Instance;
-  return true; //app.CanNodeExpand(nodeinfo.name as string, nodes);
+  return app.CanNodeExpand(nodeinfo.name as string, nodes);
 };
 
 const NodeInfoRenderer = (props) => {

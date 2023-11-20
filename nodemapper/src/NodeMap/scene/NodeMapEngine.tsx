@@ -176,7 +176,7 @@ export default class NodeMapEngine {
     return name;
   }
 
-  public CanNodeExpand(name: string, nodes): boolean {
+  public CanNodeExpand(name: string, nodes: Node[]): boolean {
     const node = this.getNodeByName(name, nodes);
     if (!node) return false;
     const json = this.getNodePropertiesAsJSON(node);
@@ -197,18 +197,33 @@ export default class NodeMapEngine {
     return node.position;
   }
 
-  public getUniqueID(elements: Node[] | Edge[]) {
+  public getUniqueNodeID(elements: Node[]): string {
     const ids = elements.map((element) => element.id);
     let id = 0;
-    while (id.toString() in ids) id++;
-    return id.toString();
+    while (ids.includes("n" + id.toString())) id++;
+    return "n" + id.toString();
   }
 
-  public getNodeInputNodes(node: Node, nodes: Node[], edges: Edge[]) {
-    const from_nodes = edges
-      .filter((edge) => edge.target === node.data.config.name)
-      .map((edge) => edge.source);
-    return [...new Set(from_nodes)]; // Remove duplicates
+  public getUniqueEdgeID(elements: Edge[]): string {
+    const ids = elements.map((element) => element.id);
+    let id = 0;
+    while (ids.includes("e" + id.toString())) id++;
+    return "e" + id.toString();
+  }
+
+  public getNodeInputNodes(
+    node: Node,
+    nodes: Node[],
+    edges: Edge[]
+  ): Record<string, string> {
+    // Returns a dictionary of input port names and the nodes they are connected to
+    const conn_edges = edges.filter((edge) => edge.target === node.id);
+    const d = {};
+    conn_edges.forEach(
+      (edge) =>
+        (d[edge.targetHandle] = this.getNodeNameFromID(edge.source, nodes))
+    );
+    return d;
   }
 
   public getNodeNameFromID(id: string, nodes: Node[]) {
@@ -328,7 +343,7 @@ export default class NodeMapEngine {
       newpoint.y += offset;
       offset += 15.0;
       // Determine unique name (but don't substitute yet)
-      const uniquename = this.EnsureUniqueName(data.name, nodes);
+      const uniquename = this.EnsureUniqueName(data.name, all_nodes);
       if (uniquename !== data.name) namemap[data.name] = uniquename;
       // Call AddNodeToGraph with uniquenames = false to prevent node renaming
       // (at least until after the graph is expanded)
@@ -338,7 +353,7 @@ export default class NodeMapEngine {
 
       // New node
       const newnode = {
-        id: this.getUniqueID(nodes.concat(newnodes)),
+        id: this.getUniqueNodeID(all_nodes.concat(newnodes)),
         type: "standard",
         position: newpoint,
         data: {
@@ -366,7 +381,7 @@ export default class NodeMapEngine {
           // string = single input port
           if (output_namespace === input_namespace) {
             const newedge = {
-              id: this.getUniqueID(edges),
+              id: this.getUniqueEdgeID(all_edges),
               source: node_from.id,
               sourceHandle: "Out",
               target: node_to.id,
@@ -379,7 +394,7 @@ export default class NodeMapEngine {
           for (const key in input_namespace) {
             if (output_namespace === input_namespace[key]) {
               const newedge = {
-                id: this.getUniqueID(edges),
+                id: this.getUniqueEdgeID(all_edges),
                 source: node_from.id,
                 sourceHandle: "Out",
                 target: node_to.id,
@@ -415,7 +430,7 @@ export default class NodeMapEngine {
       }
       const target_node = this.getNodeByName(targetnode_name, nodes);
       const newedge = {
-        id: this.getUniqueID(edges),
+        id: this.getUniqueEdgeID(all_edges),
         source: node_from.id,
         sourceHandle: "Out",
         target: target_node.id,
@@ -442,7 +457,7 @@ export default class NodeMapEngine {
         const namespace = config["config"]["output_namespace"];
         if (namespace == output_namespace) {
           const newedge = {
-            id: this.getUniqueID(edges),
+            id: this.getUniqueEdgeID(all_edges),
             source: node_from.id,
             sourceHandle: "Out",
             target: target_node.id,

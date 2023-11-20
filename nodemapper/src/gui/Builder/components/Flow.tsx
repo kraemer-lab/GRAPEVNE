@@ -76,12 +76,21 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
   let input_namespaces: string[];
   let named_inputs = false;
   if (typeof input_namespace === "string") {
-    input_namespaces = [input_namespace];
+    // Only display if input_namespace does not start with '_'
+    if (input_namespace.startsWith("_")) {
+      input_namespaces = [];
+    } else {
+      input_namespaces = [input_namespace];
+    }
   } else if (input_namespace === null) {
     input_namespaces = [];
   } else {
     named_inputs = true;
     input_namespaces = Object.keys(input_namespace);
+    // Remove input_namespaces where input_namespace value starts with '_'
+    input_namespaces = input_namespaces.filter((name) => {
+      return !input_namespace[name].startsWith("_");
+    });
   }
 
   return (
@@ -372,7 +381,7 @@ const Flow = () => {
           (data.config as Query).docstring = docstring;
           // Add node to graph
           const newnode = {
-            id: app.getUniqueID(nodes),
+            id: app.getUniqueNodeID(nodes),
             type: "standard",
             data: {
               color: color,
@@ -396,7 +405,7 @@ const Flow = () => {
     } else {
       // Module already contains a valid configuration
       const newnode = {
-        id: app.getUniqueID(nodes),
+        id: app.getUniqueNodeID(nodes),
         type: "standard",
         data: {
           config: { ...data, name: app.EnsureUniqueName(module_name, nodes) },
