@@ -64,11 +64,6 @@ const Header = () => {
     dispatch(builderBuildAsWorkflow());
   };
 
-  // Distribute model (visual)
-  const btnArrange = () => {
-    //
-  };
-
   // Load modules from repository
   const btnGetModuleList = () => {
     dispatch(builderGetRemoteModules());
@@ -147,14 +142,6 @@ const Header = () => {
           onClick={btnClearScene}
         >
           CLEAR GRAPH
-        </button>
-        <button
-          id="btnBuilderArrangeGraph"
-          className="btn"
-          onClick={btnArrange}
-          disabled
-        >
-          ARRANGE GRAPH
         </button>
       </div>
     </>

@@ -18,6 +18,7 @@ import { builderUpdateStatusText } from "redux/actions";
 import ReactFlow from "reactflow";
 import { Node } from "reactflow";
 import { Edge } from "reactflow";
+import { Panel } from "reactflow";
 import { Handle } from "reactflow";
 import { addEdge } from "reactflow";
 import { BaseEdge } from "reactflow";
@@ -41,6 +42,39 @@ import ContextMenu from "./ContextMenu";
 import "reactflow/dist/style.css";
 import styles from "./flow.module.css";
 import "./flow.css";
+
+import dagre from 'dagre';
+
+const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
+  const nodeWidth = 172;
+  const nodeHeight = 36;
+
+  // Allow dagre to determine layout
+  const isHorizontal = direction === 'LR';
+  const dagreGraph = new dagre.graphlib.Graph();
+  dagreGraph.setDefaultEdgeLabel(() => ({}));
+  dagreGraph.setGraph({ rankdir: direction });
+  nodes.forEach((node) => {
+    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+  });
+  edges.forEach((edge) => {
+    dagreGraph.setEdge(edge.source, edge.target);
+  });
+  dagre.layout(dagreGraph);
+
+  // Assign calculated positions to nodes
+  const newnodes = nodes.map((node) => {
+    const nodeWithPosition = dagreGraph.node(node.id);
+    const newnode = JSON.parse(JSON.stringify(node));
+    newnode.position = {
+      x: nodeWithPosition.x - nodeWidth / 2,
+      y: nodeWithPosition.y - nodeHeight / 2,
+    };
+    return newnode;
+  });
+
+  return newnodes;
+};
 
 const builderAPI = window.builderAPI;
 type Query = Record<string, unknown>;
@@ -421,6 +455,18 @@ const Flow = () => {
     event.dataTransfer.dropEffect = "move";
   };
 
+  const onLayout = useCallback(
+    (direction) => {
+      const newnodes = getLayoutedElements(
+        nodes,
+        edges,
+        direction
+      );
+      dispatch(builderSetNodes(newnodes));
+    },
+    [nodes, edges]
+  );
+
   return (
     <ReactFlow
       ref={ref}
@@ -442,6 +488,9 @@ const Flow = () => {
     >
       <Controls />
       <Background />
+      <Panel position="top-right">
+        <button onClick={() => onLayout('LR')}>Arrange</button>
+      </Panel>
       {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
     </ReactFlow>
   );

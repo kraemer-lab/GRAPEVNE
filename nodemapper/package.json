@@ -38,6 +38,7 @@
     "babel-loader": "^9.1.2",
     "core-js": "^3.30.2",
     "css-loader": "^6.7.3",
+    "dagre": "^0.8.5",
     "eslint-import-resolver-typescript": "^3.5.5",
     "gh-pages": "^5.0.0",
     "html-webpack-plugin": "^5.5.0",
