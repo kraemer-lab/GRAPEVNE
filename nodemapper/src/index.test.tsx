@@ -12,6 +12,9 @@ import { screen } from "@testing-library/react";
 import App from "./gui/App";
 import "./root.css";
 
+// Polyfill ResizeObserver which otherwise throws an error in tests
+global.ResizeObserver = require("resize-observer-polyfill");
+
 test("code quality", () => {
   render(
     <Provider store={store}>
