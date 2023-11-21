@@ -190,7 +190,14 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
                   console.log("Input handle clicked: ", event.target);
                 }}
               >
-                <div className={styles.InputPortLabel}>{name}</div>
+                <div
+                  className={styles.InputPortLabel}
+                  style={{
+                    pointerEvents: "none",  // pass-through click events
+                  }}
+                >
+                  {name}
+                </div>
               </Handle>
             </div>
           ))}
