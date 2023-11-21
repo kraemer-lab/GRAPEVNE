@@ -6,6 +6,7 @@ import { builderSetNodes } from "redux/actions";
 import { builderLogEvent } from "redux/actions";
 import { builderBuildAsModule } from "redux/actions";
 import { builderBuildAsWorkflow } from "redux/actions";
+import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
@@ -94,6 +95,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.edges,
             dispatch,
             getState().builder.snakemake_backend
+          );
+          break;
+
+        case "builder/node-selected":
+          NodeSelected(
+            action.payload,
+            dispatch,
           );
           break;
 
@@ -365,6 +373,20 @@ const CheckNodeDependencies = async (
   }
 };
 
+const NodeSelected = (
+  node: Node,
+  dispatch,
+) => {
+  const payload = {
+    id: node.id,
+    name: node.data.config.name,
+    type: node.data.config.type,
+    code: JSON.stringify(node.data.config.config, null, 2),
+  };
+  // Open module parameters pane
+  dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+}
+
 interface INodeDeselectedDispatch {
   payload: string;
 }
@@ -395,8 +417,13 @@ const UpdateNodeInfoKey = (
     };
     indexInto(workflow, keys, action.payload.value);
     const newnodes = setNodeWorkflow(nodes, node.id, workflow);
-    if (newnodes !== null) dispatch(builderSetNodes(newnodes));
-    else console.error("Failed to update node workflow: ", nodeinfo, workflow);
+    if (newnodes !== null) {
+      dispatch(builderSetNodes(newnodes));
+      const newnode = getNodeById(nodeinfo.id, newnodes);
+      dispatch(builderNodeSelected(newnode));
+    } else {
+      console.error("Failed to update node workflow: ", nodeinfo, workflow);
+    }
   } else {
     console.log("Node not found: ", nodeinfo);
   }
@@ -417,13 +444,8 @@ const UpdateNodeInfoName = (
     const newnodes = setNodeName(nodes, node.id, name);
     if (newnodes !== null) {
       dispatch(builderSetNodes(newnodes));
-      const payload = {
-        id: node.id,
-        name: name,
-        type: node.data.config.type,
-        code: JSON.stringify(node.data.config.config, null, 2),
-      };
-      dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+      const newnode = getNodeById(nodeinfo.id, newnodes);
+      dispatch(builderNodeSelected(newnode));
     } else console.error("Failed to update node name: ", nodeinfo, name);
   } else {
     console.log("Node not found: ", nodeinfo);

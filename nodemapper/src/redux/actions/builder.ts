@@ -102,6 +102,6 @@ export const builderAddLink = createAction<Record<string, any> | undefined>( // 
   "builder/add-link"
 );
 
-export const builderNodeSelected = createAction("builder/node-selected");
+export const builderNodeSelected = createAction<Node>("builder/node-selected");
 
 export const builderNodeDeselected = createAction("builder/node-deselected");

@@ -329,17 +329,8 @@ const Flow = () => {
   };
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
-    const payload = {
-      id: node.id,
-      name: node.data.config.name,
-      type: node.data.config.type,
-      code: JSON.stringify(node.data.config.config, null, 2),
-    };
-    // Close context menu (if open)
-    setMenu(null);
-    // Open module parameters pane
-    dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
-    dispatch(builderNodeSelected());
+    setMenu(null);  // Close context menu (if open)
+    dispatch(builderNodeSelected(node));
   };
 
   const onNodeContextMenu = (event: React.MouseEvent, node: Node) => {
