@@ -1,4 +1,7 @@
-import React, { useCallback } from "react";
+import React from "react";
+import BuilderEngine from "../BuilderEngine";
+
+import { useCallback } from "react";
 import { useAppSelector } from "redux/store/hooks";
 import { useReactFlow } from "reactflow";
 import { getNodeById } from "./Flow";
@@ -24,13 +27,16 @@ export default function ContextMenu({
   const node_name = getNodeById(id, nodes).data.config.name;
 
   const duplicateNode = useCallback(() => {
-    const node = getNode(id);
+    const app = BuilderEngine.Instance;
+    const node = JSON.parse(JSON.stringify(getNode(id)));
     const position = {
       x: node.position.x + 50,
       y: node.position.y + 50,
     };
-
-    addNodes({ ...node, id: `${node.id}-copy`, position });
+    const name = app.EnsureUniqueName(node_name, nodes);
+    const newid = app.getUniqueNodeID(nodes);
+    node.data.config.name = name;
+    addNodes({ ...node, id: newid, position });
   }, [id, getNode, addNodes]);
 
   const deleteNode = useCallback(() => {
