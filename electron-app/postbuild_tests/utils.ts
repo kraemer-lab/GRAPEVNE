@@ -145,7 +145,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
     await driver.actions().dragAndDrop(module, canvas).perform();
     // Give time for the module to be created on the canvas,
     // and for the config to load
-    await driver.sleep(500);
+    await driver.sleep(100);
   }
 
   // Force connections to be connected in order
@@ -210,7 +210,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   const canvas = await driver.findElement(By.className("react-flow__pane"));
   await driver.actions().dragAndDrop(module, canvas).perform();
   // Give time for the config to load and for the module to be created on the canvas
-  await driver.sleep(5000);
+  await driver.sleep(100);
 
   // Open the module in the editor and Expand, replacing the module with its sub-modules
   //
@@ -229,7 +229,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     By.xpath(`//div[text()='${modulename}']`)
   );
   for (const element of elements) await element.click();
-  await driver.sleep(500); // Wait for module settings to expand
+  await driver.sleep(100); // Wait for module settings to expand
   await driver.findElement(By.id("btnBuilderExpand")).click();
 
   // Assert that build file does not exist

@@ -124,6 +124,164 @@ describe("modules", () => {
     console.log("<<< test Get local modules list");
   });
 
+  test(
+    "Expand multi-nodes (with input and output connections)",
+    async () => {
+      console.log(
+        "::: test Expand multi-nodes (with input and output connections)"
+      );
+
+      // Drag-and-drop the same hierarchical modules into the scene three times
+      await driver.findElement(By.id("btnBuilderClearScene")).click();
+      const module = await driver.findElement(
+        By.id("modulelist-_multi_modules__copy_run3")
+      );
+      const canvas = await driver.findElement(By.className("react-flow__pane"));
+      await ["n0", "n1", "n2"].forEach(async () => {
+        await driver.actions().dragAndDrop(module, canvas).perform();
+        await driver.sleep(100);
+      });
+      await driver.findElement(By.id("buttonReactflowArrange")).click();
+
+      // Connect the modules together
+      await driver
+        .actions()
+        .dragAndDrop(
+          driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
+          driver.findElement(
+            By.xpath('//div[@data-id="n1-single_modules_copy_run$-target"]')
+          )
+        )
+        .perform(); // n0-to-n1
+      await driver
+        .actions()
+        .dragAndDrop(
+          driver.findElement(By.xpath('//div[@data-id="n1-out-source"]')),
+          driver.findElement(
+            By.xpath('//div[@data-id="n2-single_modules_copy_run$-target"]')
+          )
+        )
+        .perform(); // n1-to-n2
+
+      // Check connections before expansion
+      let conns = [
+        ["n0", "n1"],
+        ["n1", "n2"],
+      ];
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.findElement(
+          By.xpath(
+            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+          )
+        );
+      });
+
+      // Expand the centre module and check connections
+      conns = [
+        ["n0", "n3"],
+        ["n3", "n4"],
+        ["n4", "n5"],
+        ["n5", "n2"],
+      ];
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await driver.findElement(By.id("btnBuilderExpand")).click();
+      // findElement will throw if the element does not exist
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.findElement(
+          By.xpath(
+            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+          )
+        );
+      });
+
+      // Next, expand the leading module and check connections
+      conns = [
+        ["n1", "n6"],
+        ["n6", "n7"],
+        ["n7", "n3"],
+        ["n3", "n4"],
+        ["n4", "n5"],
+        ["n5", "n2"],
+      ];
+      await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await driver.findElement(By.id("btnBuilderExpand")).click();
+      // findElement will throw if the element does not exist
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.findElement(
+          By.xpath(
+            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+          )
+        );
+      });
+
+      // Finally, expand the trailing module and check connections
+      conns = [
+        ["n1", "n6"],
+        ["n6", "n7"],
+        ["n7", "n3"],
+        ["n3", "n4"],
+        ["n4", "n5"],
+        ["n5", "n0"],
+        ["n0", "n8"],
+        ["n8", "n9"],
+      ];
+      await driver.findElement(By.xpath(`//div[@data-id="n2"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await driver.findElement(By.id("btnBuilderExpand")).click();
+      // findElement will throw if the element does not exist
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.findElement(
+          By.xpath(
+            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+          )
+        );
+      });
+
+      console.log(
+        "<<< test Expand multi-nodes (with input and output connections)"
+      );
+    },
+    5 * ONE_MINUTE
+  );
+
   test("Construct single module workflow in GRAPEVNE", async () => {
     console.log("::: test Construct single module workflow in GRAPEVNE");
 
@@ -136,7 +294,7 @@ describe("modules", () => {
     await driver.actions().dragAndDrop(module, canvas).perform();
     // Give time for the module to be created on the canvas,
     // and for the config to load
-    await driver.sleep(500);
+    await driver.sleep(100);
 
     // Wait for module to be added to the scene and for the config to load
     console.log("<<< test Construct single module workflow in GRAPEVNE");
