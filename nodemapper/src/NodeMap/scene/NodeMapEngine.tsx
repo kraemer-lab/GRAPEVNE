@@ -445,7 +445,7 @@ export default class NodeMapEngine {
       unknown
     >;
     const output_namespace = config["config"]["output_namespace"];
-    const target_node_and_port = this.getNodeOutputNodes(node, nodes, edges);
+    const target_node_and_port = this.getNodeOutputNodes(node, all_nodes, all_edges);
     for (let i = 0; i < target_node_and_port.length; i++) {
       const target_node = target_node_and_port[i][0];
       const target_port = target_node_and_port[i][1];
@@ -472,8 +472,8 @@ export default class NodeMapEngine {
     // Delete expanded node (and connected edges)
     all_nodes = all_nodes.filter((item) => item.data.config.name !== name);
     all_edges = all_edges
-      .filter((item) => item.source !== name)
-      .filter((item) => item.target !== name);
+      .filter((item) => item.source !== node.id)
+      .filter((item) => item.target !== node.id);
 
     // Ensure unique names (subgraph was expanded without renaming so may
     //   clash with existing nodes)
