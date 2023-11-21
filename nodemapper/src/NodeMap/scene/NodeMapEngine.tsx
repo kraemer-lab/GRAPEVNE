@@ -233,9 +233,7 @@ export default class NodeMapEngine {
 
   public getNodeOutputNodes(node: Node, nodes: Node[], edges: Edge[]) {
     const nodes_and_ports = [];
-    const from_edges = edges.filter(
-      (edge) => edge.source === node.id
-    );
+    const from_edges = edges.filter((edge) => edge.source === node.id);
     from_edges.forEach((edge) => {
       nodes_and_ports.push([
         this.getNodeNameFromID(edge.target, nodes),
@@ -445,7 +443,11 @@ export default class NodeMapEngine {
       unknown
     >;
     const output_namespace = config["config"]["output_namespace"];
-    const target_node_and_port = this.getNodeOutputNodes(node, all_nodes, all_edges);
+    const target_node_and_port = this.getNodeOutputNodes(
+      node,
+      all_nodes,
+      all_edges
+    );
     for (let i = 0; i < target_node_and_port.length; i++) {
       const target_node = target_node_and_port[i][0];
       const target_port = target_node_and_port[i][1];
@@ -479,7 +481,9 @@ export default class NodeMapEngine {
     //   clash with existing nodes)
     // Replace node names in newnode configs (namespaces)
     newnodes.forEach((node) => {
-      const json = JSON.parse(JSON.stringify(this.getNodePropertiesAsJSON(node)));
+      const json = JSON.parse(
+        JSON.stringify(this.getNodePropertiesAsJSON(node))
+      );
       const outerconfig = json.config as Record<string, unknown>;
       const config = outerconfig["config"] as Record<string, unknown>;
       for (const key in config) {

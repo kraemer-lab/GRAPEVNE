@@ -193,7 +193,7 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
                 <div
                   className={styles.InputPortLabel}
                   style={{
-                    pointerEvents: "none",  // pass-through click events
+                    pointerEvents: "none", // pass-through click events
                   }}
                 >
                   {name}
@@ -336,7 +336,7 @@ const Flow = () => {
   };
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
-    setMenu(null);  // Close context menu (if open)
+    setMenu(null); // Close context menu (if open)
     dispatch(builderNodeSelected(node));
   };
 

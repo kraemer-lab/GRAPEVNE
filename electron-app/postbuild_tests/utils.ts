@@ -153,8 +153,12 @@ const BuildAndRun_MultiModuleWorkflow = async (
   for (let k = 0; k < connections.length; k++) {
     // We can connect modules by first clicking on the source port, then the target port
     const [fromport, toport] = connections[k];
-    const port1 = await driver.findElement(By.xpath(`//div[@data-id="${fromport}"]`));
-    const port2 = await driver.findElement(By.xpath(`//div[@data-id="${toport}"]`));
+    const port1 = await driver.findElement(
+      By.xpath(`//div[@data-id="${fromport}"]`)
+    );
+    const port2 = await driver.findElement(
+      By.xpath(`//div[@data-id="${toport}"]`)
+    );
     await driver.actions().dragAndDrop(port1, port2).perform();
   }
 

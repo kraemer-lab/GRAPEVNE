@@ -99,10 +99,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case "builder/node-selected":
-          NodeSelected(
-            action.payload,
-            dispatch,
-          );
+          NodeSelected(action.payload, dispatch);
           break;
 
         case "builder/node-deselected":
@@ -373,10 +370,7 @@ const CheckNodeDependencies = async (
   }
 };
 
-const NodeSelected = (
-  node: Node,
-  dispatch,
-) => {
+const NodeSelected = (node: Node, dispatch) => {
   const payload = {
     id: node.id,
     name: node.data.config.name,
@@ -385,7 +379,7 @@ const NodeSelected = (
   };
   // Open module parameters pane
   dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
-}
+};
 
 interface INodeDeselectedDispatch {
   payload: string;
