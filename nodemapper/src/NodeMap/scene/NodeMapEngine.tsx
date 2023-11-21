@@ -234,7 +234,7 @@ export default class NodeMapEngine {
   public getNodeOutputNodes(node: Node, nodes: Node[], edges: Edge[]) {
     const nodes_and_ports = [];
     const from_edges = edges.filter(
-      (edge) => edge.source === node.data.config.name
+      (edge) => edge.source === node.id
     );
     from_edges.forEach((edge) => {
       nodes_and_ports.push([
@@ -428,7 +428,7 @@ export default class NodeMapEngine {
       } else {
         throw new Error("Recursive port naming not yet supported.");
       }
-      const target_node = this.getNodeByName(targetnode_name, nodes);
+      const target_node = this.getNodeByName(targetnode_name, newnodes);
       const newedge = {
         id: this.getUniqueEdgeID(all_edges),
         source: node_from.id,
@@ -456,11 +456,12 @@ export default class NodeMapEngine {
         ] as Record<string, unknown>;
         const namespace = config["config"]["output_namespace"];
         if (namespace == output_namespace) {
+          console.log("Found output namespace: " + namespace);
           const newedge = {
             id: this.getUniqueEdgeID(all_edges),
             source: node_from.id,
             sourceHandle: "Out",
-            target: target_node.id,
+            target: this.getNodeByName(target_node, nodes).id,
             targetHandle: target_port,
           };
           all_edges.push(newedge);
