@@ -8,12 +8,13 @@ import * as path from "path";
 import * as webdriver from "selenium-webdriver";
 
 import { runif } from "./utils";
+import { is_windows } from "./utils";
 import { is_installed } from "./utils";
+import { dragAndDrop } from "./utils";
 import { FlushConsoleLog } from "./utils";
 import { RedirectConsoleLog } from "./utils";
 import { WaitForReturnCode } from "./utils";
 import { EasyEdit_SetFieldByKey } from "./utils";
-import { EasyEdit_SetFieldByValue } from "./utils";
 import { BuildAndRun_SingleModuleWorkflow } from "./utils";
 import { BuildAndRun_MultiModuleWorkflow } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
@@ -285,7 +286,7 @@ describe("modules", () => {
     5 * ONE_MINUTE
   );
 
-  test(
+  runif(!is_windows)(
     "Module validation (dependency checks)",
     async () => {
       console.log("::: test Module validation (dependency checks)");
@@ -293,32 +294,26 @@ describe("modules", () => {
       // Drag-and-drop a source and copy module into the scene
       await driver.findElement(By.id("btnBuilderClearScene")).click();
       const canvas = await driver.findElement(By.className("react-flow__pane"));
-      await driver
-        .actions()
-        .dragAndDrop(
-          driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
-          canvas
-        )
-        .perform();
+      await dragAndDrop(
+        driver,
+        driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
+        canvas
+      )
       await driver.sleep(100);
-      await driver
-        .actions()
-        .dragAndDrop(
-          driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
-          canvas
-        )
-        .perform();
+      await dragAndDrop(
+        driver,
+        driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
+        canvas
+      )
       await driver.sleep(100);
       await driver.findElement(By.id("buttonReactflowArrange")).click();
 
       // Connect the modules together
-      await driver
-        .actions()
-        .dragAndDrop(
-          driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
-          driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
-        )
-        .perform(); // n0-to-n1
+      await dragAndDrop(
+        driver,
+        driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
+        driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
+      )
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -358,7 +353,7 @@ describe("modules", () => {
       By.id("modulelist-_single_modules__payload_shell")
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
-    await driver.actions().dragAndDrop(module, canvas).perform();
+    await dragAndDrop(driver, module, canvas);
     // Give time for the module to be created on the canvas,
     // and for the config to load
     await driver.sleep(100);
@@ -367,7 +362,7 @@ describe("modules", () => {
     console.log("<<< test Construct single module workflow in GRAPEVNE");
   });
 
-  test.each([
+  runif(!is_windows).each([
     [
       "(single_modules) payload shell",
       path.join("single_modules_payload_shell", "data.csv"),
@@ -399,7 +394,7 @@ describe("modules", () => {
     5 * ONE_MINUTE
   ); // long timeout
 
-  test.each([
+  runif(!is_windows).each([
     // Test: 1 (connect two modules)
     [
       [

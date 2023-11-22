@@ -4,6 +4,7 @@ import { Key } from "selenium-webdriver";
 import * as fs from "fs";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
+import * as os from "node:os";
 import decompress = require("decompress");
 
 import * as shell from "shelljs";
@@ -119,6 +120,78 @@ const WaitForReturnCode = async (
   }
 };
 
+const dragAndDrop = async (
+  driver: webdriver.ThenableWebDriver,
+  elementFrom: webdriver.WebElement,
+  elementTo: webdriver.WebElement
+) => {
+  if (os.platform() === "win32") {
+    // Windows implementation - see function for details
+    return await dragAndDrop_script(driver, elementFrom, elementTo);
+  } else {
+    // webdriver seems to work fine on Linux and MacOS
+    await driver
+      .actions()
+      .dragAndDrop(elementFrom, elementTo)
+      .perform();
+  }
+};
+
+const dragAndDrop_script = async (
+  driver: webdriver.ThenableWebDriver,
+  elementFrom: webdriver.WebElement,
+  elementTo: webdriver.WebElement
+) => {
+  // Drag and drop replacement for Selenium (due to HTML5 issue)
+  // Required for Windows tests (regular method works on Linux and MacOS)
+  // Solution sourced from:
+  //   https://stackoverflow.com/questions/39436870/why-drag-and-drop-is-not-working-in-selenium-webdriver
+  await driver.executeScript(
+    `
+    function createEvent(typeOfEvent) {
+      var event = document.createEvent("CustomEvent");
+      event.initCustomEvent(typeOfEvent, true, true, null);
+      event.dataTransfer = {
+        data: {},
+        setData: function (key, value) {
+          this.data[key] = value;
+        },
+        getData: function (key) {
+          return this.data[key];
+        }
+      };
+      return event;
+    }
+
+    function dispatchEvent(element, event,transferData) {
+      if (transferData !== undefined) {
+        event.dataTransfer = transferData;
+      }
+      if (element.dispatchEvent) {
+        element.dispatchEvent(event);
+      } else if (element.fireEvent) {
+        element.fireEvent("on" + event.type, event);
+      }
+    }
+
+    function simulateHTML5DragAndDrop(element, destination) {
+      var dragStartEvent = createEvent('dragstart');
+      dispatchEvent(element, dragStartEvent);
+      var dropEvent = createEvent('drop');
+      dispatchEvent(destination, dropEvent, dragStartEvent.dataTransfer);
+      var dragEndEvent = createEvent('dragend');
+      dispatchEvent(element, dragEndEvent, dropEvent.dataTransfer);
+    }
+
+    var source = arguments[0];
+    var destination = arguments[1];
+    simulateHTML5DragAndDrop(source,destination);
+    `,
+    elementFrom,
+    elementTo
+  );
+};
+
 const EasyEdit_SetFieldByKey = async (
   driver: webdriver.ThenableWebDriver,
   key: string,
@@ -192,7 +265,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
       By.id("modulelist-" + wranglename(modulenames[k]))
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
-    await driver.actions().dragAndDrop(module, canvas).perform();
+    await dragAndDrop(driver, module, canvas);
     // Give time for the module to be created on the canvas,
     // and for the config to load
     await driver.sleep(100);
@@ -209,7 +282,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
     const port2 = await driver.findElement(
       By.xpath(`//div[@data-id="${toport}"]`)
     );
-    await driver.actions().dragAndDrop(port1, port2).perform();
+    await dragAndDrop(driver, port1, port2);
   }
 
   // Clean build folder (initial); assert target output does not exist
@@ -258,7 +331,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     By.id("modulelist-" + wranglename(modulename))
   );
   const canvas = await driver.findElement(By.className("react-flow__pane"));
-  await driver.actions().dragAndDrop(module, canvas).perform();
+  await dragAndDrop(driver, module, canvas);
   // Give time for the config to load and for the module to be created on the canvas
   await driver.sleep(100);
 
@@ -358,6 +431,7 @@ export {
   is_installed,
   is_windows,
   is_not_windows,
+  dragAndDrop,
   RedirectConsoleLog,
   FlushConsoleLog,
   WaitForReturnCode,
