@@ -341,6 +341,7 @@ const CheckNodeDependencies = async (
     dispatch(builderUpdateStatusText(""));
     switch (data["body"]["status"]) {
       case "ok":
+        data["returncode"] = 0;
         dispatch(
           builderSetNodes(
             app.setNodeColor(
@@ -352,9 +353,11 @@ const CheckNodeDependencies = async (
         );
         break;
       case "missing":
+        data["returncode"] = 1;
         dispatch(builderSetNodes(app.setNodeColor(node, "red", nodes)));
         break;
       default:
+        data["returncode"] = -1;
         console.error("Unexpected response: ", data["body"]);
     }
     console.log(data);

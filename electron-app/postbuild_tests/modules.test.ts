@@ -1,4 +1,5 @@
 import { By } from "selenium-webdriver";
+import { Key } from "selenium-webdriver";
 import { Select } from "selenium-webdriver/lib/select";
 import { until } from "selenium-webdriver";
 
@@ -11,6 +12,8 @@ import { is_installed } from "./utils";
 import { FlushConsoleLog } from "./utils";
 import { RedirectConsoleLog } from "./utils";
 import { WaitForReturnCode } from "./utils";
+import { EasyEdit_SetFieldByKey } from "./utils";
+import { EasyEdit_SetFieldByValue } from "./utils";
 import { BuildAndRun_SingleModuleWorkflow } from "./utils";
 import { BuildAndRun_MultiModuleWorkflow } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
@@ -281,26 +284,30 @@ describe("modules", () => {
     },
     5 * ONE_MINUTE
   );
-  
+
   test(
     "Module validation (dependency checks)",
     async () => {
-      console.log(
-        "::: test Module validation (dependency checks)"
-      );
+      console.log("::: test Module validation (dependency checks)");
 
       // Drag-and-drop a source and copy module into the scene
       await driver.findElement(By.id("btnBuilderClearScene")).click();
       const canvas = await driver.findElement(By.className("react-flow__pane"));
-      await driver.actions().dragAndDrop(
+      await driver
+        .actions()
+        .dragAndDrop(
           driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
           canvas
-        ).perform();
+        )
+        .perform();
       await driver.sleep(100);
-      await driver.actions().dragAndDrop(
+      await driver
+        .actions()
+        .dragAndDrop(
           driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
           canvas
-        ).perform();
+        )
+        .perform();
       await driver.sleep(100);
       await driver.findElement(By.id("buttonReactflowArrange")).click();
 
@@ -309,41 +316,35 @@ describe("modules", () => {
         .actions()
         .dragAndDrop(
           driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
-          driver.findElement(By.xpath('//div[@data-id="n1-in-target"]')))
+          driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
+        )
         .perform(); // n0-to-n1
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
       await driver.sleep(100); // Wait for module settings to expand
       await driver.findElement(By.id("btnBuilderValidate")).click();
-      const msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
-      expect(msg.returncode).toEqual(0);
+      let msg = await WaitForReturnCode(
+        driver,
+        "runner/check-node-dependencies"
+      );
+      expect(msg.returncode).toEqual(0); // 0 = success
 
-      /* TODO: Need to change one of the filename parameters so that they mismatch,
-       * then check that the validation fails.
-       * Requires:
-       *  - Mechanism to change the filename parameter (problems editing the input field)
-       *  - Mechanism to check the validation result (need the return code to reflect success)
-       */
-
-      /*
       // Change the expected file name in the source module
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
       await driver.sleep(100); // Wait for module settings to expand
-      const filename_field = await driver.findElement(By.xpath(`//*[contains(text(), "data.csv")]`));
-      await filename_field.click();
-      await driver.sleep(100); // Wait for filename field to be selected
-      await driver.findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input[@value="data.csv"]`)).sendKeys("x");
+      await EasyEdit_SetFieldByKey(driver, "filename", "mismatch");
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
       await driver.sleep(100); // Wait for module settings to expand
       await driver.findElement(By.id("btnBuilderValidate")).click();
       msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
-      expect(msg.returncode).toEqual(1);
-      */
+      expect(msg.returncode).toEqual(1); // 1 = missing dependency
 
-      console.log("<<< test Expand multi-nodes (with input and output connections)")
+      console.log(
+        "<<< test Expand multi-nodes (with input and output connections)"
+      );
     },
     5 * ONE_MINUTE
   );

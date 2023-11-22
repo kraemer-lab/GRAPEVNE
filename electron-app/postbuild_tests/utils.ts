@@ -1,4 +1,5 @@
 import { By } from "selenium-webdriver";
+import { Key } from "selenium-webdriver";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -116,6 +117,55 @@ const WaitForReturnCode = async (
     }
     console.log("Skipping msg: ", msg, msg_set);
   }
+};
+
+const EasyEdit_SetFieldByKey = async (
+  driver: webdriver.ThenableWebDriver,
+  key: string,
+  newvalue: string
+) => {
+  // EasyEdit boxes are awkward to interact with as they regenerate using a wrapper
+  // around the input box in Edit mode, and a simplified wrapper around a label when
+  // not. Start by clicking on the element to enable Edit mode.
+  await driver
+    .findElement(By.xpath(`//span[contains(text(), "${key}")]/following::span`))
+    .click();
+  await driver.sleep(100); // Wait for edit box to render
+  // We can send one sendKeys command to the input box before loosing focus, so
+  // need to construct the command to send the correct number of backspaces to clear
+  // the field, then enter the new value, then Enter to confirm the change.
+  const oldvalue = await driver
+    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
+    .getAttribute("value");
+  let s = "";
+  for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
+  s += newvalue + Key.ENTER;
+  await driver
+    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
+    .sendKeys(s);
+};
+
+const EasyEdit_SetFieldByValue = async (
+  driver: webdriver.ThenableWebDriver,
+  oldvalue: string,
+  newvalue: string
+) => {
+  // EasyEdit boxes are awkward to interact with as they regenerate using a wrapper
+  // around the input box in Edit mode, and a simplified wrapper around a label when
+  // not. Start by clicking on the element to enable Edit mode.
+  await driver
+    .findElement(By.xpath(`//*[contains(text(), "${oldvalue + "\n:"}")]`))
+    .click();
+  await driver.sleep(100); // Wait for edit box to render
+  // We can send one sendKeys command to the input box before loosing focus, so
+  // need to construct the command to send the correct number of backspaces to clear
+  // the field, then enter the new value, then Enter to confirm the change.
+  let s = "";
+  for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
+  s += newvalue + Key.ENTER;
+  await driver
+    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
+    .sendKeys(s);
 };
 
 const BuildAndRun_SingleModuleWorkflow = async (
@@ -311,6 +361,8 @@ export {
   RedirectConsoleLog,
   FlushConsoleLog,
   WaitForReturnCode,
+  EasyEdit_SetFieldByKey,
+  EasyEdit_SetFieldByValue,
   BuildAndRun_SingleModuleWorkflow,
   BuildAndRun_MultiModuleWorkflow,
   Build_RunWithDocker_SingleModuleWorkflow,
