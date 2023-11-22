@@ -38,7 +38,7 @@ const ValidateButton = (props: ValidateButtonProps) => {
   };
 
   return (
-    <button className="btn" onClick={btnValidate}>
+    <button id="btnBuilderValidate" className="btn" onClick={btnValidate}>
       Validate
     </button>
   );

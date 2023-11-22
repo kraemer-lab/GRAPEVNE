@@ -295,6 +295,7 @@ def post(request):
             data = {
                 "query": query,
                 "body": runner.CheckNodeDependencies(data),
+                "returncode": 0,
             }
 
         else:

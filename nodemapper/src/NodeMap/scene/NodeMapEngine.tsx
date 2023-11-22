@@ -104,7 +104,7 @@ export default class NodeMapEngine {
 
   public getInPorts(node: Node, edges: Edge[]): string[] {
     const inports = edges
-      .filter((edge) => edge.target === node.data.config.name)
+      .filter((edge) => edge.target === node.id)
       .map((edge) => edge.targetHandle);
     return [...new Set(inports)]; // Remove duplicates
   }

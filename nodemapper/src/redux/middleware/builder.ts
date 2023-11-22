@@ -357,6 +357,7 @@ const CheckNodeDependencies = async (
       default:
         console.error("Unexpected response: ", data["body"]);
     }
+    console.log(data);
   };
   switch (backend as string) {
     case "rest":
