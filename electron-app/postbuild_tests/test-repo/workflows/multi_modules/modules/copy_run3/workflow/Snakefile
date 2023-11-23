@@ -1,0 +1,22 @@
+configfile: "config/config.yaml"
+
+module single_modules_copy_run:
+    snakefile:
+        config["single_modules_copy_run"]["snakefile"]
+    config:
+        config["single_modules_copy_run"]["config"]
+use rule * from single_modules_copy_run as single_modules_copy_run_*
+
+module single_modules_copy_run_1:
+    snakefile:
+        config["single_modules_copy_run_1"]["snakefile"]
+    config:
+        config["single_modules_copy_run_1"]["config"]
+use rule * from single_modules_copy_run_1 as single_modules_copy_run_1_*
+
+module single_modules_copy_run_2:
+    snakefile:
+        config["single_modules_copy_run_2"]["snakefile"]
+    config:
+        config["single_modules_copy_run_2"]["config"]
+use rule * from single_modules_copy_run_2 as single_modules_copy_run_2_*

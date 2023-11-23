@@ -258,16 +258,16 @@ const GetRemoteModulesGithubDirectoryListing = async (
   }
 
   // Get latest commit of main branch
-  const commit = await get(
-    path.join(url_github, repo, "commits", branch)
-  ).then((data) => {
-    console.log(data);
-    console.log("Latest commit: ", data["sha"]);
-    return data["sha"];
-  }).catch(() => {
-    console.log("Could not identify latest commit.");
-    return "";
-  });
+  const commit = await get(path.join(url_github, repo, "commits", branch))
+    .then((data) => {
+      console.log(data);
+      console.log("Latest commit: ", data["sha"]);
+      return data["sha"];
+    })
+    .catch(() => {
+      console.log("Could not identify latest commit.");
+      return "";
+    });
 
   // First-level (organisation) listing
   const orgs = await get(url_base).then((data) => {

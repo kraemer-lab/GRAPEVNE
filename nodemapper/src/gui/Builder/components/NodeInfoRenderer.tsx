@@ -6,15 +6,17 @@ import BuilderEngine from "../BuilderEngine";
 import { Types } from "react-easy-edit";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { NodeModel } from "@projectstorm/react-diagrams";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { DefaultNodeModel } from "NodeMap";
+import { builderSetNodes } from "redux/actions";
+import { builderSetEdges } from "redux/actions";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfoName } from "redux/actions";
 import { builderCheckNodeDependencies } from "redux/actions";
+
+import { Node, Edge } from "reactflow";
 
 interface IPayload {
   id: string;
@@ -36,15 +38,20 @@ const ValidateButton = (props: ValidateButtonProps) => {
   };
 
   return (
-    <button className="btn" onClick={btnValidate}>
+    <button id="btnBuilderValidate" className="btn" onClick={btnValidate}>
       Validate
     </button>
   );
 };
 
 const ExpandButton = (props: ExpandProps) => {
-  const [newnodes, setNewNodes] = React.useState<NodeModel[]>(null);
+  const [newnodes, setNewNodes] = React.useState({
+    nodes: [] as Node[],
+    edges: [] as Edge[],
+  });
   const dispatch = useAppDispatch();
+  const nodes = useAppSelector((state) => state.builder.nodes);
+  const edges = useAppSelector((state) => state.builder.edges);
 
   const showExpand = useAppSelector(
     (state) => state.builder.can_selected_expand
@@ -53,33 +60,22 @@ const ExpandButton = (props: ExpandProps) => {
   const btnExpand = () => {
     // Expand the selected node into it's constituent modules
     const app = BuilderEngine.Instance;
-    const engine = app.engine;
-    const newnodes = app.ExpandNodeByName(props.nodeinfo.name as string);
-    setNewNodes(newnodes);
+    const [nodes0, edges0] = app.ExpandNodeByName(
+      props.nodeinfo.name as string,
+      nodes,
+      edges
+    );
+    console.log("newnodes", newnodes);
+    if (nodes0 !== null && nodes0 !== undefined)
+      setNewNodes({ nodes: nodes0, edges: edges0 });
   };
 
   React.useEffect(() => {
-    if (newnodes) {
-      // Add event listeners
-      newnodes.forEach((newnode) => {
-        newnode.registerListener({
-          selectionChanged: (e) => {
-            const payload: IPayload = {
-              id: newnode.getOptions().id,
-            };
-            if (e.isSelected) {
-              dispatch(builderNodeSelected(payload));
-            } else {
-              dispatch(builderNodeDeselected(payload));
-            }
-          },
-          entityRemoved: (e) => {
-            dispatch(builderNodeDeselected({}));
-          },
-        });
-      });
+    if (newnodes.nodes.length > 0) {
       // Ensure the expanded node is deselected (and no longer editable)
-      dispatch(builderNodeDeselected(""));
+      dispatch(builderSetNodes(newnodes.nodes));
+      dispatch(builderSetEdges(newnodes.edges));
+      dispatch(builderNodeDeselected());
     }
   }, [newnodes]);
 
@@ -94,14 +90,15 @@ const ExpandButton = (props: ExpandProps) => {
   }
 };
 
-const PermitNodeExpand = (nodeinfo: Record<string, unknown>) => {
+const PermitNodeExpand = (nodeinfo: Record<string, unknown>, nodes) => {
   const app = BuilderEngine.Instance;
-  return app.CanNodeExpand(nodeinfo.name as string);
+  return app.CanNodeExpand(nodeinfo.name as string, nodes);
 };
 
 const NodeInfoRenderer = (props) => {
   const dispatch = useAppDispatch();
   const nodeinfoStr = useAppSelector((state) => state.builder.nodeinfo);
+  const nodes = useAppSelector((state) => state.builder.nodes);
 
   const SetNodeName = (name: string) => {
     if (name) dispatch(builderUpdateNodeInfoName(name));
@@ -113,11 +110,7 @@ const NodeInfoRenderer = (props) => {
 
   // Get node to lock/unlock it during text edits
   const app = BuilderEngine.Instance;
-  const node = app.getNodeByName(nodeinfo.name as string);
-  // Node is not locked by default
-  node.setLocked(false);
-  const onEditFocus = () => node.setLocked(true);
-  const onEditBlur = () => node.setLocked(false);
+  const node = app.getNodeByName(nodeinfo.name as string, nodes);
 
   return (
     <div
@@ -145,19 +138,15 @@ const NodeInfoRenderer = (props) => {
             value={nodeinfo.name}
             saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
             cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-            onFocus={(e) => onEditFocus()}
-            onBlur={(e) => onEditBlur()}
             onSave={(value) => {
               SetNodeName(value);
-              onEditBlur();
             }}
-            onCancel={() => onEditBlur()}
             saveOnBlur={true}
           />
         </div>
         <div>
           <ValidateButton nodename={nodeinfo.name} />
-          {PermitNodeExpand(nodeinfo) ? (
+          {PermitNodeExpand(nodeinfo, nodes) ? (
             <ExpandButton nodeinfo={nodeinfo} />
           ) : null}
         </div>
@@ -168,10 +157,7 @@ const NodeInfoRenderer = (props) => {
           overflowY: "auto",
         }}
       >
-        <NodeInfo
-          onEditFocus={() => onEditFocus()}
-          onEditBlur={() => onEditBlur()}
-        />
+        <NodeInfo />
       </div>
     </div>
   );

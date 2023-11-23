@@ -30,8 +30,6 @@ const addQuotesIfString = (value: string, isString: boolean) => {
 
 interface HighlightedJSONProps {
   json: string;
-  onEditFocus: () => void;
-  onEditBlur: () => void;
 }
 
 const HighlightedJSON = (props: HighlightedJSONProps) => {
@@ -121,13 +119,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                     { label: "true", value: true },
                     { label: "false", value: false },
                   ]}
-                  onFocus={(e) => props.onEditFocus()}
-                  onBlur={(e) => props.onEditBlur()}
                   onSave={(value) => {
                     setValue(value);
-                    props.onEditBlur();
                   }}
-                  onCancel={() => props.onEditBlur()}
                   saveOnBlur={true}
                 />
               ) : (
@@ -137,13 +131,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                   cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
                   value={value}
-                  onFocus={(e) => props.onEditFocus()}
-                  onBlur={(e) => props.onEditBlur()}
                   onSave={(value) => {
                     setValue(value);
-                    props.onEditBlur();
                   }}
-                  onCancel={() => props.onEditBlur()}
                   saveOnBlur={true}
                 />
               )}

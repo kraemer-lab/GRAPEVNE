@@ -1,4 +1,5 @@
 import { By } from "selenium-webdriver";
+import { Key } from "selenium-webdriver";
 import { Select } from "selenium-webdriver/lib/select";
 import { until } from "selenium-webdriver";
 
@@ -7,13 +8,15 @@ import * as path from "path";
 import * as webdriver from "selenium-webdriver";
 
 import { runif } from "./utils";
+import { is_windows } from "./utils";
 import { is_installed } from "./utils";
-import { is_not_windows } from "./utils";
-import { DragAndDrop } from "./utils";
+import { dragAndDrop } from "./utils";
 import { FlushConsoleLog } from "./utils";
 import { RedirectConsoleLog } from "./utils";
 import { WaitForReturnCode } from "./utils";
+import { EasyEdit_SetFieldByKey } from "./utils";
 import { BuildAndRun_SingleModuleWorkflow } from "./utils";
+import { BuildAndRun_MultiModuleWorkflow } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
 
 const ONE_SEC = 1000;
@@ -119,11 +122,227 @@ describe("modules", () => {
     expect(msg.returncode).toEqual(0);
     // Wait for module list to be populated
     await driver.wait(
-      until.elementLocated(By.id("modulelist-_single_modules__copy_shell")),
+      until.elementLocated(By.id("modulelist-_single_modules__payload_shell")),
       TEN_SECS
     );
     console.log("<<< test Get local modules list");
   });
+
+  test(
+    "Expand multi-nodes (with input and output connections)",
+    async () => {
+      console.log(
+        "::: test Expand multi-nodes (with input and output connections)"
+      );
+
+      // Drag-and-drop the same hierarchical modules into the scene three times
+      await driver.findElement(By.id("btnBuilderClearScene")).click();
+      const module = await driver.findElement(
+        By.id("modulelist-_multi_modules__copy_run3")
+      );
+      const canvas = await driver.findElement(By.className("react-flow__pane"));
+      await ["n0", "n1", "n2"].forEach(async () => {
+        await driver.actions().dragAndDrop(module, canvas).perform();
+        await driver.sleep(100);
+      });
+      await driver.findElement(By.id("buttonReactflowArrange")).click();
+
+      // Connect the modules together
+      await driver
+        .actions()
+        .dragAndDrop(
+          driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
+          driver.findElement(
+            By.xpath('//div[@data-id="n1-single_modules_copy_run$-target"]')
+          )
+        )
+        .perform(); // n0-to-n1
+      await driver
+        .actions()
+        .dragAndDrop(
+          driver.findElement(By.xpath('//div[@data-id="n1-out-source"]')),
+          driver.findElement(
+            By.xpath('//div[@data-id="n2-single_modules_copy_run$-target"]')
+          )
+        )
+        .perform(); // n1-to-n2
+
+      // Check connections before expansion
+      let conns = [
+        ["n0", "n1"],
+        ["n1", "n2"],
+      ];
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.findElement(
+          By.xpath(
+            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+          )
+        );
+      });
+
+      // Expand the centre module and check connections
+      conns = [
+        ["n0", "n3"],
+        ["n3", "n4"],
+        ["n4", "n5"],
+        ["n5", "n2"],
+      ];
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await driver.findElement(By.id("btnBuilderExpand")).click();
+      // findElement will throw if the element does not exist
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.findElement(
+          By.xpath(
+            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+          )
+        );
+      });
+
+      // Next, expand the leading module and check connections
+      conns = [
+        ["n1", "n6"],
+        ["n6", "n7"],
+        ["n7", "n3"],
+        ["n3", "n4"],
+        ["n4", "n5"],
+        ["n5", "n2"],
+      ];
+      await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await driver.findElement(By.id("btnBuilderExpand")).click();
+      // findElement will throw if the element does not exist
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.findElement(
+          By.xpath(
+            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+          )
+        );
+      });
+
+      // Finally, expand the trailing module and check connections
+      conns = [
+        ["n1", "n6"],
+        ["n6", "n7"],
+        ["n7", "n3"],
+        ["n3", "n4"],
+        ["n4", "n5"],
+        ["n5", "n0"],
+        ["n0", "n8"],
+        ["n8", "n9"],
+      ];
+      await driver.findElement(By.xpath(`//div[@data-id="n2"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await driver.findElement(By.id("btnBuilderExpand")).click();
+      // findElement will throw if the element does not exist
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.findElement(
+          By.xpath(
+            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+          )
+        );
+      });
+
+      console.log(
+        "<<< test Expand multi-nodes (with input and output connections)"
+      );
+    },
+    5 * ONE_MINUTE
+  );
+
+  runif(!is_windows)(
+    "Module validation (dependency checks)",
+    async () => {
+      console.log("::: test Module validation (dependency checks)");
+
+      // Drag-and-drop a source and copy module into the scene
+      await driver.findElement(By.id("btnBuilderClearScene")).click();
+      const canvas = await driver.findElement(By.className("react-flow__pane"));
+      await dragAndDrop(
+        driver,
+        driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
+        canvas
+      )
+      await driver.sleep(100);
+      await dragAndDrop(
+        driver,
+        driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
+        canvas
+      )
+      await driver.sleep(100);
+      await driver.findElement(By.id("buttonReactflowArrange")).click();
+
+      // Connect the modules together
+      await dragAndDrop(
+        driver,
+        driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
+        driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
+      )
+
+      // Select target module and click 'Validate'
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await driver.findElement(By.id("btnBuilderValidate")).click();
+      let msg = await WaitForReturnCode(
+        driver,
+        "runner/check-node-dependencies"
+      );
+      expect(msg.returncode).toEqual(0); // 0 = success
+
+      // Change the expected file name in the source module
+      await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await EasyEdit_SetFieldByKey(driver, "filename", "mismatch");
+
+      // Select target module and click 'Validate'
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.sleep(100); // Wait for module settings to expand
+      await driver.findElement(By.id("btnBuilderValidate")).click();
+      msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
+      expect(msg.returncode).toEqual(1); // 1 = missing dependency
+
+      console.log(
+        "<<< test Expand multi-nodes (with input and output connections)"
+      );
+    },
+    5 * ONE_MINUTE
+  );
 
   test("Construct single module workflow in GRAPEVNE", async () => {
     console.log("::: test Construct single module workflow in GRAPEVNE");
@@ -131,26 +350,26 @@ describe("modules", () => {
     // Drag-and-drop module from modules-list into scene
     await driver.findElement(By.id("btnBuilderClearScene")).click();
     const module = await driver.findElement(
-      By.id("modulelist-_single_modules__copy_shell")
+      By.id("modulelist-_single_modules__payload_shell")
     );
-    const canvas = await driver.findElement(By.id("nodemapper-canvas"));
-    DragAndDrop(driver, module, canvas);
+    const canvas = await driver.findElement(By.className("react-flow__pane"));
+    await dragAndDrop(driver, module, canvas);
     // Give time for the module to be created on the canvas,
     // and for the config to load
-    await driver.sleep(500);
+    await driver.sleep(100);
 
     // Wait for module to be added to the scene and for the config to load
     console.log("<<< test Construct single module workflow in GRAPEVNE");
   });
 
-  test.each([
+  runif(!is_windows).each([
     [
-      "(single_modules) copy shell",
-      path.join("single_modules_copy_shell", "data.csv"),
+      "(single_modules) payload shell",
+      path.join("single_modules_payload_shell", "data.csv"),
     ],
     [
-      "(single_modules) copy run",
-      path.join("single_modules_copy_run", "data.csv"),
+      "(single_modules) payload run",
+      path.join("single_modules_payload_run", "data.csv"),
     ],
   ])(
     "Build and Test the workflow: module '%s'",
@@ -171,6 +390,89 @@ describe("modules", () => {
 
       // Build and run workflow
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
+    },
+    5 * ONE_MINUTE
+  ); // long timeout
+
+  runif(!is_windows).each([
+    // Test: 1 (connect two modules)
+    [
+      [
+        // Modules to add to scene
+        "(single_modules) payload shell", // data-nodeid="n0"
+        "(single_modules) copy run", // data-nodeid="n1"
+      ],
+      [
+        // Connections to make between modules
+        ["n0-out-source", "n1-in-target"], // (nodeid)-(portname)-(porttype)
+      ],
+      [
+        // Expected output files
+        path.join("single_modules_copy_run", "data.csv"),
+      ],
+    ],
+    // Test: 2 (connect five modules, including 4 duplicates)
+    [
+      [
+        // Modules to add to scene
+        "(single_modules) payload shell", // data-nodeid="n0"
+        "(single_modules) copy run", // data-nodeid="n1"
+        "(single_modules) copy run", // data-nodeid="n2"
+        "(single_modules) copy run", // data-nodeid="n3"
+        "(single_modules) copy run", // data-nodeid="n4"
+      ],
+      [
+        // Connections to make between modules
+        ["n0-out-source", "n1-in-target"], // (nodeid)-(portname)-(porttype)
+        ["n1-out-source", "n2-in-target"],
+        ["n2-out-source", "n3-in-target"],
+        ["n3-out-source", "n4-in-target"],
+      ],
+      [
+        // Expected output files
+        path.join("single_modules_copy_run_3", "data.csv"),
+      ],
+    ],
+    // Test: 3 (connect source to triple input module)
+    [
+      [
+        // Modules to add to scene
+        "(single_modules) payload shell", // data-nodeid="n0"
+        "(single_modules) copy run multiport", // data-nodeid="n1"
+      ],
+      [
+        // Connections to make between modules
+        ["n0-out-source", "n1-in1-target"], // (nodeid)-(portname)-(porttype)
+      ],
+      [
+        // Expected output files
+        path.join("single_modules_copy_run_multiport", "data.csv"),
+      ],
+    ],
+  ])(
+    "Build and Test the workflow: module '%s'",
+    async (modulenames, connections, outfiles) => {
+      // Open settings pane
+      await driver.findElement(By.id("btnSidenavSettings")).click();
+
+      // Set snakemake command line arguments
+      const args = await driver.findElement(
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
+      );
+      await args.clear();
+      await args.sendKeys("--cores 1");
+
+      // Close settings pane
+      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      console.log("<<< test Set snakemake arguments list to use conda");
+
+      // Build and run workflow
+      await BuildAndRun_MultiModuleWorkflow(
+        driver,
+        modulenames,
+        connections,
+        outfiles
+      );
     },
     5 * ONE_MINUTE
   ); // long timeout

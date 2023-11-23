@@ -1,10 +1,9 @@
 ---
 name: New module request
 about: Reuest a new module
-title: ''
+title: ""
 labels: module
-assignees: ''
-
+assignees: ""
 ---
 
 PLEASE SUBMIT ALL NEW MODULE REQUESTS TO OUR MODULE REPOSITORY:

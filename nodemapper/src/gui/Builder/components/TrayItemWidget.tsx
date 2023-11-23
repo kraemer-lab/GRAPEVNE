@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "@emotion/styled";
+import { wranglename } from "./Flow";
 
 type Query = Record<string, unknown>;
 
@@ -21,14 +22,6 @@ export const Tray = styled.div<{ color: string }>`
   cursor: pointer;
 `;
 
-const wranglename = (name: string) => {
-  return name
-    .replace(/ /g, "_")
-    .replace(/\(/g, "_")
-    .replace(/\)/g, "_")
-    .toLowerCase();
-};
-
 export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
   render() {
     return (
@@ -38,7 +31,7 @@ export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
         draggable={true}
         onDragStart={(event) => {
           event.dataTransfer.setData(
-            "storm-diagram-node",
+            "flow-diagram-node",
             JSON.stringify(this.props.model)
           );
         }}

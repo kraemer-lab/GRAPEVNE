@@ -1,0 +1,24 @@
+"""
+Input namespaces: [in1, in2, in3]
+Copy file from first input namespace (in1) only
+"""
+configfile: "config/config.yaml"
+import shutil
+
+params = config["params"]
+
+rule copy:
+    input:
+        expand(
+            "results/{indir}/{filename}",
+            indir=config["input_namespace"]["in1"],
+            filename=params["filename"],
+        )
+    output:
+        expand(
+            "results/{outdir}/{filename}",
+            outdir=config["output_namespace"],
+            filename=params["filename"],
+        )
+    run:
+        shutil.copy(input[0], output[0])

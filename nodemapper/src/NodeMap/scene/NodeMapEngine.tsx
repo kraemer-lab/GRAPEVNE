@@ -1,14 +1,7 @@
-import NodeScene from "./NodeScene";
-
 import { keys } from "lodash";
-import { NodeModel } from "@projectstorm/react-diagrams";
-import { DiagramEngine } from "@projectstorm/react-diagrams";
 
-import { DefaultLinkModel } from "NodeMap";
-import { DefaultPortModel } from "NodeMap";
-import { DefaultNodeModel } from "NodeMap";
-import { DefaultNodeFactory } from "NodeMap";
-import { DefaultPortFactory } from "NodeMap";
+import { Node } from "reactflow";
+import { Edge } from "reactflow";
 
 import * as globals from "redux/globals";
 
@@ -20,28 +13,6 @@ interface IPayload {
 }
 
 export default class NodeMapEngine {
-  nodeScene: NodeScene = null;
-  engine: DiagramEngine = null;
-
-  constructor() {
-    this.nodeScene = new NodeScene();
-    this.engine = this.nodeScene.engine;
-    // Register custom factories
-    this.engine.getNodeFactories().clearFactories();
-    this.engine.getNodeFactories().registerFactory(new DefaultNodeFactory());
-    this.engine.getPortFactories().clearFactories();
-    this.engine.getPortFactories().registerFactory(new DefaultPortFactory());
-  }
-
-  public NodesSelectNone() {
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((item) => {
-        item.setSelected(false);
-      });
-  }
-
   public QueryAndLoadTextFile(onLoad: (result) => void) {
     // Opens a file dialog, then executes readerEvent
     const input = document.createElement("input");
@@ -53,22 +24,6 @@ export default class NodeMapEngine {
       reader.onload = (readerEvent) => onLoad(readerEvent.target.result);
     };
     input.click();
-  }
-
-  public ClearScene() {
-    this.nodeScene.clearModel();
-  }
-
-  public LoadScene() {
-    const onLoad = (content) => {
-      this.nodeScene.loadModel(content);
-    };
-    this.QueryAndLoadTextFile(onLoad);
-  }
-
-  public SaveScene() {
-    const str = this.nodeScene.serializeModel();
-    this.Download("model.json", str);
   }
 
   public Download(filename, text) {
@@ -84,239 +39,145 @@ export default class NodeMapEngine {
     document.body.removeChild(element);
   }
 
-  public DeselectAll() {
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((item) => {
-        item.setSelected(false);
-      });
+  public getNodeName(node: Node): string {
+    return node.data.config.name;
   }
 
-  public getNodeById(id: string): NodeModel {
-    let returnNode = null;
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((item) => {
-        if (item.getOptions().id === id) returnNode = item;
-      });
-    return returnNode;
+  public setNodeName(node: Node, newname: string) {
+    node.data.config.name = newname;
   }
 
-  public getNodeByName(name: string): NodeModel {
-    let returnNode = null;
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((item) => {
-        if (this.getProperty(item, "name") === name) returnNode = item;
-      });
-    return returnNode;
-  }
-
-  public getNodePropertiesAsJSON(node: NodeModel): Record<string, undefined> {
-    return JSON.parse(node.getOptions().extras);
-  }
-
-  public getNodePropertiesAsStr(node: NodeModel): string {
-    return node.getOptions().extras;
-  }
-
-  public getProperty(node: NodeModel, prop: string): string {
-    const json = this.getNodePropertiesAsJSON(node);
-    return json[prop];
-  }
-
-  public ConstructMapFromBlocks(data: JSON) {
-    this.nodeScene.buildMapWithSnippets(data);
-  }
-
-  public MarkNodesWithoutConnectionsAsComplete(data: JSON) {
-    this.nodeScene.markNodesWithoutConnectionsAsComplete(data);
-  }
-
-  public ZoomToFit() {
-    this.engine.zoomToFit();
-  }
-
-  public RedistributeModel() {
-    this.nodeScene.distributeModel(this.engine.getModel());
-  }
-
-  public GetModuleListJSON() {
-    return this.nodeScene.getModuleListJSON();
-  }
-
-  public AddSelectionListeners(
-    select_fn: (payload: IPayload) => void,
-    deselect_fn: (payload: IPayload) => void,
-    delete_fn: () => void,
-    addlink_fn: (payload: DefaultLinkModel) => void
-  ) {
-    // Add listeners, noting the following useful resource:
-    // https://github.com/projectstorm/react-diagrams/issues/164
-    const model = this.engine.getModel();
-    // Clear listeners on base model (link listeners)
-    model.clearListeners();
-    // New link listener
-    model.registerListener({
-      linksUpdated: (event) => {
-        const link = event.link as DefaultLinkModel;
-        link.registerListener({
-          targetPortChanged: (event) => {
-            addlink_fn(link);
-          },
-        });
-      },
-    });
-    // Add node selection listeners
-    model.getNodes().forEach((node) => {
-      this.RegisterNodeListeners(node, select_fn, deselect_fn, delete_fn);
+  public setNodeColor(node: Node, newcolor: string, nodes: Node[]) {
+    const newnode = JSON.parse(JSON.stringify(node));
+    newnode.data.color = newcolor;
+    return nodes.map((item) => {
+      if (item.id === node.id) return newnode;
+      return item;
     });
   }
 
-  public RegisterNodeListeners(
-    node: NodeModel,
-    select_fn: (payload: IPayload) => void,
-    deselect_fn: (payload: IPayload) => void,
-    delete_fn: () => void
-  ) {
-    node.registerListener({
-      selectionChanged: (e) => {
-        const payload: IPayload = {
-          id: node.getOptions().id,
-        };
-        if (e.isSelected) {
-          select_fn(payload);
-        } else {
-          deselect_fn(payload);
+  public getNodeByName(name: string, nodes): Node {
+    let returnNode = null;
+    nodes.forEach((item) => {
+      if (item.data.config.name === name) returnNode = item;
+    });
+    return returnNode;
+  }
+
+  public getNodePropertiesAsJSON(node): Record<string, undefined> {
+    return node.data.config;
+  }
+
+  public setNodePropertiesAsJSON(node, json) {
+    node.data.config = json;
+  }
+
+  public getNodePropertiesAsStr(node: Node): string {
+    return JSON.stringify(this.getNodePropertiesAsJSON(node));
+  }
+
+  public getNodeColor(node: Node): string {
+    return node.data.color;
+  }
+
+  public getNodeType(node: Node): string {
+    return node.data.config.type;
+  }
+
+  public getModuleListJSONFromNodeNames(
+    nodenames: string[],
+    nodes: Node[],
+    edges: Edge[]
+  ): Record<string, unknown>[] {
+    const newnodes = nodenames.map((name) => {
+      let node = null;
+      for (const n of nodes) {
+        if (this.getNodeName(n) === name) {
+          node = n;
+          break;
         }
-      },
-      entityRemoved: (e) => {
-        delete_fn();
-      },
+      }
+      return node;
     });
+    return this.getModuleListJSONFromNodes(newnodes, edges);
   }
 
-  public GetLeafNodes(): NodeModel[] {
-    const leafNodes = [];
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((node) => {
-        if (
-          Object.keys(
-            this.nodeScene.getNodeOutputNodes(node as DefaultNodeModel)
-          ).length == 0
-        )
-          leafNodes.push(node);
-      });
-    return leafNodes;
+  public getInPorts(node: Node, edges: Edge[]): string[] {
+    const inports = edges
+      .filter((edge) => edge.target === node.id)
+      .map((edge) => edge.targetHandle);
+    return [...new Set(inports)]; // Remove duplicates
   }
 
-  public GetLeafNodeNames(): string[] {
-    const leafNodes = this.GetLeafNodes();
-    const leafNodeNames = [];
-    leafNodes.forEach((node) => {
-      leafNodeNames.push(this.getProperty(node, "name"));
+  public getModuleListJSONFromNodes(
+    nodes: Node[],
+    edges: Edge[]
+  ): Record<string, unknown>[] {
+    // Input provides a list of target nodes to generate workflow modules and
+    // connectors from.
+    const js = [];
+
+    // Add nodes
+    nodes.forEach((node: Node) => {
+      js.push(this.getNodePropertiesAsJSON(node));
     });
-    return leafNodeNames;
+
+    // Add connectors
+    nodes.forEach((node: Node) => {
+      const map = [null, null];
+      map[0] = this.getNodeInputNodes(node, nodes, edges);
+      if (this.getInPorts(node, edges).length > 0) {
+        if (this.getInPorts(node, edges).length == 1) {
+          // If singleton, return string instead of list
+          map[0] = map[0][Object.keys(map[0])[0]];
+        }
+        // Add connector
+        if (map[0] !== null && map[0] !== undefined) {
+          map[1] = this.getNodePropertiesAsJSON(node).name;
+          const conn = {
+            name: "Join [" + map[1] + "]",
+            type: "connector",
+            config: {
+              map: map,
+            },
+          };
+          js.push(conn);
+        }
+      }
+    });
+    return js;
   }
 
-  public DoesNodeNameClash(name: string): boolean {
-    let clash = false;
-    this.engine
-      .getModel()
-      .getNodes()
-      .forEach((node) => {
-        if (this.getProperty(node, "name") === name) clash = true;
-      });
-    return clash;
+  public GetLeafNodeNames(nodes: Node[], edges: Edge[]): string[] {
+    const source_names = edges.map((edge) => edge.source);
+    const leaf_node_names = nodes
+      .map((node) => node.data.config.name)
+      .filter((name) => !source_names.includes(name));
+    return leaf_node_names;
   }
 
-  public GetUniqueName(name: string): string {
+  public DoesNodeNameClash(name: string, nodes: Node[]): boolean {
+    return nodes.map((node) => node.data.config.name).includes(name);
+  }
+
+  public GetUniqueName(name: string, nodes: Node[]): string {
     // Adds a postfix to the name to make it unique
     // Note: this function always adds a postfix, use EnsureUniqueName to
     //       preserve existing name if possible
     let nodePostfix = 0;
-    while (this.DoesNodeNameClash(name + "_" + ++nodePostfix));
+    while (this.DoesNodeNameClash(name + "_" + ++nodePostfix, nodes));
     return (name += "_" + nodePostfix);
   }
 
-  public EnsureUniqueName(name: string): string {
+  public EnsureUniqueName(name: string, nodes: Node[]): string {
     // Preserves existing name if no clashes, otherwise adds a postfix
-    if (this.DoesNodeNameClash(name)) return this.GetUniqueName(name);
+    if (this.DoesNodeNameClash(name, nodes))
+      return this.GetUniqueName(name, nodes);
     return name;
   }
 
-  public AddNodeToGraph(
-    data: Record<string, unknown>,
-    point,
-    color,
-    uniquenames = true
-  ): DefaultNodeModel {
-    let node: DefaultNodeModel = null;
-    let node_name = data.name as string;
-    // Unique name
-    if (uniquenames) node_name = this.EnsureUniqueName(node_name);
-    // Create node
-    node = new DefaultNodeModel(
-      node_name,
-      color,
-      JSON.stringify({
-        id: "idcode", // TODO
-        name: node_name,
-        type: data.type,
-        config: data.config,
-      })
-    );
-    // Determine number (and names of input ports)
-    let input_namespace = {}; // namespace names (for ports)
-    let input_namespace_mapping = {}; // namespace mappings ('_*'=hidden, etc)
-    const params = (data.config as Query).config as Query;
-    if (params.input_namespace === undefined) {
-      // No input namespace specified - use default unless source
-      if (data.type !== "source") {
-        input_namespace["In"] = "In";
-      }
-    } else if (params.input_namespace === null) {
-      // Null input namespace specified - no input ports
-    } else if (typeof params.input_namespace === "object") {
-      // Where the input namespace is an object (probably a dictionary)
-      input_namespace = Object.keys(params.input_namespace);
-      input_namespace_mapping = Object.values(params.input_namespace);
-    } else {
-      // Where the input namespace is not an object (probably a string)
-      input_namespace["In"] = "In";
-      input_namespace_mapping["In"] = params.input_namespace;
-    }
-    // Add input ports
-    for (const key in input_namespace) {
-      // Do not display port if it's namespaces starts with '_'
-      if (
-        input_namespace_mapping[key] !== undefined &&
-        input_namespace_mapping[key].startsWith("_")
-      )
-        continue;
-      node.addInPort(input_namespace[key]);
-    }
-    // Add output port (if applicable)
-    switch (data.type) {
-      case "source":
-      case "module":
-      case "connector":
-        node.addOutPort("Out");
-        break;
-    }
-    node.setPosition(point);
-    this.engine.getModel().addNode(node);
-    this.engine.repaintCanvas();
-    return node;
-  }
-
-  public CanNodeExpand(name: string): boolean {
-    const node = this.getNodeByName(name);
+  public CanNodeExpand(name: string, nodes: Node[]): boolean {
+    const node = this.getNodeByName(name, nodes);
     if (!node) return false;
     const json = this.getNodePropertiesAsJSON(node);
     if (!json.config) return false;
@@ -332,19 +193,127 @@ export default class NodeMapEngine {
     return can_node_expand;
   }
 
-  public ExpandNodeByName(name: string): DefaultNodeModel[] {
-    const node = this.getNodeByName(name);
-    if (!node) return null;
+  public getNodePosition(node) {
+    return node.position;
+  }
+
+  public getUniqueNodeID(elements: Node[]): string {
+    const ids = elements.map((element) => element.id);
+    let id = 0;
+    while (ids.includes("n" + id.toString())) id++;
+    return "n" + id.toString();
+  }
+
+  public getUniqueEdgeID(elements: Edge[]): string {
+    const ids = elements.map((element) => element.id);
+    let id = 0;
+    while (ids.includes("e" + id.toString())) id++;
+    return "e" + id.toString();
+  }
+
+  public getNodeInputNodes(
+    node: Node,
+    nodes: Node[],
+    edges: Edge[]
+  ): Record<string, string> {
+    // Returns a dictionary of input port names and the nodes they are connected to
+    const conn_edges = edges.filter((edge) => edge.target === node.id);
+    const d = {};
+    conn_edges.forEach(
+      (edge) =>
+        (d[edge.targetHandle] = this.getNodeNameFromID(edge.source, nodes))
+    );
+    return d;
+  }
+
+  public getNodeNameFromID(id: string, nodes: Node[]) {
+    const node = nodes.filter((node) => node.id === id)[0];
+    return node.data.config.name;
+  }
+
+  public getNodeOutputNodes(node: Node, nodes: Node[], edges: Edge[]) {
+    const nodes_and_ports = [];
+    const from_edges = edges.filter((edge) => edge.source === node.id);
+    from_edges.forEach((edge) => {
+      nodes_and_ports.push([
+        this.getNodeNameFromID(edge.target, nodes),
+        edge.targetHandle,
+      ]);
+    });
+    return nodes_and_ports;
+  }
+
+  getNodeInputPortCount(node): number {
+    // Return the number of input ports for a given node //
+    const input_namespace = node.data.config.config.config.input_namespace;
+    if (input_namespace === null || input_namespace === undefined) return 0;
+    if (typeof input_namespace === "string") return 1;
+    return Object.keys(input_namespace).length;
+  }
+
+  public GetModuleListJSON(
+    nodes: Node[],
+    edges: Edge[]
+  ): Record<string, unknown>[] {
+    // Input provides a list of target nodes to generate workflow modules and
+    // connectors from.
+    const js = [];
+
+    // Add nodes
+    nodes.forEach((node: Node) => {
+      js.push(this.getNodePropertiesAsJSON(node));
+    });
+
+    // Add connectors
+    nodes.forEach((node) => {
+      const map = [null, null];
+      map[0] = this.getNodeInputNodes(node, nodes, edges);
+      const in_ports_count = this.getNodeInputPortCount(node);
+      if (in_ports_count > 0) {
+        if (in_ports_count == 1) {
+          // If singleton, return string instead of list
+          map[0] = map[0][Object.keys(map[0])[0]];
+        }
+        // Add connector
+        if (map[0] !== null && map[0] !== undefined) {
+          map[1] = this.getNodePropertiesAsJSON(node).name;
+          const conn = {
+            name: "Join [" + map[1] + "]",
+            type: "connector",
+            config: {
+              map: map,
+            },
+          };
+          js.push(conn);
+        }
+      }
+    });
+    return js;
+  }
+
+  public ExpandNodeByName(
+    name: string,
+    nodes: Node[],
+    edges: Edge[]
+  ): [Node[], Edge[]] {
+    console.log("ExpandNodeByName");
+
+    const node = this.getNodeByName(name, nodes);
+    if (!node) return [null, null];
     const json = this.getNodePropertiesAsJSON(node);
-    if (!json.config) return null;
-    if (!json.config["config"]) return null;
+    if (!json.config) return [null, null];
+    if (!json.config["config"]) return [null, null];
+
+    // Initialise returned nodes and edges structures
+    let all_nodes = JSON.parse(JSON.stringify(nodes));
+    let all_edges = JSON.parse(JSON.stringify(edges));
 
     // Modules list
     const modules = json.config["config"] as Record<string, unknown>;
-    if (!modules) return null; // Do not expand if no modules
+    if (!modules) return [null, null];
 
     // Create sub-nodes from modules list
-    const newnodes: DefaultNodeModel[] = [] as DefaultNodeModel[];
+    const newnodes = [];
     const namemap: Record<string, string> = {};
     let offset = 0.0;
     for (const item in modules) {
@@ -367,24 +336,29 @@ export default class NodeMapEngine {
         type: (modules[item] as Record<string, unknown>).type,
         config: config,
       };
-      const newpoint = node.getPosition().clone();
+      const newpoint = { ...this.getNodePosition(node) };
       newpoint.x += offset;
       newpoint.y += offset;
-      offset += 5.0;
+      offset += 15.0;
       // Determine unique name (but don't substitute yet)
-      const uniquename = this.EnsureUniqueName(data.name);
+      const uniquename = this.EnsureUniqueName(data.name, all_nodes);
       if (uniquename !== data.name) namemap[data.name] = uniquename;
       // Call AddNodeToGraph with uniquenames = false to prevent node renaming
       // (at least until after the graph is expanded)
       const module_type = NodeMapEngine.GetModuleType(
         data.config.config as Record<string, unknown>
       );
-      const newnode = this.AddNodeToGraph(
-        data,
-        newpoint,
-        NodeMapEngine.GetModuleTypeColor(module_type),
-        false
-      );
+
+      // New node
+      const newnode = {
+        id: this.getUniqueNodeID(all_nodes.concat(newnodes)),
+        type: "standard",
+        position: newpoint,
+        data: {
+          color: NodeMapEngine.GetModuleTypeColor(module_type),
+          config: data,
+        },
+      };
       newnodes.push(newnode);
     }
 
@@ -404,19 +378,27 @@ export default class NodeMapEngine {
         if (typeof input_namespace === "string") {
           // string = single input port
           if (output_namespace === input_namespace) {
-            const link = new DefaultLinkModel();
-            link.setSourcePort(node_from.getPort("Out"));
-            link.setTargetPort(node_to.getPort("In"));
-            this.engine.getModel().addLink(link);
+            const newedge = {
+              id: this.getUniqueEdgeID(all_edges),
+              source: node_from.id,
+              sourceHandle: "Out",
+              target: node_to.id,
+              targetHandle: "In",
+            };
+            all_edges.push(newedge);
           }
         } else {
           // record = multiple input ports
           for (const key in input_namespace) {
             if (output_namespace === input_namespace[key]) {
-              const link = new DefaultLinkModel();
-              link.setSourcePort(node_from.getPort("Out"));
-              link.setTargetPort(node_to.getPort(key));
-              this.engine.getModel().addLink(link);
+              const newedge = {
+                id: this.getUniqueEdgeID(all_edges),
+                source: node_from.id,
+                sourceHandle: "Out",
+                target: node_to.id,
+                targetHandle: key,
+              };
+              all_edges.push(newedge);
             }
           }
         }
@@ -424,13 +406,13 @@ export default class NodeMapEngine {
     });
 
     // Map input connections to sub-graph
-    const ports = this.nodeScene.getNodeInputNodes(node as DefaultNodeModel);
-    for (const port_label in ports) {
-      const node_name = ports[port_label];
-      const node_from = this.getNodeByName(node_name);
+    const from_nodes = this.getNodeInputNodes(node, nodes, edges);
+    for (const node_label in from_nodes) {
+      const node_name = from_nodes[node_label];
+      const node_from = this.getNodeByName(node_name, nodes);
       if (!node_from) continue;
       // Lookup target port in sub-graph
-      const port_name_list = port_label.split("$");
+      const port_name_list = node_label.split("$");
       const targetnode_name = port_name_list[0];
       let port_name = "";
       if (port_name_list.length == 1) {
@@ -444,13 +426,15 @@ export default class NodeMapEngine {
       } else {
         throw new Error("Recursive port naming not yet supported.");
       }
-      const target_node = this.getNodeByName(targetnode_name);
-      const target_port = target_node.getPort(port_name);
-      // Create link
-      const link = new DefaultLinkModel();
-      link.setSourcePort(node_from.getPort("Out"));
-      link.setTargetPort(target_port);
-      this.engine.getModel().addLink(link);
+      const target_node = this.getNodeByName(targetnode_name, newnodes);
+      const newedge = {
+        id: this.getUniqueEdgeID(all_edges),
+        source: node_from.id,
+        sourceHandle: "Out",
+        target: target_node.id,
+        targetHandle: port_name,
+      };
+      all_edges.push(newedge);
     }
 
     // Map output connections from sub-graph
@@ -459,8 +443,10 @@ export default class NodeMapEngine {
       unknown
     >;
     const output_namespace = config["config"]["output_namespace"];
-    const target_node_and_port = this.nodeScene.getNodeOutputNodes(
-      node as DefaultNodeModel
+    const target_node_and_port = this.getNodeOutputNodes(
+      node,
+      all_nodes,
+      all_edges
     );
     for (let i = 0; i < target_node_and_port.length; i++) {
       const target_node = target_node_and_port[i][0];
@@ -472,34 +458,32 @@ export default class NodeMapEngine {
         ] as Record<string, unknown>;
         const namespace = config["config"]["output_namespace"];
         if (namespace == output_namespace) {
-          const source_port = node_from.getPort("Out");
-          const link = new DefaultLinkModel();
-          link.setSourcePort(source_port);
-          link.setTargetPort(target_port);
-          this.engine.getModel().addLink(link);
+          console.log("Found output namespace: " + namespace);
+          const newedge = {
+            id: this.getUniqueEdgeID(all_edges),
+            source: node_from.id,
+            sourceHandle: "Out",
+            target: this.getNodeByName(target_node, nodes).id,
+            targetHandle: target_port,
+          };
+          all_edges.push(newedge);
         }
       });
     }
 
-    // Delete expanded node (be sure to delete links first)
-    const links = this.engine.getModel().getLinks();
-    links.forEach((link) => {
-      if (
-        link.getSourcePort().getParent() === node ||
-        link.getTargetPort().getParent() === node
-      ) {
-        link.getSourcePort().removeLink(link);
-        link.getTargetPort().removeLink(link);
-        this.engine.getModel().removeLink(link);
-      }
-    });
-    this.engine.getModel().removeNode(node);
+    // Delete expanded node (and connected edges)
+    all_nodes = all_nodes.filter((item) => item.data.config.name !== name);
+    all_edges = all_edges
+      .filter((item) => item.source !== node.id)
+      .filter((item) => item.target !== node.id);
 
     // Ensure unique names (subgraph was expanded without renaming so may
     //   clash with existing nodes)
     // Replace node names in newnode configs (namespaces)
     newnodes.forEach((node) => {
-      const json = this.getNodePropertiesAsJSON(node);
+      const json = JSON.parse(
+        JSON.stringify(this.getNodePropertiesAsJSON(node))
+      );
       const outerconfig = json.config as Record<string, unknown>;
       const config = outerconfig["config"] as Record<string, unknown>;
       for (const key in config) {
@@ -527,23 +511,22 @@ export default class NodeMapEngine {
         }
       }
       // Save changes back to node
-      this.nodeScene.setNodeUserProperties(node, json);
+      this.setNodePropertiesAsJSON(node, json);
     });
     // Finally, substitute node names
     newnodes.forEach((node) => {
-      const nodename = this.nodeScene.getNodeName(node);
+      const nodename = this.getNodeName(node);
       if (Object.keys(namemap).includes(nodename)) {
         console.log(
           "(expand) substitution: " + nodename + " -> " + namemap[nodename]
         );
-        this.nodeScene.setNodeName(node, namemap[nodename]);
-        node.setName(namemap[nodename]);
+        this.setNodeName(node, namemap[nodename]);
       }
     });
 
-    // Redraw and return new nodes
-    this.engine.repaintCanvas();
-    return newnodes;
+    // Concatenate new nodes with existing nodes
+    all_nodes = all_nodes.concat(newnodes);
+    return [all_nodes, all_edges];
   }
 
   public static GetModuleType(config: Record<string, unknown>): string {
@@ -561,12 +544,16 @@ export default class NodeMapEngine {
   public static GetModuleTypeColor(type: string): string {
     let color = "";
     switch (type) {
+      case "disabled": {
+        color = "#8b8c89";
+        break;
+      }
       case "source": {
-        color = "rgb(192,255,0)";
+        color = "#44aa44";
         break;
       }
       case "module": {
-        color = "rgb(0,192,255)";
+        color = "#006daa";
         break;
       }
       case "connector": {
