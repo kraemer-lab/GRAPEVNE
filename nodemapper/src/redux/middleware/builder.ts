@@ -2,19 +2,22 @@ import React from "react";
 import BuilderEngine from "gui/Builder/BuilderEngine";
 import * as globals from "redux/globals";
 
-import { DefaultPortModel } from "NodeMap";
-import { DefaultLinkModel } from "NodeMap";
-import { DefaultNodeModel } from "NodeMap";
-
-import { builderRedraw } from "redux/actions";
+import { builderSetNodes } from "redux/actions";
 import { builderLogEvent } from "redux/actions";
 import { builderBuildAsModule } from "redux/actions";
 import { builderBuildAsWorkflow } from "redux/actions";
+import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 import { builderSetSettingsVisibility } from "redux/actions";
+
+import { Node } from "reactflow";
+import { Edge } from "reactflow";
+import { getNodeById } from "gui/Builder/components/Flow";
+import { setNodeName } from "gui/Builder/components/Flow";
+import { setNodeWorkflow } from "gui/Builder/components/Flow";
 
 type Query = Record<string, unknown>;
 
@@ -40,7 +43,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables
+            getState().builder.environment_variables,
+            getState().builder.nodes,
+            getState().builder.edges
           );
           break;
 
@@ -52,7 +57,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables
+            getState().builder.environment_variables,
+            getState().builder.nodes,
+            getState().builder.edges
           );
           break;
 
@@ -62,7 +69,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_args,
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
-            getState().builder.environment_variables
+            getState().builder.environment_variables,
+            getState().builder.nodes,
+            getState().builder.edges
           );
           break;
 
@@ -70,29 +79,27 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           CleanBuildFolder(dispatch);
           break;
 
-        case "builder/redraw":
-          Redraw();
-          break;
-
         case "builder/add-link":
-          AddLink(
+          /*AddLink(
             action,
             getState().builder.auto_validate_connections,
             getState().builder.snakemake_backend,
             dispatch
-          );
+          );*/
           break;
 
         case "builder/check-node-dependencies":
           CheckNodeDependencies(
             action.payload,
+            getState().builder.nodes,
+            getState().builder.edges,
             dispatch,
             getState().builder.snakemake_backend
           );
           break;
 
         case "builder/node-selected":
-          NodeSelected(action, dispatch, dispatch);
+          NodeSelected(action.payload, dispatch);
           break;
 
         case "builder/node-deselected":
@@ -103,7 +110,8 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateNodeInfoKey(
             action,
             dispatch,
-            JSON.parse(getState().builder.nodeinfo)
+            JSON.parse(getState().builder.nodeinfo),
+            getState().builder.nodes
           );
           break;
 
@@ -111,7 +119,8 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateNodeInfoName(
             action,
             dispatch,
-            JSON.parse(getState().builder.nodeinfo)
+            JSON.parse(getState().builder.nodeinfo),
+            getState().builder.nodes
           );
           break;
 
@@ -173,7 +182,9 @@ const BuildAs = async (
   snakemake_args: string,
   snakemake_backend: string,
   conda_backend: string,
-  environment_variables: string
+  environment_variables: string,
+  nodes: Node[],
+  edges: Edge[]
 ) => {
   dispatchString(builderUpdateStatusText("Building workflow..."));
   const app = BuilderEngine.Instance;
@@ -181,8 +192,8 @@ const BuildAs = async (
     query: query_name,
     data: {
       format: "Snakefile",
-      content: app.GetModuleListJSON(),
-      targets: app.GetLeafNodeNames(),
+      content: app.GetModuleListJSON(nodes, edges),
+      targets: app.GetLeafNodeNames(nodes, edges),
       args: snakemake_args,
       backend: snakemake_backend,
       conda_backend: conda_backend,
@@ -227,7 +238,9 @@ const BuildAndRun = async (
   snakemake_args: string,
   snakemake_backend: string,
   conda_backend: string,
-  environment_variables: string
+  environment_variables: string,
+  nodes: Node[],
+  edges: Edge[]
 ) => {
   dispatchString(
     builderUpdateStatusText("Building workflow and launching a test run...")
@@ -237,8 +250,8 @@ const BuildAndRun = async (
     query: "builder/build-and-run",
     data: {
       format: "Snakefile",
-      content: app.GetModuleListJSON(),
-      targets: app.GetLeafNodeNames(),
+      content: app.GetModuleListJSON(nodes, edges),
+      targets: app.GetLeafNodeNames(nodes, edges),
       args: snakemake_args,
       backend: snakemake_backend,
       conda_backend: conda_backend,
@@ -294,53 +307,21 @@ const CleanBuildFolder = async (dispatchString: TPayloadString) => {
   }
 };
 
-const Redraw = () => {
-  const app = BuilderEngine.Instance;
-  app.engine.repaintCanvas();
-};
-
-interface IPayloadLink {
-  payload: DefaultLinkModel; // Non-serialisable object; consider alternatives
-}
-const AddLink = async (
-  action: IPayloadLink,
-  auto_validate_connections: boolean,
-  snakemake_backend: string,
-  dispatch: TPayloadString
-) => {
-  // Skip check if auto-validation is disabled
-  if (!auto_validate_connections) {
-    return;
-  }
-  // Determine which is the input (vs output) port (ordering is drag-dependent)
-  const app = BuilderEngine.Instance;
-  const link = action.payload;
-  let targetPort = null;
-  if ((link.getTargetPort() as DefaultPortModel).isIn()) {
-    targetPort = link.getTargetPort() as DefaultPortModel;
-  } else {
-    targetPort = link.getSourcePort() as DefaultPortModel;
-  }
-  const node = targetPort.getParent();
-  const nodename = JSON.parse(node.getOptions().extras)["name"];
-
-  // Check node dependencies
-  CheckNodeDependencies(nodename, dispatch, snakemake_backend);
-};
-
 const CheckNodeDependencies = async (
   nodename: string,
-  dispatch: TPayloadString,
+  nodes: Node[],
+  edges: Edge[],
+  dispatch,
   snakemake_backend: string
 ) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
   const app = BuilderEngine.Instance;
-  const node = app.getNodeByName(nodename) as DefaultNodeModel;
-  const inputNodes = app.nodeScene.getNodeInputNodes(node);
+  const node = app.getNodeByName(nodename, nodes);
+  const inputNodes = app.getNodeInputNodes(node, nodes, edges);
   const depNodeNames = Object.values(inputNodes) as string[];
   depNodeNames.unshift(nodename);
-  const jsDeps = app.nodeScene.getModuleListJSONFromNodeNames(depNodeNames);
+  const jsDeps = app.getModuleListJSONFromNodeNames(depNodeNames, nodes, edges);
 
   // Submit Build request
   const query: Query = {
@@ -352,29 +333,37 @@ const CheckNodeDependencies = async (
     },
   };
   // Set node grey to indicate checking
-  const node_type = app.getProperty(node, "type");
-  node.getOptions().color = "rgb(192,192,192)";
-  app.engine.repaintCanvas();
+  const node_type = app.getNodeType(node);
+  const all_nodes = app.setNodeColor(node, "rgb(192,192,192)", nodes);
+  dispatch(builderSetNodes(all_nodes));
 
   const callback = (data: Query) => {
     dispatch(builderUpdateStatusText(""));
-    console.log(data);
     switch (data["body"]["status"]) {
       case "ok":
-        node.getOptions().color = BuilderEngine.GetModuleTypeColor(node_type);
+        data["returncode"] = 0;
+        dispatch(
+          builderSetNodes(
+            app.setNodeColor(
+              node,
+              BuilderEngine.GetModuleTypeColor(node_type),
+              nodes
+            )
+          )
+        );
         break;
       case "missing":
-        node.getOptions().color = "red";
+        data["returncode"] = 1;
+        dispatch(builderSetNodes(app.setNodeColor(node, "red", nodes)));
         break;
       default:
+        data["returncode"] = -1;
         console.error("Unexpected response: ", data["body"]);
     }
-    app.engine.repaintCanvas();
-    dispatch(builderRedraw());
+    console.log(data);
   };
   switch (backend as string) {
     case "rest":
-      // query["data"]["content"] = JSON.stringify(query["data"]["content"]);
       postRequestCheckNodeDependencies(query, dispatch, callback);
       break;
     case "electron":
@@ -385,35 +374,14 @@ const CheckNodeDependencies = async (
   }
 };
 
-const NodeSelected = async (
-  action: IPayloadRecord,
-  dispatch: TPayloadString,
-  dispatchBool: TPayloadBool
-) => {
-  // Close settings menu (if open)
-  dispatchBool(builderSetSettingsVisibility(false));
-  // Select the node
-  const builder = BuilderEngine.Instance;
-  const id = (action.payload as Record<string, string>).id;
-  const node = builder.getNodeById(id);
-  let payload = {};
-  if (node === null) {
-    console.error("Selected node not found in engine: ", action.payload.id);
-    payload = {
-      id: action.payload.id,
-      name: "ERROR: Failed to find node (" + id + ")",
-      type: "ERROR: Failed to find node (" + id + ")",
-      code: "ERROR: Failed to find node (" + id + ")",
-    };
-  } else {
-    const json = JSON.parse(node.getOptions().extras);
-    payload = {
-      id: action.payload.id,
-      name: node.getOptions()["name"],
-      type: json.type,
-      code: JSON.stringify(json.config, null, 2),
-    };
-  }
+const NodeSelected = (node: Node, dispatch) => {
+  const payload = {
+    id: node.id,
+    name: node.data.config.name,
+    type: node.data.config.type,
+    code: JSON.stringify(node.data.config.config, null, 2),
+  };
+  // Open module parameters pane
   dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
 };
 
@@ -429,14 +397,14 @@ const NodeDeselected = (dispatch: TNodeDeselectedDispatch) => {
 const UpdateNodeInfoKey = (
   action: IPayloadRecord,
   dispatch,
-  nodeinfo
+  nodeinfo,
+  nodes: Node[]
 ): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoKey");
-  const builder = BuilderEngine.Instance;
-  const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
+  const node = getNodeById(nodeinfo.id, nodes) as Node;
   if (node !== null) {
-    const workflow = builder.nodeScene.getNodeWorkflow(node);
+    const workflow = JSON.parse(JSON.stringify(node.data.config.config));
     const keys = action.payload.keys as string[];
     const indexInto = (obj, indexlist, value) => {
       if (indexlist.length == 1) {
@@ -446,7 +414,14 @@ const UpdateNodeInfoKey = (
       }
     };
     indexInto(workflow, keys, action.payload.value);
-    builder.nodeScene.setNodeWorkflow(node, workflow);
+    const newnodes = setNodeWorkflow(nodes, node.id, workflow);
+    if (newnodes !== null) {
+      dispatch(builderSetNodes(newnodes));
+      const newnode = getNodeById(nodeinfo.id, newnodes);
+      dispatch(builderNodeSelected(newnode));
+    } else {
+      console.error("Failed to update node workflow: ", nodeinfo, workflow);
+    }
   } else {
     console.log("Node not found: ", nodeinfo);
   }
@@ -455,17 +430,21 @@ const UpdateNodeInfoKey = (
 const UpdateNodeInfoName = (
   action: IPayloadString,
   dispatch,
-  nodeinfo
+  nodeinfo,
+  nodes: Node[]
 ): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoName");
   const builder = BuilderEngine.Instance;
-  const node = builder.getNodeById(nodeinfo.id) as DefaultNodeModel;
+  const node = getNodeById(nodeinfo.id, nodes) as Node;
   if (node !== null) {
-    const name = builder.EnsureUniqueName(action.payload);
-    builder.nodeScene.setNodeName(node, name);
-    node.setName(name);
-    builder.engine.repaintCanvas();
+    const name = builder.EnsureUniqueName(action.payload, nodes);
+    const newnodes = setNodeName(nodes, node.id, name);
+    if (newnodes !== null) {
+      dispatch(builderSetNodes(newnodes));
+      const newnode = getNodeById(nodeinfo.id, newnodes);
+      dispatch(builderNodeSelected(newnode));
+    } else console.error("Failed to update node name: ", nodeinfo, name);
   } else {
     console.log("Node not found: ", nodeinfo);
   }
@@ -644,9 +623,7 @@ const SetSettingsVisibility = (
 ) => {
   if (new_state) {
     // Close node info pane
-    dispatch(builderNodeDeselected(""));
-    const app = BuilderEngine.Instance;
-    app.DeselectAll();
+    dispatch(builderNodeDeselected());
   }
   return 0;
 };

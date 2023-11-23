@@ -6,7 +6,7 @@ params = config["params"]
 rule copy:
     input:
         expand(
-            srcdir("../results/{indir}/{filename}"),
+            "results/{indir}/{filename}",
             indir=config["input_namespace"],
             filename=params["filename"],
         )

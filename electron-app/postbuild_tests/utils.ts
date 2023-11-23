@@ -1,8 +1,10 @@
 import { By } from "selenium-webdriver";
+import { Key } from "selenium-webdriver";
 
 import * as fs from "fs";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
+import * as os from "node:os";
 import decompress = require("decompress");
 
 import * as shell from "shelljs";
@@ -87,6 +89,9 @@ const WaitForReturnCode = async (
   query: string
 ): Promise<Query> => {
   console.log("::: WaitForReturnCode");
+
+  /* Warning: This routine can fail if the message object is a Proxy */
+
   // Monitor console.log until a returncode is received
   let msg = undefined;
   let msg_set = undefined;
@@ -115,12 +120,30 @@ const WaitForReturnCode = async (
   }
 };
 
-const DragAndDrop = async (
+const dragAndDrop = async (
+  driver: webdriver.ThenableWebDriver,
+  elementFrom: webdriver.WebElement,
+  elementTo: webdriver.WebElement
+) => {
+  if (os.platform() === "win32") {
+    // Windows implementation - see function for details
+    return await dragAndDrop_script(driver, elementFrom, elementTo);
+  } else {
+    // webdriver seems to work fine on Linux and MacOS
+    await driver
+      .actions()
+      .dragAndDrop(elementFrom, elementTo)
+      .perform();
+  }
+};
+
+const dragAndDrop_script = async (
   driver: webdriver.ThenableWebDriver,
   elementFrom: webdriver.WebElement,
   elementTo: webdriver.WebElement
 ) => {
   // Drag and drop replacement for Selenium (due to HTML5 issue)
+  // Required for Windows tests (regular method works on Linux and MacOS)
   // Solution sourced from:
   //   https://stackoverflow.com/questions/39436870/why-drag-and-drop-is-not-working-in-selenium-webdriver
   await driver.executeScript(
@@ -169,48 +192,127 @@ const DragAndDrop = async (
   );
 };
 
+const EasyEdit_SetFieldByKey = async (
+  driver: webdriver.ThenableWebDriver,
+  key: string,
+  newvalue: string
+) => {
+  // EasyEdit boxes are awkward to interact with as they regenerate using a wrapper
+  // around the input box in Edit mode, and a simplified wrapper around a label when
+  // not. Start by clicking on the element to enable Edit mode.
+  await driver
+    .findElement(By.xpath(`//span[contains(text(), "${key}")]/following::span`))
+    .click();
+  await driver.sleep(100); // Wait for edit box to render
+  // We can send one sendKeys command to the input box before loosing focus, so
+  // need to construct the command to send the correct number of backspaces to clear
+  // the field, then enter the new value, then Enter to confirm the change.
+  const oldvalue = await driver
+    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
+    .getAttribute("value");
+  let s = "";
+  for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
+  s += newvalue + Key.ENTER;
+  await driver
+    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
+    .sendKeys(s);
+};
+
+const EasyEdit_SetFieldByValue = async (
+  driver: webdriver.ThenableWebDriver,
+  oldvalue: string,
+  newvalue: string
+) => {
+  // EasyEdit boxes are awkward to interact with as they regenerate using a wrapper
+  // around the input box in Edit mode, and a simplified wrapper around a label when
+  // not. Start by clicking on the element to enable Edit mode.
+  await driver
+    .findElement(By.xpath(`//*[contains(text(), "${oldvalue + "\n:"}")]`))
+    .click();
+  await driver.sleep(100); // Wait for edit box to render
+  // We can send one sendKeys command to the input box before loosing focus, so
+  // need to construct the command to send the correct number of backspaces to clear
+  // the field, then enter the new value, then Enter to confirm the change.
+  let s = "";
+  for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
+  s += newvalue + Key.ENTER;
+  await driver
+    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
+    .sendKeys(s);
+};
+
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
   modulename: string,
   outfile: string
 ) => {
+  await BuildAndRun_MultiModuleWorkflow(driver, [modulename], [], [outfile]);
+};
+
+const BuildAndRun_MultiModuleWorkflow = async (
+  driver: webdriver.ThenableWebDriver,
+  modulenames: string[],
+  connections: string[][],
+  outfiles: string[]
+) => {
   console.log("::: test Build and Test the workflow");
 
   // Drag-and-drop module from modules-list into scene
   await driver.findElement(By.id("btnBuilderClearScene")).click();
-  const module = await driver.findElement(
-    By.id("modulelist-" + wranglename(modulename))
-  );
-  const canvas = await driver.findElement(By.id("nodemapper-canvas"));
-  DragAndDrop(driver, module, canvas);
-  // Give time for the module to be created on the canvas,
-  // and for the config to load
-  await driver.sleep(500);
+  // Force modules to be loaded in order
+  for (let k = 0; k < modulenames.length; k++) {
+    const module = await driver.findElement(
+      By.id("modulelist-" + wranglename(modulenames[k]))
+    );
+    const canvas = await driver.findElement(By.className("react-flow__pane"));
+    await dragAndDrop(driver, module, canvas);
+    // Give time for the module to be created on the canvas,
+    // and for the config to load
+    await driver.sleep(100);
+  }
+
+  // Force connections to be connected in order
+  await driver.findElement(By.id("buttonReactflowArrange")).click();
+  for (let k = 0; k < connections.length; k++) {
+    // We can connect modules by first clicking on the source port, then the target port
+    const [fromport, toport] = connections[k];
+    const port1 = await driver.findElement(
+      By.xpath(`//div[@data-id="${fromport}"]`)
+    );
+    const port2 = await driver.findElement(
+      By.xpath(`//div[@data-id="${toport}"]`)
+    );
+    await dragAndDrop(driver, port1, port2);
+  }
 
   // Clean build folder (initial); assert target output does not exist
-  let msg;
+  let msg: Record<string, unknown>;
   await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
   msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
-  const target_file = path.join(
-    (msg.body as Query).path as string,
-    "results",
-    outfile
-  );
-  console.log("target_file: ", target_file);
-  expect(fs.existsSync(target_file)).toBeFalsy();
+  const target_files = outfiles.map((outfile) => {
+    return path.join((msg.body as Query).path as string, "results", outfile);
+  });
+  console.log("target_files: ", target_files);
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeFalsy();
+  });
 
-  // Build and test; assert output file exists
+  // Build and test; assert output files exist
   await driver.findElement(By.id("btnBuilderBuildAndTest")).click();
   msg = await WaitForReturnCode(driver, "builder/build-and-run");
   expect(msg.returncode).toEqual(0);
-  expect(fs.existsSync(target_file)).toBeTruthy();
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeTruthy();
+  });
 
   // Clean build folder (tidy-up); assert target output does not exist
   await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
   msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
-  expect(fs.existsSync(target_file)).toBeFalsy();
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeFalsy();
+  });
 
   console.log("<<< test Build and Test the workflow");
 };
@@ -228,10 +330,10 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   const module = await driver.findElement(
     By.id("modulelist-" + wranglename(modulename))
   );
-  const canvas = await driver.findElement(By.id("nodemapper-canvas"));
-  DragAndDrop(driver, module, canvas);
+  const canvas = await driver.findElement(By.className("react-flow__pane"));
+  await dragAndDrop(driver, module, canvas);
   // Give time for the config to load and for the module to be created on the canvas
-  await driver.sleep(5000);
+  await driver.sleep(100);
 
   // Open the module in the editor and Expand, replacing the module with its sub-modules
   //
@@ -250,7 +352,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     By.xpath(`//div[text()='${modulename}']`)
   );
   for (const element of elements) await element.click();
-  await driver.sleep(500); // Wait for module settings to expand
+  await driver.sleep(100); // Wait for module settings to expand
   await driver.findElement(By.id("btnBuilderExpand")).click();
 
   // Assert that build file does not exist
@@ -329,10 +431,13 @@ export {
   is_installed,
   is_windows,
   is_not_windows,
+  dragAndDrop,
   RedirectConsoleLog,
   FlushConsoleLog,
   WaitForReturnCode,
-  DragAndDrop,
+  EasyEdit_SetFieldByKey,
+  EasyEdit_SetFieldByValue,
   BuildAndRun_SingleModuleWorkflow,
+  BuildAndRun_MultiModuleWorkflow,
   Build_RunWithDocker_SingleModuleWorkflow,
 };

@@ -7,6 +7,8 @@ import { useAppSelector } from "redux/store/hooks";
 
 import { displayUpdateNodeInfo } from "redux/actions";
 
+import { builderSetNodes } from "redux/actions";
+import { builderSetEdges } from "redux/actions";
 import { builderLoadNodemap } from "redux/actions";
 import { builderSaveNodemap } from "redux/actions";
 import { builderBuildAndRun } from "redux/actions";
@@ -36,9 +38,10 @@ const Header = () => {
 
   // Load nodemap from file
   const btnClearScene = () => {
-    BuilderEngine.Instance.ClearScene();
-    //dispatch(displayUpdateNodeInfo(""));
-    dispatch(builderNodeDeselected(""));
+    //BuilderEngine.Instance.ClearScene();
+    dispatch(builderNodeDeselected());
+    dispatch(builderSetNodes([]));
+    dispatch(builderSetEdges([]));
   };
 
   // Run - build and run the workflow
@@ -59,11 +62,6 @@ const Header = () => {
   // Build as workflow
   const btnBuildAsWorkflow = () => {
     dispatch(builderBuildAsWorkflow());
-  };
-
-  // Distribute model (visual)
-  const btnArrange = () => {
-    BuilderEngine.Instance.RedistributeModel();
   };
 
   // Load modules from repository
@@ -144,13 +142,6 @@ const Header = () => {
           onClick={btnClearScene}
         >
           CLEAR GRAPH
-        </button>
-        <button
-          id="btnBuilderArrangeGraph"
-          className="btn"
-          onClick={btnArrange}
-        >
-          ARRANGE GRAPH
         </button>
       </div>
     </>

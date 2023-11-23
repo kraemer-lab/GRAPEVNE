@@ -1,0 +1,20 @@
+configfile: "config/config.yaml"
+
+import os
+import pathlib
+import shutil
+
+params = config["params"]
+
+rule copy:
+    input:
+        srcdir("../resources/file"),
+    output:
+        expand(
+            "results/{outdir}/{filename}",
+            outdir=config["output_namespace"],
+            filename=params["filename"],
+        )
+    run:
+        pathlib.Path(os.path.dirname(output[0])).mkdir(parents=True, exist_ok=True)
+        shutil.copy(input[0], output[0])

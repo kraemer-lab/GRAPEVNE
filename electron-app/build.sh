@@ -13,10 +13,12 @@ set -eoux pipefail
 rm -rf dist out
 
 # compile build dependencies
+corepack enable
 ./build_deps.sh
 
 # compile GRAPEVNE
 #rm -rf node_modules  # deep clean
+yarn install
 yarn
 yarn build
 yarn package

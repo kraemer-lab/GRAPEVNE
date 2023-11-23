@@ -1,0 +1,30 @@
+input_namespace:
+  single_modules_copy_run$: in
+output_namespace: single_modules_copy_run_2
+single_modules_copy_run:
+  config:
+    input_namespace: in
+    output_namespace: single_modules_copy_run
+    params:
+      filename: data.csv
+  name: (single_modules) copy_run
+  snakefile: /Users/jsb/repos/jsbrittain/GRAPEVNE/electron-app/postbuild_tests/test-repo/workflows/single_modules/modules/copy_run/workflow/Snakefile
+  type: module
+single_modules_copy_run_1:
+  config:
+    input_namespace: single_modules_copy_run
+    output_namespace: single_modules_copy_run_1
+    params:
+      filename: data.csv
+  name: (single_modules) copy_run_1
+  snakefile: /Users/jsb/repos/jsbrittain/GRAPEVNE/electron-app/postbuild_tests/test-repo/workflows/single_modules/modules/copy_run/workflow/Snakefile
+  type: module
+single_modules_copy_run_2:
+  config:
+    input_namespace: single_modules_copy_run_1
+    output_namespace: single_modules_copy_run_2
+    params:
+      filename: data.csv
+  name: (single_modules) copy_run_2
+  snakefile: /Users/jsb/repos/jsbrittain/GRAPEVNE/electron-app/postbuild_tests/test-repo/workflows/single_modules/modules/copy_run/workflow/Snakefile
+  type: module

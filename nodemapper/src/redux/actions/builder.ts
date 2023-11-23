@@ -1,4 +1,12 @@
 import { createAction } from "@reduxjs/toolkit";
+import { Node } from "reactflow";
+import { Edge } from "reactflow";
+import { Connection } from "reactflow";
+
+export const builderSetNodes = createAction<Node[]>("builder/set-nodes");
+export const builderAddNode = createAction<Node>("builder/add-node");
+export const builderAddNodes = createAction<Node[]>("builder/add-nodes");
+export const builderSetEdges = createAction<Edge[]>("builder/set-edges");
 
 export const builderLoadNodemap = createAction("builder/load-nodemap");
 
@@ -39,8 +47,6 @@ export const builderToggleSettingsVisibility = createAction(
 export const builderCleanBuildFolder = createAction(
   "builder/clean-build-folder"
 );
-
-export const builderRedraw = createAction("builder/redraw");
 
 export const builderGetRemoteModules = createAction(
   "builder/get-remote-modules"
@@ -96,10 +102,6 @@ export const builderAddLink = createAction<Record<string, any> | undefined>( // 
   "builder/add-link"
 );
 
-export const builderNodeSelected = createAction<
-  Record<string, any> | undefined // eslint-disable-line @typescript-eslint/no-explicit-any
->("builder/node-selected");
+export const builderNodeSelected = createAction<Node>("builder/node-selected");
 
-export const builderNodeDeselected = createAction<
-  Record<string, any> | undefined // eslint-disable-line @typescript-eslint/no-explicit-any
->("builder/node-deselected");
+export const builderNodeDeselected = createAction("builder/node-deselected");

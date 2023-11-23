@@ -33,24 +33,14 @@ python -m PyInstaller src/python/pyrunner.py \
     --add-data "src/python/run_docker_sh:." \
     --add-data "../builder/builder/configutil.py:builder"
 
-# Check for presence of yarn
-if ! command -v yarn &> /dev/null
-then
-    npm i yarn
-    alias yarn="${PWD}/node_modules/.bin/yarn"
-fi
-if ! command -v yarn &> /dev/null
-then
-    echo "yarn could not be found or installed."
-    exit
-fi
-
 # Ensure nodemapper has the most up-to-date electron api file
 cp src/api.ts ../nodemapper/src
 
 # Build nodemapper (front-end)
 pushd ../nodemapper
 cp src/redux/globals_electron.ts src/redux/globals.ts
+rm -rf dist
+yarn install
 yarn
 yarn build
 popd
