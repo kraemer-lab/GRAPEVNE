@@ -149,10 +149,11 @@ export default class NodeMapEngine {
   }
 
   public GetLeafNodeNames(nodes: Node[], edges: Edge[]): string[] {
-    const source_names = edges.map((edge) => edge.source);
+    const source_ids = edges.map((edge) => edge.source);
     const leaf_node_names = nodes
-      .map((node) => node.data.config.name)
-      .filter((name) => !source_names.includes(name));
+      .map((node) => node.id)
+      .filter((id) => !source_ids.includes(id))
+      .map((id) => this.getNodeNameFromID(id, nodes));
     return leaf_node_names;
   }
 
@@ -270,8 +271,8 @@ export default class NodeMapEngine {
       map[0] = this.getNodeInputNodes(node, nodes, edges);
       const in_ports_count = this.getNodeInputPortCount(node);
       if (in_ports_count > 0) {
-        if (in_ports_count == 1) {
-          // If singleton, return string instead of list
+        if (typeof node.data.config.config.config.input_namespace === "string") {
+          // If the input namespace is a string, then return a string instead of a list
           map[0] = map[0][Object.keys(map[0])[0]];
         }
         // Add connector

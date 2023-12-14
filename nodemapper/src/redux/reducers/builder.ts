@@ -237,18 +237,18 @@ const builderStateInit: IBuilderState = {
   // Settings -- TODO: Move to separate reducer
   repo: JSON.stringify([
     // Default - should be overwritten by master list (downloaded from url)
-    {
+    /*{
       type: "github", // local | github
       label: "Kraemer Lab",
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: "kraemer-lab/vneyard",
-    },
-    /*{
+    },*/
+    {
       type: "local", // local | github
       label: "Snakeshack",
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: "/Users/jsb/repos/jsbrittain/snakeshack",
-    },*/
+    },
   ]),
   modules_list: "[]",
   snakemake_backend: "builtin", // builtin | system
@@ -281,6 +281,13 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderSetEdges, (state, action) => {
       state.edges = action.payload as Edge[];
       console.log("Set edges: ", state.edges);
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderUpdateNode, (state, action) => {
+      const newnode = action.payload as Node;
+      state.nodes = state.nodes.map((node) => {
+        return (node.id === newnode.id) ? newnode : node;
+      });
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderLoadNodemap, (state, action) => {

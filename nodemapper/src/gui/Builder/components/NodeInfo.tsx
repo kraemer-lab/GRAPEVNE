@@ -100,7 +100,10 @@ const NodeInfo = () => {
               overflowY: "auto",
             }}
           >
-            <HighlightedJSON json={codesnippet} />
+            <HighlightedJSON
+              nodeid={JSON.parse(nodeinfo).id}
+              json={codesnippet}
+            />
           </Panel>
         </PanelGroup>
       </Content>
