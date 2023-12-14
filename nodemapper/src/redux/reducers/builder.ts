@@ -102,6 +102,13 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.log("Set edges: ", state.edges);
       console.info("[Reducer] " + action.type);
     })
+    .addCase(actions.builderUpdateNode, (state, action) => {
+      const newnode = action.payload as Node;
+      state.nodes = state.nodes.map((node) => {
+        return (node.id === newnode.id) ? newnode : node;
+      });
+      console.info("[Reducer] " + action.type);
+    })
     .addCase(actions.builderLoadNodemap, (state, action) => {
       console.info("[Reducer] " + action.type);
     })

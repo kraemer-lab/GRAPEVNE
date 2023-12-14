@@ -52,6 +52,7 @@ class Node:
         input_namespace: Namespace = "",
         output_namespace: str = "",
         docstring: str = "",  # passthrough (unused in builds)
+        parameter_map: List[dict] | None = None,
     ):
         """Initialise a Node object, the parent class for Modules
 
@@ -72,6 +73,7 @@ class Node:
         self.config = {} if not config else config
         self.input_namespace = input_namespace
         self.output_namespace = output_namespace
+        self.parameter_map = parameter_map
 
     def GetOutputNamespace(self) -> str:
         """Returns the output namespace"""
@@ -251,6 +253,9 @@ class Model:
                 "name": node.name,
                 "type": node.nodetype,
                 "snakefile": node.snakefile,
+                "parameter_map": self.MapParameters_NamesToRuleNames(
+                    node.parameter_map
+                ),
                 "config": cnode,
             }
         return c
@@ -460,6 +465,17 @@ class Model:
             raise ValueError("Invalid response from github API: " + str(response))
         response_json = response.json()
         return response_json["tree"]
+
+    def MapParameters_NamesToRuleNames(
+        self, parameter_map: List[dict] | None
+    ) -> List[dict] | None:
+        """Maps parameters from names to rule names"""
+        if parameter_map is None:
+            return None
+        for param_map in parameter_map:
+            param_map["from"][0] = self.LookupRuleName(param_map["from"][0])
+            param_map["to"][0] = self.LookupRuleName(param_map["to"][0])
+        return parameter_map
 
     def SaveWorkflow(
         self,
