@@ -362,9 +362,9 @@ class Model:
                 "Requested '" + mapping[1] + "'"
             )
         if isinstance(mapping[0], dict):
-            assert isinstance(
-                node_to.input_namespace, dict
-            ), "Connector mapping is a dictionary but the destination node does not have a dictionary input namespace"
+            assert isinstance(node_to.input_namespace, dict), (
+                "Connector mapping is a dictionary but the destination node does not "
+                "have a dictionary input namespace")
             for k, v in mapping[0].items():
                 incoming_node = self.GetNodeByName(v)
                 if not incoming_node:
@@ -742,7 +742,7 @@ def BuildFromJSON(
             (
                 (
                     m.BuildSnakefileConfig(),
-                    m.BuildSnakefile(add_configutil=add_configutil),
+                    m.BuildSnakefile(add_configutil=False),
                 )
             ),
             m,
