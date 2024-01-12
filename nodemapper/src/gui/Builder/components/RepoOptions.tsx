@@ -157,7 +157,7 @@ const RepoOptions: React.FC = () => {
           }}
         >
           <button
-            id="buttonBuilderSettingsRepositoryListAddItem"
+            id="buttonBuilderSettingsRepositoryLoadMasterList"
             onClick={() => OnClickReloadMasterList()}
             style={{ marginRight: "5px" }}
           >
