@@ -1,9 +1,12 @@
 import React from "react";
 import MainPage from "./MainPage";
-import { BrowserRouter } from "react-router-dom";
-import { Routes } from "react-router-dom";
-import { Route } from "react-router-dom";
 import BuilderSettings from "./Builder/components/BuilderSettings";
+
+import { Route } from "react-router-dom";
+import { Routes } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
+import { useAppDispatch } from "redux/store/hooks";
+import { builderReadStoreConfig } from "redux/actions";
 
 import Sidenav from "./Sidenav";
 
@@ -12,7 +15,20 @@ const Monitor = () => <h1>Monitor</h1>;
 const Explore = () => <h1>Explore</h1>;
 const Statistics = () => <h1>Statistics</h1>;
 
+// Startup
+let started = false;
+const startup = () => {
+  // Mark startup as (at least) attempted
+  started = true;
+  const dispatch = useAppDispatch();
+  // Load persistent state
+  dispatch(builderReadStoreConfig());
+};
+
 function App() {
+  if (!started)
+    startup();
+
   return (
     <div
       className="App"

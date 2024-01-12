@@ -20,10 +20,8 @@ const createWindow = () => {
 
   if (app.isPackaged) {
     win.loadFile("index.html"); //prod
-    //win.webContents.openDevTools();
   } else {
     win.loadURL("http://localhost:5001"); //dev
-    win.webContents.openDevTools();
   }
 
   const downloadpath = app.commandLine.getSwitchValue("downloadpath");
@@ -121,10 +119,8 @@ app.whenReady().then(() => {
       event,
       data,
       terminal_sendLine,
-      // stdout_callback
-      (data: string) => sendLogData(data + "\r\n"),
-      // stderr_callback
-      (data: string) => sendLogData(data + "\r\n")
+      (data: string) => sendLogData(data + "\r\n"),  // stdout_callback
+      (data: string) => sendLogData(data + "\r\n")  // stderr_callback
     )
   );
   ipcMain.handle("builder/clean-build-folder", (event, data) =>

@@ -1,32 +1,39 @@
 import BuilderEngine from "gui/Builder/BuilderEngine";
-import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "../actions";
-import { ConfigPaneDisplay } from "redux/types";
 
 import { Node } from "reactflow";
 import { Edge } from "reactflow";
+import { OnConnect } from "reactflow";
+import { createReducer } from "@reduxjs/toolkit";
 import { OnNodesChange } from "reactflow";
 import { OnEdgesChange } from "reactflow";
-import { OnConnect } from "reactflow";
+import { ConfigPaneDisplay } from "redux/types";
 
 const displayAPI = window.displayAPI;
 
-interface IBuilderState {
+export interface IRepo {
+  type: string;
+  label: string;
+  listing_type: string;
+  repo: string;
+}
+
+export interface IBuilderState {
   // Builder state
   statustext: string;
   nodeinfo: string;
+  modules_list: string;
   can_selected_expand: boolean;
   terminal_visibile: boolean;
   config_pane_display: string;
   logtext: string;
 
-  // react-flow parameters (experimental)
+  // react-flow parameters
   nodes: Node[];
   edges: Edge[];
 
   // Settings -- TODO: Move to separate reducer
-  repositories: Record<string, string>[];
-  modules_list: string;
+  repositories: IRepo[];
   snakemake_backend: string;
   snakemake_args: string;
   conda_backend: string;
@@ -48,28 +55,22 @@ const builderStateInit: IBuilderState = {
   terminal_visibile: false,
   config_pane_display: ConfigPaneDisplay.None,
   logtext: " ",
+  modules_list: "[]",
 
-  // react-flow parameters (experimental)
+  // react-flow parameters
   nodes: default_nodes,
   edges: default_edges,
 
   // Settings -- TODO: Move to separate reducer
   repositories: [
-    // Default - should be overwritten by local state (and master list, downloaded from url)
+    // Default - should be overwritten by local state
     {
       type: "github", // local | github
       label: "Kraemer Lab",
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: "kraemer-lab/vneyard",
     },
-    /*{
-      type: "local", // local | github
-      label: "Snakeshack",
-      listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
-      repo: "/Users/jsb/repos/jsbrittain/snakeshack",
-    },*/
   ],
-  modules_list: "[]",
   snakemake_backend: "builtin", // builtin | system
   snakemake_args: "--cores 1 --use-conda",
   conda_backend: "builtin", // builtin | system
@@ -77,30 +78,6 @@ const builderStateInit: IBuilderState = {
   display_module_settings: false,
   auto_validate_connections: false,
 };
-
-// Write persistent state to electron frontend
-const store_write_config = async () => {
-  displayAPI.StoreWriteConfig({
-    'repositories': builderStateInit.repositories,
-    'snakemake_backend': builderStateInit.snakemake_backend,
-    'snakemake_args': builderStateInit.snakemake_args,
-    'conda_backend': builderStateInit.conda_backend,
-    'environment_variables': builderStateInit.environment_variables,
-    'display_module_settings': builderStateInit.display_module_settings,
-    'auto_validate_connections': builderStateInit.auto_validate_connections,
-  });
-}
-
-// Read persistent state from electron frontend
-const store_read_config = async () => {
-  const local_config = await displayAPI.StoreReadConfig();
-  console.log("Local config: ", local_config);
-  for (const key in local_config) {
-    console.log("Setting key: ", key, " to ", local_config[key]);
-    builderStateInit[key] = local_config[key];
-  }
-}
-store_read_config();
 
 // Nodemap
 const builderReducer = createReducer(builderStateInit, (builder) => {
@@ -152,7 +129,6 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderUpdateModulesList, (state, action) => {
-      // Get list of remote actions
       state.modules_list = JSON.stringify(action.payload);
       console.info("[Reducer] " + action.type);
     })
@@ -168,7 +144,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetRepositoryTarget, (state, action) => {
-      state.repositories = action.payload as Record<string, string>[];
+      state.repositories = action.payload as IRepo[];
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderToggleTerminalVisibility, (state, action) => {
@@ -210,11 +186,19 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderLogEvent, (state, action) => {
       addLogEvent(state, action.payload);
       console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderUpdateSettings, (state, action) => {
+      const local_config = action.payload as Record<string, unknown>;
+      for (const key in local_config) {
+        state[key] = local_config[key];
+      }
+      console.info("[Reducer] " + action.type);
     });
 });
 
 const setStatusText = (state: IBuilderState, text: string) => {
-  if (text === "" || text === null || text === undefined) text = "Idle";
+  if (text === "" || text === null || text === undefined)
+    text = "Idle";
   state.statustext = text;
   return state;
 };
@@ -226,5 +210,4 @@ const addLogEvent = (state: IBuilderState, text: string) => {
   if (state.logtext === "") state.logtext = " ";
 };
 
-export { IBuilderState };
 export default builderReducer;

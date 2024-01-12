@@ -57,7 +57,6 @@ const Layer = styled.div`
  * 2. Panel group (tabbed panel group for e.g. log display)
  */
 const Canvas = () => {
-  const modules = useAppSelector((state) => state.builder.modules_list);
   const configPaneOpen = useAppSelector(
     (state) => state.builder.config_pane_display
   );

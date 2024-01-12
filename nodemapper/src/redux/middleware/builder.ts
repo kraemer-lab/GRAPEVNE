@@ -9,6 +9,7 @@ import { builderBuildAsWorkflow } from "redux/actions";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
+import { builderUpdateSettings } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 
@@ -22,6 +23,7 @@ type Query = Record<string, unknown>;
 
 const API_ENDPOINT = globals.getApiEndpoint();
 
+const displayAPI = window.displayAPI;
 const builderAPI = window.builderAPI;
 const runnerAPI = window.runnerAPI;
 const backend = globals.getBackend();
@@ -124,7 +126,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case "builder/get-remote-modules":
-          GetRemoteModules(dispatch, JSON.parse(getState().builder.repo));
+          GetRemoteModules(dispatch, getState().builder.repositories);
           break;
 
         case "builder/update-modules-list":
@@ -133,6 +135,14 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 
         case "builder/update-status-text":
           UpdateStatusText(dispatch, action.payload);
+          break;
+
+        case "builder/read-store-config":
+          ReadStoreConfig(dispatch);
+          break;
+
+        case "builder/write-store-config":
+          WriteStoreConfig(getState().builder);
           break;
 
         default:
@@ -486,6 +496,25 @@ const UpdateModulesList = (dispatch: TPayloadString) => {
   // Update list of modules - done in reducer
   dispatch(builderUpdateStatusText(""));
 };
+
+// Write persistent state to electron frontend
+const WriteStoreConfig = async (state) => {
+  displayAPI.StoreWriteConfig({
+    'repositories': state.repositories,
+    'snakemake_backend': state.snakemake_backend,
+    'snakemake_args': state.snakemake_args,
+    'conda_backend': state.conda_backend,
+    'environment_variables': state.environment_variables,
+    'display_module_settings': state.display_module_settings,
+    'auto_validate_connections': state.auto_validate_connections,
+  });
+}
+
+// Read persistent state from electron frontend
+const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
+  const local_config = await displayAPI.StoreReadConfig();
+  dispatch(builderUpdateSettings(local_config));
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // POST request handlers

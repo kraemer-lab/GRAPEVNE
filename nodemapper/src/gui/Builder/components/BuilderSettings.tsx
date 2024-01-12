@@ -1,18 +1,29 @@
 import React from "react";
+import RepoOptions from "./RepoOptions";
+
+import { useEffect } from 'react';
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
+import { builderWriteStoreConfig } from "redux/actions";
 import { builderSetSnakemakeArgs } from "redux/actions";
 import { builderSetEnvironmentVars } from "redux/actions";
 import { builderSelectSnakemakeBackend } from "redux/actions";
 import { builderSetDisplayModuleSettings } from "redux/actions";
 import { builderSetAutoValidateConnections } from "redux/actions";
-import RepoOptions from "./RepoOptions";
 
 const default_input_size = 35;
 const panel_background_color = "#2e3746";
 
 const BuilderSettings = () => {
   const dispatch = useAppDispatch();
+  
+  const onComponentMount = () => { return; };
+  const onComponentUnmount = () => { dispatch(builderWriteStoreConfig()); };
+  useEffect(() => {
+    onComponentMount();
+    return () => onComponentUnmount();
+  }, []);
+
   const snakemake_backend = useAppSelector(
     (state) => state.builder.snakemake_backend
   );
@@ -28,26 +39,21 @@ const BuilderSettings = () => {
   const auto_validate_connections = useAppSelector(
     (state) => state.builder.auto_validate_connections
   );
-
-  const SetSnakemakeArgs = (args: string) => {
+  
+  const SetSnakemakeArgs = (args: string) =>
     dispatch(builderSetSnakemakeArgs(args));
-  };
 
-  const SetEnvironmentVars = (args: string) => {
+  const SetEnvironmentVars = (args: string) =>
     dispatch(builderSetEnvironmentVars(args));
-  };
 
-  const selectSnakemakeBackend = (value: string) => {
+  const selectSnakemakeBackend = (value: string) =>
     dispatch(builderSelectSnakemakeBackend(value));
-  };
 
-  const SetDisplayModuleSettings = (value: boolean) => {
+  const SetDisplayModuleSettings = (value: boolean) =>
     dispatch(builderSetDisplayModuleSettings(value));
-  };
 
-  const SetAutoValidateConnections = (value: boolean) => {
+  const SetAutoValidateConnections = (value: boolean) =>
     dispatch(builderSetAutoValidateConnections(value));
-  };
 
   return (
     <>

@@ -1,7 +1,12 @@
 import React from "react";
+import axios from "axios";
+
+import { IRepo } from "redux/reducers/builder";
 import { useState } from "react";
 import { useAppDispatch } from "redux/store/hooks";
 import { useAppSelector } from "redux/store/hooks";
+import { builderLogEvent } from "redux/actions";
+import { getMasterRepoListURL } from "redux/globals";
 import { builderSetRepositoryTarget } from "redux/actions";
 
 const default_input_size = 35;
@@ -9,11 +14,10 @@ const panel_background_color = "#2e3746";
 
 const RepoOptions: React.FC = () => {
   const dispatch = useAppDispatch();
-  const repoSettings = useAppSelector((state) => state.builder.repositories);
+  const repoSettings = useAppSelector((state) => state.builder.repositories as IRepo[]);
 
   const [repoLabel, setRepoLabel] = useState("");
   const [repoURL, setRepoURL] = useState("");
-  // Repo type is (type, listing_type)
   const [repoFormType, setRepoFormType] = useState("GithubDirectory");
   const [repoLocale, setRepoLocale] = useState("github");
   const [repoListingType, setRepoListingType] = useState("DirectoryListing");
@@ -50,14 +54,37 @@ const RepoOptions: React.FC = () => {
     setRepoFormType(target);
   };
 
+  const OnClickReloadMasterList = () => {
+    console.log("Reload master list");
+    const getMasterRepoList = async () => {
+      const url = getMasterRepoListURL();
+      return await axios
+        .get(url)
+        .then((response) => {
+          return response.data;
+        })
+        .catch((error) => {
+          dispatch(builderLogEvent("Error loading master repository list"));
+          dispatch(builderLogEvent(`  Error: ${error}`));
+          dispatch(builderLogEvent(`  Loading URL: ${url}`));
+        });
+    };
+    getMasterRepoList().then((data) => {
+      if (data) {
+        console.log("Master repo list: ", data);
+        dispatch(builderSetRepositoryTarget(data));
+      }
+    });
+  };
+
   const OnClickAddItem = () => {
-    repoSettings.push({
+    const newRepoSettings = [...repoSettings, {
       type: repoLocale, // github | local
       label: repoLabel, // user label for the repo
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: repoURL, // github repo or local path
-    });
-    dispatch(builderSetRepositoryTarget(repoSettings));
+    }];
+    dispatch(builderSetRepositoryTarget(newRepoSettings));
   };
 
   const OnClickRemoveItem = () => {
@@ -69,19 +96,18 @@ const RepoOptions: React.FC = () => {
   };
 
   const RepoListSelectItem = (value) => {
-    console.log("RepoListSelectItem:", value);
+    console.log("Select item:", value);
     const selected_repo = repoSettings.filter(
-      (repo) => repo.label !== repoListSelectedItems
+      (repo) => repo.label === value
     )[0];
-    // Display repo settings On form
+    // Display repo settings on form
     setRepoLocale(selected_repo.type);
     setRepoLabel(selected_repo.label);
     setRepoListingType(selected_repo.listing_type);
-    if (selected_repo.type === "local") {
+    if (selected_repo.type === "local")
       setRepoFormType("LocalFilesystem");
-    } else {
+    else
       setRepoFormType("GithubDirectory");
-    }
     setRepoURL(selected_repo.repo);
     // Set the selected item
     setRepoListSelectedItems(value);
@@ -100,7 +126,7 @@ const RepoOptions: React.FC = () => {
       <select
         id="selectBuilderSettingsRepositoryList"
         size={8}
-        // multiple={true}
+        multiple={false}
         style={{ width: "100%" }}
         onChange={(e) => RepoListSelectItem(e.target.value)}
       >
@@ -130,6 +156,13 @@ const RepoOptions: React.FC = () => {
             justifyContent: "flex-end",
           }}
         >
+          <button
+            id="buttonBuilderSettingsRepositoryListAddItem"
+            onClick={() => OnClickReloadMasterList()}
+            style={{ marginRight: "5px" }}
+          >
+            RELOAD MASTER LIST
+          </button>
           <button
             id="buttonBuilderSettingsRepositoryListAddItem"
             onClick={() => OnClickAddItem()}
