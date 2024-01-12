@@ -11,7 +11,6 @@ import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
-import { builderSetSettingsVisibility } from "redux/actions";
 
 import { Node } from "reactflow";
 import { Edge } from "reactflow";
@@ -130,14 +129,6 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 
         case "builder/update-modules-list":
           UpdateModulesList(dispatch);
-          break;
-
-        case "builder/set-settings-visibility":
-          SetSettingsVisibility(dispatch, action.payload);
-          break;
-
-        case "builder/toggle-settings-visibility":
-          ToggleSettingsVisibility(dispatch, getState().builder);
           break;
 
         case "builder/update-status-text":
@@ -615,21 +606,6 @@ const SubmitQuery = (query: Query, dispatch, callback) => {
 
   // Received query request
   if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
-};
-
-const SetSettingsVisibility = (
-  dispatch: TPayloadString,
-  new_state: boolean
-) => {
-  if (new_state) {
-    // Close node info pane
-    dispatch(builderNodeDeselected());
-  }
-  return 0;
-};
-
-const ToggleSettingsVisibility = (dispatch: TPayloadString, state: Query) => {
-  SetSettingsVisibility(dispatch, !state.settings_visible);
 };
 
 const UpdateStatusText = (dispatch: TPayloadString, text: string) => {

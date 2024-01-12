@@ -48,6 +48,7 @@
     "axios": "^1.6.0",
     "electron-chromedriver": "27",
     "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^8.1.0",
     "js-yaml": "^4.1.0",
     "node-pty": "^1.0.0",
     "python-shell": "^5.0.0",

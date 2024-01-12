@@ -3,6 +3,10 @@ import path from "path";
 import * as handles from "./handles";
 import * as os from "node:os";
 import * as pty from "node-pty";
+import Store from "electron-store";
+
+// Set up electron-store (persistent local configuration)
+const store = new Store();
 
 // Create electon window
 const createWindow = () => {
@@ -94,6 +98,12 @@ app.whenReady().then(() => {
 
   // Display
   ipcMain.handle("display/folderinfo", handles.display_FolderInfo);
+  ipcMain.handle("display/store-read-config", (event) =>
+    handles.display_StoreReadConfig(event, store)
+  );
+  ipcMain.handle("display/store-write-config", (event, data) =>
+    handles.display_StoreWriteConfig(event, store, data)
+  );
 
   // Builder
   ipcMain.handle(

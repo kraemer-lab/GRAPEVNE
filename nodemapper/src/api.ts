@@ -8,6 +8,8 @@ export type TerminalAPI = {
 
 export type DisplayAPI = {
   FolderInfo: (query: Query) => Promise<Query>;
+  StoreReadConfig: () => Promise<Query>;
+  StoreWriteConfig: (query: Query) => Promise<Query>;
 };
 
 export type BuilderAPI = {

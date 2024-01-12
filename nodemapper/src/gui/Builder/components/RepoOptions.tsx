@@ -9,9 +9,7 @@ const panel_background_color = "#2e3746";
 
 const RepoOptions: React.FC = () => {
   const dispatch = useAppDispatch();
-  const repoSettings = JSON.parse(
-    useAppSelector((state) => state.builder.repo)
-  );
+  const repoSettings = useAppSelector((state) => state.builder.repositories);
 
   const [repoLabel, setRepoLabel] = useState("");
   const [repoURL, setRepoURL] = useState("");

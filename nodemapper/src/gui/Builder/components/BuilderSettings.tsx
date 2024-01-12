@@ -13,7 +13,6 @@ const panel_background_color = "#2e3746";
 
 const BuilderSettings = () => {
   const dispatch = useAppDispatch();
-  const isvisible = useAppSelector((state) => state.builder.settings_visible);
   const snakemake_backend = useAppSelector(
     (state) => state.builder.snakemake_backend
   );

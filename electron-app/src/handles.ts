@@ -3,6 +3,7 @@ import web from "./web";
 import { IpcMainInvokeEvent } from "electron";
 import { RunWorkflow } from "./pyrunner";
 import { ProcessQuery } from "./pyrunner";
+import Store from "electron-store";
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
@@ -32,12 +33,28 @@ const ErrorReturn = (query: string, err: Query) => {
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-// Query handlers
+// Display query handlers
 ///////////////////////////////////////////////////////////////////////////////
 
 export async function display_FolderInfo(event: Event, query: Query) {
   return await ProcessQuery(event, query);
 }
+
+export async function display_StoreReadConfig(event: Event, store: Store) {
+  // Set up electron-store (persistent local configuration)
+  const config = store.get('config');
+  return config;
+}
+
+export async function display_StoreWriteConfig(event: Event, store: Store, data: Query) {
+  // Set up electron-store (persistent local configuration)
+  store.set('config', data);
+  return store.get('config');
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Builder query handlers
+///////////////////////////////////////////////////////////////////////////////
 
 export async function builder_GetRemoteModules(event: Event, query: Query) {
   try {
@@ -66,9 +83,8 @@ export async function builder_GetRemoteModuleConfig(
 }
 
 export async function builder_BuildAsModule(event: Event, query: Query) {
-  // Note: Instead of returning the zip file as a base64 string from Python
-  //       (as was the procedure in the REST implementation), we instead rely
-  //       on Python saving the zip file to disk, then reading it back in.
+  // This implementation relies on Python saving the zip file to disk, then
+  // reading it back in.
   const data = await ProcessQuery(event, query);
   return fs.readFileSync((data["body"] as Query)["zipfile"] as string, {
     encoding: "base64",
@@ -76,9 +92,8 @@ export async function builder_BuildAsModule(event: Event, query: Query) {
 }
 
 export async function builder_BuildAsWorkflow(event: Event, query: Query) {
-  // Note: Instead of returning the zip file as a base64 string from Python
-  //       (as was the procedure in the REST implementation), we instead rely
-  //       on Python saving the zip file to disk, then reading it back in.
+  // This implementation relies on Python saving the zip file to disk, then
+  // reading it back in.
   const data = await ProcessQuery(event, query);
   return fs.readFileSync((data["body"] as Query)["zipfile"] as string, {
     encoding: "base64",
@@ -170,6 +185,10 @@ export async function builder_CleanBuildFolder(
   data["returncode"] = 0;
   return data;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Runner query handlers
+///////////////////////////////////////////////////////////////////////////////
 
 export async function runner_Build(event: Event, query: Query) {
   return await ProcessQuery(event, query);

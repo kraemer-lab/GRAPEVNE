@@ -9,6 +9,8 @@ import { OnNodesChange } from "reactflow";
 import { OnEdgesChange } from "reactflow";
 import { OnConnect } from "reactflow";
 
+const displayAPI = window.displayAPI;
+
 interface IBuilderState {
   // Builder state
   statustext: string;
@@ -23,7 +25,7 @@ interface IBuilderState {
   edges: Edge[];
 
   // Settings -- TODO: Move to separate reducer
-  repo: string;
+  repositories: Record<string, string>[];
   modules_list: string;
   snakemake_backend: string;
   snakemake_args: string;
@@ -31,193 +33,10 @@ interface IBuilderState {
   environment_variables: string;
   display_module_settings: boolean;
   auto_validate_connections: boolean;
-
-  // TODO: Remove these options
-  settings_visible: boolean;
 }
 
-const default_nodes = [
-  {
-    id: "0",
-    type: "standard",
-    position: { x: 50, y: 50 },
-    data: {
-      color: "#8b8c89",
-      config: {
-        name: "Source",
-        type: "source",
-        config: {
-          snakefile: "Snakefile",
-          docstring: null,
-          config: {
-            input_namespace: null,
-            output_namespace: "out",
-            params: {
-              param1: "value1",
-              param2: "value2",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    id: "1",
-    type: "standard",
-    position: { x: 50, y: 150 },
-    data: {
-      color: "#006daa",
-      config: {
-        name: "Single input",
-        type: "module",
-        config: {
-          snakefile: "Snakefile",
-          docstring: null,
-          config: {
-            input_namespace: "in",
-            output_namespace: "out",
-            params: {
-              param1: "value1",
-              param2: "value2",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    id: "11",
-    type: "standard",
-    position: { x: 50, y: 250 },
-    data: {
-      color: "#005599",
-      config: {
-        name: "a",
-        type: "module",
-        config: {
-          snakefile: "Snakefile",
-          docstring: null,
-          config: {
-            input_namespace: "in",
-            output_namespace: "out",
-            params: {
-              param1: "value1",
-              param2: "value2",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    id: "-1",
-    type: "standard",
-    position: { x: 50, y: 320 },
-    data: {
-      color: "#44aa44",
-      config: {
-        name: "Here is a really long name for a source",
-        type: "source",
-        config: {
-          snakefile: "Snakefile",
-          docstring: null,
-          config: {
-            input_namespace: null,
-            output_namespace: "out",
-            params: {
-              param1: "value1",
-              param2: "value2",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    id: "2",
-    type: "standard",
-    position: { x: 300, y: 50 },
-    data: {
-      color: "#006daa",
-      config: {
-        name: "Multiple inputs (even count)",
-        type: "module",
-        config: {
-          snakefile: "Snakefile",
-          docstring: null,
-          config: {
-            input_namespace: {
-              in1: "in1value",
-              in2: "in2value",
-              in3: "in3value",
-              in4: "in4value",
-            },
-            output_namespace: "out",
-            params: {
-              param1: "value1",
-              param2: "value2",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    id: "3",
-    type: "standard",
-    position: { x: 300, y: 190 },
-    data: {
-      color: "#006daa",
-      config: {
-        name: "Multiple inputs (odd count)",
-        type: "module",
-        config: {
-          snakefile: "Snakefile",
-          docstring: null,
-          config: {
-            input_namespace: {
-              in1: "in1value",
-              in2: "in2value",
-              in3: "in3value",
-              in4: "in4value",
-              in5: "in5value",
-            },
-            output_namespace: "out",
-            params: {
-              param1: "value1",
-              param2: "value2",
-            },
-          },
-        },
-      },
-    },
-  },
-  {
-    id: "12",
-    type: "standard",
-    position: { x: 300, y: 350 },
-    data: {
-      color: "#006daa",
-      config: {
-        name: "Here is a really long name for a module",
-        type: "module",
-        config: {
-          snakefile: "Snakefile",
-          docstring: null,
-          config: {
-            input_namespace: "in",
-            output_namespace: "out",
-            params: {
-              param1: "value1",
-              param2: "value2",
-            },
-          },
-        },
-      },
-    },
-  },
-] as Node[];
-
+// Defaults
+const default_nodes = [] as Node[];
 const default_edges = [] as Edge[];
 
 // State
@@ -231,12 +50,12 @@ const builderStateInit: IBuilderState = {
   logtext: " ",
 
   // react-flow parameters (experimental)
-  nodes: [], // default_nodes,
+  nodes: default_nodes,
   edges: default_edges,
 
   // Settings -- TODO: Move to separate reducer
-  repo: JSON.stringify([
-    // Default - should be overwritten by master list (downloaded from url)
+  repositories: [
+    // Default - should be overwritten by local state (and master list, downloaded from url)
     {
       type: "github", // local | github
       label: "Kraemer Lab",
@@ -249,7 +68,7 @@ const builderStateInit: IBuilderState = {
       listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
       repo: "/Users/jsb/repos/jsbrittain/snakeshack",
     },*/
-  ]),
+  ],
   modules_list: "[]",
   snakemake_backend: "builtin", // builtin | system
   snakemake_args: "--cores 1 --use-conda",
@@ -257,10 +76,31 @@ const builderStateInit: IBuilderState = {
   environment_variables: "",
   display_module_settings: false,
   auto_validate_connections: false,
-
-  // TODO: Remove these options
-  settings_visible: false,
 };
+
+// Write persistent state to electron frontend
+const store_write_config = async () => {
+  displayAPI.StoreWriteConfig({
+    'repositories': builderStateInit.repositories,
+    'snakemake_backend': builderStateInit.snakemake_backend,
+    'snakemake_args': builderStateInit.snakemake_args,
+    'conda_backend': builderStateInit.conda_backend,
+    'environment_variables': builderStateInit.environment_variables,
+    'display_module_settings': builderStateInit.display_module_settings,
+    'auto_validate_connections': builderStateInit.auto_validate_connections,
+  });
+}
+
+// Read persistent state from electron frontend
+const store_read_config = async () => {
+  const local_config = await displayAPI.StoreReadConfig();
+  console.log("Local config: ", local_config);
+  for (const key in local_config) {
+    console.log("Setting key: ", key, " to ", local_config[key]);
+    builderStateInit[key] = local_config[key];
+  }
+}
+store_read_config();
 
 // Nodemap
 const builderReducer = createReducer(builderStateInit, (builder) => {
@@ -305,9 +145,6 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderNodeDeselected, (state, action) => {
       // Action intercepted in middleware to control display
-      state.config_pane_display = state.settings_visible
-        ? ConfigPaneDisplay.Settings
-        : ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderGetRemoteModules, (state, action) => {
@@ -331,7 +168,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetRepositoryTarget, (state, action) => {
-      state.repo = JSON.stringify(action.payload);
+      state.repositories = action.payload as Record<string, string>[];
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderToggleTerminalVisibility, (state, action) => {
@@ -340,20 +177,6 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderOpenTerminal, (state, action) => {
       state.terminal_visibile = true;
-      console.info("[Reducer] " + action.type);
-    })
-    .addCase(actions.builderSetSettingsVisibility, (state, action) => {
-      state.settings_visible = action.payload;
-      state.config_pane_display = state.settings_visible
-        ? ConfigPaneDisplay.Settings
-        : ConfigPaneDisplay.None;
-      console.info("[Reducer] " + action.type);
-    })
-    .addCase(actions.builderToggleSettingsVisibility, (state, action) => {
-      state.settings_visible = !state.settings_visible;
-      state.config_pane_display = state.settings_visible
-        ? ConfigPaneDisplay.Settings
-        : ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
