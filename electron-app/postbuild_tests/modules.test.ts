@@ -228,8 +228,9 @@ describe("modules", () => {
       ];
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
       await driver.sleep(100); // Wait for module settings to expand
-      await driver.findElement(By.id("btnBuilderExpand")).click();
       // findElement will throw if the element does not exist
+      await driver.findElement(By.id("btnBuilderExpand")).click();
+      await driver.sleep(500); // Wait for expansion to complete
       expect(
         (
           await driver.findElements(
