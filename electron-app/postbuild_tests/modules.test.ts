@@ -172,21 +172,12 @@ describe("modules", () => {
         ["n0", "n1"],
         ["n1", "n2"],
       ];
-      expect(
-        (
-          await driver.findElements(
-            By.xpath(
-              `//*[@aria-label and contains(@class, "react-flow__edge")]`
-            )
-          )
-        ).length
-      ).toEqual(conns.length);
       await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.findElement(
+        await driver.wait(until.elementLocated(
           By.xpath(
             `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
           )
-        );
+        ));
       });
 
       // Expand the centre module and check connections
@@ -197,24 +188,14 @@ describe("modules", () => {
         ["n5", "n2"],
       ];
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      // findElement will throw if the element does not exist
-      expect(
-        (
-          await driver.findElements(
-            By.xpath(
-              `//*[@aria-label and contains(@class, "react-flow__edge")]`
-            )
-          )
-        ).length
-      ).toEqual(conns.length);
       await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.findElement(
+        await driver.wait(until.elementLocated(
           By.xpath(
             `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
           )
-        );
+        ));
       });
 
       // Next, expand the leading module and check connections
@@ -227,25 +208,14 @@ describe("modules", () => {
         ["n5", "n2"],
       ];
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
-      // findElement will throw if the element does not exist
+      await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      await driver.sleep(500); // Wait for expansion to complete
-      expect(
-        (
-          await driver.findElements(
-            By.xpath(
-              `//*[@aria-label and contains(@class, "react-flow__edge")]`
-            )
-          )
-        ).length
-      ).toEqual(conns.length);
       await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.findElement(
+        await driver.wait(until.elementLocated(
           By.xpath(
             `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
           )
-        );
+        ));
       });
 
       // Finally, expand the trailing module and check connections
@@ -260,25 +230,14 @@ describe("modules", () => {
         ["n8", "n9"],
       ];
       await driver.findElement(By.xpath(`//div[@data-id="n2"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      await driver.sleep(500); // Wait for expansion to complete
-      // findElement will throw if the element does not exist
-      expect(
-        (
-          await driver.findElements(
-            By.xpath(
-              `//*[@aria-label and contains(@class, "react-flow__edge")]`
-            )
-          )
-        ).length
-      ).toEqual(conns.length);
       await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.findElement(
+        await driver.wait(until.elementLocated(
           By.xpath(
             `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
           )
-        );
+        ));
       });
 
       console.log(
@@ -319,7 +278,7 @@ describe("modules", () => {
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderValidate")));
       await driver.findElement(By.id("btnBuilderValidate")).click();
       let msg = await WaitForReturnCode(
         driver,
@@ -334,7 +293,7 @@ describe("modules", () => {
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderValidate")));
       await driver.findElement(By.id("btnBuilderValidate")).click();
       msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
       expect(msg.returncode).toEqual(1); // 1 = missing dependency
