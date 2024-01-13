@@ -130,10 +130,7 @@ const dragAndDrop = async (
     return await dragAndDrop_script(driver, elementFrom, elementTo);
   } else {
     // webdriver seems to work fine on Linux and MacOS
-    await driver
-      .actions()
-      .dragAndDrop(elementFrom, elementTo)
-      .perform();
+    await driver.actions().dragAndDrop(elementFrom, elementTo).perform();
   }
 };
 

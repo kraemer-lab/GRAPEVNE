@@ -173,12 +173,24 @@ describe("modules", () => {
         ["n1", "n2"],
       ];
       await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.wait(until.elementLocated(
-          By.xpath(
-            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+            )
           )
-        ));
+        );
       });
+      // Once all expected nodes are found, check the total count
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
 
       // Expand the centre module and check connections
       conns = [
@@ -191,12 +203,24 @@ describe("modules", () => {
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
       await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.wait(until.elementLocated(
-          By.xpath(
-            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+            )
           )
-        ));
+        );
       });
+      // Once all expected nodes are found, check the total count
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
 
       // Next, expand the leading module and check connections
       conns = [
@@ -211,12 +235,24 @@ describe("modules", () => {
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
       await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.wait(until.elementLocated(
-          By.xpath(
-            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+            )
           )
-        ));
+        );
       });
+      // Once all expected nodes are found, check the total count
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
 
       // Finally, expand the trailing module and check connections
       conns = [
@@ -233,12 +269,24 @@ describe("modules", () => {
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
       await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.wait(until.elementLocated(
-          By.xpath(
-            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+            )
           )
-        ));
+        );
       });
+      // Once all expected nodes are found, check the total count
+      expect(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      ).toEqual(conns.length);
 
       console.log(
         "<<< test Expand multi-nodes (with input and output connections)"
@@ -259,13 +307,13 @@ describe("modules", () => {
         driver,
         driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
         canvas
-      )
+      );
       await driver.sleep(100);
       await dragAndDrop(
         driver,
         driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
         canvas
-      )
+      );
       await driver.sleep(100);
       await driver.findElement(By.id("buttonReactflowArrange")).click();
 
@@ -274,7 +322,7 @@ describe("modules", () => {
         driver,
         driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
         driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
-      )
+      );
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
