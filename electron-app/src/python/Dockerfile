@@ -14,7 +14,9 @@ ENV PATH="/opt/conda/bin:${PATH}"
 RUN conda config --set channel_priority strict
 
 # Install snakemake
-RUN python -m pip install snakemake==7.32
+# NOTE: We version tag pulp to permit snakemake to install with a compatible version
+#       see https://github.com/kraemer-lab/GRAPEVNE/issues/184
+RUN python -m pip install pulp==2.7.0 snakemake==7.32
 
 # Pass UID to container (ensures appropriate permissions for created files/directories)
 ARG HOST_UID

@@ -14,7 +14,9 @@ const panel_background_color = "#2e3746";
 
 const RepoOptions: React.FC = () => {
   const dispatch = useAppDispatch();
-  const repoSettings = useAppSelector((state) => state.builder.repositories as IRepo[]);
+  const repoSettings = useAppSelector(
+    (state) => state.builder.repositories as IRepo[]
+  );
 
   const [repoLabel, setRepoLabel] = useState("");
   const [repoURL, setRepoURL] = useState("");
@@ -78,12 +80,15 @@ const RepoOptions: React.FC = () => {
   };
 
   const OnClickAddItem = () => {
-    const newRepoSettings = [...repoSettings, {
-      type: repoLocale, // github | local
-      label: repoLabel, // user label for the repo
-      listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
-      repo: repoURL, // github repo or local path
-    }];
+    const newRepoSettings = [
+      ...repoSettings,
+      {
+        type: repoLocale, // github | local
+        label: repoLabel, // user label for the repo
+        listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
+        repo: repoURL, // github repo or local path
+      },
+    ];
     dispatch(builderSetRepositoryTarget(newRepoSettings));
   };
 
@@ -104,10 +109,8 @@ const RepoOptions: React.FC = () => {
     setRepoLocale(selected_repo.type);
     setRepoLabel(selected_repo.label);
     setRepoListingType(selected_repo.listing_type);
-    if (selected_repo.type === "local")
-      setRepoFormType("LocalFilesystem");
-    else
-      setRepoFormType("GithubDirectory");
+    if (selected_repo.type === "local") setRepoFormType("LocalFilesystem");
+    else setRepoFormType("GithubDirectory");
     setRepoURL(selected_repo.repo);
     // Set the selected item
     setRepoListSelectedItems(value);

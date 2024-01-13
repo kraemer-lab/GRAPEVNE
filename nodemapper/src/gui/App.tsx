@@ -26,8 +26,7 @@ const startup = () => {
 };
 
 function App() {
-  if (!started)
-    startup();
+  if (!started) startup();
 
   return (
     <div

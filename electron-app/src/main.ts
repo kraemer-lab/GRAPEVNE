@@ -119,8 +119,8 @@ app.whenReady().then(() => {
       event,
       data,
       terminal_sendLine,
-      (data: string) => sendLogData(data + "\r\n"),  // stdout_callback
-      (data: string) => sendLogData(data + "\r\n")  // stderr_callback
+      (data: string) => sendLogData(data + "\r\n"), // stdout_callback
+      (data: string) => sendLogData(data + "\r\n") // stderr_callback
     )
   );
   ipcMain.handle("builder/clean-build-folder", (event, data) =>

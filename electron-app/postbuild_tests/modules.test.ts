@@ -172,6 +172,16 @@ describe("modules", () => {
         ["n0", "n1"],
         ["n1", "n2"],
       ];
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+            )
+          )
+        );
+      });
+      // Once all expected nodes are found, check the total count
       expect(
         (
           await driver.findElements(
@@ -181,13 +191,6 @@ describe("modules", () => {
           )
         ).length
       ).toEqual(conns.length);
-      await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.findElement(
-          By.xpath(
-            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
-          )
-        );
-      });
 
       // Expand the centre module and check connections
       conns = [
@@ -197,9 +200,18 @@ describe("modules", () => {
         ["n5", "n2"],
       ];
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      // findElement will throw if the element does not exist
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+            )
+          )
+        );
+      });
+      // Once all expected nodes are found, check the total count
       expect(
         (
           await driver.findElements(
@@ -209,13 +221,6 @@ describe("modules", () => {
           )
         ).length
       ).toEqual(conns.length);
-      await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.findElement(
-          By.xpath(
-            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
-          )
-        );
-      });
 
       // Next, expand the leading module and check connections
       conns = [
@@ -227,9 +232,18 @@ describe("modules", () => {
         ["n5", "n2"],
       ];
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      // findElement will throw if the element does not exist
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+            )
+          )
+        );
+      });
+      // Once all expected nodes are found, check the total count
       expect(
         (
           await driver.findElements(
@@ -239,13 +253,6 @@ describe("modules", () => {
           )
         ).length
       ).toEqual(conns.length);
-      await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.findElement(
-          By.xpath(
-            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
-          )
-        );
-      });
 
       // Finally, expand the trailing module and check connections
       conns = [
@@ -259,9 +266,18 @@ describe("modules", () => {
         ["n8", "n9"],
       ];
       await driver.findElement(By.xpath(`//div[@data-id="n2"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      // findElement will throw if the element does not exist
+      await conns.forEach(async ([nodefrom, nodeto]) => {
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
+            )
+          )
+        );
+      });
+      // Once all expected nodes are found, check the total count
       expect(
         (
           await driver.findElements(
@@ -271,13 +287,6 @@ describe("modules", () => {
           )
         ).length
       ).toEqual(conns.length);
-      await conns.forEach(async ([nodefrom, nodeto]) => {
-        await driver.findElement(
-          By.xpath(
-            `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
-          )
-        );
-      });
 
       console.log(
         "<<< test Expand multi-nodes (with input and output connections)"
@@ -298,13 +307,13 @@ describe("modules", () => {
         driver,
         driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
         canvas
-      )
+      );
       await driver.sleep(100);
       await dragAndDrop(
         driver,
         driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
         canvas
-      )
+      );
       await driver.sleep(100);
       await driver.findElement(By.id("buttonReactflowArrange")).click();
 
@@ -313,11 +322,11 @@ describe("modules", () => {
         driver,
         driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
         driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
-      )
+      );
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderValidate")));
       await driver.findElement(By.id("btnBuilderValidate")).click();
       let msg = await WaitForReturnCode(
         driver,
@@ -332,7 +341,7 @@ describe("modules", () => {
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.wait(until.elementLocated(By.id("btnBuilderValidate")));
       await driver.findElement(By.id("btnBuilderValidate")).click();
       msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
       expect(msg.returncode).toEqual(1); // 1 = missing dependency
