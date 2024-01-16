@@ -122,6 +122,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderNodeDeselected, (state, action) => {
       // Action intercepted in middleware to control display
+      state.config_pane_display = ConfigPaneDisplay.None;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderGetRemoteModules, (state, action) => {

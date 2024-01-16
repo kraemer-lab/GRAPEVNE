@@ -35,12 +35,6 @@ export const builderToggleTerminalVisibility = createAction(
 export const builderSetDisplayModuleSettings = createAction<boolean>(
   "builder/set-display-module-settings"
 );
-export const builderSetSettingsVisibility = createAction<boolean>(
-  "builder/set-settings-visibility"
-);
-export const builderToggleSettingsVisibility = createAction(
-  "builder/toggle-settings-visibility"
-);
 
 export const builderSelectSnakemakeBackend = createAction<string>(
   "builder/select-snakemake-backend"
