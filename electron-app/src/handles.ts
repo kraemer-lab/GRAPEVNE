@@ -42,14 +42,18 @@ export async function display_FolderInfo(event: Event, query: Query) {
 
 export async function display_StoreReadConfig(event: Event, store: Store) {
   // Set up electron-store (persistent local configuration)
-  const config = store.get('config');
+  const config = store.get("config");
   return config;
 }
 
-export async function display_StoreWriteConfig(event: Event, store: Store, data: Query) {
+export async function display_StoreWriteConfig(
+  event: Event,
+  store: Store,
+  data: Query
+) {
   // Set up electron-store (persistent local configuration)
-  store.set('config', data);
-  return store.get('config');
+  store.set("config", data);
+  return store.get("config");
 }
 
 ///////////////////////////////////////////////////////////////////////////////

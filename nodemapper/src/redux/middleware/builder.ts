@@ -500,21 +500,27 @@ const UpdateModulesList = (dispatch: TPayloadString) => {
 // Write persistent state to electron frontend
 const WriteStoreConfig = async (state) => {
   displayAPI.StoreWriteConfig({
-    'repositories': state.repositories,
-    'snakemake_backend': state.snakemake_backend,
-    'snakemake_args': state.snakemake_args,
-    'conda_backend': state.conda_backend,
-    'environment_variables': state.environment_variables,
-    'display_module_settings': state.display_module_settings,
-    'auto_validate_connections': state.auto_validate_connections,
+    repositories: state.repositories,
+    snakemake_backend: state.snakemake_backend,
+    snakemake_args: state.snakemake_args,
+    conda_backend: state.conda_backend,
+    environment_variables: state.environment_variables,
+    display_module_settings: state.display_module_settings,
+    auto_validate_connections: state.auto_validate_connections,
   });
-}
+};
 
 // Read persistent state from electron frontend
 const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
-  const local_config = await displayAPI.StoreReadConfig();
+  let local_config = {};
+  try {
+    local_config = await displayAPI.StoreReadConfig();
+  } catch (error) {
+    // Error reading local config
+    return;
+  }
   dispatch(builderUpdateSettings(local_config));
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // POST request handlers
