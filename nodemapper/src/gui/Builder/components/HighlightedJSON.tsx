@@ -17,7 +17,12 @@ import "./HighlightedJSON.css";
  * https://codepen.io/benshope/pen/BxVpjo
  */
 
-const protectedNames = ["input_namespace", "output_namespace", "snakefile"];
+const protectedNames = [
+  "input_namespace",
+  "output_namespace",
+  "snakefile",
+  "parameter_map",
+];
 
 interface IHighlightJSONProps {
   keylist: string[];
