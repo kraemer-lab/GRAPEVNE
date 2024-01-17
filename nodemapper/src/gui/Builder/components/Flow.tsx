@@ -365,6 +365,11 @@ const Flow = () => {
     });
   };
 
+  const onNodesDelete = (nodes: Node[]) => {
+    // Close module parameters pane (if open)
+    dispatch(builderNodeDeselected());
+  };
+
   const onPaneClick = useCallback(() => {
     console.log("Pane clicked");
     // Close context menu (if open)
@@ -488,6 +493,7 @@ const Flow = () => {
       onConnect={onConnect}
       onNodeClick={onNodeClick}
       onNodeContextMenu={onNodeContextMenu}
+      onNodesDelete={onNodesDelete}
       onPaneClick={onPaneClick}
       onDrop={onDrop}
       onDragOver={onDragOver}
