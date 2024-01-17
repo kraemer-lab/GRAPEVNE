@@ -19,7 +19,6 @@ import { builderNodeDeselected } from "redux/actions";
 import { builderCleanBuildFolder } from "redux/actions";
 import { builderGetRemoteModules } from "redux/actions";
 import { builderToggleTerminalVisibility } from "redux/actions";
-import { builderToggleSettingsVisibility } from "redux/actions";
 
 const Header = () => {
   const dispatch = useAppDispatch();

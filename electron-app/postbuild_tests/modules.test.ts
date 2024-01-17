@@ -316,13 +316,16 @@ describe("modules", () => {
       );
       await driver.sleep(100);
       await driver.findElement(By.id("buttonReactflowArrange")).click();
+      await driver.sleep(100);
 
       // Connect the modules together
-      await dragAndDrop(
-        driver,
-        driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
-        driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
-      );
+      await driver
+        .actions()
+        .dragAndDrop(
+          driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
+          driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
+        )
+        .perform(); // n1-to-n2
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
