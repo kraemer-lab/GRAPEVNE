@@ -37,7 +37,11 @@ export const builderToggleTerminalVisibility = createAction(
   "builder/toggle-terminal-visibility",
 );
 export const builderSetDisplayModuleSettings = createAction<boolean>(
+<<<<<<< HEAD
   "builder/set-display-module-settings",
+=======
+  "builder/set-display-module-settings"
+>>>>>>> 42f7f08 (Persistent local settings and master list reload (#186))
 );
 
 export const builderSelectSnakemakeBackend = createAction<string>(
@@ -80,9 +84,17 @@ export const builderAddLink = createAction<Record<string, any> | undefined>( // 
 export const builderNodeSelected = createAction<Node>("builder/node-selected");
 export const builderNodeDeselected = createAction("builder/node-deselected");
 export const builderUpdateSettings = createAction<Record<string, unknown>>(
+<<<<<<< HEAD
   "builder/update-settings",
 );
 export const builderReadStoreConfig = createAction("builder/read-store-config");
 export const builderWriteStoreConfig = createAction(
   "builder/write-store-config",
+=======
+  "builder/update-settings"
+);
+export const builderReadStoreConfig = createAction("builder/read-store-config");
+export const builderWriteStoreConfig = createAction(
+  "builder/write-store-config"
+>>>>>>> 42f7f08 (Persistent local settings and master list reload (#186))
 );
