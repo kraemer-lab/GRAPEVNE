@@ -20,7 +20,7 @@ const InfoPanel = () => {
     >
       <TabList>
         <Tab>Log</Tab>
-        <Tab>Terminal</Tab>
+        {/*<Tab>Terminal</Tab>*/}
       </TabList>
 
       <TabPanel
@@ -32,14 +32,14 @@ const InfoPanel = () => {
         <Logger />
       </TabPanel>
 
-      <TabPanel
+      {/*<TabPanel
         style={{
           width: "100%",
           height: "100%",
         }}
       >
         <TerminalWindow />
-      </TabPanel>
+      </TabPanel>*/}
     </Tabs>
   );
 };

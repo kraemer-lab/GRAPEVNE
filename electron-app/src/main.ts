@@ -3,6 +3,10 @@ import path from "path";
 import * as handles from "./handles";
 import * as os from "node:os";
 import * as pty from "node-pty";
+import Store from "electron-store";
+
+// Set up electron-store (persistent local configuration)
+const store = new Store();
 
 // Create electon window
 const createWindow = () => {
@@ -16,10 +20,8 @@ const createWindow = () => {
 
   if (app.isPackaged) {
     win.loadFile("index.html"); //prod
-    //win.webContents.openDevTools();
   } else {
     win.loadURL("http://localhost:5001"); //dev
-    win.webContents.openDevTools();
   }
 
   const downloadpath = app.commandLine.getSwitchValue("downloadpath");
@@ -94,6 +96,12 @@ app.whenReady().then(() => {
 
   // Display
   ipcMain.handle("display/folderinfo", handles.display_FolderInfo);
+  ipcMain.handle("display/store-read-config", (event) =>
+    handles.display_StoreReadConfig(event, store)
+  );
+  ipcMain.handle("display/store-write-config", (event, data) =>
+    handles.display_StoreWriteConfig(event, store, data)
+  );
 
   // Builder
   ipcMain.handle(
@@ -111,10 +119,8 @@ app.whenReady().then(() => {
       event,
       data,
       terminal_sendLine,
-      // stdout_callback
-      (data: string) => sendLogData(data + "\r\n"),
-      // stderr_callback
-      (data: string) => sendLogData(data + "\r\n")
+      (data: string) => sendLogData(data + "\r\n"), // stdout_callback
+      (data: string) => sendLogData(data + "\r\n") // stderr_callback
     )
   );
   ipcMain.handle("builder/clean-build-folder", (event, data) =>
