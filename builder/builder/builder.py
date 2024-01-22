@@ -206,6 +206,7 @@ class Model:
         if len(module_output_namespaces) == 0:
             # Model has no orphan outputs, so will form a Terminal module
             # This will most likely need marking in the config somewhere.
+            # TODO
             ...
         if len(module_output_namespaces) == 1:
             c["output_namespace"] = module_output_namespaces[0]
@@ -256,6 +257,9 @@ class Model:
                 ),
                 "config": cnode,
             }
+            # Delete option fields (e.g. parameter_map) if empty
+            if not c[node.rulename]["parameter_map"]:
+                del c[node.rulename]["parameter_map"]
         return c
 
     def MapParameters_NamesToRuleNames(
