@@ -286,6 +286,20 @@ export const getNodeById = (id: string, nodes: Node[]): Node | null => {
   return null;
 };
 
+export const getNodeName = (node: Node): string => {
+  return node.data.config.name;
+}
+
+export const getNodeByName = (name: string, nodes: Node[]): Node | null => {
+  for (const node of nodes) {
+    console.log("Checking node: ", node.data.config.name, " for ", name);
+    if (node.data.config.name === name) {
+      return node;
+    }
+  }
+  return null;
+};
+
 export const setNodeName = (nodes: Node[], id: string, name: string): Node[] =>
   nodes.map((node) => {
     if (node.id === id) {

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Types } from "react-easy-edit";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { getNodeByName } from "./Flow";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -40,13 +41,86 @@ interface HighlightedJSONProps {
   json: string;
 }
 
-const lookupKey = (jsonObj, keylist: string[], key: string) => {
-  for (let i = 0; i < keylist.length; i++) {
-    if (jsonObj[keylist[i]] === undefined) return undefined;
-    jsonObj = jsonObj[keylist[i]];
+const lookupKey = (json, keylist: string[], key: string) => {
+  // If key is the empty string, return the last key in the keylist
+  if (key === "") {
+    key = keylist[keylist.length - 1];
+    keylist = keylist.slice(0, keylist.length - 1);
   }
-  if (jsonObj[key] === undefined) return undefined;
-  return jsonObj[key];
+  for (let i = 0; i < keylist.length; i++) {
+    if (json[keylist[i]] === undefined) return undefined;
+    json = json[keylist[i]];
+  }
+  if (json[key] === undefined) return undefined;
+  return json[key];
+}
+
+const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string) => {
+  // TODO: This is a placeholder function that should look up a key value in ANY
+  // module, not just the one currently being rendered. At present the function
+  // returns the same value as lookupKey.
+  
+  // If key is the empty string, return the last key in the keylist
+  if (key === "") {
+    key = keylist[keylist.length - 1];
+    keylist = keylist.slice(0, keylist.length - 1);
+  }
+  
+  // First, determine which module to look up the key in
+  const nodes = useAppSelector((state) => state.builder.nodes);
+  const node = getNodeByName(node_name, nodes);
+  
+  // Obtain the module's config
+  const config = node.data.config.config;
+
+  // Return the value
+  console.log("Lookup key global: ", config, keylist, key);
+  return lookupKey(config, keylist, key);
+}
+
+export const getParameterPairs = (json) => {
+  // Recursively identify all parameter_map dictionaries, relative to the root
+  const parameter_maps = [];
+  const findParameterMaps = (jsonObj, keylist: string[]) => {
+    for (const key in jsonObj) {
+      if (key === "parameter_map") {
+        parameter_maps.push([...keylist, key]);
+      } else if (typeof jsonObj[key] === "object") {
+        findParameterMaps(jsonObj[key], [...keylist, key]);
+      }
+    }
+  };
+  findParameterMaps(json, []);
+
+  // Expand parameter maps into a list of parameter pairs
+  const parameter_pairs = [];
+  parameter_maps.forEach((param_map) => {
+    const param_map_obj = lookupKey(json, param_map, "");
+    if (param_map_obj === undefined || param_map_obj === null) return;
+    param_map_obj.forEach((pair) => {
+      parameter_pairs.push({
+        from: [...pair["from"]],
+        to: [...pair["to"]],
+        root: param_map.slice(0, param_map.length - 1),
+      });
+    });
+  });
+  console.log("Parameter pairs: ", parameter_pairs);
+  return parameter_pairs;
+}
+
+const ParameterLink = (connectParameter) => {
+  return (
+    <span
+      style={{
+        cursor: "pointer",
+        fontSize: "0.8em",
+      }}
+      onClick={() => connectParameter()}
+    >
+      {' '}🔗
+    </span>
+  );
 }
 
 const HighlightedJSON = (props: HighlightedJSONProps) => {
@@ -65,7 +139,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
   )
     return <div className="json"></div>;
   const json = JSON.parse(json_str);
-  
+  const parameter_pairs = getParameterPairs(json);
+
   // Recursive function to render the JSON tree
   const HighlightJSON = ({ keylist }: IHighlightJSONProps) => {
     // Isolate current branch in the json tree (indexed by keylist)
@@ -93,7 +168,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       const isHiddenValue =
         !display_module_settings && (protectedNames.includes(key) || key.startsWith(":"));
       if (isHiddenValue) {
-        return <></>;
+        return <div key={key}></div>;
       }
 
       // Check whether parameter has a corresponding settings dictionary
@@ -110,6 +185,31 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
               value: option,
             });
           }
+        }
+      }
+
+      // TODO: Check whether setting is a connectable parameter
+      const canConnectParameter = true;
+
+      // Check whether parameter is connected to another parameter
+      let isParameterConnected = false;
+      let parameterValue = "(link)";
+      for (const pair of parameter_pairs) {
+        let pair_to = [];
+        pair_to = [...pair["root"], "config", ...pair["to"]];
+        if (pair_to.join("/") === [...keylist, key].join("/")) {
+          isParameterConnected = true;
+          let pair_from = pair["from"];
+          if (pair_from[0] === "config") {
+            // Parameter is connected to a parameter in the same module
+            parameterValue = lookupKey(json, pair_from, "");
+          } else {
+            // Parameter is connected to a parameter in a different module
+            const pair_node = pair_from[0];
+            pair_from = pair_from.slice(1, pair_from.length);
+            parameterValue = lookupKeyGlobal(json, pair_node, pair_from, "");
+          }
+          break;
         }
       }
 
@@ -138,13 +238,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       };
 
       return (
-        <div key={key} className="line">
+        <div style={{cursor: "default"}} key={key} className="line">
           <span className="key">
-            <button
-              style={{borderRadius: "50%", borderStyle: "solid", width: "15px", height: "15px"}}
-              onClick={() => connectParameter()}
-            />
-            {'  '}{key}:
+            {key}:
           </span>
           {isProtectedValue ? (
             <span
@@ -152,62 +248,88 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
               style={{
                 display: "inline-block",
                 height: "25px",
-                minWidth: "150px",
               }}
             >
               {value}
             </span>
-          ) : isSimpleValue ? (
-            <span
-              className={valueType}
-              style={{
-                display: "inline-block",
-                height: "25px",
-                minWidth: "150px",
-              }}
-            >
-              {valueType === "boolean" ? (
-                <EasyEdit
-                  type={Types.SELECT}
-                  onHoverCssClass="easyedit-hover"
-                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-                  value={value}
-                  options={[
-                    { label: "true", value: true },
-                    { label: "false", value: false },
-                  ]}
-                  onSave={(value) => {
-                    setValue(value);
-                  }}
-                  saveOnBlur={true}
-                />
-              ) : (valueType === "select") ? (
-                <EasyEdit
-                  type={Types.SELECT}
-                  onHoverCssClass="easyedit-hover"
-                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-                  value={value}
-                  options={valueOptions}
-                  onSave={(value) => {
-                    setValue(value);
-                  }}
-                  saveOnBlur={true}
-                />
-              ) : (
+          ) : isParameterConnected ? (
+            <span>
+              <span
+                className="linked"
+                style={{
+                  display: "inline-block",
+                  height: "25px",
+                }}
+              >
                 <EasyEdit
                   type={Types.TEXT}
+                  style={{ cursor: "text" }}
                   onHoverCssClass="easyedit-hover"
-                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-                  value={value}
-                  onSave={(value) => {
-                    setValue(value);
-                  }}
-                  saveOnBlur={true}
+                  value={parameterValue}
+                  onSave={(value) => {return}}
+                  allowEdit={false}
                 />
-              )}
+              </span>
+              <ParameterLink connectParameter />
+            </span>
+          ) : isSimpleValue ? (
+            <span>
+              <span
+                className={valueType}
+                style={{
+                  display: "inline-block",
+                  height: "25px",
+                }}
+              >
+                {valueType === "boolean" ? (
+                  <EasyEdit
+                    type={Types.SELECT}
+                    style={{ cursor: "text" }}
+                    onHoverCssClass="easyedit-hover"
+                    saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
+                    cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                    value={value ? "true" : "false"}
+                    options={[
+                      { label: "true", value: true },
+                      { label: "false", value: false },
+                    ]}
+                    onSave={(value) => {
+                      setValue(value === "true");
+                    }}
+                    saveOnBlur={true}
+                  />
+                ) : (valueType === "select") ? (
+                  <EasyEdit
+                    type={Types.SELECT}
+                    style={{ cursor: "text" }}
+                    onHoverCssClass="easyedit-hover"
+                    saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
+                    cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                    value={value}
+                    options={valueOptions}
+                    onSave={(value) => {
+                      setValue(value);
+                    }}
+                    saveOnBlur={true}
+                  />
+                ) : (
+                  <EasyEdit
+                    type={Types.TEXT}
+                    style={{ cursor: "text" }}
+                    onHoverCssClass="easyedit-hover"
+                    saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
+                    cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                    value={value}
+                    onSave={(value) => {
+                      setValue(value);
+                    }}
+                    saveOnBlur={true}
+                  />
+                )}
+              </span>
+              { canConnectParameter ? (
+                <ParameterLink connectParameter />
+              ) : null }
             </span>
           ) : (
             <HighlightJSON keylist={[...keylist, key]} />
