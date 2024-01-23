@@ -1,7 +1,7 @@
 import React from "react";
 import BuilderEngine from "../BuilderEngine";
 
-import { Node } from "reactflow";
+import { Node } from "./Flow";
 import { getNodeById } from "./Flow";
 import { getNodeName } from "./Flow";
 import { useAppSelector } from "redux/store/hooks";

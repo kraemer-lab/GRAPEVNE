@@ -1,6 +1,8 @@
 import { keys } from "lodash";
 
-import { Node } from "reactflow";
+import { ModuleType } from "./Module";
+import { Node as FlowNode } from "reactflow";
+import { Node } from "./Flow";
 import { Edge } from "reactflow";
 
 import * as globals from "redux/globals";

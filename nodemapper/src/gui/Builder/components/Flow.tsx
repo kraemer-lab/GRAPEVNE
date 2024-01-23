@@ -15,8 +15,10 @@ import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 
+import { Node } from "NodeMap/scene/Flow";  // Custom Node definition
+import { NodeData } from "NodeMap/scene/Flow";  // Custom NodeData definition
+
 import ReactFlow from "reactflow";
-import { Node } from "reactflow";
 import { Edge } from "reactflow";
 import { Panel } from "reactflow";
 import { Handle } from "reactflow";
@@ -87,26 +89,6 @@ const proOptions = {
   hideAttribution: true,
 };
 
-export type ModuleData = {
-  // Place graphical only settings here
-  color: string;
-
-  // Keep GRAPEVNE module configuration isolated from any graphical settings
-  config: {
-    name: string;
-    type: string;
-    config: {
-      snakefile: string;
-      docstring?: string | null;
-      config: {
-        input_namespace: string | Record<string, string> | null;
-        output_namespace: string | null;
-        params?: Record<string, unknown> | null;
-      };
-    };
-  };
-};
-
 export const wranglename = (name: string) => {
   return name
     .replace(/ /g, "_")
@@ -115,7 +97,7 @@ export const wranglename = (name: string) => {
     .toLowerCase();
 };
 
-const ModuleNode = (props: NodeProps<ModuleData>) => {
+const ModuleNode = (props: NodeProps<NodeData>) => {
   // Extract input_namespace and wrap as list as necessary
   const input_namespace =
     props.data?.config?.config?.config.input_namespace ?? null;
@@ -526,4 +508,5 @@ const Flow = () => {
   );
 };
 
+export { Node } from "NodeMap/scene/Flow";
 export default Flow;
