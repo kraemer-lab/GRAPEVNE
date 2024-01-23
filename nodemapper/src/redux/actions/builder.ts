@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
-import { Node } from "reactflow";
+import { Node } from "gui/Builder/components/Flow";
 import { Edge } from "reactflow";
 import { Connection } from "reactflow";
 

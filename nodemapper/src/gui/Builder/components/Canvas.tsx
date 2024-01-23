@@ -7,7 +7,7 @@ import ResizeHandle from "./ResizeHandle";
 import TerminalController from "Terminal/TerminalController";
 
 import Flow from "./Flow";
-import { Node } from "reactflow";
+import { Node } from "./Flow";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 import { builderAddNode } from "redux/actions";

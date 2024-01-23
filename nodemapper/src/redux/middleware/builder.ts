@@ -13,7 +13,7 @@ import { builderUpdateSettings } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 
-import { Node } from "reactflow";
+import { Node } from "NodeMap/scene/Flow";
 import { Edge } from "reactflow";
 import { getNodeById } from "gui/Builder/components/Flow";
 import { setNodeName } from "gui/Builder/components/Flow";
