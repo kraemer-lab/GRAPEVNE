@@ -403,11 +403,19 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     console.log("target_file: ", target_file);
     expect(fs.existsSync(target_file)).toBeFalsy();
 
+    // Build docker image
+    console.log("Build docker image");
+    let { stdout, stderr } = await execPromise(
+      path.join(buildfolder, "build_container.sh")
+    );
+    if (stdout) console.log(stdout);
+    if (stderr) console.log(stderr);
+
     // Launch docker and wait for process to finish
     console.log("Launch docker and wait for process to finish");
-    const { stdout, stderr } = await execPromise(
-      path.join(buildfolder, "run_docker.sh")
-    );
+    ({ stdout, stderr } = await execPromise(
+      path.join(buildfolder, "launch_container.sh")
+    ));
     if (stdout) console.log(stdout);
     if (stderr) console.log(stderr);
     console.log("Check that target file has been created");
