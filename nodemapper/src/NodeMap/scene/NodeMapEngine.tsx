@@ -271,7 +271,9 @@ export default class NodeMapEngine {
       map[0] = this.getNodeInputNodes(node, nodes, edges);
       const in_ports_count = this.getNodeInputPortCount(node);
       if (in_ports_count > 0) {
-        if (typeof node.data.config.config.config.input_namespace === "string") {
+        if (
+          typeof node.data.config.config.config.input_namespace === "string"
+        ) {
           // If the input namespace is a string, then return a string instead of a list
           map[0] = map[0][Object.keys(map[0])[0]];
         }
