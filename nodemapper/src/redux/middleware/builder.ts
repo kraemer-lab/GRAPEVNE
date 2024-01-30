@@ -45,6 +45,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
             getState().builder.environment_variables,
+            false, // package_modules (workflow only)
             getState().builder.nodes,
             getState().builder.edges
           );
@@ -59,6 +60,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.snakemake_backend,
             getState().builder.conda_backend,
             getState().builder.environment_variables,
+            getState().builder.package_modules_in_workflow,
             getState().builder.nodes,
             getState().builder.edges
           );
@@ -184,6 +186,7 @@ const BuildAs = async (
   snakemake_backend: string,
   conda_backend: string,
   environment_variables: string,
+  package_modules: boolean,
   nodes: Node[],
   edges: Edge[]
 ) => {
@@ -199,6 +202,7 @@ const BuildAs = async (
       backend: snakemake_backend,
       conda_backend: conda_backend,
       environment_variables: environment_variables,
+      package_modules: package_modules,
     },
   };
   const callback = (result) => {
@@ -507,6 +511,7 @@ const WriteStoreConfig = async (state) => {
     environment_variables: state.environment_variables,
     display_module_settings: state.display_module_settings,
     auto_validate_connections: state.auto_validate_connections,
+    package_modules_in_workflow: state.package_modules_in_workflow,
   });
 };
 

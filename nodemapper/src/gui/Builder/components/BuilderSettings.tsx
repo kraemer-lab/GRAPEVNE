@@ -10,6 +10,7 @@ import { builderSetEnvironmentVars } from "redux/actions";
 import { builderSelectSnakemakeBackend } from "redux/actions";
 import { builderSetDisplayModuleSettings } from "redux/actions";
 import { builderSetAutoValidateConnections } from "redux/actions";
+import { builderSetPackageModulesInWorkflow } from "redux/actions";
 
 const default_input_size = 35;
 const panel_background_color = "#2e3746";
@@ -43,6 +44,9 @@ const BuilderSettings = () => {
   const auto_validate_connections = useAppSelector(
     (state) => state.builder.auto_validate_connections
   );
+  const package_modules_in_workflow = useAppSelector(
+    (state) => state.builder.package_modules_in_workflow
+  );
 
   const SetSnakemakeArgs = (args: string) =>
     dispatch(builderSetSnakemakeArgs(args));
@@ -58,6 +62,9 @@ const BuilderSettings = () => {
 
   const SetAutoValidateConnections = (value: boolean) =>
     dispatch(builderSetAutoValidateConnections(value));
+
+  const SetPackageModulesInWorkflow = (value: boolean) =>
+    dispatch(builderSetPackageModulesInWorkflow(value));
 
   return (
     <>
@@ -173,6 +180,20 @@ const BuilderSettings = () => {
                 <label htmlFor="auto_validate_connections">
                   {" "}
                   Auto-validate connections
+                </label>
+              </p>
+              <p>
+                <input
+                  type="checkbox"
+                  id="package_modules_in_workflow"
+                  checked={package_modules_in_workflow}
+                  onChange={(e) =>
+                    SetPackageModulesInWorkflow(e.target.checked)
+                  }
+                />
+                <label htmlFor="package_modules_in_workflow">
+                  {" "}
+                  Package all modules in workflow
                 </label>
               </p>
             </div>

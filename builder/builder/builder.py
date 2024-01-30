@@ -241,16 +241,90 @@ class Model:
             }
         return c
 
+    def PackageModule_Local(self, build_path: str, node: Node) -> None:
+        # Identify local folder structure
+        if not isinstance(node.snakefile, str):
+            raise ValueError("Local module configuration expected")
+        m_path = os.path.dirname(os.path.normpath(node.snakefile))
+        try:
+            m_pathlist = m_path.split(os.path.sep)
+            m_workflow_foldername = m_pathlist[-1]
+            m_modulename_foldername = m_pathlist[-2]
+            m_type_foldername = m_pathlist[-3]
+            m_project_foldername = m_pathlist[-4]
+            m_workflows_foldername = m_pathlist[-5]
+            if m_workflows_foldername != "workflows":
+                raise IndexError
+            m_repo_name = m_pathlist[-6]
+        except IndexError:
+            raise ValueError(
+                "Module Snakefile is not in the expected folder structure"
+            )
+        # Recreate folder structure in the build directory
+        dest = os.path.join(
+            build_path,
+            "workflow",  # base 'workflow' folder
+            "modules",  # downloaded modules are stored in a 'modules' sub-folder
+            m_repo_name,  # imported module root folder, equivalent to repo name
+            "workflows",
+            m_project_foldername,
+            m_type_foldername,
+            m_modulename_foldername,
+        )
+        src = os.path.normpath(os.path.join(m_path, os.pardir))
+        pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
+        # Copy module to the build directory
+        ignore_in_root = ["results", "logs", "benchmarks"]
+        ignore_anywhere = [".snakemake", "__pycache__"]
+        folders_in_root = os.listdir(src)
+        keep_folders = set(folders_in_root) - set(ignore_in_root)
+        for folder in keep_folders:
+            shutil.copytree(
+                os.path.join(src, folder),
+                os.path.join(dest, folder),
+                dirs_exist_ok=True,
+                ignore=shutil.ignore_patterns(*ignore_anywhere),
+            )
+        # Redirect snakefile location in config
+        node.snakefile = os.path.join(
+            "modules",
+            m_repo_name,
+            "workflows",
+            m_project_foldername,
+            m_type_foldername,
+            m_modulename_foldername,
+            m_workflow_foldername,
+            "Snakefile",
+        )
+
+    def PackageModule_Remote(self, build_path: str, node: Node) -> None:
+        raise ValueError("Packaging remote files not yet supported")
+
+    def PackageModules(self, build_path: str) -> None:
+        # Copy modules to the workflow directory
+        for node in self.nodes:
+            if isinstance(node.snakefile, str):
+                # Local file
+                self.PackageModule_Local(build_path, node)
+            else:
+                # Remote file
+                self.PackageModule_Remote(build_path, node)
+
     def SaveWorkflow(
         self,
         build_path: str = "build",
         clean_build: bool = True,
+        package_modules: bool = False,
     ) -> str:
         """Saves the workflow to the build directory"""
         if clean_build:  # Delete build directory before rebuilding
             shutil.rmtree(build_path, ignore_errors=True)
         pathlib.Path(f"{build_path}/config").mkdir(parents=True, exist_ok=True)
         pathlib.Path(f"{build_path}/workflow").mkdir(parents=True, exist_ok=True)
+        # Copy modules to the workflow directory and update config/snakefile
+        if package_modules:
+            self.PackageModules(build_path)
+        # Write config and snakefile
         with open(f"{build_path}/workflow/Snakefile", "w") as file:
             file.write(self.BuildSnakefile())
         with open(f"{build_path}/config/config.yaml", "w") as file:
@@ -668,6 +742,7 @@ def BuildFromJSON(
     clean_build: bool = True,
     partial_build: bool = False,  # Don't throw an error if node is missing
     create_zip: bool = True,
+    package_modules: bool = False,
 ) -> Tuple[Union[Tuple[str, str], bytes], Model, str]:
     """Builds a workflow from a JSON specification
 
@@ -678,8 +753,9 @@ def BuildFromJSON(
     logging.debug("BuildFromJSON")
     logging.debug(
         f"{config=}, {singlefile=}, {expand=}, {build_path=}, "
-        f"{clean_build=}, {partial_build=}"
+        f"{clean_build=}, {partial_build=}, {create_zip=}, {package_modules=}"
     )
+    package_modules &= create_zip  # Package modules requires a zip file
     m = Model()
     m.SetPartialBuild(partial_build)
     # Add modules first to ensure all namespaces are defined before connectors
@@ -708,7 +784,7 @@ def BuildFromJSON(
         return ((m.BuildSnakefileConfig(), m.BuildSnakefile())), m, ""
     else:
         # Create (zipped) workflow and return as binary object
-        build_path = m.SaveWorkflow(build_path, clean_build)
+        build_path = m.SaveWorkflow(build_path, clean_build, package_modules)
         zipfilename = tempfile.gettempdir() + "/build"
         if create_zip:
             logging.debug("Creating zip file...")
