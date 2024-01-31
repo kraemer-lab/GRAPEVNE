@@ -4,9 +4,9 @@ import logging
 import os
 import sys
 import tempfile
+from typing import List
 from zipfile import ZipFile
 from zipfile import ZipInfo
-from typing import List
 
 import filesystem
 import snakemake
@@ -83,6 +83,7 @@ def BuildAndRun(
     )
     snakemake_list: List[str] = list(filter(None, response["stdout"].split("\n")))
     logging.debug("snakemake --list output: %s", snakemake_list)
+    logging.debug(f"target_modules: {target_modules}")
     target_rules = []
     for target in target_modules:
         if not target:

@@ -12,6 +12,7 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
+import cachetools
 import requests
 import yaml
 
@@ -242,6 +243,10 @@ class Model:
         return c
 
     def PackageModule_Local(self, build_path: str, node: Node) -> None:
+        """Packages a local module into the build directory
+
+        Assumes node.snakemake is a string representing the path to the module
+        """
         # Identify local folder structure
         if not isinstance(node.snakefile, str):
             raise ValueError("Local module configuration expected")
@@ -257,9 +262,7 @@ class Model:
                 raise IndexError
             m_repo_name = m_pathlist[-6]
         except IndexError:
-            raise ValueError(
-                "Module Snakefile is not in the expected folder structure"
-            )
+            raise ValueError("Module Snakefile is not in the expected folder structure")
         # Recreate folder structure in the build directory
         dest = os.path.join(
             build_path,
@@ -298,7 +301,97 @@ class Model:
         )
 
     def PackageModule_Remote(self, build_path: str, node: Node) -> None:
-        raise ValueError("Packaging remote files not yet supported")
+        """Packages a remote module into the build directory
+
+        Assumes node.snakemake is a dict with the following structure:
+        {
+            "function": "github",
+            "args": ["repo/name"],
+            "kwargs": {
+                "branch": "main",  # key can also be "tag" or "commit"
+                "path": "workflow/Snakefile"
+            }
+        }
+        """
+        # Validate node.snakemake
+        if not isinstance(node.snakefile, dict):
+            raise ValueError(
+                "Remote module configuration expected, got: " + str(node.snakefile)
+            )
+        if node.snakefile["function"] not in ["github"]:
+            raise ValueError(
+                "Only github function is currently supported, got: "
+                + node.snakefile["function"]
+            )
+        if not any(
+            [k in node.snakefile["kwargs"] for k in ["branch", "tag", "commit"]]
+        ):
+            raise ValueError(
+                "Remote module requires a branch, tag or commit to be specified, kwargs: "
+                + str(node.snakefile["kwargs"])
+            )
+        if "path" not in node.snakefile["kwargs"]:
+            raise ValueError(
+                "Remote module requires a path to be specified, kwargs: "
+                + str(node.snakefile["kwargs"])
+            )
+        # Identify remote folder structure
+        try:
+            m_path = node.snakefile["kwargs"]["path"]
+            m_pathlist = m_path.split(os.path.sep)[:-1]
+            m_workflow_foldername = m_pathlist[-1]
+            m_modulename_foldername = m_pathlist[-2]
+            m_type_foldername = m_pathlist[-3]
+            m_project_foldername = m_pathlist[-4]
+            m_workflows_foldername = m_pathlist[-5]
+            if m_workflows_foldername != "workflows":
+                raise IndexError
+            m_repo_name = os.path.join(*node.snakefile["args"][0].split("/"))
+        except IndexError:
+            raise ValueError("Module Snakefile is not in the expected folder structure")
+        # Recreate folder structure in the build directory
+        dest = os.path.join(
+            build_path,
+            "workflow",  # base 'workflow' folder
+            "modules",  # downloaded modules are stored in a 'modules' sub-folder
+            m_repo_name,
+        )
+        pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
+        branch = node.snakefile["kwargs"].get("branch", None)
+        if not branch:
+            branch = node.snakefile["kwargs"].get("tag", None)
+        if not branch:
+            branch = node.snakefile["kwargs"].get("commit", None)
+        if not branch:
+            raise ValueError(
+                "Remote module requires a branch, tag or commit to be specified, kwargs: "
+                + str(node.snakefile["kwargs"])
+            )
+        # Copy github directory structure to the build directory
+        blobs = self.GetRemoteModule_BlobTree(node)
+        for blob in blobs:
+            url = f"https://raw.githubusercontent.com/{m_repo_name}/{branch}/{blob['path']}"
+            response = requests.get(url)
+            if response.status_code != 200:
+                raise ValueError("Invalid response from github API: " + str(response))
+            response_text = response.text
+            # Create directories
+            blob_path = os.path.join(dest, blob["path"])
+            pathlib.Path(os.path.dirname(blob_path)).mkdir(parents=True, exist_ok=True)
+            # Write file
+            with open(blob_path, "w") as file:
+                file.write(response_text)
+        # Redirect snakefile location in config
+        node.snakefile = os.path.join(
+            "modules",
+            m_repo_name,
+            "workflows",
+            m_project_foldername,
+            m_type_foldername,
+            m_modulename_foldername,
+            m_workflow_foldername,
+            "Snakefile",
+        )
 
     def PackageModules(self, build_path: str) -> None:
         # Copy modules to the workflow directory
@@ -309,6 +402,42 @@ class Model:
             else:
                 # Remote file
                 self.PackageModule_Remote(build_path, node)
+
+    def GetRemoteModule_BlobTree(self, node: Node) -> List[str]:
+        """Returns the folder structure for a remote module"""
+        if not isinstance(node.snakefile, dict):
+            raise ValueError("Remote module configuration expected")
+        owner, repo = node.snakefile["args"][0].split("/")
+        module_folder = "/".join(node.snakefile["kwargs"]["path"].split("/")[:-2]) + "/"
+        print(f"{owner=}, {repo=}, {module_folder=}")
+        # branch identifier can actually be branch, tag or commit
+        branch = node.snakefile["kwargs"].get("branch", None)
+        if not branch:
+            branch = node.snakefile["kwargs"].get("tag", None)
+        if not branch:
+            branch = node.snakefile["kwargs"].get("commit", None)
+        if not branch:
+            raise ValueError(
+                "Remote module requires a branch, tag or commit to be specified, kwargs: "
+                + str(node.snakefile["kwargs"])
+            )
+        # Form github API query url - note that this queries the full repo tree
+        tree = self.GetRemoteModule_Tree(owner, repo, branch)
+        return [d for d in tree if module_folder in d["path"] and d["type"] == "blob"]
+
+    @cachetools.cached(cache=cachetools.TTLCache(maxsize=64, ttl=600))  # 10 mins cache
+    def GetRemoteModule_Tree(self, owner, repo, branch) -> List[dict]:
+        """Returns the folder structure for a remote repo
+
+        This method is time-to-live cached to avoid repeated calls to the github API
+        for modules within the same repository.
+        """
+        url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise ValueError("Invalid response from github API: " + str(response))
+        response_json = response.json()
+        return response_json["tree"]
 
     def SaveWorkflow(
         self,

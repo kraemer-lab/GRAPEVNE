@@ -238,6 +238,25 @@ const EasyEdit_SetFieldByValue = async (
     .sendKeys(s);
 };
 
+const SetCheckBox = async (
+  checkbox: webdriver.WebElement,
+  checked: boolean
+) => {
+  // Set checkbox to checked or unchecked
+  const is_checked = await checkbox.isSelected();
+  if (is_checked != checked) await checkbox.click();
+};
+
+const SetCheckBoxByID = async (
+  driver: webdriver.ThenableWebDriver,
+  id: string,
+  checked: boolean
+) => {
+  // Set checkbox to checked or unchecked
+  const checkbox = await driver.findElement(By.id(id));
+  await SetCheckBox(checkbox, checked);
+};
+
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
   modulename: string,
@@ -432,6 +451,7 @@ export {
   RedirectConsoleLog,
   FlushConsoleLog,
   WaitForReturnCode,
+  SetCheckBoxByID,
   EasyEdit_SetFieldByKey,
   EasyEdit_SetFieldByValue,
   BuildAndRun_SingleModuleWorkflow,

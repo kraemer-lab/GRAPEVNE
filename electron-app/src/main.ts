@@ -17,13 +17,13 @@ const createWindow = () => {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-
   if (app.isPackaged) {
     win.loadFile("index.html"); //prod
   } else {
     win.loadURL("http://localhost:5001"); //dev
   }
 
+  // Command line arguments
   const downloadpath = app.commandLine.getSwitchValue("downloadpath");
   if (downloadpath) {
     const ses = win.webContents.session;

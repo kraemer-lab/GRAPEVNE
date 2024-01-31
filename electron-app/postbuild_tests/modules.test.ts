@@ -9,11 +9,12 @@ import * as webdriver from "selenium-webdriver";
 
 import { runif } from "./utils";
 import { is_windows } from "./utils";
-import { is_installed } from "./utils";
 import { dragAndDrop } from "./utils";
+import { is_installed } from "./utils";
 import { FlushConsoleLog } from "./utils";
-import { RedirectConsoleLog } from "./utils";
+import { SetCheckBoxByID } from "./utils";
 import { WaitForReturnCode } from "./utils";
+import { RedirectConsoleLog } from "./utils";
 import { EasyEdit_SetFieldByKey } from "./utils";
 import { BuildAndRun_SingleModuleWorkflow } from "./utils";
 import { BuildAndRun_MultiModuleWorkflow } from "./utils";
@@ -108,6 +109,11 @@ describe("modules", () => {
     await driver
       .findElement(By.id("buttonBuilderSettingsRepositoryListAddItem"))
       .click();
+
+    // Ensure that interface options are set as expected
+    await SetCheckBoxByID(driver, "display_module_settings", false);
+    await SetCheckBoxByID(driver, "auto_validate_connections", false);
+    await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
 
     // Close settings pane
     await driver.findElement(By.id("btnSidenavBuilder")).click();
