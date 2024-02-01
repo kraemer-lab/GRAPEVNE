@@ -212,7 +212,19 @@ describe("modules", () => {
         );
       });
       // Once all expected nodes are found, check the total count
-      expect(
+      console.log("Checking connections... length = ");
+      console.log(
+        (
+          await driver.findElements(
+            By.xpath(
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`
+            )
+          )
+        ).length
+      );
+      console.log(conns);
+      console.log(conns.length);
+      await expect(
         (
           await driver.findElements(
             By.xpath(
