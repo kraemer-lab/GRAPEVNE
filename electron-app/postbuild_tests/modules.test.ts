@@ -151,8 +151,8 @@ describe("modules", () => {
       await driver
         .actions()
         .dragAndDrop(
-          driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
-          driver.findElement(
+          await driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
+          await driver.findElement(
             By.xpath('//div[@data-id="n1-single_modules_copy_run$-target"]')
           )
         )
@@ -160,8 +160,8 @@ describe("modules", () => {
       await driver
         .actions()
         .dragAndDrop(
-          driver.findElement(By.xpath('//div[@data-id="n1-out-source"]')),
-          driver.findElement(
+          await driver.findElement(By.xpath('//div[@data-id="n1-out-source"]')),
+          await driver.findElement(
             By.xpath('//div[@data-id="n2-single_modules_copy_run$-target"]')
           )
         )
