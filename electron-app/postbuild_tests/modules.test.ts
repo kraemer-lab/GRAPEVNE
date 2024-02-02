@@ -141,10 +141,11 @@ describe("modules", () => {
         By.id("modulelist-_multi_modules__copy_run3")
       );
       const canvas = await driver.findElement(By.className("react-flow__pane"));
-      await ["n0", "n1", "n2"].forEach(async () => {
+      for (const n of ["n0", "n1", "n2"]) {
+        console.log(`Dragging module to canvas: ${n}`);
         await driver.actions().dragAndDrop(module, canvas).perform();
         await driver.sleep(100);
-      });
+      }
       await driver.findElement(By.id("buttonReactflowArrange")).click();
 
       // Connect the modules together
@@ -172,7 +173,7 @@ describe("modules", () => {
         ["n0", "n1"],
         ["n1", "n2"],
       ];
-      await conns.forEach(async ([nodefrom, nodeto]) => {
+      for await (const [nodefrom, nodeto] of conns) {
         await driver.wait(
           until.elementLocated(
             By.xpath(
@@ -180,7 +181,7 @@ describe("modules", () => {
             )
           )
         );
-      });
+      }
       // Once all expected nodes are found, check the total count
       expect(
         (
@@ -202,7 +203,7 @@ describe("modules", () => {
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      await conns.forEach(async ([nodefrom, nodeto]) => {
+      for await (const [nodefrom, nodeto] of conns) {
         await driver.wait(
           until.elementLocated(
             By.xpath(
@@ -210,9 +211,9 @@ describe("modules", () => {
             )
           )
         );
-      });
+      }
       // Once all expected nodes are found, check the total count
-      await expect(
+      expect(
         (
           await driver.findElements(
             By.xpath(
@@ -234,7 +235,7 @@ describe("modules", () => {
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      await conns.forEach(async ([nodefrom, nodeto]) => {
+      for await (const [nodefrom, nodeto] of conns) {
         await driver.wait(
           until.elementLocated(
             By.xpath(
@@ -242,9 +243,9 @@ describe("modules", () => {
             )
           )
         );
-      });
+      }
       // Once all expected nodes are found, check the total count
-      await expect(
+      expect(
         (
           await driver.findElements(
             By.xpath(
@@ -268,7 +269,7 @@ describe("modules", () => {
       await driver.findElement(By.xpath(`//div[@data-id="n2"]`)).click();
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      await conns.forEach(async ([nodefrom, nodeto]) => {
+      for await (const [nodefrom, nodeto] of conns) {
         await driver.wait(
           until.elementLocated(
             By.xpath(
@@ -276,9 +277,9 @@ describe("modules", () => {
             )
           )
         );
-      });
+      }
       // Once all expected nodes are found, check the total count
-      await expect(
+      expect(
         (
           await driver.findElements(
             By.xpath(
