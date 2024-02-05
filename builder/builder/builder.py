@@ -44,7 +44,6 @@ class Node:
         input_namespace: Namespace = "",
         output_namespace: str = "",
         docstring: str = "",  # passthrough (unused in builds)
-        parameter_map: List[dict] | None = None,
     ):
         """Initialise a Node object, the parent class for Modules
 
@@ -65,7 +64,6 @@ class Node:
         self.config = {} if not config else config
         self.input_namespace = input_namespace
         self.output_namespace = output_namespace
-        self.parameter_map = parameter_map
 
     def GetOutputNamespace(self) -> str:
         """Returns the output namespace"""
@@ -155,15 +153,11 @@ class Model:
     def BuildSnakefile(
         self,
         configfile: str = "config/config.yaml",
-        add_configutil: bool = True,
     ) -> str:
         """Builds the workflow Snakefile (links modules)"""
         s = ""
         if configfile:
             s = f'configfile: "{configfile}"\n'
-        if add_configutil:
-            s += "import configutil\n"
-            s += "config = configutil.remap_params(config)\n"
         # Build Snakefile
         for node in self.nodes:
             s += "\n"
@@ -252,14 +246,8 @@ class Model:
                 "name": node.name,
                 "type": node.nodetype,
                 "snakefile": node.snakefile,
-                "parameter_map": self.MapParameters_NamesToRuleNames(
-                    node.parameter_map
-                ),
                 "config": cnode,
             }
-            # Delete option fields (e.g. parameter_map) if empty
-            if not c[node.rulename]["parameter_map"]:
-                del c[node.rulename]["parameter_map"]
         return c
 
     def MapParameters_NamesToRuleNames(
@@ -277,7 +265,6 @@ class Model:
         self,
         build_path: str = "build",
         clean_build: bool = True,
-        add_configutil: bool = True,
     ) -> str:
         """Saves the workflow to the build directory"""
         if clean_build:  # Delete build directory before rebuilding
@@ -285,12 +272,9 @@ class Model:
         pathlib.Path(f"{build_path}/config").mkdir(parents=True, exist_ok=True)
         pathlib.Path(f"{build_path}/workflow").mkdir(parents=True, exist_ok=True)
         with open(f"{build_path}/workflow/Snakefile", "w") as file:
-            file.write(self.BuildSnakefile(add_configutil=add_configutil))
+            file.write(self.BuildSnakefile())
         with open(f"{build_path}/config/config.yaml", "w") as file:
             file.write(self.BuildSnakefileConfig())
-        if add_configutil:
-            with open(f"{build_path}/workflow/configutil.py", "w") as file:
-                file.write(self.BuildConfigUtil())
         return build_path
 
     def WrangleName(self, basename: str, subname: str = "") -> str:
@@ -746,7 +730,7 @@ def BuildFromJSON(
             (
                 (
                     m.BuildSnakefileConfig(),
-                    m.BuildSnakefile(add_configutil=False),
+                    m.BuildSnakefile(),
                 )
             ),
             m,
@@ -754,9 +738,7 @@ def BuildFromJSON(
         )
     else:
         # Create (zipped) workflow and return as binary object
-        build_path = m.SaveWorkflow(
-            build_path, clean_build, add_configutil=add_configutil
-        )
+        build_path = m.SaveWorkflow(build_path, clean_build)
         zipfilename = tempfile.gettempdir() + "/build"
         if create_zip:
             logging.debug("Creating zip file...")

@@ -3,6 +3,7 @@ import EasyEdit from "react-easy-edit";
 import BuilderEngine from "../BuilderEngine";
 import ParameterList from "./ParameterList";
 
+import { getNodeById } from "./Flow";
 import { useState } from "react";
 import { Types } from "react-easy-edit";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +13,7 @@ import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { builderUpdateNodeInfoKey } from "redux/actions";
+import { builderUpdateNode } from "redux/actions";
 
 import "./HighlightedJSON.css";
 
@@ -56,10 +58,6 @@ const lookupKey = (json, keylist: string[], key: string) => {
 }
 
 const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string) => {
-  // TODO: This is a placeholder function that should look up a key value in ANY
-  // module, not just the one currently being rendered. At present the function
-  // returns the same value as lookupKey.
-  
   // If key is the empty string, return the last key in the keylist
   if (key === "") {
     key = keylist[keylist.length - 1];
@@ -72,44 +70,43 @@ const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string
   
   // Obtain the module's config
   const config = node.data.config.config;
+  const value = lookupKey(config, keylist, key);
+  const metadata = lookupKey(config, keylist, ':' + key);
 
-  // Return the value
-  console.log("Lookup key global: ", config, keylist, key);
-  return lookupKey(config, keylist, key);
+  // If the key is linked to another parameter, follow the link
+  if (metadata !== undefined && metadata["link"] !== undefined) {
+    let link_from = metadata["link"];
+    const link_node = link_from[0];
+    link_from = link_from.slice(1, link_from.length);
+    return lookupKeyGlobal(json, link_node, link_from, "");
+  } else {
+    // Otherwise, return the simple value
+    return value;
+  }
 }
 
-export const getParameterPairs = (json) => {
-  // Recursively identify all parameter_map dictionaries, relative to the root
-  const parameter_maps = [];
-  const findParameterMaps = (jsonObj, keylist: string[]) => {
-    for (const key in jsonObj) {
-      if (key === "parameter_map") {
-        parameter_maps.push([...keylist, key]);
-      } else if (typeof jsonObj[key] === "object") {
-        findParameterMaps(jsonObj[key], [...keylist, key]);
+export const getAllLinks = (json) => {
+  const links = [];
+  const traverse = (json, keylist) => {
+    for (const key in json) {
+      if (typeof json[key] === "object") {
+        traverse(json[key], [...keylist, key]);
+      } else {
+        const metadata = lookupKey(json, keylist, ':' + key);
+        if (metadata !== undefined && metadata["link"] !== undefined) {
+          links.push({
+            from: [...keylist, key],
+            to: metadata["link"],
+          });
+        }
       }
     }
   };
-  findParameterMaps(json, []);
-
-  // Expand parameter maps into a list of parameter pairs
-  const parameter_pairs = [];
-  parameter_maps.forEach((param_map) => {
-    const param_map_obj = lookupKey(json, param_map, "");
-    if (param_map_obj === undefined || param_map_obj === null) return;
-    param_map_obj.forEach((pair) => {
-      parameter_pairs.push({
-        from: [...pair["from"]],
-        to: [...pair["to"]],
-        root: param_map.slice(0, param_map.length - 1),
-      });
-    });
-  });
-  console.log("Parameter pairs: ", parameter_pairs);
-  return parameter_pairs;
+  traverse(json, []);
+  return links;
 }
 
-const ParameterLink = (props: {connectParameter}) => {
+const ConnectParameter = (props: {connectParameter}) => {
   return (
     <span
       style={{
@@ -123,7 +120,22 @@ const ParameterLink = (props: {connectParameter}) => {
   );
 }
 
+const DisconnectParameter = (props: {disconnectParameter}) => {
+  return (
+    <span
+      style={{
+        cursor: "pointer",
+        color: "#8B0000",
+      }}
+      onClick={() => props.disconnectParameter()}
+    >
+      {' '}<FontAwesomeIcon icon={faTimes} />
+    </span>
+  );
+}
+
 const HighlightedJSON = (props: HighlightedJSONProps) => {
+  const nodes = useAppSelector((state) => state.builder.nodes);
   const dispatch = useAppDispatch();
   const display_module_settings = useAppSelector(
     (state) => state.builder.display_module_settings
@@ -139,7 +151,6 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
   )
     return <div className="json"></div>;
   const json = JSON.parse(json_str);
-  const parameter_pairs = getParameterPairs(json);
 
   // Recursive function to render the JSON tree
   const HighlightJSON = ({ keylist }: IHighlightJSONProps) => {
@@ -166,52 +177,40 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         valueType = null;
       }
       const isHiddenValue =
-        !display_module_settings && (protectedNames.includes(key) || key.startsWith(":"));
+        !display_module_settings &&
+        (protectedNames.includes(key) || key.startsWith(":"));
       if (isHiddenValue) {
         return <div key={key}></div>;
       }
 
-      // Check whether parameter has a corresponding settings dictionary
-      const keylist_lookup = [...keylist];
-      keylist_lookup[keylist_lookup.length - 1] = ":params";
-      const settings = lookupKey(json, keylist_lookup, key);
+      // Check whether parameter has a corresponding metadata entry
+      const metadata = lookupKey(json, keylist, ':' + key);
       const valueOptions = [];
-      if (settings !== undefined) {
-        if (settings["type"] === "select") {
+      let isParameterConnected = false;
+      let parameterValue = "(link)";
+      if (metadata !== undefined) {
+        // Determine the type of the parameter
+        if (metadata["type"] === "select") {
           valueType = "select";
-          for (const option of settings["options"]) {
+          for (const option of metadata["options"]) {
             valueOptions.push({
               label: option,
               value: option,
             });
           }
         }
+        // Check whether the parameter is linked to another parameter
+        if (metadata["link"] !== undefined) {
+          let link_from = metadata["link"];
+          const link_node = link_from[0];
+          link_from = link_from.slice(1, link_from.length);
+          parameterValue = lookupKeyGlobal(json, link_node, link_from, "");
+          isParameterConnected = true;
+        }
       }
 
       // TODO: Check whether setting is a connectable parameter
       const canConnectParameter = true;
-
-      // Check whether parameter is connected to another parameter
-      let isParameterConnected = false;
-      let parameterValue = "(link)";
-      for (const pair of parameter_pairs) {
-        let pair_to = [];
-        pair_to = [...pair["root"], "config", ...pair["to"]];
-        if (pair_to.join("/") === [...keylist, key].join("/")) {
-          isParameterConnected = true;
-          let pair_from = pair["from"];
-          if (pair_from[0] === "config") {
-            // Parameter is connected to a parameter in the same module
-            parameterValue = lookupKey(json, pair_from, "");
-          } else {
-            // Parameter is connected to a parameter in a different module
-            const pair_node = pair_from[0];
-            pair_from = pair_from.slice(1, pair_from.length);
-            parameterValue = lookupKeyGlobal(json, pair_node, pair_from, "");
-          }
-          break;
-        }
-      }
 
       // Callback to update field in central state (triggers re-render)
       const setValue = (value) => {
@@ -235,6 +234,25 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
             setMenu(null);
           }
         });
+      };
+
+      // Callback to connect parameters between modules
+      const disconnectParameter = () => {
+        console.log("Disconnect parameter: ", key);
+        const node = getNodeById(props.nodeid, nodes);
+        const newnode = JSON.parse(JSON.stringify(node));
+        const module_settings = newnode.data.config.config;
+        const metadata = lookupKey(module_settings, keylist, ':' + key);
+        delete metadata["link"];
+        if (Object.keys(metadata).length === 0) {
+          const parent = lookupKey(
+            module_settings,
+            keylist.slice(0, keylist.length-1),
+            keylist[keylist.length-1]
+          );
+          delete parent[":" + key];
+        }
+        dispatch(builderUpdateNode(newnode));
       };
 
       return (
@@ -270,7 +288,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   allowEdit={false}
                 />
               </span>
-              <ParameterLink connectParameter={connectParameter} />
+              <DisconnectParameter disconnectParameter={disconnectParameter} />
             </span>
           ) : isSimpleValue ? (
             <span>
@@ -328,7 +346,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 )}
               </span>
               { canConnectParameter ? (
-                <ParameterLink connectParameter={connectParameter} />
+                <ConnectParameter connectParameter={connectParameter} />
               ) : null }
             </span>
           ) : (
