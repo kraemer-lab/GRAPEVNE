@@ -17,7 +17,7 @@ const pyrunner = path.join(
   "app",
   "dist",
   "pyrunner",
-  "pyrunner"
+  "pyrunner",
 );
 
 const condaPath = path.join(
@@ -25,7 +25,7 @@ const condaPath = path.join(
   "app",
   "dist",
   "conda",
-  os.platform() === "win32" ? "condabin" : "bin"
+  os.platform() === "win32" ? "condabin" : "bin",
 );
 
 const pathSeparator = os.platform() === "win32" ? ";" : ":";
@@ -97,7 +97,7 @@ export async function RunWorkflow(
   conda_backend: string,
   envs: Record<string, string>,
   stdout_callback: (cmd: string) => void,
-  stderr_callback: (cmd: string) => void
+  stderr_callback: (cmd: string) => void,
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const querystr = JSON.stringify(query);
@@ -140,7 +140,7 @@ export async function RunWorkflow(
         // shell arguments
         [...shell_args, shell_cmd],
         // environment variables
-        options
+        options,
       );
     } else {
       // Spawn child process directly (i.e. do not use the system shell). Note

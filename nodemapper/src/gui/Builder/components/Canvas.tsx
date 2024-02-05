@@ -58,7 +58,7 @@ const Layer = styled.div`
  */
 const Canvas = () => {
   const configPaneOpen = useAppSelector(
-    (state) => state.builder.config_pane_display
+    (state) => state.builder.config_pane_display,
   );
 
   return (

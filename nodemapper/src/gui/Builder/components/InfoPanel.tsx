@@ -7,7 +7,7 @@ import "react-tabs/style/react-tabs.css";
 
 const InfoPanel = () => {
   const terminal_visible = useAppSelector(
-    (state) => state.builder.terminal_visibile
+    (state) => state.builder.terminal_visibile,
   );
   return (
     <Tabs
