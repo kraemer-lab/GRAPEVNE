@@ -362,9 +362,6 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   //
   // This was a workaround as local modules could not be run through containers until
   // workflow packaging was introduced.
-  console.log("Open the module in the editor and Expand");
-  console.log("modulename: ", modulename);
-  console.log("expand_module: ", expand_module);
   if (expand_module) {
     // Click on the canvas module element. This actually finds both the repository entry
     // and the canvas element, so we click on both as we cannot guarantee ordering.
