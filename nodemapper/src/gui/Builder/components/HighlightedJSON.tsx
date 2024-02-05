@@ -109,14 +109,14 @@ export const getParameterPairs = (json) => {
   return parameter_pairs;
 }
 
-const ParameterLink = (connectParameter) => {
+const ParameterLink = (props: {connectParameter}) => {
   return (
     <span
       style={{
         cursor: "pointer",
         fontSize: "0.8em",
       }}
-      onClick={() => connectParameter()}
+      onClick={() => props.connectParameter()}
     >
       {' '}🔗
     </span>
@@ -270,7 +270,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   allowEdit={false}
                 />
               </span>
-              <ParameterLink connectParameter />
+              <ParameterLink connectParameter={connectParameter} />
             </span>
           ) : isSimpleValue ? (
             <span>
@@ -328,7 +328,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 )}
               </span>
               { canConnectParameter ? (
-                <ParameterLink connectParameter />
+                <ParameterLink connectParameter={connectParameter} />
               ) : null }
             </span>
           ) : (
