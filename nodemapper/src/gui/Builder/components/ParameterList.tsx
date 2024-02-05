@@ -7,7 +7,7 @@ import { getNodeName } from "./Flow";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 import { builderUpdateNode } from "redux/actions";
-import { getParameterPairs } from "./HighlightedJSON";
+import { getAllLinks } from "./HighlightedJSON";
 
 import "./ParameterList.css";
 
@@ -81,8 +81,10 @@ export default function ParameterList({
   }
   
   const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
-  const parameter_pairs = getParameterPairs(json);
-  console.log("Parameter pairs (ParameterList): ", parameter_pairs);
+
+  // Get parameter pairs from node - replace this bit
+  const links = getAllLinks(json);
+  console.debug("All link: ", links);
 
   // Handle parameter selection
   const onParameterSelect = (n: Node, p: string) => {
@@ -105,15 +107,22 @@ export default function ParameterList({
 
     // Add pairing between 'key/keylist' param and selection, into node.id
     const newnode = JSON.parse(JSON.stringify(node));
-    let pmap = newnode.data.config.config["parameter_map"];
-    if (pmap === undefined) {
-      pmap = [];
+    const node_config = newnode.data.config.config;
+    let pmap = node_config;
+    for(let i = 0; i < keylist.length; i++) {
+      if (pmap[keylist[i]] === undefined)
+        throw new Error("ParameterList: Keylist not found in node");
+      pmap = pmap[keylist[i]];
     }
-    pmap.push({
-      from: param_from,
-      to: param_to,
-    });
-    newnode.data.config.config["parameter_map"] = pmap;
+    let pmap_metadata = pmap[':' + keyitem];  // metadata record
+    if (pmap_metadata === undefined) {
+      pmap[':' + keyitem] = {};
+      pmap_metadata = pmap[':' + keyitem];
+    }
+    pmap_metadata["link"] = param_from;
+
+    // Update node with new parameter map
+    newnode.data.config.config = node_config;
     dispatch(builderUpdateNode(newnode));
     onclose();
   }
@@ -175,13 +184,13 @@ export default function ParameterList({
 
               // Signify if parameter is already mapped
               let is_mapped = false;
-              parameter_pairs.forEach((pair) => {
+              links.forEach((pair) => {
                 console.log("Pair: ", pair, ", p: ", p);
                 if (pair["from"][pair["from"].length-1] === p) {
                   is_mapped = true;
                 }
               });
-              console.log("Parameter: ", p, ", is_mapped: ", is_mapped);
+              console.debug("Parameter: ", p, ", is_mapped: ", is_mapped);
               if (is_mapped) {
                 return (
                   <button
