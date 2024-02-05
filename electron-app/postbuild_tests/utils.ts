@@ -260,9 +260,9 @@ const SetCheckBoxByID = async (
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
   modulename: string,
-  outfile: string
+  outfiles: string[]
 ) => {
-  await BuildAndRun_MultiModuleWorkflow(driver, [modulename], [], [outfile]);
+  await BuildAndRun_MultiModuleWorkflow(driver, [modulename], [], outfiles);
 };
 
 const BuildAndRun_MultiModuleWorkflow = async (
@@ -307,7 +307,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
   msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   const target_files = outfiles.map((outfile) => {
-    return path.join((msg.body as Query).path as string, "results", outfile);
+    return path.join((msg.body as Query).path as string, outfile);
   });
   console.log("target_files: ", target_files);
   target_files.forEach((target_file) => {
@@ -336,7 +336,9 @@ const BuildAndRun_MultiModuleWorkflow = async (
 const Build_RunWithDocker_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
   modulename: string,
-  outfile: string
+  target_outfiles: string[],
+  payload_outfiles: string[],
+  expand_module = false
 ) => {
   console.log("::: test Build, then launch in Docker");
 
@@ -358,18 +360,22 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   // Instead, we expand a local module which contains a link to a remote module (this
   // can be loaded remotely from the docker container).
   //
-  // TODO: This is a workaround until local module loading is supported within
-  // containerised builds.
-
-  // Click on the canvas module element. This actually finds both the repository entry
-  // and the canvas element, so we click on both as we cannot guarantee ordering.
-  console.log("Click the canvas module element");
-  const elements = await driver.findElements(
-    By.xpath(`//div[text()='${modulename}']`)
-  );
-  for (const element of elements) await element.click();
-  await driver.sleep(100); // Wait for module settings to expand
-  await driver.findElement(By.id("btnBuilderExpand")).click();
+  // This was a workaround as local modules could not be run through containers until
+  // workflow packaging was introduced.
+  console.log("Open the module in the editor and Expand");
+  console.log("modulename: ", modulename);
+  console.log("expand_module: ", expand_module);
+  if (expand_module) {
+    // Click on the canvas module element. This actually finds both the repository entry
+    // and the canvas element, so we click on both as we cannot guarantee ordering.
+    console.log("Click the canvas module element");
+    const elements = await driver.findElements(
+      By.xpath(`//div[text()='${modulename}']`)
+    );
+    for (const element of elements) await element.click();
+    await driver.sleep(100); // Wait for module settings to expand
+    await driver.findElement(By.id("btnBuilderExpand")).click();
+  }
 
   // Assert that build file does not exist
   console.log("Assert that build file does not exist");
@@ -418,9 +424,22 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   } else {
     // Assert that the target output file does not exist
     console.log("Assert that the target output file does not exist");
-    const target_file = path.join(buildfolder, "results", outfile);
-    console.log("target_file: ", target_file);
-    expect(fs.existsSync(target_file)).toBeFalsy();
+    const target_files = target_outfiles.map((outfile) => {
+      return path.join(buildfolder, outfile);
+    });
+    console.log("target_files: ", target_files);
+    target_files.forEach((target_file) => {
+      expect(fs.existsSync(target_file)).toBeFalsy();
+    });
+    
+    console.log("Assert that the packaged payload files do exist");
+    const payload_files = payload_outfiles.map((outfile) => {
+      return path.join(buildfolder, outfile);
+    });
+    console.log("payload_files: ", payload_files);
+    payload_files.forEach((payload_file) => {
+      expect(fs.existsSync(payload_file)).toBeTruthy();
+    });
 
     // Launch docker and wait for process to finish
     console.log("Launch docker and wait for process to finish");
@@ -430,13 +449,17 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     if (stdout) console.log(stdout);
     if (stderr) console.log(stderr);
     console.log("Check that target file has been created");
-    expect(fs.existsSync(target_file)).toBeTruthy();
+    target_files.forEach((target_file) => {
+      expect(fs.existsSync(target_file)).toBeTruthy();
+    });
 
     // Clean build folder (tidy-up); assert target output does not exist
     fs.rmSync(buildfile);
     fs.rmSync(buildfolder, { recursive: true });
     expect(fs.existsSync(buildfile)).toBeFalsy();
-    expect(fs.existsSync(target_file)).toBeFalsy();
+    target_files.forEach((target_file) => {
+      expect(fs.existsSync(target_file)).toBeFalsy();
+    });
   }
 
   console.log("<<< test Build, then launch in Docker");

@@ -1,5 +1,4 @@
 import { By } from "selenium-webdriver";
-import { Key } from "selenium-webdriver";
 import { Select } from "selenium-webdriver/lib/select";
 import { until } from "selenium-webdriver";
 
@@ -383,15 +382,19 @@ describe("modules", () => {
   runif(!is_windows).each([
     [
       "(single_modules) payload shell",
-      path.join("single_modules_payload_shell", "data.csv"),
+      [
+        path.join("results", "single_modules_payload_shell", "data.csv")
+      ],
     ],
     [
       "(single_modules) payload run",
-      path.join("single_modules_payload_run", "data.csv"),
+      [
+        path.join("results", "single_modules_payload_run", "data.csv")
+      ],
     ],
   ])(
     "Build and Test the workflow: module '%s'",
-    async (modulename, outfile) => {
+    async (modulename, outfiles) => {
       // Open settings pane
       await driver.findElement(By.id("btnSidenavSettings")).click();
 
@@ -407,11 +410,11 @@ describe("modules", () => {
       console.log("<<< test Set snakemake arguments list to use conda");
 
       // Build and run workflow
-      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
+      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
     },
     5 * ONE_MINUTE
   ); // long timeout
-
+  
   runif(!is_windows).each([
     // Test: 1 (connect two modules)
     [
@@ -426,7 +429,7 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("single_modules_copy_run", "data.csv"),
+        path.join("results", "single_modules_copy_run", "data.csv"),
       ],
     ],
     // Test: 2 (connect five modules, including 4 duplicates)
@@ -448,7 +451,7 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("single_modules_copy_run_3", "data.csv"),
+        path.join("results", "single_modules_copy_run_3", "data.csv"),
       ],
     ],
     // Test: 3 (connect source to triple input module)
@@ -464,7 +467,7 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("single_modules_copy_run_multiport", "data.csv"),
+        path.join("results", "single_modules_copy_run_multiport", "data.csv"),
       ],
     ],
   ])(
@@ -527,22 +530,27 @@ describe("modules", () => {
   // Basic workflow tests (those that do not require conda)
   test.skip.each([
     // placeholder (empty and skipped at present)
-    ["PLACEHOLDER", ""],
+    ["PLACEHOLDER", [""]],
   ])(
     "Build and Test the workflow: module '%s'",
-    async (modulename, outfile) => {
-      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
+    async (modulename, outfiles) => {
+      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
     },
     10 * ONE_MINUTE
   ); // long timeout
 
   // Conda tests
   runif(is_installed(["mamba", "conda"], "any")).each([
-    ["(single_modules) conda", path.join("single_modules_conda", "data.csv")],
+    [
+      "(single_modules) conda",
+      [
+        path.join("results", "single_modules_conda", "data.csv")
+      ]
+    ],
   ])(
     "Build and Test the conda workflow: module '%s'",
-    async (modulename, outfile) => {
-      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
+    async (modulename, outfiles) => {
+      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
     },
     10 * ONE_MINUTE
   ); // long timeout
@@ -552,17 +560,65 @@ describe("modules", () => {
     [
       // NOTE: This test relies on the remote module jsbrittain/snakeshack (Utilty) touch
       "(single_modules) container_touch",
-      path.join("utility_touch", "data.csv"),
+      [
+        // target files
+        path.join("results", "utility_touch", "data.csv")
+      ],
+      [
+        // packaged payload files
+      ],
     ],
   ])(
     "Build, extract zip, run in Docker: module '%s'",
-    async (modulename, outfile) => {
+    async (modulename, target_files, payload_files) => {
       await Build_RunWithDocker_SingleModuleWorkflow(
         driver,
         modulename,
-        outfile
+        target_files,
+        payload_files,
+        true  // expand_module
       );
     },
     20 * ONE_MINUTE
   ); // long timeout
+  
+  // Package workflow (container test)
+  runif(is_installed(["docker"])).each([
+    [
+      "(single_modules) payload run",
+      [
+        // target files
+        path.join("results", "single_modules_payload_run", "data.csv"),
+      ],
+      [
+        // packaged payload files
+        path.join("workflow", "modules", "test-repo", "workflows", "single_modules",
+                  "sources", "payload_run", "resources", "file"),
+      ],
+    ],
+  ])(
+    "Package workflow (container): module '%s'",
+    async (modulename, target_files, payload_files) => {
+      // Set workflow packaging option
+      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await SetCheckBoxByID(driver, "package_modules_in_workflow", true);
+      await driver.findElement(By.id("btnSidenavBuilder")).click();
+
+      // Build and run workflow
+      await Build_RunWithDocker_SingleModuleWorkflow(
+        driver,
+        modulename,
+        target_files,
+        payload_files,
+        false  // expand_module
+      );
+
+      // Unset workflow packaging option
+      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
+      await driver.findElement(By.id("btnSidenavBuilder")).click();
+    },
+    10 * ONE_MINUTE
+  ); // long timeout
+
 });
