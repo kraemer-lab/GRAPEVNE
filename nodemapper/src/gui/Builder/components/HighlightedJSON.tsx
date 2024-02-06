@@ -57,7 +57,12 @@ const lookupKey = (json, keylist: string[], key: string) => {
   return json[key];
 }
 
-const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string) => {
+const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string, lookup_count = 0) => {
+  // Stop infinite recursion
+  if (lookup_count > 100) {
+    return undefined;
+  }
+
   // If key is the empty string, return the last key in the keylist
   if (key === "") {
     key = keylist[keylist.length - 1];
@@ -67,6 +72,9 @@ const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string
   // First, determine which module to look up the key in
   const nodes = useAppSelector((state) => state.builder.nodes);
   const node = getNodeByName(node_name, nodes);
+  if (node === undefined) {
+    return undefined;
+  }
   
   // Obtain the module's config
   const config = node.data.config.config;
@@ -78,7 +86,7 @@ const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string
     let link_from = metadata["link"];
     const link_node = link_from[0];
     link_from = link_from.slice(1, link_from.length);
-    return lookupKeyGlobal(json, link_node, link_from, "");
+    return lookupKeyGlobal(json, link_node, link_from, "", lookup_count + 1);
   } else {
     // Otherwise, return the simple value
     return value;
@@ -205,6 +213,12 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
           const link_node = link_from[0];
           link_from = link_from.slice(1, link_from.length);
           parameterValue = lookupKeyGlobal(json, link_node, link_from, "");
+          if (parameterValue === undefined) {
+            parameterValue = "(linked value is undefined)";
+          }
+          if (parameterValue === "") {
+            parameterValue = "(linked value is empty)";
+          }
           isParameterConnected = true;
         }
       }
@@ -288,7 +302,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   allowEdit={false}
                 />
               </span>
-              <DisconnectParameter disconnectParameter={disconnectParameter} />
+              <ConnectParameter connectParameter={connectParameter} />
             </span>
           ) : isSimpleValue ? (
             <span>
