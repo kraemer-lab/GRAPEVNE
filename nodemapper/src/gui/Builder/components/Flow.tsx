@@ -99,8 +99,8 @@ export const wranglename = (name: string) => {
 
 const ModuleNode = (props: NodeProps<NodeData>) => {
   // Extract input_namespace and wrap as list as necessary
-  const input_namespace =
-    props.data?.config?.config?.config.input_namespace ?? null;
+  const node_config = props.data?.config?.config?.config ?? null;
+  const input_namespace = node_config.input_namespace ?? null;
   let input_namespaces: string[];
   let named_inputs = false;
   if (typeof input_namespace === "string") {
@@ -158,31 +158,45 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
             height: `${input_namespaces.length * 18 - 4}px`,
           }}
         >
-          {input_namespaces.map((name) => (
-            <div key={"div-" + name}>
-              <Handle
-                className={styles.HandleInput}
-                id={name}
-                key={name}
-                type="target"
-                position={Position.Left}
-                style={{ top: `${input_namespaces.indexOf(name) * 18 + 38}px` }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  console.log("Input handle clicked: ", event.target);
-                }}
-              >
-                <div
-                  className={styles.InputPortLabel}
-                  style={{
-                    pointerEvents: "none", // pass-through click events
-                  }}
-                >
-                  {name}
+          {
+            input_namespaces.map((name) => {
+              // Format port name
+              const port_name_split = name.split('$');
+              let port_name = node_config[port_name_split[0]]?.name ?? null;
+              if (port_name === undefined || port_name === null) {
+                port_name = name;
+              } else if (port_name_split.length > 1 && port_name_split[1] !== "") {
+                port_name = port_name + ' [' + name.split('$')[1] + ']';
+              }
+
+              return (
+                <div key={"div-" + name}>
+                  <Handle
+                    className={styles.HandleInput}
+                    id={name}
+                    key={name}
+                    type="target"
+                    position={Position.Left}
+                    style={{ top: `${input_namespaces.indexOf(name) * 18 + 38}px` }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      console.log("Input handle clicked: ", event.target);
+                    }}
+                  >
+                    <div
+                      className={styles.InputPortLabel}
+                      style={{
+                        pointerEvents: "none", // pass-through click events
+                        width: "100%",
+                      }}
+                    >
+                      {port_name}
+                    </div>
+                  </Handle>
                 </div>
-              </Handle>
-            </div>
-          ))}
+              )
+            })
+          }
           <div>
             <Handle
               className={styles.HandleOutput}

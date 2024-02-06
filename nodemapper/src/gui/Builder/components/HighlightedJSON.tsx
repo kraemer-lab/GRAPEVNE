@@ -15,7 +15,32 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { builderUpdateNodeInfoKey } from "redux/actions";
 import { builderUpdateNode } from "redux/actions";
 
+import { styled } from '@mui/material/styles';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import { createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import type {} from '@mui/x-tree-view/themeAugmentation';
+
 import "./HighlightedJSON.css";
+
+export const theme = createTheme({
+  components: {
+    MuiTreeItem: {
+      styleOverrides: {
+        content: {
+          padding: '0px',
+        },
+        iconContainer: {
+          display: 'none',
+        },
+        label: {
+          padding: '0px',
+        }
+      },
+    },
+  },
+});
 
 /*
  * HighlightedJSON code modified from:
@@ -142,6 +167,31 @@ const DisconnectParameter = (props: {disconnectParameter}) => {
   );
 }
 
+export const checkParameter_IsModuleRoot = (value) => {
+  if (value === undefined)
+    return false;
+  // Parameter is a module root if it contains a 'snakefile' field
+  if (Object.keys(value).includes("snakefile"))
+    return true;
+  return false;
+};
+
+export const checkParameter_IsInModuleConfigLayer = (node, keylist, key) => {
+  if (node === undefined)
+    return false;
+  // Is the parameters parent a module root?
+  const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
+  let jsonObj = json;
+  for (let i = 0; i < keylist.length; i++) {
+    jsonObj = jsonObj[keylist[i]];
+    if (jsonObj === undefined)
+      return false;
+  }
+  if (checkParameter_IsModuleRoot(jsonObj))
+    return true;
+  return false;
+};
+
 const HighlightedJSON = (props: HighlightedJSONProps) => {
   const nodes = useAppSelector((state) => state.builder.nodes);
   const dispatch = useAppDispatch();
@@ -149,6 +199,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
     (state) => state.builder.display_module_settings
   );
   const [menu, setMenu] = useState(null);
+  let nodeId = 0;
 
   // Parse JSON string
   const json_str: string = props.json;
@@ -159,6 +210,26 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
   )
     return <div className="json"></div>;
   const json = JSON.parse(json_str);
+
+  const expandedIfHierarchicalModule = (json) => {
+    if (display_module_settings)
+      return Array.from({length: 999}, (_, i) => i.toString());
+    if (json === undefined)
+      return [];
+    const jsonConfig = json["config"];
+    if (jsonConfig === undefined)
+      return [];
+    // Check for hierarchical module
+    for(const key in jsonConfig) {
+      if (jsonConfig[key] != undefined && jsonConfig[key]["snakefile"] !== undefined) {
+        console.log("Hierarchical module");
+        return [];
+      }
+    }
+    // Non-hierarchical module, expand all
+    console.log("Non-hierarchical module");
+    return Array.from({length: 999}, (_, i) => i.toString());
+  }
 
   // Recursive function to render the JSON tree
   const HighlightJSON = ({ keylist }: IHighlightJSONProps) => {
@@ -225,6 +296,30 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
       // TODO: Check whether setting is a connectable parameter
       const canConnectParameter = true;
+      
+      // If the key is a module root, substitute the module 'name' field as the label
+      let label = key;
+      const isModuleRoot = checkParameter_IsModuleRoot(value);
+      if (isModuleRoot && !display_module_settings) {
+        if (jsonObj[key].name !== undefined) {
+          label = jsonObj[key].name;
+        }
+      }
+
+      // If the key is a module config, skip renderin of the key (but render children)
+      const node = getNodeById(props.nodeid, nodes);
+      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist, key);
+      if (isInModuleConfigLayer && !display_module_settings) {
+        // Of the parameters in the module config layer, continue rendering only the
+        // 'config' children, which contains the actual parameters
+        if (key !== "config") {
+          return <></>;
+        } else {
+          return (
+            <HighlightJSON keylist={[...keylist, key]} key={(nodeId++).toString()} />
+          );
+        }
+      }
 
       // Callback to update field in central state (triggers re-render)
       const setValue = (value) => {
@@ -271,21 +366,26 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
       return (
         <div style={{cursor: "default"}} key={key} className="line">
-          <span className="key">
-            {key}:
-          </span>
           {isProtectedValue ? (
-            <span
-              className="protected"
-              style={{
-                display: "inline-block",
-                height: "25px",
-              }}
-            >
-              {value}
+            <span>
+              <span className="key">
+                {label}:
+              </span>
+              <span
+                className="protected"
+                style={{
+                  display: "inline-block",
+                  height: "25px",
+                }}
+              >
+                {value}
+              </span>
             </span>
           ) : isParameterConnected ? (
             <span>
+              <span className="key">
+                {label}:
+              </span>
               <span
                 className="linked"
                 style={{
@@ -306,6 +406,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
             </span>
           ) : isSimpleValue ? (
             <span>
+              <span className="key">
+                {label}:
+              </span>
               <span
                 className={valueType}
                 style={{
@@ -364,7 +467,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
               ) : null }
             </span>
           ) : (
-            <HighlightJSON keylist={[...keylist, key]} />
+            <TreeItem nodeId={(nodeId++).toString()} key={key} label={label} >
+              <HighlightJSON keylist={[...keylist, key]} />
+            </TreeItem>
           )}
         </div>
       );
@@ -379,9 +484,17 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       style={{
         borderStyle: "solid",
         borderWidth: "1px 0px 0px 0px",
+        padding: "2px",
       }}
     >
-      <HighlightJSON keylist={[]} />
+      <ThemeProvider theme={theme}>
+        <TreeView
+          defaultExpanded={expandedIfHierarchicalModule(json)}
+        >
+          <HighlightJSON keylist={[]} />
+        </TreeView>
+      </ThemeProvider>
+
       {menu && <ParameterList {...menu} />}
     </div>
   );

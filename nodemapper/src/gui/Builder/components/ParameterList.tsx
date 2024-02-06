@@ -9,10 +9,16 @@ import { useAppDispatch } from "redux/store/hooks";
 import { builderUpdateNode } from "redux/actions";
 import { getAllLinks } from "./HighlightedJSON";
 
+import { checkParameter_IsModuleRoot } from "./HighlightedJSON";
+import { checkParameter_IsInModuleConfigLayer } from "./HighlightedJSON";
+import { theme } from "./HighlightedJSON";
+
 import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import { ThemeProvider } from '@mui/material/styles';
+
+import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2';
 import Paper from '@mui/material/Paper';
@@ -53,27 +59,6 @@ const Item = styled(Paper)(({ theme }) => ({
   overflow: 'auto',
   color: theme.palette.text.secondary,
 }));
-
-const checkParameter_IsModuleRoot = (value) => {
-  // Parameter is a module root if it contains a 'snakefile' field
-  if (Object.keys(value).includes("snakefile")) {
-    return true;
-  }
-  return false;
-};
-
-const checkParameter_IsInModuleConfigLayer = (node, keylist, key) => {
-  // Is the parameters parent a module root?
-  const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
-  let jsonObj = json;
-  for (let i = 0; i < keylist.length; i++) {
-    jsonObj = jsonObj[keylist[i]];
-  }
-  if (checkParameter_IsModuleRoot(jsonObj)) {
-    return true;
-  }
-  return false;
-};
 
 export default function ParameterList({
   id,
@@ -142,11 +127,7 @@ export default function ParameterList({
 
   // Handle parameter selection
   const onParameterSelect = (node_from: Node, keylist_from, key_from: string) => {
-
-    // Determine source parameter name/list
     const param_from = [node_from.data.config.name, ...keylist_from, key_from];
-
-    // Determine target parameter name/list
     const param_to = [...keylist.slice(1, keylist.length), keyitem];
 
     // Add pairing between 'key/keylist' param and selection, into node.id
@@ -296,7 +277,9 @@ export default function ParameterList({
             gap: "3px",
           }}
         >
-          <TreeView>
+          <TreeView
+            defaultExpanded={Array.from({length: 999}, (_, i) => i.toString())}
+          >
             <NodeParameters node={node} keylist={[]} />
           </TreeView>
         </div>
@@ -351,35 +334,37 @@ export default function ParameterList({
         </span>
       </p>
       <div style={{width: "100%", height: "100%", backgroundColor: "white"}}>
-        <Box sx={{ width: "100%", height: "100%", overflowY: 'auto' }}>
-          <Grid container
-            spacing={{
-              xs: 4,
-              md: 2
-            }}
-            columns={{
-              xs: 2,
-              sm: 8,
-              md: 12
-            }}
-          >
-            {
-              Object.keys(input_nodes).map((node_id) => (
-                <Grid
-                  key={node_id}
-                  xs={2}
-                  sm={4}
-                  md={4}
-                >
-                  <ModuleEntry
-                    label={input_nodes[node_id].label}
-                    node={input_nodes[node_id].node}
-                  />
-                </Grid>
-              ))
-            }
-          </Grid>
-        </Box>
+        <ThemeProvider theme={theme}>
+          <Box sx={{ width: "100%", height: "100%", overflowY: 'auto' }}>
+            <Grid container
+              spacing={{
+                xs: 4,
+                md: 2
+              }}
+              columns={{
+                xs: 2,
+                sm: 8,
+                md: 12
+              }}
+            >
+              {
+                Object.keys(input_nodes).map((node_id) => (
+                  <Grid
+                    key={node_id}
+                    xs={2}
+                    sm={4}
+                    md={4}
+                  >
+                    <ModuleEntry
+                      label={input_nodes[node_id].label}
+                      node={input_nodes[node_id].node}
+                    />
+                  </Grid>
+                ))
+              }
+            </Grid>
+          </Box>
+        </ThemeProvider>
       </div>
     </div>
   );
