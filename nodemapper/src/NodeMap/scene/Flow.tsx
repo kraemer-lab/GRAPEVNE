@@ -10,4 +10,4 @@ export type NodeData = {
 };
 
 // Declare main Node type, as ReactFlow Node, but with structured NodeData
-export type Node = Omit<FlowNode, 'data'> & { data: NodeData };
+export type Node = Omit<FlowNode, "data"> & { data: NodeData };

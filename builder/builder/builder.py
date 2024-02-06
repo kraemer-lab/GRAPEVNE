@@ -352,7 +352,8 @@ class Model:
         if isinstance(mapping[0], dict):
             assert isinstance(node_to.input_namespace, dict), (
                 "Connector mapping is a dictionary but the destination node does not "
-                "have a dictionary input namespace")
+                "have a dictionary input namespace"
+            )
             for k, v in mapping[0].items():
                 incoming_node = self.GetNodeByName(v)
                 if not incoming_node:
@@ -688,7 +689,6 @@ def BuildFromJSON(
     clean_build: bool = True,
     partial_build: bool = False,  # Don't throw an error if node is missing
     create_zip: bool = True,
-    add_configutil: bool = True,
 ) -> Tuple[Union[Tuple[str, str], bytes], Model, str]:
     """Builds a workflow from a JSON specification
 

@@ -13,22 +13,19 @@ import { checkParameter_IsModuleRoot } from "./HighlightedJSON";
 import { checkParameter_IsInModuleConfigLayer } from "./HighlightedJSON";
 import { theme } from "./HighlightedJSON";
 
-import { styled } from '@mui/material/styles';
-import { TreeView } from '@mui/x-tree-view/TreeView';
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
-import { ThemeProvider } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
+import { TreeView } from "@mui/x-tree-view/TreeView";
+import { TreeItem } from "@mui/x-tree-view/TreeItem";
+import { ThemeProvider } from "@mui/material/styles";
 
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Unstable_Grid2';
-import Paper from '@mui/material/Paper';
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Unstable_Grid2";
+import Paper from "@mui/material/Paper";
 
 import "./ParameterList.css";
 
-const protectedNames = [
-  "input_namespace",
-  "output_namespace",
-];
+const protectedNames = ["input_namespace", "output_namespace"];
 
 interface ParameterListProps {
   id: string;
@@ -41,22 +38,22 @@ interface ParameterListProps {
   onclose: () => void;
 }
 
-interface INodeParametersProps{
+interface INodeParametersProps {
   node: Node;
   keylist: string[];
 }
 
-interface IModuleEntryProps{
+interface IModuleEntryProps {
   label: string;
   node: Node;
 }
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
-  textAlign: 'left',
-  overflow: 'auto',
+  textAlign: "left",
+  overflow: "auto",
   color: theme.palette.text.secondary,
 }));
 
@@ -82,19 +79,19 @@ export default function ParameterList({
   let nodeId = 0;
 
   // Format keyitem and keylist together
-  let keylist_str = keylist.slice(2, keylist.length).join('/');
+  let keylist_str = keylist.slice(2, keylist.length).join("/");
   if (keylist_str.length > 0) {
     keylist_str += "/";
   }
   keylist_str += keyitem;
 
   // Get list of nodes that are connected as inputs to this node
-  const input_nodes: Record<string, {label: string, node: Node}> = {};
+  const input_nodes: Record<string, { label: string; node: Node }> = {};
   if (showAllNodes) {
     nodes.forEach((n) => {
       input_nodes[n.id] = {
         label: getNodeName(n),
-        node: n
+        node: n,
       };
     });
     // Remove self node (if not showing self node)
@@ -106,7 +103,7 @@ export default function ParameterList({
       if (e.target === id) {
         input_nodes[e.targetHandle] = {
           label: e.targetHandle,
-          node: getNodeById(e.source, nodes)
+          node: getNodeById(e.source, nodes),
         };
       }
     });
@@ -114,11 +111,10 @@ export default function ParameterList({
     if (showSelfNodes) {
       input_nodes[id] = {
         label: getNodeName(node_to),
-        node: node_to
+        node: node_to,
       };
     }
   }
-  
 
   // Get parameter pairs from node - TODO: replace this bit
   const json = JSON.parse(JSON.stringify(node_to))["data"]["config"]["config"];
@@ -126,7 +122,11 @@ export default function ParameterList({
   console.debug("All link: ", links);
 
   // Handle parameter selection
-  const onParameterSelect = (node_from: Node, keylist_from, key_from: string) => {
+  const onParameterSelect = (
+    node_from: Node,
+    keylist_from,
+    key_from: string
+  ) => {
     const param_from = [node_from.data.config.name, ...keylist_from, key_from];
     const param_to = [...keylist.slice(1, keylist.length), keyitem];
 
@@ -134,15 +134,15 @@ export default function ParameterList({
     const newnode_to = JSON.parse(JSON.stringify(node_to));
     const node_config = newnode_to.data.config.config;
     let pmap = node_config;
-    for(let i = 0; i < keylist.length; i++) {
+    for (let i = 0; i < keylist.length; i++) {
       if (pmap[keylist[i]] === undefined)
         throw new Error("ParameterList: Keylist not found in node");
       pmap = pmap[keylist[i]];
     }
-    let pmap_metadata = pmap[':' + keyitem];  // metadata record
+    let pmap_metadata = pmap[":" + keyitem]; // metadata record
     if (pmap_metadata === undefined) {
-      pmap[':' + keyitem] = {};
-      pmap_metadata = pmap[':' + keyitem];
+      pmap[":" + keyitem] = {};
+      pmap_metadata = pmap[":" + keyitem];
     }
     pmap_metadata["link"] = param_from;
 
@@ -150,7 +150,7 @@ export default function ParameterList({
     newnode_to.data.config.config = node_config;
     dispatch(builderUpdateNode(newnode_to));
     onclose();
-  }
+  };
 
   // Handle parameter removal
   const onRemoveMapping = () => {
@@ -161,15 +161,14 @@ export default function ParameterList({
       pmap = [];
     }
     pmap = pmap.filter((pair) => {
-      return pair["to"][pair["to"].length-1] !== keyitem;
+      return pair["to"][pair["to"].length - 1] !== keyitem;
     });
     newnode_to.data.config.config["parameter_map"] = pmap;
     dispatch(builderUpdateNode(newnode_to));
     onclose();
-  }
+  };
 
   const NodeParameters = ({ node, keylist }: INodeParametersProps) => {
-
     // Isolate current branch in the json tree (indexed by keylist)
     const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
     let jsonObj = json;
@@ -182,8 +181,7 @@ export default function ParameterList({
       const valueType: string = typeof value;
       const isSimpleValue =
         ["string", "number", "boolean"].includes(valueType) || !value;
-      const isHiddenValue =
-        (protectedNames.includes(key) || key.startsWith(":"));
+      const isHiddenValue = protectedNames.includes(key) || key.startsWith(":");
       if (isHiddenValue) {
         return <></>;
       }
@@ -198,7 +196,11 @@ export default function ParameterList({
       }
 
       // If the key is a module config, skip renderin of the key (but render children)
-      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist, key);
+      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(
+        node,
+        keylist,
+        key
+      );
       if (isInModuleConfigLayer) {
         // Of the parameters in the module config layer, continue rendering only the
         // 'config' children, which contains the actual parameters
@@ -206,36 +208,38 @@ export default function ParameterList({
           return <></>;
         } else {
           return (
-            <NodeParameters node={node} keylist={[...keylist, key]} key={(nodeId++).toString()} />
+            <NodeParameters
+              node={node}
+              keylist={[...keylist, key]}
+              key={(nodeId++).toString()}
+            />
           );
         }
       }
 
       return (
         <>
-          {
-            (isSimpleValue) ? (
-              <TreeItem
-                key={node.id + "__" + [...keylist, key].join("/")}
-                nodeId={(nodeId++).toString()}
-                label={key + ": " + value}
-                onClick={() => onParameterSelect(node, keylist, key)}
-              />
-            ) : (
-              <TreeItem
-                key={node.id + "__" + [...keylist, key].join("/")}
-                nodeId={(nodeId++).toString()}
-                label={label}
-              >
-                <NodeParameters node={node} keylist={[...keylist, key]} />
-              </TreeItem>
-            )
-          }
+          {isSimpleValue ? (
+            <TreeItem
+              key={node.id + "__" + [...keylist, key].join("/")}
+              nodeId={(nodeId++).toString()}
+              label={key + ": " + value}
+              onClick={() => onParameterSelect(node, keylist, key)}
+            />
+          ) : (
+            <TreeItem
+              key={node.id + "__" + [...keylist, key].join("/")}
+              nodeId={(nodeId++).toString()}
+              label={label}
+            >
+              <NodeParameters node={node} keylist={[...keylist, key]} />
+            </TreeItem>
+          )}
         </>
       );
     });
     return <>{fieldlist}</>;
-  }
+  };
 
   const ModuleEntry = ({ label, node }: IModuleEntryProps) => (
     <Item>
@@ -255,19 +259,16 @@ export default function ParameterList({
             backgroundColor: "#eee",
           }}
         >
-          {
-            (showAllNodes || showSelfNodes) ? (
+          {showAllNodes || showSelfNodes ? (
+            <div>{"Node: " + label}</div>
+          ) : (
+            <div>
+              {"Port: " + label}
               <div>
-                {"Node: " + label}
+                <small>{node.data.config.name}</small>
               </div>
-            ) : (
-              <div>{"Port: " + label}
-                <div>
-                  <small>{node.data.config.name}</small>
-                </div>
-              </div>
-            )
-          }
+            </div>
+          )}
         </div>
         <div
           key={node.id + "_p"}
@@ -278,7 +279,9 @@ export default function ParameterList({
           }}
         >
           <TreeView
-            defaultExpanded={Array.from({length: 999}, (_, i) => i.toString())}
+            defaultExpanded={Array.from({ length: 999 }, (_, i) =>
+              i.toString()
+            )}
           >
             <NodeParameters node={node} keylist={[]} />
           </TreeView>
@@ -292,7 +295,7 @@ export default function ParameterList({
     if (e.key === "Escape") {
       onclose();
     }
-  }
+  };
 
   return (
     <div
@@ -301,11 +304,12 @@ export default function ParameterList({
       {...props}
     >
       <p style={{ margin: "0.5em" }}>
-        <big><b>{keylist_str}</b></big> <i>{node_name}</i>
+        <big>
+          <b>{keylist_str}</b>
+        </big>{" "}
+        <i>{node_name}</i>
         <span style={{ float: "right" }}>
-          <label
-            htmlFor="checkParameterListShowSelfParams"
-          >
+          <label htmlFor="checkParameterListShowSelfParams">
             Show own parameters
           </label>
           <input
@@ -314,54 +318,41 @@ export default function ParameterList({
             onChange={() => setShowSelfNodes(!showSelfNodes)}
             checked={showSelfNodes}
           ></input>
-          <label
-            htmlFor="checkParameterListShowAllNodes"
-          >
-            Show all nodes
-          </label>
+          <label htmlFor="checkParameterListShowAllNodes">Show all nodes</label>
           <input
             type="checkbox"
             id="checkParameterListShowAllNodes"
             onChange={() => setShowAllNodes(!showAllNodes)}
             checked={showAllNodes}
           ></input>
-          <button
-            id="btnParameterListClose"
-            onClick={onclose}
-          >
+          <button id="btnParameterListClose" onClick={onclose}>
             X
           </button>
         </span>
       </p>
-      <div style={{width: "100%", height: "100%", backgroundColor: "white"}}>
+      <div style={{ width: "100%", height: "100%", backgroundColor: "white" }}>
         <ThemeProvider theme={theme}>
-          <Box sx={{ width: "100%", height: "100%", overflowY: 'auto' }}>
-            <Grid container
+          <Box sx={{ width: "100%", height: "100%", overflowY: "auto" }}>
+            <Grid
+              container
               spacing={{
                 xs: 4,
-                md: 2
+                md: 2,
               }}
               columns={{
                 xs: 2,
                 sm: 8,
-                md: 12
+                md: 12,
               }}
             >
-              {
-                Object.keys(input_nodes).map((node_id) => (
-                  <Grid
-                    key={node_id}
-                    xs={2}
-                    sm={4}
-                    md={4}
-                  >
-                    <ModuleEntry
-                      label={input_nodes[node_id].label}
-                      node={input_nodes[node_id].node}
-                    />
-                  </Grid>
-                ))
-              }
+              {Object.keys(input_nodes).map((node_id) => (
+                <Grid key={node_id} xs={2} sm={4} md={4}>
+                  <ModuleEntry
+                    label={input_nodes[node_id].label}
+                    node={input_nodes[node_id].node}
+                  />
+                </Grid>
+              ))}
             </Grid>
           </Box>
         </ThemeProvider>

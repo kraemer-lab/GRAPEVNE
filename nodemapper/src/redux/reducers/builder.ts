@@ -103,7 +103,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderUpdateNode, (state, action) => {
       const newnode = action.payload as Node;
       state.nodes = state.nodes.map((node) => {
-        return (node.id === newnode.id) ? newnode : node;
+        return node.id === newnode.id ? newnode : node;
       });
       console.info("[Reducer] " + action.type);
     })
