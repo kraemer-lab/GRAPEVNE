@@ -9,6 +9,12 @@ import { useAppDispatch } from "redux/store/hooks";
 import { builderUpdateNode } from "redux/actions";
 import { getAllLinks } from "./HighlightedJSON";
 
+import Button from '@mui/material/Button';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import Box from '@mui/material/Box';
+import Grid from '@mui/material/Unstable_Grid2';
+
 import "./ParameterList.css";
 
 interface ParameterListProps {
@@ -20,6 +26,16 @@ interface ParameterListProps {
   right: number;
   bottom: number;
   onclose: () => void;
+}
+
+interface INodeParametersProps{
+  node: Node;
+  keylist: string[];
+}
+
+interface IModuleEntryProps{
+  label: string;
+  node: Node;
 }
 
 export default function ParameterList({
@@ -38,9 +54,10 @@ export default function ParameterList({
   const [showAllNodes, setShowAllNodes] = React.useState(false);
   const [showSelfNodes, setShowSelfNodes] = React.useState(false);
 
-  const node = getNodeById(id, nodes);
-  const node_name = getNodeName(node);
+  const node_to = getNodeById(id, nodes);
+  const node_name = getNodeName(node_to);
   const dispatch = useAppDispatch();
+  let nodeId = 0;
 
   // Format keyitem and keylist together
   let keylist_str = keylist.slice(2, keylist.length).join('/');
@@ -74,40 +91,30 @@ export default function ParameterList({
     // Add self node (if showing self node)
     if (showSelfNodes) {
       input_nodes[id] = {
-        label: getNodeName(node),
-        node: node
+        label: getNodeName(node_to),
+        node: node_to
       };
     }
   }
   
-  const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
 
-  // Get parameter pairs from node - replace this bit
+  // Get parameter pairs from node - TODO: replace this bit
+  const json = JSON.parse(JSON.stringify(node_to))["data"]["config"]["config"];
   const links = getAllLinks(json);
   console.debug("All link: ", links);
 
   // Handle parameter selection
-  const onParameterSelect = (n: Node, p: string) => {
-    /* Example config:
-     *
-     * module_to:
-     *  name: "Module Name"
-     *  type: "module"
-     *  parameter_map:
-     *    - from: ['module_from', 'config', 'params', 'param_name_from']
-     *      to: ['module_to', 'config', 'params', 'param_name_to']
-     *  config: {...}
-     */
+  const onParameterSelect = (node_from: Node, keylist_from, key_from: string) => {
 
     // Determine source parameter name/list
-    const param_from = [n.data.config.name, "config", "params", p];
+    const param_from = [node_from.data.config.name, ...keylist_from, key_from];
 
     // Determine target parameter name/list
     const param_to = [...keylist.slice(1, keylist.length), keyitem];
 
     // Add pairing between 'key/keylist' param and selection, into node.id
-    const newnode = JSON.parse(JSON.stringify(node));
-    const node_config = newnode.data.config.config;
+    const newnode_to = JSON.parse(JSON.stringify(node_to));
+    const node_config = newnode_to.data.config.config;
     let pmap = node_config;
     for(let i = 0; i < keylist.length; i++) {
       if (pmap[keylist[i]] === undefined)
@@ -122,30 +129,71 @@ export default function ParameterList({
     pmap_metadata["link"] = param_from;
 
     // Update node with new parameter map
-    newnode.data.config.config = node_config;
-    dispatch(builderUpdateNode(newnode));
+    newnode_to.data.config.config = node_config;
+    dispatch(builderUpdateNode(newnode_to));
     onclose();
   }
 
   // Handle parameter removal
   const onRemoveMapping = () => {
     // Remove pairing between 'key/keylist' param and selection, into node.id
-    const newnode = JSON.parse(JSON.stringify(node));
-    let pmap = newnode.data.config.config["parameter_map"];
+    const newnode_to = JSON.parse(JSON.stringify(node_to));
+    let pmap = newnode_to.data.config.config["parameter_map"];
     if (pmap === undefined) {
       pmap = [];
     }
     pmap = pmap.filter((pair) => {
       return pair["to"][pair["to"].length-1] !== keyitem;
     });
-    newnode.data.config.config["parameter_map"] = pmap;
-    dispatch(builderUpdateNode(newnode));
+    newnode_to.data.config.config["parameter_map"] = pmap;
+    dispatch(builderUpdateNode(newnode_to));
     onclose();
   }
 
-  const NodeParameters = (label: string, n: Node) => (
+  const NodeParameters = ({ node, keylist }: INodeParametersProps) => {
+
+    // Isolate current branch in the json tree (indexed by keylist)
+    const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
+    let jsonObj = json;
+    for (let i = 0; i < keylist.length; i++) {
+      jsonObj = jsonObj[keylist[i]];
+    }
+    // Map the JSON sub-fields to a list of rendered elements
+    const fieldlist = Object.keys(jsonObj).map((key) => {
+      const value = jsonObj[key];
+      const valueType: string = typeof value;
+      const isSimpleValue =
+        ["string", "number", "boolean"].includes(valueType) || !value;
+
+      return (
+        <>
+          {
+            (isSimpleValue) ? (
+              <TreeItem
+                key={node.id + "__" + [...keylist, key].join("/")}
+                nodeId={(nodeId++).toString()}
+                label={key + ": " + value}
+                onClick={() => onParameterSelect(node, keylist, key)}
+              />
+            ) : (
+              <TreeItem
+                key={node.id + "__" + [...keylist, key].join("/")}
+                nodeId={(nodeId++).toString()}
+                label={key}
+              >
+                <NodeParameters node={node} keylist={[...keylist, key]} />
+              </TreeItem>
+            )
+          }
+        </>
+      );
+    });
+    return <>{fieldlist}</>;
+  }
+
+  const ModuleEntry = ({ label, node }: IModuleEntryProps) => (
     <div
-      key={n.id}
+      key={node.id}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -164,61 +212,20 @@ export default function ParameterList({
           {showAllNodes ? "Node: " + label : "Port: " + label}
         </div>
         <div>
-          <small>{n.data.config.name}</small>
+          <small>{node.data.config.name}</small>
         </div>
       </div>
       <div
-        key={n.id + "_p"}
+        key={node.id + "_p"}
         style={{
           display: "flex",
           flexDirection: "column",
           gap: "3px",
         }}
       >
-        { // List parameters (but only if params structure exists)
-          (n.data.config.config.config["params"] !== undefined) ? (
-            Object.keys(n.data.config.config.config["params"]).map((p) => {
-              // Exclude self parameter from list
-              if (n === node && p === keyitem)
-                return null;  
-
-              // Signify if parameter is already mapped
-              let is_mapped = false;
-              links.forEach((pair) => {
-                console.log("Pair: ", pair, ", p: ", p);
-                if (pair["from"][pair["from"].length-1] === p) {
-                  is_mapped = true;
-                }
-              });
-              console.debug("Parameter: ", p, ", is_mapped: ", is_mapped);
-              if (is_mapped) {
-                return (
-                  <button
-                    key={n.id + "_p_" + p}
-                    style={{ color: "red" }}
-                    className="btn"
-                    onClick={() => onRemoveMapping()}
-                  >
-                    {p}
-                  </button>
-                )
-              } else {
-                // Otherwise, return a parameter button
-                return (
-                  <button
-                    key={n.id + "_p_" + p}
-                    className="btn"
-                    onClick={() => onParameterSelect(n, p)}
-                  >
-                    {p}
-                  </button>
-                )
-              }
-            })
-          ) : (
-            <i>No parameters</i>
-          )
-        }
+        <TreeView>
+          <NodeParameters node={node} keylist={[]} />
+        </TreeView>
       </div>
     </div>
   );
@@ -272,14 +279,14 @@ export default function ParameterList({
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
-          gap: "10px",
-          margin: "5px",
         }}
       >
         {
           Object.keys(input_nodes).map((node_id) => {
-            return NodeParameters(input_nodes[node_id].label, input_nodes[node_id].node);
+            return ModuleEntry({
+              label: input_nodes[node_id].label,
+              node: input_nodes[node_id].node
+            });
           })
         }
       </div>
