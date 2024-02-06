@@ -15,12 +15,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { builderUpdateNodeInfoKey } from "redux/actions";
 import { builderUpdateNode } from "redux/actions";
 
-import { styled } from '@mui/material/styles';
-import { TreeView } from '@mui/x-tree-view/TreeView';
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
-import { createTheme } from '@mui/material/styles';
-import { ThemeProvider } from '@mui/material/styles';
-import type {} from '@mui/x-tree-view/themeAugmentation';
+import { styled } from "@mui/material/styles";
+import { TreeView } from "@mui/x-tree-view/TreeView";
+import { TreeItem } from "@mui/x-tree-view/TreeItem";
+import { createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@mui/material/styles";
+import type {} from "@mui/x-tree-view/themeAugmentation";
 
 import "./HighlightedJSON.css";
 
@@ -29,14 +29,14 @@ export const theme = createTheme({
     MuiTreeItem: {
       styleOverrides: {
         content: {
-          padding: '0px',
+          padding: "0px",
         },
         iconContainer: {
-          display: 'none',
+          display: "none",
         },
         label: {
-          padding: '0px',
-        }
+          padding: "0px",
+        },
       },
     },
   },
@@ -80,9 +80,15 @@ const lookupKey = (json, keylist: string[], key: string) => {
   }
   if (json[key] === undefined) return undefined;
   return json[key];
-}
+};
 
-const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string, lookup_count = 0) => {
+const lookupKeyGlobal = (
+  json,
+  node_name: string,
+  keylist: string[],
+  key: string,
+  lookup_count = 0
+) => {
   // Stop infinite recursion
   if (lookup_count > 100) {
     return undefined;
@@ -93,18 +99,18 @@ const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string
     key = keylist[keylist.length - 1];
     keylist = keylist.slice(0, keylist.length - 1);
   }
-  
+
   // First, determine which module to look up the key in
   const nodes = useAppSelector((state) => state.builder.nodes);
   const node = getNodeByName(node_name, nodes);
   if (node === undefined) {
     return undefined;
   }
-  
+
   // Obtain the module's config
   const config = node.data.config.config;
   const value = lookupKey(config, keylist, key);
-  const metadata = lookupKey(config, keylist, ':' + key);
+  const metadata = lookupKey(config, keylist, ":" + key);
 
   // If the key is linked to another parameter, follow the link
   if (metadata !== undefined && metadata["link"] !== undefined) {
@@ -116,7 +122,7 @@ const lookupKeyGlobal = (json, node_name: string, keylist: string[], key: string
     // Otherwise, return the simple value
     return value;
   }
-}
+};
 
 export const getAllLinks = (json) => {
   const links = [];
@@ -125,7 +131,7 @@ export const getAllLinks = (json) => {
       if (typeof json[key] === "object") {
         traverse(json[key], [...keylist, key]);
       } else {
-        const metadata = lookupKey(json, keylist, ':' + key);
+        const metadata = lookupKey(json, keylist, ":" + key);
         if (metadata !== undefined && metadata["link"] !== undefined) {
           links.push({
             from: [...keylist, key],
@@ -137,9 +143,9 @@ export const getAllLinks = (json) => {
   };
   traverse(json, []);
   return links;
-}
+};
 
-const ConnectParameter = (props: {connectParameter}) => {
+const ConnectParameter = (props: { connectParameter }) => {
   return (
     <span
       style={{
@@ -148,12 +154,13 @@ const ConnectParameter = (props: {connectParameter}) => {
       }}
       onClick={() => props.connectParameter()}
     >
-      {' '}🔗
+      {" "}
+      🔗
     </span>
   );
-}
+};
 
-const DisconnectParameter = (props: {disconnectParameter}) => {
+const DisconnectParameter = (props: { disconnectParameter }) => {
   return (
     <span
       style={{
@@ -162,33 +169,29 @@ const DisconnectParameter = (props: {disconnectParameter}) => {
       }}
       onClick={() => props.disconnectParameter()}
     >
-      {' '}<FontAwesomeIcon icon={faTimes} />
+      {" "}
+      <FontAwesomeIcon icon={faTimes} />
     </span>
   );
-}
+};
 
 export const checkParameter_IsModuleRoot = (value) => {
-  if (value === undefined)
-    return false;
+  if (value === undefined) return false;
   // Parameter is a module root if it contains a 'snakefile' field
-  if (Object.keys(value).includes("snakefile"))
-    return true;
+  if (Object.keys(value).includes("snakefile")) return true;
   return false;
 };
 
 export const checkParameter_IsInModuleConfigLayer = (node, keylist, key) => {
-  if (node === undefined)
-    return false;
+  if (node === undefined) return false;
   // Is the parameters parent a module root?
   const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
   let jsonObj = json;
   for (let i = 0; i < keylist.length; i++) {
     jsonObj = jsonObj[keylist[i]];
-    if (jsonObj === undefined)
-      return false;
+    if (jsonObj === undefined) return false;
   }
-  if (checkParameter_IsModuleRoot(jsonObj))
-    return true;
+  if (checkParameter_IsModuleRoot(jsonObj)) return true;
   return false;
 };
 
@@ -213,23 +216,24 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
   const expandedIfHierarchicalModule = (json) => {
     if (display_module_settings)
-      return Array.from({length: 999}, (_, i) => i.toString());
-    if (json === undefined)
-      return [];
+      return Array.from({ length: 999 }, (_, i) => i.toString());
+    if (json === undefined) return [];
     const jsonConfig = json["config"];
-    if (jsonConfig === undefined)
-      return [];
+    if (jsonConfig === undefined) return [];
     // Check for hierarchical module
-    for(const key in jsonConfig) {
-      if (jsonConfig[key] != undefined && jsonConfig[key]["snakefile"] !== undefined) {
+    for (const key in jsonConfig) {
+      if (
+        jsonConfig[key] != undefined &&
+        jsonConfig[key]["snakefile"] !== undefined
+      ) {
         console.log("Hierarchical module");
         return [];
       }
     }
     // Non-hierarchical module, expand all
     console.log("Non-hierarchical module");
-    return Array.from({length: 999}, (_, i) => i.toString());
-  }
+    return Array.from({ length: 999 }, (_, i) => i.toString());
+  };
 
   // Recursive function to render the JSON tree
   const HighlightJSON = ({ keylist }: IHighlightJSONProps) => {
@@ -263,7 +267,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       }
 
       // Check whether parameter has a corresponding metadata entry
-      const metadata = lookupKey(json, keylist, ':' + key);
+      const metadata = lookupKey(json, keylist, ":" + key);
       const valueOptions = [];
       let isParameterConnected = false;
       let parameterValue = "(link)";
@@ -296,7 +300,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
       // TODO: Check whether setting is a connectable parameter
       const canConnectParameter = true;
-      
+
       // If the key is a module root, substitute the module 'name' field as the label
       let label = key;
       const isModuleRoot = checkParameter_IsModuleRoot(value);
@@ -308,7 +312,11 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
       // If the key is a module config, skip renderin of the key (but render children)
       const node = getNodeById(props.nodeid, nodes);
-      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist, key);
+      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(
+        node,
+        keylist,
+        key
+      );
       if (isInModuleConfigLayer && !display_module_settings) {
         // Of the parameters in the module config layer, continue rendering only the
         // 'config' children, which contains the actual parameters
@@ -316,7 +324,10 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
           return <></>;
         } else {
           return (
-            <HighlightJSON keylist={[...keylist, key]} key={(nodeId++).toString()} />
+            <HighlightJSON
+              keylist={[...keylist, key]}
+              key={(nodeId++).toString()}
+            />
           );
         }
       }
@@ -341,7 +352,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
           right: 100,
           onclose: () => {
             setMenu(null);
-          }
+          },
         });
       };
 
@@ -351,13 +362,13 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         const node = getNodeById(props.nodeid, nodes);
         const newnode = JSON.parse(JSON.stringify(node));
         const module_settings = newnode.data.config.config;
-        const metadata = lookupKey(module_settings, keylist, ':' + key);
+        const metadata = lookupKey(module_settings, keylist, ":" + key);
         delete metadata["link"];
         if (Object.keys(metadata).length === 0) {
           const parent = lookupKey(
             module_settings,
-            keylist.slice(0, keylist.length-1),
-            keylist[keylist.length-1]
+            keylist.slice(0, keylist.length - 1),
+            keylist[keylist.length - 1]
           );
           delete parent[":" + key];
         }
@@ -365,12 +376,10 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       };
 
       return (
-        <div style={{cursor: "default"}} key={key} className="line">
+        <div style={{ cursor: "default" }} key={key} className="line">
           {isProtectedValue ? (
             <span>
-              <span className="key">
-                {label}:
-              </span>
+              <span className="key">{label}:</span>
               <span
                 className="protected"
                 style={{
@@ -383,9 +392,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
             </span>
           ) : isParameterConnected ? (
             <span>
-              <span className="key">
-                {label}:
-              </span>
+              <span className="key">{label}:</span>
               <span
                 className="linked"
                 style={{
@@ -398,7 +405,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   style={{ cursor: "text" }}
                   onHoverCssClass="easyedit-hover"
                   value={parameterValue}
-                  onSave={(value) => {return}}
+                  onSave={(value) => {
+                    return;
+                  }}
                   allowEdit={false}
                 />
               </span>
@@ -406,9 +415,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
             </span>
           ) : isSimpleValue ? (
             <span>
-              <span className="key">
-                {label}:
-              </span>
+              <span className="key">{label}:</span>
               <span
                 className={valueType}
                 style={{
@@ -433,7 +440,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                     }}
                     saveOnBlur={true}
                   />
-                ) : (valueType === "select") ? (
+                ) : valueType === "select" ? (
                   <EasyEdit
                     type={Types.SELECT}
                     style={{ cursor: "text" }}
@@ -462,12 +469,12 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   />
                 )}
               </span>
-              { canConnectParameter ? (
+              {canConnectParameter ? (
                 <ConnectParameter connectParameter={connectParameter} />
-              ) : null }
+              ) : null}
             </span>
           ) : (
-            <TreeItem nodeId={(nodeId++).toString()} key={key} label={label} >
+            <TreeItem nodeId={(nodeId++).toString()} key={key} label={label}>
               <HighlightJSON keylist={[...keylist, key]} />
             </TreeItem>
           )}
@@ -488,9 +495,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       }}
     >
       <ThemeProvider theme={theme}>
-        <TreeView
-          defaultExpanded={expandedIfHierarchicalModule(json)}
-        >
+        <TreeView defaultExpanded={expandedIfHierarchicalModule(json)}>
           <HighlightJSON keylist={[]} />
         </TreeView>
       </ThemeProvider>

@@ -15,8 +15,8 @@ import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 
-import { Node } from "NodeMap/scene/Flow";  // Custom Node definition
-import { NodeData } from "NodeMap/scene/Flow";  // Custom NodeData definition
+import { Node } from "NodeMap/scene/Flow"; // Custom Node definition
+import { NodeData } from "NodeMap/scene/Flow"; // Custom NodeData definition
 
 import ReactFlow from "reactflow";
 import { Edge } from "reactflow";
@@ -158,45 +158,48 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
             height: `${input_namespaces.length * 18 - 4}px`,
           }}
         >
-          {
-            input_namespaces.map((name) => {
-              // Format port name
-              const port_name_split = name.split('$');
-              let port_name = node_config[port_name_split[0]]?.name ?? null;
-              if (port_name === undefined || port_name === null) {
-                port_name = name;
-              } else if (port_name_split.length > 1 && port_name_split[1] !== "") {
-                port_name = port_name + ' [' + name.split('$')[1] + ']';
-              }
+          {input_namespaces.map((name) => {
+            // Format port name
+            const port_name_split = name.split("$");
+            let port_name = node_config[port_name_split[0]]?.name ?? null;
+            if (port_name === undefined || port_name === null) {
+              port_name = name;
+            } else if (
+              port_name_split.length > 1 &&
+              port_name_split[1] !== ""
+            ) {
+              port_name = port_name + " [" + name.split("$")[1] + "]";
+            }
 
-              return (
-                <div key={"div-" + name}>
-                  <Handle
-                    className={styles.HandleInput}
-                    id={name}
-                    key={name}
-                    type="target"
-                    position={Position.Left}
-                    style={{ top: `${input_namespaces.indexOf(name) * 18 + 38}px` }}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      console.log("Input handle clicked: ", event.target);
+            return (
+              <div key={"div-" + name}>
+                <Handle
+                  className={styles.HandleInput}
+                  id={name}
+                  key={name}
+                  type="target"
+                  position={Position.Left}
+                  style={{
+                    top: `${input_namespaces.indexOf(name) * 18 + 38}px`,
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    console.log("Input handle clicked: ", event.target);
+                  }}
+                >
+                  <div
+                    className={styles.InputPortLabel}
+                    style={{
+                      pointerEvents: "none", // pass-through click events
+                      width: "100%",
                     }}
                   >
-                    <div
-                      className={styles.InputPortLabel}
-                      style={{
-                        pointerEvents: "none", // pass-through click events
-                        width: "100%",
-                      }}
-                    >
-                      {port_name}
-                    </div>
-                  </Handle>
-                </div>
-              )
-            })
-          }
+                    {port_name}
+                  </div>
+                </Handle>
+              </div>
+            );
+          })}
           <div>
             <Handle
               className={styles.HandleOutput}
@@ -284,7 +287,7 @@ export const getNodeById = (id: string, nodes: Node[]): Node | null => {
 
 export const getNodeName = (node: Node): string => {
   return node.data.config.name;
-}
+};
 
 export const getNodeByName = (name: string, nodes: Node[]): Node | null => {
   for (const node of nodes) {

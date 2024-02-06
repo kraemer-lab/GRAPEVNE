@@ -53,7 +53,7 @@ module module3:
         config["module3"]["config"]
 use rule * from module3 as module3_*
 """
-    assert m.BuildSnakefile(add_configutil=False) == target_snakefile
+    assert m.BuildSnakefile() == target_snakefile
 
 
 def test_ConstructSnakefileConfig():
