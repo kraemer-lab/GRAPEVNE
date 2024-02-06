@@ -9,13 +9,20 @@ import { useAppDispatch } from "redux/store/hooks";
 import { builderUpdateNode } from "redux/actions";
 import { getAllLinks } from "./HighlightedJSON";
 
+import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2';
+import Paper from '@mui/material/Paper';
 
 import "./ParameterList.css";
+
+const protectedNames = [
+  "input_namespace",
+  "output_namespace",
+];
 
 interface ParameterListProps {
   id: string;
@@ -37,6 +44,36 @@ interface IModuleEntryProps{
   label: string;
   node: Node;
 }
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'left',
+  overflow: 'auto',
+  color: theme.palette.text.secondary,
+}));
+
+const checkParameter_IsModuleRoot = (value) => {
+  // Parameter is a module root if it contains a 'snakefile' field
+  if (Object.keys(value).includes("snakefile")) {
+    return true;
+  }
+  return false;
+};
+
+const checkParameter_IsInModuleConfigLayer = (node, keylist, key) => {
+  // Is the parameters parent a module root?
+  const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
+  let jsonObj = json;
+  for (let i = 0; i < keylist.length; i++) {
+    jsonObj = jsonObj[keylist[i]];
+  }
+  if (checkParameter_IsModuleRoot(jsonObj)) {
+    return true;
+  }
+  return false;
+};
 
 export default function ParameterList({
   id,
@@ -164,6 +201,34 @@ export default function ParameterList({
       const valueType: string = typeof value;
       const isSimpleValue =
         ["string", "number", "boolean"].includes(valueType) || !value;
+      const isHiddenValue =
+        (protectedNames.includes(key) || key.startsWith(":"));
+      if (isHiddenValue) {
+        return <></>;
+      }
+
+      // If the key is a module root, substitute the module 'name' field as the label
+      let label = key;
+      const isModuleRoot = checkParameter_IsModuleRoot(value);
+      if (isModuleRoot) {
+        if (jsonObj[key].name !== undefined) {
+          label = jsonObj[key].name;
+        }
+      }
+
+      // If the key is a module config, skip renderin of the key (but render children)
+      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist, key);
+      if (isInModuleConfigLayer) {
+        // Of the parameters in the module config layer, continue rendering only the
+        // 'config' children, which contains the actual parameters
+        if (key !== "config") {
+          return <></>;
+        } else {
+          return (
+            <NodeParameters node={node} keylist={[...keylist, key]} key={(nodeId++).toString()} />
+          );
+        }
+      }
 
       return (
         <>
@@ -179,7 +244,7 @@ export default function ParameterList({
               <TreeItem
                 key={node.id + "__" + [...keylist, key].join("/")}
                 nodeId={(nodeId++).toString()}
-                label={key}
+                label={label}
               >
                 <NodeParameters node={node} keylist={[...keylist, key]} />
               </TreeItem>
@@ -192,42 +257,51 @@ export default function ParameterList({
   }
 
   const ModuleEntry = ({ label, node }: IModuleEntryProps) => (
-    <div
-      key={node.id}
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "10px",
-      }}
-    >
+    <Item>
       <div
+        key={node.id}
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "0px",
-          backgroundColor: "#eee",
+          gap: "10px",
         }}
       >
-        <div>
-          {showAllNodes ? "Node: " + label : "Port: " + label}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0px",
+            backgroundColor: "#eee",
+          }}
+        >
+          {
+            (showAllNodes || showSelfNodes) ? (
+              <div>
+                {"Node: " + label}
+              </div>
+            ) : (
+              <div>{"Port: " + label}
+                <div>
+                  <small>{node.data.config.name}</small>
+                </div>
+              </div>
+            )
+          }
         </div>
-        <div>
-          <small>{node.data.config.name}</small>
+        <div
+          key={node.id + "_p"}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "3px",
+          }}
+        >
+          <TreeView>
+            <NodeParameters node={node} keylist={[]} />
+          </TreeView>
         </div>
       </div>
-      <div
-        key={node.id + "_p"}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "3px",
-        }}
-      >
-        <TreeView>
-          <NodeParameters node={node} keylist={[]} />
-        </TreeView>
-      </div>
-    </div>
+    </Item>
   );
 
   // Handle escape key
@@ -276,19 +350,36 @@ export default function ParameterList({
           </button>
         </span>
       </p>
-      <div
-        style={{
-          display: "flex",
-        }}
-      >
-        {
-          Object.keys(input_nodes).map((node_id) => {
-            return ModuleEntry({
-              label: input_nodes[node_id].label,
-              node: input_nodes[node_id].node
-            });
-          })
-        }
+      <div style={{width: "100%", height: "100%", backgroundColor: "white"}}>
+        <Box sx={{ width: "100%", height: "100%", overflowY: 'auto' }}>
+          <Grid container
+            spacing={{
+              xs: 4,
+              md: 2
+            }}
+            columns={{
+              xs: 2,
+              sm: 8,
+              md: 12
+            }}
+          >
+            {
+              Object.keys(input_nodes).map((node_id) => (
+                <Grid
+                  key={node_id}
+                  xs={2}
+                  sm={4}
+                  md={4}
+                >
+                  <ModuleEntry
+                    label={input_nodes[node_id].label}
+                    node={input_nodes[node_id].node}
+                  />
+                </Grid>
+              ))
+            }
+          </Grid>
+        </Box>
       </div>
     </div>
   );

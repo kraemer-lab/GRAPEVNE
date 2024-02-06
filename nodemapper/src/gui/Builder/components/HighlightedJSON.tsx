@@ -26,7 +26,7 @@ const protectedNames = [
   "input_namespace",
   "output_namespace",
   "snakefile",
-  "parameter_map",
+  "docstring",
 ];
 
 interface IHighlightJSONProps {
