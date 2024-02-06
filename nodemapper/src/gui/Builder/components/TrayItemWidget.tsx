@@ -32,7 +32,7 @@ export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
         onDragStart={(event) => {
           event.dataTransfer.setData(
             "flow-diagram-node",
-            JSON.stringify(this.props.model)
+            JSON.stringify(this.props.model),
           );
         }}
         className="tray-item"

@@ -12,16 +12,16 @@ export const runnerBuildSnakefile = createAction("runner/build-snakefile");
 export const runnerImportSnakefile = createAction("runner/import-snakefile");
 export const runnerLaunchSnakefile = createAction("runner/launch-snakefile");
 export const runnerStoreJobStatus = createAction<string>(
-  "runner/store-job-status"
+  "runner/store-job-status",
 );
 export const runnerUpdateStatusText = createAction<string>(
-  "runner/update-status-text"
+  "runner/update-status-text",
 );
 export const runnerLoadSnakefile = createAction<string>(
-  "runner/load-snakefile"
+  "runner/load-snakefile",
 );
 export const runnerNodeSelected = createAction<Record<string, any> | undefined>( // eslint-disable-line @typescript-eslint/no-explicit-any
-  "runner/node-selected"
+  "runner/node-selected",
 );
 export const runnerNodeDeselected = createAction<
   Record<string, any> | undefined // eslint-disable-line @typescript-eslint/no-explicit-any

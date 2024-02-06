@@ -13,7 +13,7 @@ interface ElementMakerProps {
   showInputEle: boolean;
 }
 export const ElementMaker: React.FC<ElementMakerProps> = (
-  props: ElementMakerProps
+  props: ElementMakerProps,
 ) => {
   // Render a span or input element based on the state of showInputEle (switched
   // by a double-click in the parent component)

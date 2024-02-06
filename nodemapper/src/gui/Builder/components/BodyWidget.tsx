@@ -43,7 +43,7 @@ const Layer = styled.div`
  */
 export const BodyWidget = () => {
   const configPaneOpen = useAppSelector(
-    (state) => state.builder.config_pane_display
+    (state) => state.builder.config_pane_display,
   );
 
   return (

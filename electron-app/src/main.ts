@@ -77,7 +77,7 @@ app.whenReady().then(() => {
   const sendPtyData = (data: string) => {
     win.webContents.send(
       "terminal/receive-data",
-      data.replace(/\r?\n/g, "\r\n")
+      data.replace(/\r?\n/g, "\r\n"),
     );
   };
   ptyProcess.onData(sendPtyData);
@@ -97,20 +97,20 @@ app.whenReady().then(() => {
   // Display
   ipcMain.handle("display/folderinfo", handles.display_FolderInfo);
   ipcMain.handle("display/store-read-config", (event) =>
-    handles.display_StoreReadConfig(event, store)
+    handles.display_StoreReadConfig(event, store),
   );
   ipcMain.handle("display/store-write-config", (event, data) =>
-    handles.display_StoreWriteConfig(event, store, data)
+    handles.display_StoreWriteConfig(event, store, data),
   );
 
   // Builder
   ipcMain.handle(
     "builder/get-remote-modules",
-    handles.builder_GetRemoteModules
+    handles.builder_GetRemoteModules,
   );
   ipcMain.handle(
     "builder/get-remote-module-config",
-    handles.builder_GetRemoteModuleConfig
+    handles.builder_GetRemoteModuleConfig,
   );
   ipcMain.handle("builder/build-as-module", handles.builder_BuildAsModule);
   ipcMain.handle("builder/build-as-workflow", handles.builder_BuildAsWorkflow);
@@ -120,13 +120,13 @@ app.whenReady().then(() => {
       data,
       terminal_sendLine,
       (data: string) => sendLogData(data + "\r\n"), // stdout_callback
-      (data: string) => sendLogData(data + "\r\n") // stderr_callback
-    )
+      (data: string) => sendLogData(data + "\r\n"), // stderr_callback
+    ),
   );
   ipcMain.handle("builder/clean-build-folder", (event, data) =>
     handles.builder_CleanBuildFolder(event, data, (data: string) =>
-      sendLogData(data + "\r\n")
-    )
+      sendLogData(data + "\r\n"),
+    ),
   );
 
   // Runner
@@ -140,7 +140,7 @@ app.whenReady().then(() => {
   ipcMain.handle("runner/launch", handles.runner_Launch);
   ipcMain.handle(
     "runner/check-node-dependencies",
-    handles.runner_CheckNodeDependencies
+    handles.runner_CheckNodeDependencies,
   );
 });
 

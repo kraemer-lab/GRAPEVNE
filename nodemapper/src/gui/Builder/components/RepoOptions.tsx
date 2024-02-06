@@ -15,7 +15,7 @@ const panel_background_color = "#2e3746";
 const RepoOptions: React.FC = () => {
   const dispatch = useAppDispatch();
   const repoSettings = useAppSelector(
-    (state) => state.builder.repositories as IRepo[]
+    (state) => state.builder.repositories as IRepo[],
   );
 
   const [repoLabel, setRepoLabel] = useState("");
@@ -95,7 +95,7 @@ const RepoOptions: React.FC = () => {
   const OnClickRemoveItem = () => {
     console.log("Remove item:", repoListSelectedItems);
     const newRepoSettings = repoSettings.filter(
-      (repo) => repo.label !== repoListSelectedItems
+      (repo) => repo.label !== repoListSelectedItems,
     );
     dispatch(builderSetRepositoryTarget(newRepoSettings));
   };
@@ -103,7 +103,7 @@ const RepoOptions: React.FC = () => {
   const RepoListSelectItem = (value) => {
     console.log("Select item:", value);
     const selected_repo = repoSettings.filter(
-      (repo) => repo.label === value
+      (repo) => repo.label === value,
     )[0];
     // Display repo settings on form
     setRepoLocale(selected_repo.type);

@@ -40,7 +40,7 @@ interface HighlightedJSONProps {
 const HighlightedJSON = (props: HighlightedJSONProps) => {
   const dispatch = useAppDispatch();
   const display_module_settings = useAppSelector(
-    (state) => state.builder.display_module_settings
+    (state) => state.builder.display_module_settings,
   );
 
   // Parse JSON string
@@ -86,7 +86,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       // Callback to update field in central state (triggers re-render)
       const setValue = (value) => {
         dispatch(
-          builderUpdateNodeInfoKey({ keys: [...keylist, key], value: value })
+          builderUpdateNodeInfoKey({ keys: [...keylist, key], value: value }),
         );
       };
 

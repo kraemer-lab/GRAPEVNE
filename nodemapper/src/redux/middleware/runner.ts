@@ -97,7 +97,7 @@ const RebuildNodeMap = (content: Query, dispatch): void => {
 };
 
 const QueryAndLoadTextFile = (
-  onLoad: (result, filename: string) => void
+  onLoad: (result, filename: string) => void,
 ): void => {
   // eslint-disable-line @typescript-eslint/ban-types
   // Opens a file dialog, then executes readerEvent
@@ -116,7 +116,7 @@ const QueryAndLoadTextFile = (
 const SubmitQuery = (
   query: Query,
   dispatch,
-  callback: (content: Query) => void
+  callback: (content: Query) => void,
 ): void => {
   // POST request handler
   const postRequest = async () => {
