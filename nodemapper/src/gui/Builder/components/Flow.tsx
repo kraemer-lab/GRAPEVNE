@@ -16,10 +16,10 @@ import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 
 import { Node } from "NodeMap/scene/Flow"; // Custom Node definition
+import { Edge } from "NodeMap/scene/Flow"; // Custom Edge definition
 import { NodeData } from "NodeMap/scene/Flow"; // Custom NodeData definition
 
 import ReactFlow from "reactflow";
-import { Edge } from "reactflow";
 import { Panel } from "reactflow";
 import { Handle } from "reactflow";
 import { addEdge } from "reactflow";
@@ -525,5 +525,5 @@ const Flow = () => {
   );
 };
 
-export { Node } from "NodeMap/scene/Flow";
+export { Node, Edge } from "NodeMap/scene/Flow";
 export default Flow;

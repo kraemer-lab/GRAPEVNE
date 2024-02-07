@@ -68,7 +68,7 @@ interface HighlightedJSONProps {
   json: string;
 }
 
-const lookupKey = (json, keylist: string[], key: string) => {
+export const lookupKey = (json, keylist: string[], key: string) => {
   // If key is the empty string, return the last key in the keylist
   if (key === "") {
     key = keylist[keylist.length - 1];
@@ -122,27 +122,6 @@ const lookupKeyGlobal = (
     // Otherwise, return the simple value
     return value;
   }
-};
-
-export const getAllLinks = (json) => {
-  const links = [];
-  const traverse = (json, keylist) => {
-    for (const key in json) {
-      if (typeof json[key] === "object") {
-        traverse(json[key], [...keylist, key]);
-      } else {
-        const metadata = lookupKey(json, keylist, ":" + key);
-        if (metadata !== undefined && metadata["link"] !== undefined) {
-          links.push({
-            from: [...keylist, key],
-            to: metadata["link"],
-          });
-        }
-      }
-    }
-  };
-  traverse(json, []);
-  return links;
 };
 
 const ConnectParameter = (props: { connectParameter }) => {

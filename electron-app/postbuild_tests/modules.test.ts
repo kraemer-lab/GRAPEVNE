@@ -572,6 +572,7 @@ describe("modules", () => {
       );
       await driver.wait(until.elementLocated(link_target), TEN_SECS);
       await driver.findElement(link_target).click();
+      await driver.findElement(By.id("btnParameterListClose")).click();
 
       // Validation check (should pass)
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -591,6 +592,21 @@ describe("modules", () => {
       console.log("target_files", target_files);
       await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
       await MultiModuleWorkflow_TidyUp(driver, target_files);
+
+      // Delete the parameter link between modules
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.wait(until.elementLocated(link_button), TEN_SECS);
+      await driver.findElement(link_button).click();
+      await driver.wait(until.elementLocated(By.id("btnParameterListRemove")), TEN_SECS);
+      await driver.findElement(By.id("btnParameterListRemove")).click();
+      await driver.findElement(By.id("btnParameterListClose")).click();
+
+      // Validation check (should fail - no need to test build again)
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.wait(until.elementLocated(By.id("btnBuilderValidate")));
+      await driver.findElement(By.id("btnBuilderValidate")).click();
+      msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
+      expect(msg.returncode).toEqual(1); // 1 = missing dependency
     },
     5 * ONE_MINUTE
   );

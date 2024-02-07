@@ -2,23 +2,28 @@ import React from "react";
 import BuilderEngine from "../BuilderEngine";
 
 import { Node } from "./Flow";
+import { Edge } from "./Flow";
 import { getNodeById } from "./Flow";
 import { getNodeName } from "./Flow";
+import { ModuleType } from "NodeMap/scene/Module";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 import { builderUpdateNode } from "redux/actions";
-import { getAllLinks } from "./HighlightedJSON";
 
 import { checkParameter_IsModuleRoot } from "./HighlightedJSON";
 import { checkParameter_IsInModuleConfigLayer } from "./HighlightedJSON";
+import { lookupKey } from "./HighlightedJSON";
 import { theme } from "./HighlightedJSON";
 
 import { styled } from "@mui/material/styles";
 import { TreeView } from "@mui/x-tree-view/TreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
 import { ThemeProvider } from "@mui/material/styles";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
 import Paper from "@mui/material/Paper";
@@ -57,6 +62,55 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+type InputNodesType = Record<string, { label: string; node: Node }>;
+
+const detemineInputNodes = (
+  id: string,
+  node_to: Node,
+  nodes: Node[],
+  edges: Edge[],
+  showAllNodes: boolean,
+  showSelfNodes: boolean
+): InputNodesType => {
+  const input_nodes: InputNodesType = {};
+  if (showAllNodes) {
+    nodes.forEach((n) => {
+      input_nodes[n.id] = {
+        label: getNodeName(n),
+        node: n,
+      };
+    });
+    // Remove self node (if not showing self node)
+    if (!showSelfNodes) {
+      delete input_nodes[id];
+    }
+  } else {
+    if (showSelfNodes) {
+      nodes.forEach((n) => {
+        input_nodes[n.id] = {
+          label: getNodeName(n),
+          node: n,
+        };
+      });
+      // Add self node (if showing self node)
+      input_nodes[id] = {
+        label: getNodeName(node_to),
+        node: node_to,
+      };
+    } else {
+      edges.forEach((e) => {
+        if (e.target === id) {
+          input_nodes[e.targetHandle] = {
+            label: e.targetHandle,
+            node: getNodeById(e.source, nodes),
+          };
+        }
+      });
+    }
+  }
+  return input_nodes;
+}
+
 export default function ParameterList({
   id,
   keylist,
@@ -79,47 +133,26 @@ export default function ParameterList({
   let nodeId = 0;
 
   // Format keyitem and keylist together
-  let keylist_str = keylist.slice(2, keylist.length).join("/");
-  if (keylist_str.length > 0) {
-    keylist_str += "/";
-  }
-  keylist_str += keyitem;
+  const keylist_str = [...keylist.slice(2, keylist.length), keyitem].join("/");
 
   // Get list of nodes that are connected as inputs to this node
-  const input_nodes: Record<string, { label: string; node: Node }> = {};
-  if (showAllNodes) {
-    nodes.forEach((n) => {
-      input_nodes[n.id] = {
-        label: getNodeName(n),
-        node: n,
-      };
-    });
-    // Remove self node (if not showing self node)
-    if (!showSelfNodes) {
-      delete input_nodes[id];
-    }
-  } else {
-    edges.forEach((e) => {
-      if (e.target === id) {
-        input_nodes[e.targetHandle] = {
-          label: e.targetHandle,
-          node: getNodeById(e.source, nodes),
-        };
-      }
-    });
-    // Add self node (if showing self node)
-    if (showSelfNodes) {
-      input_nodes[id] = {
-        label: getNodeName(node_to),
-        node: node_to,
-      };
-    }
+  const input_nodes = detemineInputNodes(id, node_to, nodes, edges, showAllNodes, showSelfNodes);
+
+  // Determine if parameter is already connected to another parameter
+  let isConnected = false;
+  const node = getNodeById(id, nodes);
+  const module_settings = node.data.config.config;
+  const metadata = lookupKey(module_settings, keylist, ":" + keyitem);
+  let target_keylist_str = "";
+  if (metadata !== undefined) {
+    isConnected = metadata["link"] !== undefined;
+    if (isConnected)
+      target_keylist_str = metadata["link"].join("/");
   }
 
-  // Get parameter pairs from node - TODO: replace this bit
-  const json = JSON.parse(JSON.stringify(node_to))["data"]["config"]["config"];
-  const links = getAllLinks(json);
-  console.debug("All link: ", links);
+  // Get parameter pairs from node
+  const node_json = JSON.parse(JSON.stringify(node_to))["data"] as ModuleType;
+  const json = node_json?.config?.config && null;
 
   // Handle parameter selection
   const onParameterSelect = (
@@ -149,23 +182,24 @@ export default function ParameterList({
     // Update node with new parameter map
     newnode_to.data.config.config = node_config;
     dispatch(builderUpdateNode(newnode_to));
-    onclose();
   };
 
-  // Handle parameter removal
-  const onRemoveMapping = () => {
-    // Remove pairing between 'key/keylist' param and selection, into node.id
-    const newnode_to = JSON.parse(JSON.stringify(node_to));
-    let pmap = newnode_to.data.config.config["parameter_map"];
-    if (pmap === undefined) {
-      pmap = [];
+  const disconnectParameter = () => {
+    console.log("Disconnect parameter: ", keyitem);
+    const node = getNodeById(id, nodes);
+    const newnode = JSON.parse(JSON.stringify(node));
+    const module_settings = newnode.data.config.config;
+    const metadata = lookupKey(module_settings, keylist, ":" + keyitem);
+    delete metadata["link"];
+    if (Object.keys(metadata).length === 0) {
+      const parent = lookupKey(
+        module_settings,
+        keylist.slice(0, keylist.length - 1),
+        keylist[keylist.length - 1]
+      );
+      delete parent[":" + keyitem];
     }
-    pmap = pmap.filter((pair) => {
-      return pair["to"][pair["to"].length - 1] !== keyitem;
-    });
-    newnode_to.data.config.config["parameter_map"] = pmap;
-    dispatch(builderUpdateNode(newnode_to));
-    onclose();
+    dispatch(builderUpdateNode(newnode));
   };
 
   const NodeParameters = ({ node, keylist }: INodeParametersProps) => {
@@ -175,8 +209,10 @@ export default function ParameterList({
     for (let i = 0; i < keylist.length; i++) {
       jsonObj = jsonObj[keylist[i]];
     }
+
     // Map the JSON sub-fields to a list of rendered elements
     const fieldlist = Object.keys(jsonObj).map((key) => {
+      const node_name = getNodeName(node);
       const value = jsonObj[key];
       const valueType: string = typeof value;
       const isSimpleValue =
@@ -217,15 +253,45 @@ export default function ParameterList({
         }
       }
 
-      return (
-        <>
-          {isSimpleValue ? (
+      const DisplaySimpleValue = () => {
+        // Is the parameter the target of our already connected parameter?
+        const identifier = [node_name, ...keylist, key].join("/");
+        if (identifier === target_keylist_str) {
+          return (
             <TreeItem
-              key={node.id + "__" + [...keylist, key].join("/")}
+              style={{color: "#1876d2"}}
+              key={node.id + "__" + identifier}
+              nodeId={(nodeId++).toString()}
+              label={key + ": " + value}
+              onClick={() => onParameterSelect(node, keylist, key)}
+            >
+              <Button
+                component="label"
+                variant="outlined"
+                startIcon={<FontAwesomeIcon icon={faTimes} />}
+                size="small"
+                style={{maxHeight: "25px"}}
+                onClick={disconnectParameter}
+              >
+                Disconnect
+              </Button>
+            </TreeItem>
+        )} else {
+          return (
+            <TreeItem
+              key={node.id + "__" + identifier}
               nodeId={(nodeId++).toString()}
               label={key + ": " + value}
               onClick={() => onParameterSelect(node, keylist, key)}
             />
+          )
+        }
+      }
+
+      return (
+        <>
+          {isSimpleValue ? (
+            <DisplaySimpleValue />
           ) : (
             <TreeItem
               key={node.id + "__" + [...keylist, key].join("/")}
@@ -309,25 +375,41 @@ export default function ParameterList({
         </big>{" "}
         <i>{node_name}</i>
         <span style={{ float: "right" }}>
+          {(isConnected) ? (
+            <span>
+              <Button
+                id="btnParameterListRemove"
+                variant="outlined"
+                size="small"
+                onClick={disconnectParameter}
+              >
+                Disconnect
+              </Button>
+              {' '}
+            </span>
+          ) : (<></>)}
           <label htmlFor="checkParameterListShowSelfParams">
             Show own parameters
           </label>
-          <input
-            type="checkbox"
+          <Checkbox
             id="checkParameterListShowSelfParams"
             onChange={() => setShowSelfNodes(!showSelfNodes)}
             checked={showSelfNodes}
-          ></input>
+          />
           <label htmlFor="checkParameterListShowAllNodes">Show all nodes</label>
-          <input
-            type="checkbox"
+          <Checkbox
             id="checkParameterListShowAllNodes"
             onChange={() => setShowAllNodes(!showAllNodes)}
             checked={showAllNodes}
-          ></input>
-          <button id="btnParameterListClose" onClick={onclose}>
-            X
-          </button>
+          />
+          <Button
+            id="btnParameterListClose"
+            variant="outlined"
+            style={{width: "25px", height: "25px", minWidth: "0"}}
+            onClick={onclose}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </Button>
         </span>
       </p>
       <div style={{ width: "100%", height: "100%", backgroundColor: "white" }}>
