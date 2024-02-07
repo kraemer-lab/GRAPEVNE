@@ -2,7 +2,7 @@ import BuilderEngine from "gui/Builder/BuilderEngine";
 import * as actions from "../actions";
 
 import { Node } from "NodeMap/scene/Flow";
-import { Edge } from "reactflow";
+import { Edge } from "NodeMap/scene/Flow";
 import { OnConnect } from "reactflow";
 import { createReducer } from "@reduxjs/toolkit";
 import { OnNodesChange } from "reactflow";
