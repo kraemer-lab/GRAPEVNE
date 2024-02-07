@@ -272,7 +272,27 @@ const BuildAndRun_MultiModuleWorkflow = async (
   outfiles: string[],
 ) => {
   console.log("::: test Build and Test the workflow");
+  await MultiModuleWorkflow_Setup(
+    driver,
+    modulenames,
+    connections,
+  );
+  const target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
+    driver,
+    modulenames,
+    connections,
+    outfiles
+  );
+  await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
+  await MultiModuleWorkflow_TidyUp(driver, target_files);
+};
 
+export const MultiModuleWorkflow_Setup = async (
+  driver: webdriver.ThenableWebDriver,
+  modulenames: string[],
+  connections: string[][],
+) => {
+  console.log("::: test Build and Test the workflow (setup)");
   // Drag-and-drop module from modules-list into scene
   await driver.findElement(By.id("btnBuilderClearScene")).click();
   // Force modules to be loaded in order
@@ -300,11 +320,18 @@ const BuildAndRun_MultiModuleWorkflow = async (
     );
     await dragAndDrop(driver, port1, port2);
   }
+};
 
+export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
+  driver: webdriver.ThenableWebDriver,
+  modulenames: string[],
+  connections: string[][],
+  outfiles: string[]
+) => {
+  console.log("::: test Build and Test the workflow (CleanAndDeterminTargets)");
   // Clean build folder (initial); assert target output does not exist
-  let msg: Record<string, unknown>;
   await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
-  msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
+  const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   const target_files = outfiles.map((outfile) => {
     return path.join((msg.body as Query).path as string, outfile);
@@ -314,17 +341,35 @@ const BuildAndRun_MultiModuleWorkflow = async (
     expect(fs.existsSync(target_file)).toBeFalsy();
   });
 
+  return target_files;
+};
+
+export const MultiModuleWorkflow_BuildAndCheck = async (
+  driver: webdriver.ThenableWebDriver,
+  target_files: string[],
+  should_fail = false
+) => {
+  console.log("::: test Build and Test the workflow (build-and-check)");
+
   // Build and test; assert output files exist
   await driver.findElement(By.id("btnBuilderBuildAndTest")).click();
-  msg = await WaitForReturnCode(driver, "builder/build-and-run");
+  const msg = await WaitForReturnCode(driver, "builder/build-and-run");
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
-    expect(fs.existsSync(target_file)).toBeTruthy();
+    if (should_fail) expect(fs.existsSync(target_file)).toBeFalsy();
+    else expect(fs.existsSync(target_file)).toBeTruthy();
   });
+};
+
+export const MultiModuleWorkflow_TidyUp = async (
+  driver: webdriver.ThenableWebDriver,
+  target_files: string[]
+) => {
+  console.log("::: test Build and Test the workflow (tidy-up)");
 
   // Clean build folder (tidy-up); assert target output does not exist
   await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
-  msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
+  const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
     expect(fs.existsSync(target_file)).toBeFalsy();
