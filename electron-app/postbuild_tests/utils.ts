@@ -253,11 +253,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
   outfiles: string[]
 ) => {
   console.log("::: test Build and Test the workflow");
-  await MultiModuleWorkflow_Setup(
-    driver,
-    modulenames,
-    connections,
-  );
+  await MultiModuleWorkflow_Setup(driver, modulenames, connections);
   const target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
     driver,
     modulenames,
@@ -271,7 +267,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
 export const MultiModuleWorkflow_Setup = async (
   driver: webdriver.ThenableWebDriver,
   modulenames: string[],
-  connections: string[][],
+  connections: string[][]
 ) => {
   console.log("::: test Build and Test the workflow (setup)");
   // Drag-and-drop module from modules-list into scene

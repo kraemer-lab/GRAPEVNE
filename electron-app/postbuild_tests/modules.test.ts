@@ -515,7 +515,11 @@ describe("modules", () => {
       // Drag modules into scene; connect and run with default settings
       await MultiModuleWorkflow_Setup(driver, modulenames, connections);
       let target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
-        driver, modulenames, connections, outfiles);
+        driver,
+        modulenames,
+        connections,
+        outfiles
+      );
 
       // Validation check (should pass)
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -573,7 +577,11 @@ describe("modules", () => {
       // Build and run the (linked) workflow (should pass)
       outfiles[0] = path.join("single_modules_copy_run", "newfile.csv");
       target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
-        driver, modulenames, connections, outfiles);
+        driver,
+        modulenames,
+        connections,
+        outfiles
+      );
       console.log("target_files", target_files);
       await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
       await MultiModuleWorkflow_TidyUp(driver, target_files);
