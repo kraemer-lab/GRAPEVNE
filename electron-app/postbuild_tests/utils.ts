@@ -406,7 +406,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     // Build docker image
     console.log("Build docker image");
     let { stdout, stderr } = await execPromise(
-      path.join(buildfolder, "build_container.sh")
+      path.join(buildfolder, "build_container.sh"),
     );
     if (stdout) console.log(stdout);
     if (stderr) console.log(stderr);
@@ -414,7 +414,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     // Launch docker and wait for process to finish
     console.log("Launch docker and wait for process to finish");
     ({ stdout, stderr } = await execPromise(
-      path.join(buildfolder, "launch_container.sh")
+      path.join(buildfolder, "launch_container.sh"),
     ));
     if (stdout) console.log(stdout);
     if (stderr) console.log(stderr);
