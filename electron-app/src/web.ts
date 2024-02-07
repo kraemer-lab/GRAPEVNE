@@ -7,7 +7,7 @@ const load_config = false;
 
 const GetModuleConfig = async (
   repo: Record<string, unknown>,
-  snakefile: Record<string, unknown> | string
+  snakefile: Record<string, unknown> | string,
 ) => {
   /* Returns both the config file, and the workflow docstring, if it exists */
   const config = (await GetModuleConfigFile(repo, snakefile)) as Record<
@@ -20,7 +20,7 @@ const GetModuleConfig = async (
 
 const GetModuleConfigFile = async (
   repo: Record<string, unknown>,
-  snakefile: Record<string, unknown> | string
+  snakefile: Record<string, unknown> | string,
 ) => {
   console.log("GetModuleConfig: ", repo);
   let workflow_url = "";
@@ -74,7 +74,7 @@ const GetModuleConfigFile = async (
 
 const GetModuleDocstring = async (
   repo: Record<string, unknown>,
-  snakefile: Record<string, unknown> | string
+  snakefile: Record<string, unknown> | string,
 ) => {
   console.log("GetModuleConfig: ", repo);
   let workflow_url = "";
@@ -134,7 +134,7 @@ const ParseDocstring = (snakefile: string): string => {
 };
 
 const GetModulesList = async (
-  url: Record<string, unknown> | Record<string, unknown>[]
+  url: Record<string, unknown> | Record<string, unknown>[],
 ): Promise<Array<Record<string, unknown>>> => {
   // Process multiple urls if input is an array
   if (Array.isArray(url)) {
@@ -151,7 +151,7 @@ const GetModulesList = async (
     case "github":
       return GetRemoteModulesGithub(
         url["repo"] as string,
-        url["listing_type"] as string
+        url["listing_type"] as string,
       );
     case "local":
       return GetLocalModules(url["repo"] as string);
@@ -167,7 +167,7 @@ const GetFolders = (root_folder: string): Array<string> =>
     .map((f) => f.name);
 
 const GetLocalModules = (
-  root_folder: string
+  root_folder: string,
 ): Array<Record<string, unknown>> => {
   // static return for now
   const path_base = path.join(path.resolve(root_folder), "workflows");
@@ -193,14 +193,14 @@ const GetLocalModules = (
           org,
           module_type,
           workflow,
-          "workflow/Snakefile"
+          "workflow/Snakefile",
         );
         const config_file = path.join(
           path_base,
           org,
           module_type,
           workflow,
-          "config/config.yaml"
+          "config/config.yaml",
         );
 
         let config = {};
@@ -232,7 +232,7 @@ const GetLocalModules = (
 
 const GetRemoteModulesGithub = async (
   repo: string,
-  listing_type: string
+  listing_type: string,
 ): Promise<Record<string, unknown>[]> => {
   switch (listing_type) {
     case "DirectoryListing":
@@ -245,7 +245,7 @@ const GetRemoteModulesGithub = async (
 };
 
 const GetRemoteModulesGithubDirectoryListing = async (
-  repo: string
+  repo: string,
 ): Promise<Record<string, unknown>[]> => {
   const url_github = "https://api.github.com/repos";
   const url_base: string = path.join(url_github, repo, "contents/workflows");
@@ -280,7 +280,8 @@ const GetRemoteModulesGithubDirectoryListing = async (
     const module_types = await get(url_org).then((data) => {
       return data
         .filter(
-          (module_type: Record<string, unknown>) => module_type["type"] == "dir"
+          (module_type: Record<string, unknown>) =>
+            module_type["type"] == "dir",
         )
         .map((module_type: Record<string, unknown>) => module_type["name"])
         .reverse();
@@ -292,7 +293,7 @@ const GetRemoteModulesGithubDirectoryListing = async (
       const workflows = await get(url_workflow).then((data) => {
         return data
           .filter(
-            (workflow: Record<string, unknown>) => workflow["type"] == "dir"
+            (workflow: Record<string, unknown>) => workflow["type"] == "dir",
           )
           .map((workflow: Record<string, unknown>) => workflow["name"]);
       });
@@ -307,7 +308,7 @@ const GetRemoteModulesGithubDirectoryListing = async (
           org,
           module_type,
           workflow,
-          "config/config.yaml"
+          "config/config.yaml",
         );
 
         let config = {};
@@ -361,7 +362,7 @@ const GetRemoteModulesGithubDirectoryListing = async (
 };
 
 const GetRemoteModulesGithubBranchListing = async (
-  repo: string
+  repo: string,
 ): Promise<Record<string, unknown>[]> => {
   const url_github = "https://api.github.com/repos";
   const url_base = path.join(url_github, repo, "branches");
@@ -388,14 +389,14 @@ const GetRemoteModulesGithubBranchListing = async (
     const [module_type, module_org, module_name] = branch.split("/");
     if (!Object.keys(module_types).includes(module_type)) {
       throw new Error(
-        `Invalid module type '${module_type}' in branch '${branch}'.`
+        `Invalid module type '${module_type}' in branch '${branch}'.`,
       );
     }
     const url_config = path.join(
       "https://raw.githubusercontent.com",
       repo,
       branch,
-      "config/config.yaml"
+      "config/config.yaml",
     );
     let config = {};
     let module_classification =

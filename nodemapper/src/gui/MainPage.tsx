@@ -11,7 +11,7 @@ interface MenuChoiceRenderProps {
 }
 
 const MenuChoiceRender: React.FC<MenuChoiceRenderProps> = (
-  props: MenuChoiceRenderProps
+  props: MenuChoiceRenderProps,
 ) => {
   const selection = props.selection;
   if (selection == 0) {

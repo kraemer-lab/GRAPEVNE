@@ -47,7 +47,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.environment_variables,
             false, // package_modules (workflow only)
             getState().builder.nodes,
-            getState().builder.edges
+            getState().builder.edges,
           );
           break;
 
@@ -62,7 +62,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.environment_variables,
             getState().builder.package_modules_in_workflow,
             getState().builder.nodes,
-            getState().builder.edges
+            getState().builder.edges,
           );
           break;
 
@@ -74,7 +74,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.conda_backend,
             getState().builder.environment_variables,
             getState().builder.nodes,
-            getState().builder.edges
+            getState().builder.edges,
           );
           break;
 
@@ -97,7 +97,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             getState().builder.nodes,
             getState().builder.edges,
             dispatch,
-            getState().builder.snakemake_backend
+            getState().builder.snakemake_backend,
           );
           break;
 
@@ -114,7 +114,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             action,
             dispatch,
             JSON.parse(getState().builder.nodeinfo),
-            getState().builder.nodes
+            getState().builder.nodes,
           );
           break;
 
@@ -123,7 +123,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             action,
             dispatch,
             JSON.parse(getState().builder.nodeinfo),
-            getState().builder.nodes
+            getState().builder.nodes,
           );
           break;
 
@@ -188,7 +188,7 @@ const BuildAs = async (
   environment_variables: string,
   package_modules: boolean,
   nodes: Node[],
-  edges: Edge[]
+  edges: Edge[],
 ) => {
   dispatchString(builderUpdateStatusText("Building workflow..."));
   const app = BuilderEngine.Instance;
@@ -211,7 +211,7 @@ const BuildAs = async (
     const element = document.createElement("a");
     element.setAttribute(
       "href",
-      "data:application/zip;base64," + encodeURIComponent(result)
+      "data:application/zip;base64," + encodeURIComponent(result),
     );
     element.setAttribute("download", filename);
     element.style.display = "none";
@@ -245,10 +245,10 @@ const BuildAndRun = async (
   conda_backend: string,
   environment_variables: string,
   nodes: Node[],
-  edges: Edge[]
+  edges: Edge[],
 ) => {
   dispatchString(
-    builderUpdateStatusText("Building workflow and launching a test run...")
+    builderUpdateStatusText("Building workflow and launching a test run..."),
   );
   const app = BuilderEngine.Instance;
   const query: Query = {
@@ -317,7 +317,7 @@ const CheckNodeDependencies = async (
   nodes: Node[],
   edges: Edge[],
   dispatch,
-  snakemake_backend: string
+  snakemake_backend: string,
 ) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
@@ -352,9 +352,9 @@ const CheckNodeDependencies = async (
             app.setNodeColor(
               node,
               BuilderEngine.GetModuleTypeColor(node_type),
-              nodes
-            )
-          )
+              nodes,
+            ),
+          ),
         );
         break;
       case "missing":
@@ -403,7 +403,7 @@ const UpdateNodeInfoKey = (
   action: IPayloadRecord,
   dispatch,
   nodeinfo,
-  nodes: Node[]
+  nodes: Node[],
 ): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoKey");
@@ -436,7 +436,7 @@ const UpdateNodeInfoName = (
   action: IPayloadString,
   dispatch,
   nodeinfo,
-  nodes: Node[]
+  nodes: Node[],
 ): void => {
   // Update field for node
   console.log("Middleware: UpdateNodeInfoName");
@@ -457,7 +457,7 @@ const UpdateNodeInfoName = (
 
 const GetRemoteModules = async (
   dispatchString: TPayloadString,
-  repo: string
+  repo: string,
 ) => {
   // Get list of remote modules
   dispatchString(builderUpdateStatusText("Loading modules..."));
@@ -533,7 +533,7 @@ const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
 
 const SubmitQueryExpectZip = (
   query: Query,
-  callback: (content: unknown) => void
+  callback: (content: unknown) => void,
 ) => {
   // POST request handler
   const postZIPRequest = async () => {
@@ -571,7 +571,7 @@ const SubmitQueryExpectZip = (
       .then((stream) =>
         new Response(stream, {
           headers: { "Content-type": "application/zip" },
-        }).text()
+        }).text(),
       )
       .then((result) => {
         callback(result);
@@ -583,7 +583,7 @@ const SubmitQueryExpectZip = (
 const postRequestCheckNodeDependencies = async (
   query: Query,
   dispatch: TPayloadString,
-  callback: (data: Query) => void
+  callback: (data: Query) => void,
 ) => {
   const postRequestOptions = {
     method: "POST",

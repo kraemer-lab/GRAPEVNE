@@ -86,7 +86,7 @@ const FlushConsoleLog = async (driver: webdriver.ThenableWebDriver) => {
 // Wait for return code
 const WaitForReturnCode = async (
   driver: webdriver.ThenableWebDriver,
-  query: string
+  query: string,
 ): Promise<Query> => {
   console.log("::: WaitForReturnCode");
 
@@ -99,7 +99,7 @@ const WaitForReturnCode = async (
   // eslint-disable-next-line no-constant-condition
   while (true) {
     msg_set = (await driver.executeScript(
-      "return _msg_queue.shift()"
+      "return _msg_queue.shift()",
     )) as unknown[];
     if (msg_set === undefined || msg_set === null) continue;
     msg = msg_set.shift();
@@ -123,7 +123,7 @@ const WaitForReturnCode = async (
 const dragAndDrop = async (
   driver: webdriver.ThenableWebDriver,
   elementFrom: webdriver.WebElement,
-  elementTo: webdriver.WebElement
+  elementTo: webdriver.WebElement,
 ) => {
   if (os.platform() === "win32") {
     // Windows implementation - see function for details
@@ -137,7 +137,7 @@ const dragAndDrop = async (
 const dragAndDrop_script = async (
   driver: webdriver.ThenableWebDriver,
   elementFrom: webdriver.WebElement,
-  elementTo: webdriver.WebElement
+  elementTo: webdriver.WebElement,
 ) => {
   // Drag and drop replacement for Selenium (due to HTML5 issue)
   // Required for Windows tests (regular method works on Linux and MacOS)
@@ -185,14 +185,14 @@ const dragAndDrop_script = async (
     simulateHTML5DragAndDrop(source,destination);
     `,
     elementFrom,
-    elementTo
+    elementTo,
   );
 };
 
 const EasyEdit_SetFieldByKey = async (
   driver: webdriver.ThenableWebDriver,
   key: string,
-  newvalue: string
+  newvalue: string,
 ) => {
   // EasyEdit boxes are awkward to interact with as they regenerate using a wrapper
   // around the input box in Edit mode, and a simplified wrapper around a label when
@@ -218,7 +218,7 @@ const EasyEdit_SetFieldByKey = async (
 const EasyEdit_SetFieldByValue = async (
   driver: webdriver.ThenableWebDriver,
   oldvalue: string,
-  newvalue: string
+  newvalue: string,
 ) => {
   // EasyEdit boxes are awkward to interact with as they regenerate using a wrapper
   // around the input box in Edit mode, and a simplified wrapper around a label when
@@ -269,7 +269,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
   modulenames: string[],
   connections: string[][],
-  outfiles: string[]
+  outfiles: string[],
 ) => {
   console.log("::: test Build and Test the workflow");
 
@@ -278,7 +278,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
   // Force modules to be loaded in order
   for (let k = 0; k < modulenames.length; k++) {
     const module = await driver.findElement(
-      By.id("modulelist-" + wranglename(modulenames[k]))
+      By.id("modulelist-" + wranglename(modulenames[k])),
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
     await dragAndDrop(driver, module, canvas);
@@ -293,10 +293,10 @@ const BuildAndRun_MultiModuleWorkflow = async (
     // We can connect modules by first clicking on the source port, then the target port
     const [fromport, toport] = connections[k];
     const port1 = await driver.findElement(
-      By.xpath(`//div[@data-id="${fromport}"]`)
+      By.xpath(`//div[@data-id="${fromport}"]`),
     );
     const port2 = await driver.findElement(
-      By.xpath(`//div[@data-id="${toport}"]`)
+      By.xpath(`//div[@data-id="${toport}"]`),
     );
     await dragAndDrop(driver, port1, port2);
   }
@@ -346,7 +346,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   console.log("Drag-and-drop module from modules-list into scene");
   await driver.findElement(By.id("btnBuilderClearScene")).click();
   const module = await driver.findElement(
-    By.id("modulelist-" + wranglename(modulename))
+    By.id("modulelist-" + wranglename(modulename)),
   );
   const canvas = await driver.findElement(By.className("react-flow__pane"));
   await dragAndDrop(driver, module, canvas);
@@ -360,7 +360,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   // Instead, we expand a local module which contains a link to a remote module (this
   // can be loaded remotely from the docker container).
   //
-  // This was a workaround as local modules could not be run through containers until
+  // This was required as local modules could not be run through containers, until
   // workflow packaging was introduced.
   if (expand_module) {
     // Click on the canvas module element. This actually finds both the repository entry
@@ -441,7 +441,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     // Launch docker and wait for process to finish
     console.log("Launch docker and wait for process to finish");
     const { stdout, stderr } = await execPromise(
-      path.join(buildfolder, "run_docker.sh")
+      path.join(buildfolder, "run_docker.sh"),
     );
     if (stdout) console.log(stdout);
     if (stderr) console.log(stderr);

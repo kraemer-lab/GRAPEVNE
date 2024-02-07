@@ -6,7 +6,7 @@ import { ConfigPaneDisplay } from "redux/types";
 
 export const ConfigPane: React.FC = () => {
   const configPaneDisplay = useAppSelector(
-    (state) => state.builder.config_pane_display
+    (state) => state.builder.config_pane_display,
   );
 
   switch (configPaneDisplay) {

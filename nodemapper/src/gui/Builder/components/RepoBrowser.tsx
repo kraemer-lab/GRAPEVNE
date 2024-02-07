@@ -68,8 +68,8 @@ const RepoBrowser = () => {
     dispatch(
       builderUpdateStatusText(
         "ERROR: Module list failed to load - check that the repository name is " +
-          "correct and is reachable"
-      )
+          "correct and is reachable",
+      ),
     );
     modules_list = "[]";
   }
@@ -78,12 +78,12 @@ const RepoBrowser = () => {
     JSON.parse(modules_list)
       .filter(
         (m) =>
-          m["name"].startsWith(filterSelection) || filterSelection === "(all)"
+          m["name"].startsWith(filterSelection) || filterSelection === "(all)",
       )
       .filter(
         (m) =>
           m["name"].toLowerCase().includes(searchterm.toLowerCase()) ||
-          searchterm === ""
+          searchterm === "",
       )
       .map((m) => (
         <TrayItemWidget
@@ -95,7 +95,7 @@ const RepoBrowser = () => {
       ));
 
   const [trayitems, setTrayitems] = React.useState(
-    updateTrayItems("(all)", "")
+    updateTrayItems("(all)", ""),
   );
   React.useEffect(() => {
     setFilterSelection("(all)");
