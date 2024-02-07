@@ -49,7 +49,7 @@ export async function display_StoreReadConfig(event: Event, store: Store) {
 export async function display_StoreWriteConfig(
   event: Event,
   store: Store,
-  data: Query
+  data: Query,
 ) {
   // Set up electron-store (persistent local configuration)
   store.set("config", data);
@@ -63,7 +63,7 @@ export async function display_StoreWriteConfig(
 export async function builder_GetRemoteModules(event: Event, query: Query) {
   try {
     const modules = await web.GetModulesList(
-      ((query["data"] as Query)["content"] as Query)["url"]
+      ((query["data"] as Query)["content"] as Query)["url"],
     );
     return {
       query: "builder/get-remote-modules",
@@ -77,11 +77,11 @@ export async function builder_GetRemoteModules(event: Event, query: Query) {
 
 export async function builder_GetRemoteModuleConfig(
   event: Event,
-  query: Query
+  query: Query,
 ) {
   const config = await web.GetModuleConfig(
     ((query["data"] as Query)["content"] as Query)["repo"],
-    ((query["data"] as Query)["content"] as Query)["snakefile"]
+    ((query["data"] as Query)["content"] as Query)["snakefile"],
   );
   return config;
 }
@@ -109,7 +109,7 @@ export async function builder_BuildAndRun(
   query: Query,
   cmd_callback: (cmd: string) => void,
   stdout_callback: (cmd: string) => void,
-  stderr_callback: (cmd: string) => void
+  stderr_callback: (cmd: string) => void,
 ) {
   stdout_callback("Building workflow...");
   const data = await ProcessQuery(event, query);
@@ -158,7 +158,7 @@ export async function builder_BuildAndRun(
           conda_backend,
           envs,
           stdout_callback,
-          stderr_callback
+          stderr_callback,
         );
         stdout_callback("Workflow complete.");
         break;
@@ -181,7 +181,7 @@ export async function builder_BuildAndRun(
 export async function builder_CleanBuildFolder(
   event: Event,
   query: Query,
-  status_callback: (status: string) => void
+  status_callback: (status: string) => void,
 ) {
   status_callback("Cleaning build folder...");
   const data = await ProcessQuery(event, query);

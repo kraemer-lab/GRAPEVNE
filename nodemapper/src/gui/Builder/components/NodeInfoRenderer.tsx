@@ -54,7 +54,7 @@ const ExpandButton = (props: ExpandProps) => {
   const edges = useAppSelector((state) => state.builder.edges);
 
   const showExpand = useAppSelector(
-    (state) => state.builder.can_selected_expand
+    (state) => state.builder.can_selected_expand,
   );
 
   const btnExpand = () => {
@@ -63,7 +63,7 @@ const ExpandButton = (props: ExpandProps) => {
     const [nodes0, edges0] = app.ExpandNodeByName(
       props.nodeinfo.name as string,
       nodes,
-      edges
+      edges,
     );
     console.log("newnodes", newnodes);
     if (nodes0 !== null && nodes0 !== undefined)

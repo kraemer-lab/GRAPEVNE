@@ -20,5 +20,5 @@ root.render(
         <App />
       </StrictMode>
     </HashRouter>
-  </Provider>
+  </Provider>,
 );

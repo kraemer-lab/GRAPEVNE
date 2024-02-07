@@ -10,9 +10,9 @@
     "baseUrl": "src",
     "plugins": [
       {
-        "name": "typescript-plugin-css-modules"
-      }
-    ]
+        "name": "typescript-plugin-css-modules",
+      },
+    ],
   },
-  "include": ["src"]
+  "include": ["src"],
 }

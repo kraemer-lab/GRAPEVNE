@@ -23,6 +23,6 @@ test("code quality", () => {
           <App />
         </StrictMode>
       </HashRouter>
-    </Provider>
+    </Provider>,
   );
 });

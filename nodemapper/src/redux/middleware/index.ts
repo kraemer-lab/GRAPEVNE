@@ -6,7 +6,7 @@ import { displayMiddleware } from "./display.js";
 const middleware = applyMiddleware(
   runnerMiddleware,
   builderMiddleware,
-  displayMiddleware
+  displayMiddleware,
 );
 
 export default middleware;
