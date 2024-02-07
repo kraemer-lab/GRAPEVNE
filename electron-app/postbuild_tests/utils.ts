@@ -240,7 +240,7 @@ const EasyEdit_SetFieldByValue = async (
 
 const SetCheckBox = async (
   checkbox: webdriver.WebElement,
-  checked: boolean
+  checked: boolean,
 ) => {
   // Set checkbox to checked or unchecked
   const is_checked = await checkbox.isSelected();
@@ -250,7 +250,7 @@ const SetCheckBox = async (
 const SetCheckBoxByID = async (
   driver: webdriver.ThenableWebDriver,
   id: string,
-  checked: boolean
+  checked: boolean,
 ) => {
   // Set checkbox to checked or unchecked
   const checkbox = await driver.findElement(By.id(id));
@@ -260,7 +260,7 @@ const SetCheckBoxByID = async (
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
   modulename: string,
-  outfiles: string[]
+  outfiles: string[],
 ) => {
   await BuildAndRun_MultiModuleWorkflow(driver, [modulename], [], outfiles);
 };
@@ -338,7 +338,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
   modulename: string,
   target_outfiles: string[],
   payload_outfiles: string[],
-  expand_module = false
+  expand_module = false,
 ) => {
   console.log("::: test Build, then launch in Docker");
 
@@ -367,7 +367,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     // and the canvas element, so we click on both as we cannot guarantee ordering.
     console.log("Click the canvas module element");
     const elements = await driver.findElements(
-      By.xpath(`//div[text()='${modulename}']`)
+      By.xpath(`//div[text()='${modulename}']`),
     );
     for (const element of elements) await element.click();
     await driver.sleep(100); // Wait for module settings to expand
@@ -428,7 +428,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async (
     target_files.forEach((target_file) => {
       expect(fs.existsSync(target_file)).toBeFalsy();
     });
-    
+
     console.log("Assert that the packaged payload files do exist");
     const payload_files = payload_outfiles.map((outfile) => {
       return path.join(buildfolder, outfile);

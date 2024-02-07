@@ -45,7 +45,7 @@ const BuilderSettings = () => {
     (state) => state.builder.auto_validate_connections,
   );
   const package_modules_in_workflow = useAppSelector(
-    (state) => state.builder.package_modules_in_workflow
+    (state) => state.builder.package_modules_in_workflow,
   );
 
   const SetSnakemakeArgs = (args: string) =>

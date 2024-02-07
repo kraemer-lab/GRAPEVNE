@@ -383,15 +383,11 @@ describe("modules", () => {
   runif(!is_windows).each([
     [
       "(single_modules) payload shell",
-      [
-        path.join("results", "single_modules_payload_shell", "data.csv")
-      ],
+      [path.join("results", "single_modules_payload_shell", "data.csv")],
     ],
     [
       "(single_modules) payload run",
-      [
-        path.join("results", "single_modules_payload_run", "data.csv")
-      ],
+      [path.join("results", "single_modules_payload_run", "data.csv")],
     ],
   ])(
     "Build and Test the workflow: module '%s'",
@@ -415,7 +411,7 @@ describe("modules", () => {
     },
     5 * ONE_MINUTE,
   ); // long timeout
-  
+
   runif(!is_windows).each([
     // Test: 1 (connect two modules)
     [
@@ -544,9 +540,7 @@ describe("modules", () => {
   runif(is_installed(["mamba", "conda"], "any")).each([
     [
       "(single_modules) conda",
-      [
-        path.join("results", "single_modules_conda", "data.csv")
-      ]
+      [path.join("results", "single_modules_conda", "data.csv")],
     ],
   ])(
     "Build and Test the conda workflow: module '%s'",
@@ -563,7 +557,7 @@ describe("modules", () => {
       "(single_modules) container_touch",
       [
         // target files
-        path.join("results", "utility_touch", "data.csv")
+        path.join("results", "utility_touch", "data.csv"),
       ],
       [
         // packaged payload files
@@ -577,12 +571,12 @@ describe("modules", () => {
         modulename,
         target_files,
         payload_files,
-        true  // expand_module
+        true, // expand_module
       );
     },
     20 * ONE_MINUTE,
   ); // long timeout
-  
+
   // Package workflow (container test)
   runif(is_installed(["docker"])).each([
     [
@@ -593,8 +587,17 @@ describe("modules", () => {
       ],
       [
         // packaged payload files
-        path.join("workflow", "modules", "test-repo", "workflows", "single_modules",
-                  "sources", "payload_run", "resources", "file"),
+        path.join(
+          "workflow",
+          "modules",
+          "test-repo",
+          "workflows",
+          "single_modules",
+          "sources",
+          "payload_run",
+          "resources",
+          "file",
+        ),
       ],
     ],
   ])(
@@ -611,7 +614,7 @@ describe("modules", () => {
         modulename,
         target_files,
         payload_files,
-        false  // expand_module
+        false, // expand_module
       );
 
       // Unset workflow packaging option
@@ -619,7 +622,6 @@ describe("modules", () => {
       await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
       await driver.findElement(By.id("btnSidenavBuilder")).click();
     },
-    10 * ONE_MINUTE
+    10 * ONE_MINUTE,
   ); // long timeout
-
 });
