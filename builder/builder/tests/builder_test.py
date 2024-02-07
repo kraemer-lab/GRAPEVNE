@@ -247,3 +247,114 @@ config["modules"]["name1"]="first"
 config["modules"]["name2"]="second"
 """
     assert YAMLToConfig(content) == target
+
+
+def test_ResolveParameterLinks_1chain_ByRuleName():
+    # Integration test of resolveParameterLinks by building a model with and without
+    # a link and verifying the parameter value is resolved
+    module1_config = {
+        "snakefile": "snakefile1",
+        "config": {"params": {"param1": "value1"}},
+    }
+    module2_config_no_link = {
+        "snakefile": "snakefile2",
+        "input_namespace": "in3",
+        "config": {
+            "params": {
+                "param2": "value2",
+            }
+        },
+    }
+    module2_config_with_link = {
+        "snakefile": "snakefile2",
+        "input_namespace": "in3",
+        "config": {
+            "params": {
+                "param2": "value2",
+                ":param2": {"link": ["module1", "config", "params", "param1"]},
+            }
+        },
+    }
+
+    # Construct without link and verify original parameter value is retained
+    m = Model()
+    m.AddModule("module1", module1_config)
+    m.AddModule("module2", module2_config_no_link)
+    m.AddConnector("conn12", {"map": ["module1", "module2"]})
+    c = m.ConstructSnakefileConfig()
+    assert c["module2"]["config"]["params"]["param2"] == "value2"
+
+    # Construct with link and verify parameter value is resolved
+    m = Model()
+    m.AddModule("module1", module1_config)
+    m.AddModule("module2", module2_config_with_link)
+    m.AddConnector("conn12", {"map": ["module1", "module2"]})
+    c = m.ConstructSnakefileConfig()
+    assert c["module2"]["config"]["params"]["param2"] == "value1"
+
+
+def test_ResolveParameterLinks_1chain_byName():
+    # Integration test of resolveParameterLinks by building a model with and without
+    # a link and verifying the parameter value is resolved
+    module1_config = {
+        "snakefile": "snakefile1",
+        "config": {"params": {"param1": "value1"}},
+    }
+    module2_config = {
+        "snakefile": "snakefile2",
+        "input_namespace": "in3",
+        "config": {
+            "params": {
+                "param2": "value2",
+                ":param2": {"link": ["Module 1", "config", "params", "param1"]},
+            }
+        },
+    }
+
+    # Construct with link and verify parameter value is resolved
+    m = Model()
+    m.AddModule("Module 1", module1_config)
+    m.AddModule("Module 2", module2_config)
+    m.AddConnector("conn12", {"map": ["Module 1", "Module 2"]})
+    c = m.ConstructSnakefileConfig()
+    assert c["module_2"]["config"]["params"]["param2"] == "value1"
+
+
+def test_ResolveParameterLinks_2chains():
+    # Integration test of resolveParameterLinks by building a model with and without
+    # a link and verifying the parameter value is resolved
+    module1_config = {
+        "snakefile": "snakefile1",
+        "config": {"params": {"param1": "value1"}},
+    }
+    module2_config_with_link = {
+        "snakefile": "snakefile2",
+        "input_namespace": "in2",
+        "config": {
+            "params": {
+                "param2": "value2",
+                ":param2": {"link": ["module1", "config", "params", "param1"]},
+            }
+        },
+    }
+    module3_config_with_link = {
+        "snakefile": "snakefile3",
+        "input_namespace": "in3",
+        "config": {
+            "params": {
+                "param3": "value3",
+                ":param3": {"link": ["module2", "config", "params", "param2"]},
+            }
+        },
+    }
+
+    # Construct with link and verify parameter value is fully resolved
+    m = Model()
+    m.AddModule("module1", module1_config)
+    m.AddModule("module2", module2_config_with_link)
+    m.AddModule("module3", module3_config_with_link)
+    m.AddConnector("conn12", {"map": ["module1", "module2"]})
+    m.AddConnector("conn23", {"map": ["module2", "module3"]})
+    c = m.ConstructSnakefileConfig()
+    assert c["module2"]["config"]["params"]["param2"] == "value1"
+    assert c["module3"]["config"]["params"]["param3"] == "value1"

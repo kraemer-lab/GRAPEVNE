@@ -17,6 +17,10 @@ import { WaitForReturnCode } from "./utils";
 import { EasyEdit_SetFieldByKey } from "./utils";
 import { BuildAndRun_SingleModuleWorkflow } from "./utils";
 import { BuildAndRun_MultiModuleWorkflow } from "./utils";
+import { MultiModuleWorkflow_Setup } from "./utils";
+import { MultiModuleWorkflow_CleanAndDetermineTargets } from "./utils";
+import { MultiModuleWorkflow_BuildAndCheck } from "./utils";
+import { MultiModuleWorkflow_TidyUp } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
 
 const ONE_SEC = 1000;
@@ -488,6 +492,94 @@ describe("modules", () => {
     },
     5 * ONE_MINUTE
   ); // long timeout
+
+  runif(!is_windows).each([
+    [
+      [
+        // Modules to add to scene
+        "(single_modules) payload run", // data-nodeid="n0"
+        "(single_modules) copy run", // data-nodeid="n1"
+      ],
+      [
+        // Connections to make between modules
+        ["n0-out-source", "n1-in-target"], // (nodeid)-(portname)-(porttype)
+      ],
+      [
+        // Expected output files
+        path.join("single_modules_copy_run", "data.csv"),
+      ],
+    ],
+  ])(
+    "Parameter linkage",
+    async (modulenames, connections, outfiles) => {
+      // Drag modules into scene; connect and run with default settings
+      await MultiModuleWorkflow_Setup(driver, modulenames, connections);
+      let target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
+        driver, modulenames, connections, outfiles);
+
+      // Validation check (should pass)
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.wait(until.elementLocated(By.id("btnBuilderValidate")));
+      await driver.findElement(By.id("btnBuilderValidate")).click();
+      let msg = await WaitForReturnCode(
+        driver,
+        "runner/check-node-dependencies"
+      );
+      expect(msg.returncode).toEqual(0); // 0 = success
+
+      // Build and run the workflow (should pass)
+      await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
+      await MultiModuleWorkflow_TidyUp(driver, target_files);
+
+      // Change the source filename (not yet linked to target module)
+      await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
+      await EasyEdit_SetFieldByKey(driver, "filename", "newfile.csv");
+
+      // Validation check (should fail)
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.wait(until.elementLocated(By.id("btnBuilderValidate")));
+      await driver.findElement(By.id("btnBuilderValidate")).click();
+      msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
+      expect(msg.returncode).toEqual(1); // 1 = missing dependency
+
+      // Build should fail
+      await MultiModuleWorkflow_BuildAndCheck(
+        driver,
+        target_files,
+        true // should_fail
+      );
+      await MultiModuleWorkflow_TidyUp(driver, target_files);
+
+      // Form parameter link between modules
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      const link_button = By.xpath(
+        `//span[contains(text(), "filename")]/following::span/following::span`
+      );
+      await driver.wait(until.elementLocated(link_button), TEN_SECS);
+      await driver.findElement(link_button).click();
+      const link_target = By.xpath(
+        `//div[@class='MuiTreeItem-label' and contains(text(), "filename")]`
+      );
+      await driver.wait(until.elementLocated(link_target), TEN_SECS);
+      await driver.findElement(link_target).click();
+
+      // Validation check (should pass)
+      await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
+      await driver.wait(until.elementLocated(By.id("btnBuilderValidate")));
+      await driver.findElement(By.id("btnBuilderValidate")).click();
+      msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
+      expect(msg.returncode).toEqual(0); // 0 = success
+
+      // Build and run the (linked) workflow (should pass)
+      outfiles[0] = path.join("single_modules_copy_run", "newfile.csv");
+      target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
+        driver, modulenames, connections, outfiles);
+      console.log("target_files", target_files);
+      await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
+      await MultiModuleWorkflow_TidyUp(driver, target_files);
+    },
+    5 * ONE_MINUTE
+  );
 
   runif(is_installed(["mamba", "conda"], "any"))(
     "Set snakemake arguments list to use conda",
