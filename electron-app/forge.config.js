@@ -52,7 +52,7 @@ module.exports = {
       buildPath,
       electronVersion,
       platform,
-      arch
+      arch,
     ) => {
       var src = path.join(__dirname, "../nodemapper/dist/");
       var dst = buildPath;

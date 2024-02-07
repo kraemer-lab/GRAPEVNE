@@ -29,19 +29,19 @@ const BuilderSettings = () => {
   }, []);
 
   const snakemake_backend = useAppSelector(
-    (state) => state.builder.snakemake_backend
+    (state) => state.builder.snakemake_backend,
   );
   const snakemake_args = useAppSelector(
-    (state) => state.builder.snakemake_args
+    (state) => state.builder.snakemake_args,
   );
   const environment_vars = useAppSelector(
-    (state) => state.builder.environment_variables
+    (state) => state.builder.environment_variables,
   );
   const display_module_settings = useAppSelector(
-    (state) => state.builder.display_module_settings
+    (state) => state.builder.display_module_settings,
   );
   const auto_validate_connections = useAppSelector(
-    (state) => state.builder.auto_validate_connections
+    (state) => state.builder.auto_validate_connections,
   );
 
   const SetSnakemakeArgs = (args: string) =>

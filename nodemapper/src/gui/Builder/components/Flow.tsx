@@ -50,7 +50,7 @@ import dagre from "dagre";
 const getLayoutedElements = (
   nodes: Node[],
   edges: Edge[],
-  direction = "TB"
+  direction = "TB",
 ) => {
   const nodeWidth = 172;
   const nodeHeight = 36;
@@ -313,7 +313,7 @@ export const setNodeName = (nodes: Node[], id: string, name: string): Node[] =>
 export const setNodeWorkflow = (
   nodes: Node[],
   id: string,
-  workflow: Record<string, unknown>
+  workflow: Record<string, unknown>,
 ): Node[] => {
   return nodes.map((node) => {
     if (node.id === id) {
@@ -344,7 +344,7 @@ const Flow = () => {
 
   const onConnect = (connection: Connection) => {
     dispatch(
-      builderSetEdges(addEdge({ ...connection, type: "buttonedge" }, edges))
+      builderSetEdges(addEdge({ ...connection, type: "buttonedge" }, edges)),
     );
   };
 
@@ -463,7 +463,7 @@ const Flow = () => {
         .catch((error) => {
           console.log(error);
           dispatch(
-            builderUpdateStatusText(`FAILED to load module ${module_name}.`)
+            builderUpdateStatusText(`FAILED to load module ${module_name}.`),
           );
         });
     } else {
@@ -490,7 +490,7 @@ const Flow = () => {
       const newnodes = getLayoutedElements(nodes, edges, direction);
       dispatch(builderSetNodes(newnodes));
     },
-    [nodes, edges]
+    [nodes, edges],
   );
 
   return (

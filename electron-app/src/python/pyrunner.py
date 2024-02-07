@@ -90,17 +90,18 @@ def BuildAndRun(
             raise NotImplementedError(
                 "Cannot determine target rulenames for module containing sub-modules"
             )
+        target_rule = f"{target}_all"
+        if target_rule in snakemake_list:
+            target_rules.append(target_rule)
+            continue
         target_rule = f"{target}_target"
         if target_rule in snakemake_list:
-            # {rulename}_target appears in workflow,
-            # add rule to target list
             target_rules.append(target_rule)
-        else:
-            # _target rule does not appear in workflow, add all rules
-            # starting with the module name to the target list
-            target_rules.extend(
-                [rulename for rulename in snakemake_list if rulename.startswith(target)]
-            )
+            continue
+        # Add the first rule to appear in the list (mimics snakemake behaviour)
+        target_rules.append(
+            [rulename for rulename in snakemake_list if rulename.startswith(target)][0]
+        )
 
     # Second, return the launch command
     logging.info("Generating launch command")

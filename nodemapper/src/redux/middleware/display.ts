@@ -80,7 +80,7 @@ const DeleteResults = async (dispatch, getState) => {
       break;
     case "electron":
       callback(
-        (await runnerAPI.DeleteResults(query)) as Record<string, unknown>
+        (await runnerAPI.DeleteResults(query)) as Record<string, unknown>,
       );
       break;
     default:

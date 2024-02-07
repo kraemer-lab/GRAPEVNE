@@ -76,7 +76,7 @@ describe("modules", () => {
 
     // Clear repository list
     const repo_list = new Select(
-      await driver.findElement(By.id("selectBuilderSettingsRepositoryList"))
+      await driver.findElement(By.id("selectBuilderSettingsRepositoryList")),
     );
     let options = await repo_list.getOptions();
     for (let i = 0; i < options.length; i++) {
@@ -90,20 +90,20 @@ describe("modules", () => {
 
     // Set new (local) repository type
     const repo_type = new Select(
-      await driver.findElement(By.id("selectBuilderSettingsRepositoryType"))
+      await driver.findElement(By.id("selectBuilderSettingsRepositoryType")),
     );
     await repo_type.selectByVisibleText("Local filesystem");
 
     // Set new (local) repository label
     const repo_label = await driver.findElement(
-      webdriver.By.id("inputBuilderSettingsRepositoryLabel")
+      webdriver.By.id("inputBuilderSettingsRepositoryLabel"),
     );
     await repo_label.clear();
     await repo_label.sendKeys("test-repo");
 
     // Set new (local) repository path
     const repo_path = await driver.findElement(
-      webdriver.By.id("inputBuilderSettingsRepositoryURL")
+      webdriver.By.id("inputBuilderSettingsRepositoryURL"),
     );
     await repo_path.clear();
     await repo_path.sendKeys(path.join(__dirname, "test-repo"));
@@ -127,7 +127,7 @@ describe("modules", () => {
     // Wait for module list to be populated
     await driver.wait(
       until.elementLocated(By.id("modulelist-_single_modules__payload_shell")),
-      TEN_SECS
+      TEN_SECS,
     );
     console.log("<<< test Get local modules list");
   });
@@ -136,38 +136,39 @@ describe("modules", () => {
     "Expand multi-nodes (with input and output connections)",
     async () => {
       console.log(
-        "::: test Expand multi-nodes (with input and output connections)"
+        "::: test Expand multi-nodes (with input and output connections)",
       );
 
       // Drag-and-drop the same hierarchical modules into the scene three times
       await driver.findElement(By.id("btnBuilderClearScene")).click();
       const module = await driver.findElement(
-        By.id("modulelist-_multi_modules__copy_run3")
+        By.id("modulelist-_multi_modules__copy_run3"),
       );
       const canvas = await driver.findElement(By.className("react-flow__pane"));
-      await ["n0", "n1", "n2"].forEach(async () => {
+      for (const n of ["n0", "n1", "n2"]) {
+        console.log(`Dragging module to canvas: ${n}`);
         await driver.actions().dragAndDrop(module, canvas).perform();
         await driver.sleep(100);
-      });
+      }
       await driver.findElement(By.id("buttonReactflowArrange")).click();
 
       // Connect the modules together
       await driver
         .actions()
         .dragAndDrop(
-          driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
-          driver.findElement(
-            By.xpath('//div[@data-id="n1-single_modules_copy_run$-target"]')
-          )
+          await driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
+          await driver.findElement(
+            By.xpath('//div[@data-id="n1-single_modules_copy_run$-target"]'),
+          ),
         )
         .perform(); // n0-to-n1
       await driver
         .actions()
         .dragAndDrop(
-          driver.findElement(By.xpath('//div[@data-id="n1-out-source"]')),
-          driver.findElement(
-            By.xpath('//div[@data-id="n2-single_modules_copy_run$-target"]')
-          )
+          await driver.findElement(By.xpath('//div[@data-id="n1-out-source"]')),
+          await driver.findElement(
+            By.xpath('//div[@data-id="n2-single_modules_copy_run$-target"]'),
+          ),
         )
         .perform(); // n1-to-n2
 
@@ -176,24 +177,24 @@ describe("modules", () => {
         ["n0", "n1"],
         ["n1", "n2"],
       ];
-      await conns.forEach(async ([nodefrom, nodeto]) => {
+      for await (const [nodefrom, nodeto] of conns) {
         await driver.wait(
           until.elementLocated(
             By.xpath(
-              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
-            )
-          )
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`,
+            ),
+          ),
         );
-      });
+      }
       // Once all expected nodes are found, check the total count
       expect(
         (
           await driver.findElements(
             By.xpath(
-              `//*[@aria-label and contains(@class, "react-flow__edge")]`
-            )
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`,
+            ),
           )
-        ).length
+        ).length,
       ).toEqual(conns.length);
 
       // Expand the centre module and check connections
@@ -206,24 +207,24 @@ describe("modules", () => {
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      await conns.forEach(async ([nodefrom, nodeto]) => {
+      for await (const [nodefrom, nodeto] of conns) {
         await driver.wait(
           until.elementLocated(
             By.xpath(
-              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
-            )
-          )
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`,
+            ),
+          ),
         );
-      });
+      }
       // Once all expected nodes are found, check the total count
       expect(
         (
           await driver.findElements(
             By.xpath(
-              `//*[@aria-label and contains(@class, "react-flow__edge")]`
-            )
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`,
+            ),
           )
-        ).length
+        ).length,
       ).toEqual(conns.length);
 
       // Next, expand the leading module and check connections
@@ -238,24 +239,24 @@ describe("modules", () => {
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      await conns.forEach(async ([nodefrom, nodeto]) => {
+      for await (const [nodefrom, nodeto] of conns) {
         await driver.wait(
           until.elementLocated(
             By.xpath(
-              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
-            )
-          )
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`,
+            ),
+          ),
         );
-      });
+      }
       // Once all expected nodes are found, check the total count
       expect(
         (
           await driver.findElements(
             By.xpath(
-              `//*[@aria-label and contains(@class, "react-flow__edge")]`
-            )
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`,
+            ),
           )
-        ).length
+        ).length,
       ).toEqual(conns.length);
 
       // Finally, expand the trailing module and check connections
@@ -272,31 +273,31 @@ describe("modules", () => {
       await driver.findElement(By.xpath(`//div[@data-id="n2"]`)).click();
       await driver.wait(until.elementLocated(By.id("btnBuilderExpand")));
       await driver.findElement(By.id("btnBuilderExpand")).click();
-      await conns.forEach(async ([nodefrom, nodeto]) => {
+      for await (const [nodefrom, nodeto] of conns) {
         await driver.wait(
           until.elementLocated(
             By.xpath(
-              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`
-            )
-          )
+              `//*[contains(@aria-label, "Edge from ${nodefrom} to ${nodeto}")]`,
+            ),
+          ),
         );
-      });
+      }
       // Once all expected nodes are found, check the total count
       expect(
         (
           await driver.findElements(
             By.xpath(
-              `//*[@aria-label and contains(@class, "react-flow__edge")]`
-            )
+              `//*[@aria-label and contains(@class, "react-flow__edge")]`,
+            ),
           )
-        ).length
+        ).length,
       ).toEqual(conns.length);
 
       console.log(
-        "<<< test Expand multi-nodes (with input and output connections)"
+        "<<< test Expand multi-nodes (with input and output connections)",
       );
     },
-    5 * ONE_MINUTE
+    5 * ONE_MINUTE,
   );
 
   runif(!is_windows)(
@@ -310,13 +311,13 @@ describe("modules", () => {
       await dragAndDrop(
         driver,
         driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
-        canvas
+        canvas,
       );
       await driver.sleep(100);
       await dragAndDrop(
         driver,
         driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
-        canvas
+        canvas,
       );
       await driver.sleep(100);
       await driver.findElement(By.id("buttonReactflowArrange")).click();
@@ -327,7 +328,7 @@ describe("modules", () => {
         .actions()
         .dragAndDrop(
           driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
-          driver.findElement(By.xpath('//div[@data-id="n1-in-target"]'))
+          driver.findElement(By.xpath('//div[@data-id="n1-in-target"]')),
         )
         .perform(); // n1-to-n2
 
@@ -337,7 +338,7 @@ describe("modules", () => {
       await driver.findElement(By.id("btnBuilderValidate")).click();
       let msg = await WaitForReturnCode(
         driver,
-        "runner/check-node-dependencies"
+        "runner/check-node-dependencies",
       );
       expect(msg.returncode).toEqual(0); // 0 = success
 
@@ -354,10 +355,10 @@ describe("modules", () => {
       expect(msg.returncode).toEqual(1); // 1 = missing dependency
 
       console.log(
-        "<<< test Expand multi-nodes (with input and output connections)"
+        "<<< test Expand multi-nodes (with input and output connections)",
       );
     },
-    5 * ONE_MINUTE
+    5 * ONE_MINUTE,
   );
 
   test("Construct single module workflow in GRAPEVNE", async () => {
@@ -366,7 +367,7 @@ describe("modules", () => {
     // Drag-and-drop module from modules-list into scene
     await driver.findElement(By.id("btnBuilderClearScene")).click();
     const module = await driver.findElement(
-      By.id("modulelist-_single_modules__payload_shell")
+      By.id("modulelist-_single_modules__payload_shell"),
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
     await dragAndDrop(driver, module, canvas);
@@ -395,7 +396,7 @@ describe("modules", () => {
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
-        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
       await args.clear();
       await args.sendKeys("--cores 1");
@@ -407,7 +408,7 @@ describe("modules", () => {
       // Build and run workflow
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
     },
-    5 * ONE_MINUTE
+    5 * ONE_MINUTE,
   ); // long timeout
 
   runif(!is_windows).each([
@@ -473,7 +474,7 @@ describe("modules", () => {
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
-        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
       await args.clear();
       await args.sendKeys("--cores 1");
@@ -487,10 +488,10 @@ describe("modules", () => {
         driver,
         modulenames,
         connections,
-        outfiles
+        outfiles,
       );
     },
-    5 * ONE_MINUTE
+    5 * ONE_MINUTE,
   ); // long timeout
 
   runif(!is_windows).each([
@@ -598,7 +599,7 @@ describe("modules", () => {
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
-        webdriver.By.id("inputBuilderSettingsSnakemakeArgs")
+        webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
       await args.clear();
       await args.sendKeys("--cores 1 --use-conda");
@@ -606,7 +607,7 @@ describe("modules", () => {
       // Set conda environment path --- passthrough from test environment
       if (process.env.CONDA_PATH != undefined) {
         const args = await driver.findElement(
-          webdriver.By.id("inputBuilderSettingsEnvironmentVars")
+          webdriver.By.id("inputBuilderSettingsEnvironmentVars"),
         );
         await args.clear();
         await args.sendKeys(`PATH=${process.env.CONDA_PATH}`);
@@ -615,7 +616,7 @@ describe("modules", () => {
       // Close settings pane
       await driver.findElement(By.id("btnSidenavBuilder")).click();
       console.log("<<< test Set snakemake arguments list to use conda");
-    }
+    },
   );
 
   // Basic workflow tests (those that do not require conda)
@@ -627,7 +628,7 @@ describe("modules", () => {
     async (modulename, outfile) => {
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
     },
-    10 * ONE_MINUTE
+    10 * ONE_MINUTE,
   ); // long timeout
 
   // Conda tests
@@ -638,7 +639,7 @@ describe("modules", () => {
     async (modulename, outfile) => {
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfile);
     },
-    10 * ONE_MINUTE
+    10 * ONE_MINUTE,
   ); // long timeout
 
   // Container tests
@@ -654,9 +655,9 @@ describe("modules", () => {
       await Build_RunWithDocker_SingleModuleWorkflow(
         driver,
         modulename,
-        outfile
+        outfile,
       );
     },
-    20 * ONE_MINUTE
+    20 * ONE_MINUTE,
   ); // long timeout
 });

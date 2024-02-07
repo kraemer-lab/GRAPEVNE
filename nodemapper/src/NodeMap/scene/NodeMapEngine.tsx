@@ -32,7 +32,7 @@ export default class NodeMapEngine {
     const element = document.createElement("a");
     element.setAttribute(
       "href",
-      "data:text/plain;charset=utf-8," + encodeURIComponent(text)
+      "data:text/plain;charset=utf-8," + encodeURIComponent(text),
     );
     element.setAttribute("download", filename);
     element.style.display = "none";
@@ -89,7 +89,7 @@ export default class NodeMapEngine {
   public getModuleListJSONFromNodeNames(
     nodenames: string[],
     nodes: Node[],
-    edges: Edge[]
+    edges: Edge[],
   ): Record<string, unknown>[] {
     const newnodes = nodenames.map((name) => {
       let node = null;
@@ -113,7 +113,7 @@ export default class NodeMapEngine {
 
   public getModuleListJSONFromNodes(
     nodes: Node[],
-    edges: Edge[]
+    edges: Edge[],
   ): Record<string, unknown>[] {
     // Input provides a list of target nodes to generate workflow modules and
     // connectors from.
@@ -217,14 +217,14 @@ export default class NodeMapEngine {
   public getNodeInputNodes(
     node: Node,
     nodes: Node[],
-    edges: Edge[]
+    edges: Edge[],
   ): Record<string, string> {
     // Returns a dictionary of input port names and the nodes they are connected to
     const conn_edges = edges.filter((edge) => edge.target === node.id);
     const d = {};
     conn_edges.forEach(
       (edge) =>
-        (d[edge.targetHandle] = this.getNodeNameFromID(edge.source, nodes))
+        (d[edge.targetHandle] = this.getNodeNameFromID(edge.source, nodes)),
     );
     return d;
   }
@@ -256,7 +256,7 @@ export default class NodeMapEngine {
 
   public GetModuleListJSON(
     nodes: Node[],
-    edges: Edge[]
+    edges: Edge[],
   ): Record<string, unknown>[] {
     // Input provides a list of target nodes to generate workflow modules and
     // connectors from.
@@ -299,7 +299,7 @@ export default class NodeMapEngine {
   public ExpandNodeByName(
     name: string,
     nodes: Node[],
-    edges: Edge[]
+    edges: Edge[],
   ): [Node[], Edge[]] {
     console.log("ExpandNodeByName");
 
@@ -351,7 +351,7 @@ export default class NodeMapEngine {
       // Call AddNodeToGraph with uniquenames = false to prevent node renaming
       // (at least until after the graph is expanded)
       const module_type = NodeMapEngine.GetModuleType(
-        data.config.config as Record<string, unknown>
+        data.config.config as Record<string, unknown>,
       );
 
       // New node
@@ -451,7 +451,7 @@ export default class NodeMapEngine {
     const target_node_and_port = this.getNodeOutputNodes(
       node,
       all_nodes,
-      all_edges
+      all_edges,
     );
     for (let i = 0; i < target_node_and_port.length; i++) {
       const target_node = target_node_and_port[i][0];
@@ -487,7 +487,7 @@ export default class NodeMapEngine {
     // Replace node names in newnode configs (namespaces)
     newnodes.forEach((node) => {
       const json = JSON.parse(
-        JSON.stringify(this.getNodePropertiesAsJSON(node))
+        JSON.stringify(this.getNodePropertiesAsJSON(node)),
       );
       const outerconfig = json.config as Record<string, unknown>;
       const config = outerconfig["config"] as Record<string, unknown>;
@@ -523,7 +523,7 @@ export default class NodeMapEngine {
       const nodename = this.getNodeName(node);
       if (Object.keys(namemap).includes(nodename)) {
         console.log(
-          "(expand) substitution: " + nodename + " -> " + namemap[nodename]
+          "(expand) substitution: " + nodename + " -> " + namemap[nodename],
         );
         this.setNodeName(node, namemap[nodename]);
       }
