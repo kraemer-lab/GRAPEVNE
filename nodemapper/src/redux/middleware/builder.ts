@@ -10,6 +10,7 @@ import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
 import { builderUpdateSettings } from "redux/actions";
+import { builderNodeSelectedByID } from "redux/actions";
 import { builderUpdateStatusText } from "redux/actions";
 import { builderUpdateModulesList } from "redux/actions";
 
@@ -101,6 +102,10 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 
         case "builder/node-selected":
           NodeSelected(action.payload, dispatch);
+          break;
+
+        case "builder/node-selected-by-id":
+          NodeSelectedByID(action.payload, getState().builder.nodes, dispatch);
           break;
 
         case "builder/node-deselected":
@@ -376,6 +381,18 @@ const CheckNodeDependencies = async (
 };
 
 const NodeSelected = (node: Node, dispatch) => {
+  const payload = {
+    id: node.id,
+    name: node.data.config.name,
+    type: node.data.config.type,
+    code: JSON.stringify(node.data.config.config, null, 2),
+  };
+  // Open module parameters pane
+  dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+};
+
+const NodeSelectedByID = (id: string, nodes: Node[], dispatch) => {
+  const node = getNodeById(id, nodes) as Node;
   const payload = {
     id: node.id,
     name: node.data.config.name,

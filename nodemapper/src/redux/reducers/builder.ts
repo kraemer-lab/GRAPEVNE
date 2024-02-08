@@ -97,7 +97,6 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetEdges, (state, action) => {
       state.edges = action.payload as Edge[];
-      console.log("Set edges: ", state.edges);
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderUpdateNode, (state, action) => {
@@ -123,6 +122,11 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderNodeSelected, (state, action) => {
+      // Action intercepted in middleware to control display
+      state.config_pane_display = ConfigPaneDisplay.Node;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderNodeSelectedByID, (state, action) => {
       // Action intercepted in middleware to control display
       state.config_pane_display = ConfigPaneDisplay.Node;
       console.info("[Reducer] " + action.type);

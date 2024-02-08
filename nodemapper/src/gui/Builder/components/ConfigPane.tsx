@@ -15,7 +15,7 @@ export const ConfigPane: React.FC = () => {
     case ConfigPaneDisplay.Settings:
       return <BuilderSettings />;
     default:
-      return <></>;
+      return null;
   }
 };
 
