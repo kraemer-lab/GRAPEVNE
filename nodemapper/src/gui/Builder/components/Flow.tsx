@@ -10,6 +10,7 @@ import { useAppDispatch } from "redux/store/hooks";
 import { builderAddNode } from "redux/actions";
 import { builderSetNodes } from "redux/actions";
 import { builderSetEdges } from "redux/actions";
+import { builderUpdateNode } from "redux/actions";
 import { builderNodeSelected } from "redux/actions";
 import { builderNodeDeselected } from "redux/actions";
 import { builderUpdateNodeInfo } from "redux/actions";
@@ -38,14 +39,25 @@ import { useEdgesState } from "reactflow";
 import { applyNodeChanges } from "reactflow";
 import { applyEdgeChanges } from "reactflow";
 import { EdgeLabelRenderer } from "reactflow";
+import { NodeResizeControl } from "reactflow";
+import { ResizeControlVariant } from "reactflow";
 
 import ContextMenu from "./ContextMenu";
 
 import "reactflow/dist/style.css";
 import styles from "./flow.module.css";
 import "./flow.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLeftRight } from "@fortawesome/free-solid-svg-icons";
 
 import dagre from "dagre";
+
+const nodeResizeControlStyle = {
+  background: 'transparent',
+  border: 'none',
+  width: '98%',
+  color: 'white',
+};
 
 const getLayoutedElements = (
   nodes: Node[],
@@ -98,6 +110,13 @@ export const wranglename = (name: string) => {
 };
 
 const ModuleNode = (props: NodeProps<NodeData>) => {
+  const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
+  let selected = false;
+  if (nodeinfo !== null && nodeinfo !== undefined && nodeinfo !== "") {
+    const nodeinfo_id = JSON.parse(nodeinfo)["id"];
+    selected = nodeinfo_id === props.id;
+  }
+
   // Extract input_namespace and wrap as list as necessary
   const node_config = props.data?.config?.config?.config ?? null;
   const input_namespace = node_config.input_namespace ?? null;
@@ -122,98 +141,119 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
   }
 
   return (
-    <div
-      className={styles.Node}
-      style={{
-        backgroundColor: props.data.color,
-      }}
-    >
-      <div className={styles.HeaderPanel}>
-        <div className={styles.HeaderText}>{props.data.config.name}</div>
-      </div>
-      {!named_inputs ? (
-        <>
-          {input_namespaces.length == 1 ? (
-            <Handle
-              className={styles.HandleInput}
-              id={input_namespaces[0]}
-              key={input_namespaces[0]}
-              type="target"
-              position={Position.Left}
-              style={{ top: "50%" }}
-            />
-          ) : null}
-          <Handle
-            className={styles.HandleOutput}
-            id="out"
-            type="source"
-            position={Position.Right}
-            style={{ top: "50%" }}
-          />
-        </>
-      ) : (
-        <div
-          className={styles.BodyPanel}
-          style={{
-            height: `${input_namespaces.length * 18 - 4}px`,
-          }}
+    <>
+      <div
+        className={styles.Node}
+        style={{
+          backgroundColor: props.data.color,
+        }}
+      >
+      {(selected) ? (
+        <NodeResizeControl
+          style={nodeResizeControlStyle}
+          minWidth={120}
+          minHeight={50}
+          variant={ResizeControlVariant.Line}
+          position="top-right"
+          shouldResize={(e, params) => params.direction[1] === 0}
         >
-          {input_namespaces.map((name) => {
-            // Format port name
-            const port_name_split = name.split("$");
-            let port_name = node_config[port_name_split[0]]?.name ?? null;
-            if (port_name === undefined || port_name === null) {
-              port_name = name;
-            } else if (
-              port_name_split.length > 1 &&
-              port_name_split[1] !== ""
-            ) {
-              port_name = port_name + " [" + name.split("$")[1] + "]";
-            }
-
-            return (
-              <div key={"div-" + name}>
-                <Handle
-                  className={styles.HandleInput}
-                  id={name}
-                  key={name}
-                  type="target"
-                  position={Position.Left}
-                  style={{
-                    top: `${input_namespaces.indexOf(name) * 18 + 38}px`,
-                  }}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    console.log("Input handle clicked: ", event.target);
-                  }}
-                >
-                  <div
-                    className={styles.InputPortLabel}
-                    style={{
-                      pointerEvents: "none", // pass-through click events
-                      width: "100%",
-                    }}
-                  >
-                    {port_name}
-                  </div>
-                </Handle>
-              </div>
-            );
-          })}
-          <div>
+          <span
+            style={{
+              float: "right",
+              color: "#bebebe",
+            }}
+          >
+            <FontAwesomeIcon icon={faLeftRight} />
+          </span>
+        </NodeResizeControl>
+      ) : null}
+        <div className={styles.HeaderPanel}>
+          <div className={styles.HeaderText}>{props.data.config.name}</div>
+        </div>
+        {!named_inputs ? (
+          <>
+            {input_namespaces.length == 1 ? (
+              <Handle
+                className={styles.HandleInput}
+                id={input_namespaces[0]}
+                key={input_namespaces[0]}
+                type="target"
+                position={Position.Left}
+                style={{ top: "50%" }}
+              />
+            ) : null}
             <Handle
               className={styles.HandleOutput}
               id="out"
               type="source"
               position={Position.Right}
-              style={{
-                top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
-              }}
+              style={{ top: "50%" }}
             />
+          </>
+        ) : (
+          <div
+            className={styles.BodyPanel}
+            style={{
+              height: `${input_namespaces.length * 18 - 4}px`,
+            }}
+          >
+            {input_namespaces.map((name) => {
+              // Format port name
+              const port_name_split = name.split("$");
+              let port_name = node_config[port_name_split[0]]?.name ?? null;
+              if (port_name === undefined || port_name === null) {
+                port_name = name;
+              } else if (
+                port_name_split.length > 1 &&
+                port_name_split[1] !== ""
+              ) {
+                port_name = port_name + " [" + name.split("$")[1] + "]";
+              }
+
+              return (
+                <div key={"div-" + name}>
+                  <Handle
+                    className={styles.HandleInput}
+                    id={name}
+                    key={name}
+                    type="target"
+                    position={Position.Left}
+                    style={{
+                      top: `${input_namespaces.indexOf(name) * 18 + 38}px`,
+                    }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      console.debug("Input handle clicked: ", event.target);
+                    }}
+                  >
+                  </Handle>
+                  <div
+                    className={styles.InputPortLabel}
+                    style={{
+                      pointerEvents: "none", // pass-through click events
+                      top: `${input_namespaces.indexOf(name) * 18 + 32}px`,
+                    }}
+                  >
+                    {port_name}
+                  </div>
+                </div>
+              );
+            })}
+            <div>
+              <Handle
+                className={styles.HandleOutput}
+                id="out"
+                type="source"
+                position={Position.Right}
+                style={{
+                  top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
+                }}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 
@@ -335,6 +375,11 @@ const Flow = () => {
   const ref = useRef(null);
 
   const onNodesChange = (changes: NodeChange[]) => {
+    // Allow node removal to be handled by onNodesDelete
+    if (changes.some((change) => change.type === "remove")) {
+      return;
+    }
+    // Otherwise, apply changes to nodes
     dispatch(builderSetNodes(applyNodeChanges(changes, nodes)));
   };
 
@@ -378,13 +423,64 @@ const Flow = () => {
     });
   };
 
-  const onNodesDelete = (nodes: Node[]) => {
+  const RemoveLinkParameters = (removed_nodes: Node[]) => {
+    const removed_nodes_names = removed_nodes.map((node) => {
+      return getNodeName(node);
+    });
+    const StripLinks = (config: Record<string, unknown>) => {
+      if (config === null || config === undefined) {
+        return config;
+      }
+      const keys = Object.keys(config);
+      for (const key of keys) {
+        if (key.startsWith(":")) {
+          const metadata = config[key] as Record<string, unknown>;
+          const link = metadata["link"] as string[];
+          if (link === undefined || link === null) {
+            continue;
+          }
+          if (removed_nodes_names.includes(link[0])) {
+            delete metadata["link"];
+            if (Object.keys(metadata).length === 0) {
+              delete config[key];
+            }
+          }
+        } else if (typeof config[key] === "object") {
+          config[key] = StripLinks(config[key] as Record<string, unknown>);
+        }
+      }
+      return config;
+    };
+
+    const remaining_nodes =
+      nodes
+      .filter((node) => {
+        return !removed_nodes.map((n) => n.id).includes(node.id);
+      })
+      .map((node) => {
+        const newnode = JSON.parse(JSON.stringify(node));
+        const node_config = newnode.data.config.config.config ?? null;
+        if (node_config === null || node_config === undefined) {
+          return node_config;
+        }
+        // Recursively remove links to removed nodes
+        const new_node_config = StripLinks(node_config);
+        newnode.data.config.config.config = new_node_config;
+        return newnode;
+      });
+    dispatch(builderSetNodes(remaining_nodes));
+  };
+
+  const onNodesDelete = (removed_nodes: Node[]) => {
+    // Strip any active links to the removed nodes
+    RemoveLinkParameters(removed_nodes);
     // Close module parameters pane (if open)
     dispatch(builderNodeDeselected());
+    console.log("Removed nodes: ", removed_nodes);
   };
 
   const onPaneClick = useCallback(() => {
-    console.log("Pane clicked");
+    console.debug("Pane clicked");
     // Close context menu (if open)
     setMenu(null);
     // Close module parameters pane (if open)
@@ -461,7 +557,7 @@ const Flow = () => {
           dispatch(builderUpdateStatusText(`Module loaded.`));
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
           dispatch(
             builderUpdateStatusText(`FAILED to load module ${module_name}.`),
           );

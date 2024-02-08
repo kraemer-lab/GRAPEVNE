@@ -9,6 +9,7 @@ import { ModuleType } from "NodeMap/scene/Module";
 import { useAppSelector } from "redux/store/hooks";
 import { useAppDispatch } from "redux/store/hooks";
 import { builderUpdateNode } from "redux/actions";
+import { builderNodeSelected } from "redux/actions";
 
 import { checkParameter_IsModuleRoot } from "./HighlightedJSON";
 import { checkParameter_IsInModuleConfigLayer } from "./HighlightedJSON";
@@ -134,6 +135,7 @@ export default function ParameterList({
 
   // Format keyitem and keylist together
   const keylist_str = [...keylist.slice(2, keylist.length), keyitem].join("/");
+  const keylist_str_full = [node_name, ...keylist, keyitem].join("/");
 
   // Get list of nodes that are connected as inputs to this node
   const input_nodes = detemineInputNodes(id, node_to, nodes, edges, showAllNodes, showSelfNodes);
@@ -152,7 +154,10 @@ export default function ParameterList({
 
   // Get parameter pairs from node
   const node_json = JSON.parse(JSON.stringify(node_to))["data"] as ModuleType;
-  const json = node_json?.config?.config && null;
+  const json = node_json?.config?.config ?? null;
+  if (json === null) {
+    return null;
+  }
 
   // Handle parameter selection
   const onParameterSelect = (
@@ -182,6 +187,7 @@ export default function ParameterList({
     // Update node with new parameter map
     newnode_to.data.config.config = node_config;
     dispatch(builderUpdateNode(newnode_to));
+    dispatch(builderNodeSelected(newnode_to));
   };
 
   const disconnectParameter = () => {
@@ -200,6 +206,7 @@ export default function ParameterList({
       delete parent[":" + keyitem];
     }
     dispatch(builderUpdateNode(newnode));
+    dispatch(builderNodeSelected(newnode));
   };
 
   const NodeParameters = ({ node, keylist }: INodeParametersProps) => {
@@ -219,7 +226,7 @@ export default function ParameterList({
         ["string", "number", "boolean"].includes(valueType) || !value;
       const isHiddenValue = protectedNames.includes(key) || key.startsWith(":");
       if (isHiddenValue) {
-        return <></>;
+        return null;
       }
 
       // If the key is a module root, substitute the module 'name' field as the label
@@ -231,7 +238,7 @@ export default function ParameterList({
         }
       }
 
-      // If the key is a module config, skip renderin of the key (but render children)
+      // If the key is a module config, skip rendering of the key (but render children)
       const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(
         node,
         keylist,
@@ -241,7 +248,7 @@ export default function ParameterList({
         // Of the parameters in the module config layer, continue rendering only the
         // 'config' children, which contains the actual parameters
         if (key !== "config") {
-          return <></>;
+          return null;
         } else {
           return (
             <NodeParameters
@@ -253,36 +260,55 @@ export default function ParameterList({
         }
       }
 
+      // Determine if parameter is valid
+      let canBeConnected = true;
+      const identifier = [node_name, ...keylist, key].join("/");
+      if (identifier === keylist_str_full) {
+        // Is this parameter the originating target?
+        canBeConnected = false;
+      }
+
       const DisplaySimpleValue = () => {
         // Is the parameter the target of our already connected parameter?
         const identifier = [node_name, ...keylist, key].join("/");
-        if (identifier === target_keylist_str) {
-          return (
-            <TreeItem
-              style={{color: "#1876d2"}}
-              key={node.id + "__" + identifier}
-              nodeId={(nodeId++).toString()}
-              label={key + ": " + value}
-              onClick={() => onParameterSelect(node, keylist, key)}
-            >
-              <Button
-                component="label"
-                variant="outlined"
-                startIcon={<FontAwesomeIcon icon={faTimes} />}
-                size="small"
-                style={{maxHeight: "25px"}}
-                onClick={disconnectParameter}
+        if (canBeConnected) {
+          if (identifier === target_keylist_str) {
+            return (
+              <TreeItem
+                style={{color: "#1876d2"}}
+                key={node.id + "__" + identifier}
+                nodeId={(nodeId++).toString()}
+                label={key + ": " + value}
+                onClick={() => onParameterSelect(node, keylist, key)}
               >
-                Disconnect
-              </Button>
-            </TreeItem>
-        )} else {
+                <Button
+                  component="label"
+                  variant="outlined"
+                  startIcon={<FontAwesomeIcon icon={faTimes} />}
+                  size="small"
+                  style={{maxHeight: "25px"}}
+                  onClick={disconnectParameter}
+                >
+                  Disconnect
+                </Button>
+              </TreeItem>
+          )} else {
+            return (
+              <TreeItem
+                key={node.id + "__" + identifier}
+                nodeId={(nodeId++).toString()}
+                label={key + ": " + value}
+                onClick={() => onParameterSelect(node, keylist, key)}
+              />
+            )
+          }
+        } else {
           return (
             <TreeItem
+              style={{color: "#bebebe"}}
               key={node.id + "__" + identifier}
               nodeId={(nodeId++).toString()}
               label={key + ": " + value}
-              onClick={() => onParameterSelect(node, keylist, key)}
             />
           )
         }
@@ -387,7 +413,7 @@ export default function ParameterList({
               </Button>
               {' '}
             </span>
-          ) : (<></>)}
+          ) : null}
           <label htmlFor="checkParameterListShowSelfParams">
             Show own parameters
           </label>

@@ -86,7 +86,7 @@ const ExpandButton = (props: ExpandProps) => {
       </button>
     );
   } else {
-    return <></>;
+    return null;
   }
 };
 
@@ -104,9 +104,9 @@ const NodeInfoRenderer = (props) => {
     if (name) dispatch(builderUpdateNodeInfoName(name));
   };
 
-  if (!nodeinfoStr) return <></>;
+  if (!nodeinfoStr) return null;
   const nodeinfo = JSON.parse(nodeinfoStr);
-  if (Object.keys(nodeinfo).length === 0) return <></>;
+  if (Object.keys(nodeinfo).length === 0) return null;
 
   // Get node to lock/unlock it during text edits
   const app = BuilderEngine.Instance;
@@ -114,6 +114,7 @@ const NodeInfoRenderer = (props) => {
 
   return (
     <div
+      key={"nodeinfo-" + nodeinfo.id}  // ensures render defaults are reset when node is changed
       style={{
         display: "flex",
         width: "100%",

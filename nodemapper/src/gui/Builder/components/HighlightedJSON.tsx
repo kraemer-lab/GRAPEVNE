@@ -5,6 +5,7 @@ import ParameterList from "./ParameterList";
 
 import { getNodeById } from "./Flow";
 import { useState } from "react";
+import { useReducer } from "react";
 import { Types } from "react-easy-edit";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
@@ -14,6 +15,7 @@ import { useAppDispatch } from "redux/store/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { builderUpdateNodeInfoKey } from "redux/actions";
 import { builderUpdateNode } from "redux/actions";
+import { builderNodeSelectedByID } from "redux/actions";
 
 import { styled } from "@mui/material/styles";
 import { TreeView } from "@mui/x-tree-view/TreeView";
@@ -96,6 +98,9 @@ const lookupKeyGlobal = (
 
   // If key is the empty string, return the last key in the keylist
   if (key === "") {
+    if (keylist.length === 0) {
+      return undefined;
+    }
     key = keylist[keylist.length - 1];
     keylist = keylist.slice(0, keylist.length - 1);
   }
@@ -108,7 +113,10 @@ const lookupKeyGlobal = (
   }
 
   // Obtain the module's config
-  const config = node.data.config.config;
+  const config = node?.data?.config?.config ?? null;
+  if (config === null) {
+    return undefined;
+  }
   const value = lookupKey(config, keylist, key);
   const metadata = lookupKey(config, keylist, ":" + key);
 
@@ -162,7 +170,7 @@ export const checkParameter_IsModuleRoot = (value) => {
 };
 
 export const checkParameter_IsInModuleConfigLayer = (node, keylist, key) => {
-  if (node === undefined) return false;
+  if (node === undefined || node === null) return false;
   // Is the parameters parent a module root?
   const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
   let jsonObj = json;
@@ -193,7 +201,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
     return <div className="json"></div>;
   const json = JSON.parse(json_str);
 
-  const expandedIfHierarchicalModule = (json) => {
+  const concertinaIfHierarchicalModule = (json) => {
     if (display_module_settings)
       return Array.from({ length: 999 }, (_, i) => i.toString());
     if (json === undefined) return [];
@@ -277,8 +285,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         }
       }
 
-      // TODO: Check whether setting is a connectable parameter
-      const canConnectParameter = true;
+      // Determine whether parameter is connectable - simple values only for now
+      const canConnectParameter = isSimpleValue;
 
       // If the key is a module root, substitute the module 'name' field as the label
       let label = key;
@@ -289,7 +297,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         }
       }
 
-      // If the key is a module config, skip renderin of the key (but render children)
+      // If the key is a module config, skip rendering of the key (but render children)
       const node = getNodeById(props.nodeid, nodes);
       const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(
         node,
@@ -300,7 +308,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         // Of the parameters in the module config layer, continue rendering only the
         // 'config' children, which contains the actual parameters
         if (key !== "config") {
-          return <></>;
+          return null;
         } else {
           return (
             <HighlightJSON
@@ -474,7 +482,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       }}
     >
       <ThemeProvider theme={theme}>
-        <TreeView defaultExpanded={expandedIfHierarchicalModule(json)}>
+        <TreeView defaultExpanded={concertinaIfHierarchicalModule(json)}>
           <HighlightJSON keylist={[]} />
         </TreeView>
       </ThemeProvider>
