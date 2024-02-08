@@ -524,7 +524,7 @@ describe("modules", () => {
         driver,
         modulenames,
         connections,
-        outfiles
+        outfiles,
       );
 
       // Validation check (should pass)
@@ -533,7 +533,7 @@ describe("modules", () => {
       await driver.findElement(By.id("btnBuilderValidate")).click();
       let msg = await WaitForReturnCode(
         driver,
-        "runner/check-node-dependencies"
+        "runner/check-node-dependencies",
       );
       expect(msg.returncode).toEqual(0); // 0 = success
 
@@ -556,19 +556,19 @@ describe("modules", () => {
       await MultiModuleWorkflow_BuildAndCheck(
         driver,
         target_files,
-        true // should_fail
+        true, // should_fail
       );
       await MultiModuleWorkflow_TidyUp(driver, target_files);
 
       // Form parameter link between modules
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
       const link_button = By.xpath(
-        `//span[contains(text(), "filename")]/following::span/following::span`
+        `//span[contains(text(), "filename")]/following::span/following::span`,
       );
       await driver.wait(until.elementLocated(link_button), TEN_SECS);
       await driver.findElement(link_button).click();
       const link_target = By.xpath(
-        `//div[@class='MuiTreeItem-label' and contains(text(), "filename")]`
+        `//div[@class='MuiTreeItem-label' and contains(text(), "filename")]`,
       );
       await driver.wait(until.elementLocated(link_target), TEN_SECS);
       await driver.findElement(link_target).click();
@@ -587,7 +587,7 @@ describe("modules", () => {
         driver,
         modulenames,
         connections,
-        outfiles
+        outfiles,
       );
       console.log("target_files", target_files);
       await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
@@ -597,7 +597,10 @@ describe("modules", () => {
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
       await driver.wait(until.elementLocated(link_button), TEN_SECS);
       await driver.findElement(link_button).click();
-      await driver.wait(until.elementLocated(By.id("btnParameterListRemove")), TEN_SECS);
+      await driver.wait(
+        until.elementLocated(By.id("btnParameterListRemove")),
+        TEN_SECS,
+      );
       await driver.findElement(By.id("btnParameterListRemove")).click();
       await driver.findElement(By.id("btnParameterListClose")).click();
 
@@ -608,7 +611,7 @@ describe("modules", () => {
       msg = await WaitForReturnCode(driver, "runner/check-node-dependencies");
       expect(msg.returncode).toEqual(1); // 1 = missing dependency
     },
-    5 * ONE_MINUTE
+    5 * ONE_MINUTE,
   );
 
   runif(is_installed(["mamba", "conda"], "any"))(

@@ -53,10 +53,10 @@ import { faLeftRight } from "@fortawesome/free-solid-svg-icons";
 import dagre from "dagre";
 
 const nodeResizeControlStyle = {
-  background: 'transparent',
-  border: 'none',
-  width: '98%',
-  color: 'white',
+  background: "transparent",
+  border: "none",
+  width: "98%",
+  color: "white",
 };
 
 const getLayoutedElements = (
@@ -148,25 +148,25 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
           backgroundColor: props.data.color,
         }}
       >
-      {(selected) ? (
-        <NodeResizeControl
-          style={nodeResizeControlStyle}
-          minWidth={120}
-          minHeight={50}
-          variant={ResizeControlVariant.Line}
-          position="top-right"
-          shouldResize={(e, params) => params.direction[1] === 0}
-        >
-          <span
-            style={{
-              float: "right",
-              color: "#bebebe",
-            }}
+        {selected ? (
+          <NodeResizeControl
+            style={nodeResizeControlStyle}
+            minWidth={120}
+            minHeight={50}
+            variant={ResizeControlVariant.Line}
+            position="top-right"
+            shouldResize={(e, params) => params.direction[1] === 0}
           >
-            <FontAwesomeIcon icon={faLeftRight} />
-          </span>
-        </NodeResizeControl>
-      ) : null}
+            <span
+              style={{
+                float: "right",
+                color: "#bebebe",
+              }}
+            >
+              <FontAwesomeIcon icon={faLeftRight} />
+            </span>
+          </NodeResizeControl>
+        ) : null}
         <div className={styles.HeaderPanel}>
           <div className={styles.HeaderText}>{props.data.config.name}</div>
         </div>
@@ -225,8 +225,7 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
                       event.stopPropagation();
                       console.debug("Input handle clicked: ", event.target);
                     }}
-                  >
-                  </Handle>
+                  ></Handle>
                   <div
                     className={styles.InputPortLabel}
                     style={{
@@ -452,8 +451,7 @@ const Flow = () => {
       return config;
     };
 
-    const remaining_nodes =
-      nodes
+    const remaining_nodes = nodes
       .filter((node) => {
         return !removed_nodes.map((n) => n.id).includes(node.id);
       })
