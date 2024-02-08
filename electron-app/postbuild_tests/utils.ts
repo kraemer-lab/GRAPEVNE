@@ -258,7 +258,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
     driver,
     modulenames,
     connections,
-    outfiles
+    outfiles,
   );
   await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
   await MultiModuleWorkflow_TidyUp(driver, target_files);
@@ -267,7 +267,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
 export const MultiModuleWorkflow_Setup = async (
   driver: webdriver.ThenableWebDriver,
   modulenames: string[],
-  connections: string[][]
+  connections: string[][],
 ) => {
   console.log("::: test Build and Test the workflow (setup)");
   // Drag-and-drop module from modules-list into scene
@@ -303,7 +303,7 @@ export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
   driver: webdriver.ThenableWebDriver,
   modulenames: string[],
   connections: string[][],
-  outfiles: string[]
+  outfiles: string[],
 ) => {
   console.log("::: test Build and Test the workflow (CleanAndDeterminTargets)");
   // Clean build folder (initial); assert target output does not exist
@@ -324,7 +324,7 @@ export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
 export const MultiModuleWorkflow_BuildAndCheck = async (
   driver: webdriver.ThenableWebDriver,
   target_files: string[],
-  should_fail = false
+  should_fail = false,
 ) => {
   console.log("::: test Build and Test the workflow (build-and-check)");
 
@@ -340,7 +340,7 @@ export const MultiModuleWorkflow_BuildAndCheck = async (
 
 export const MultiModuleWorkflow_TidyUp = async (
   driver: webdriver.ThenableWebDriver,
-  target_files: string[]
+  target_files: string[],
 ) => {
   console.log("::: test Build and Test the workflow (tidy-up)");
 

@@ -114,7 +114,7 @@ const NodeInfoRenderer = (props) => {
 
   return (
     <div
-      key={"nodeinfo-" + nodeinfo.id}  // ensures render defaults are reset when node is changed
+      key={"nodeinfo-" + nodeinfo.id} // ensures render defaults are reset when node is changed
       style={{
         display: "flex",
         width: "100%",

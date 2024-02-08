@@ -89,7 +89,7 @@ const lookupKeyGlobal = (
   node_name: string,
   keylist: string[],
   key: string,
-  lookup_count = 0
+  lookup_count = 0,
 ) => {
   // Stop infinite recursion
   if (lookup_count > 100) {
@@ -302,7 +302,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(
         node,
         keylist,
-        key
+        key,
       );
       if (isInModuleConfigLayer && !display_module_settings) {
         // Of the parameters in the module config layer, continue rendering only the
@@ -355,7 +355,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
           const parent = lookupKey(
             module_settings,
             keylist.slice(0, keylist.length - 1),
-            keylist[keylist.length - 1]
+            keylist[keylist.length - 1],
           );
           delete parent[":" + key];
         }

@@ -71,7 +71,7 @@ const detemineInputNodes = (
   nodes: Node[],
   edges: Edge[],
   showAllNodes: boolean,
-  showSelfNodes: boolean
+  showSelfNodes: boolean,
 ): InputNodesType => {
   const input_nodes: InputNodesType = {};
   if (showAllNodes) {
@@ -110,7 +110,7 @@ const detemineInputNodes = (
     }
   }
   return input_nodes;
-}
+};
 
 export default function ParameterList({
   id,
@@ -138,7 +138,14 @@ export default function ParameterList({
   const keylist_str_full = [node_name, ...keylist, keyitem].join("/");
 
   // Get list of nodes that are connected as inputs to this node
-  const input_nodes = detemineInputNodes(id, node_to, nodes, edges, showAllNodes, showSelfNodes);
+  const input_nodes = detemineInputNodes(
+    id,
+    node_to,
+    nodes,
+    edges,
+    showAllNodes,
+    showSelfNodes,
+  );
 
   // Determine if parameter is already connected to another parameter
   let isConnected = false;
@@ -148,8 +155,7 @@ export default function ParameterList({
   let target_keylist_str = "";
   if (metadata !== undefined) {
     isConnected = metadata["link"] !== undefined;
-    if (isConnected)
-      target_keylist_str = metadata["link"].join("/");
+    if (isConnected) target_keylist_str = metadata["link"].join("/");
   }
 
   // Get parameter pairs from node
@@ -163,7 +169,7 @@ export default function ParameterList({
   const onParameterSelect = (
     node_from: Node,
     keylist_from,
-    key_from: string
+    key_from: string,
   ) => {
     const param_from = [node_from.data.config.name, ...keylist_from, key_from];
     const param_to = [...keylist.slice(1, keylist.length), keyitem];
@@ -201,7 +207,7 @@ export default function ParameterList({
       const parent = lookupKey(
         module_settings,
         keylist.slice(0, keylist.length - 1),
-        keylist[keylist.length - 1]
+        keylist[keylist.length - 1],
       );
       delete parent[":" + keyitem];
     }
@@ -242,7 +248,7 @@ export default function ParameterList({
       const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(
         node,
         keylist,
-        key
+        key,
       );
       if (isInModuleConfigLayer) {
         // Of the parameters in the module config layer, continue rendering only the
@@ -275,7 +281,7 @@ export default function ParameterList({
           if (identifier === target_keylist_str) {
             return (
               <TreeItem
-                style={{color: "#1876d2"}}
+                style={{ color: "#1876d2" }}
                 key={node.id + "__" + identifier}
                 nodeId={(nodeId++).toString()}
                 label={key + ": " + value}
@@ -286,13 +292,14 @@ export default function ParameterList({
                   variant="outlined"
                   startIcon={<FontAwesomeIcon icon={faTimes} />}
                   size="small"
-                  style={{maxHeight: "25px"}}
+                  style={{ maxHeight: "25px" }}
                   onClick={disconnectParameter}
                 >
                   Disconnect
                 </Button>
               </TreeItem>
-          )} else {
+            );
+          } else {
             return (
               <TreeItem
                 key={node.id + "__" + identifier}
@@ -300,19 +307,19 @@ export default function ParameterList({
                 label={key + ": " + value}
                 onClick={() => onParameterSelect(node, keylist, key)}
               />
-            )
+            );
           }
         } else {
           return (
             <TreeItem
-              style={{color: "#bebebe"}}
+              style={{ color: "#bebebe" }}
               key={node.id + "__" + identifier}
               nodeId={(nodeId++).toString()}
               label={key + ": " + value}
             />
-          )
+          );
         }
-      }
+      };
 
       return (
         <>
@@ -372,7 +379,7 @@ export default function ParameterList({
         >
           <TreeView
             defaultExpanded={Array.from({ length: 999 }, (_, i) =>
-              i.toString()
+              i.toString(),
             )}
           >
             <NodeParameters node={node} keylist={[]} />
@@ -401,7 +408,7 @@ export default function ParameterList({
         </big>{" "}
         <i>{node_name}</i>
         <span style={{ float: "right" }}>
-          {(isConnected) ? (
+          {isConnected ? (
             <span>
               <Button
                 id="btnParameterListRemove"
@@ -410,8 +417,7 @@ export default function ParameterList({
                 onClick={disconnectParameter}
               >
                 Disconnect
-              </Button>
-              {' '}
+              </Button>{" "}
             </span>
           ) : null}
           <label htmlFor="checkParameterListShowSelfParams">
@@ -431,7 +437,7 @@ export default function ParameterList({
           <Button
             id="btnParameterListClose"
             variant="outlined"
-            style={{width: "25px", height: "25px", minWidth: "0"}}
+            style={{ width: "25px", height: "25px", minWidth: "0" }}
             onClick={onclose}
           >
             <FontAwesomeIcon icon={faTimes} />

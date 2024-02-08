@@ -90,7 +90,7 @@ export const BodyWidget = () => {
                   </div>
                 </Panel>
               </>
-            ) : null }
+            ) : null}
           </PanelGroup>
         </Content>
       </Body>
