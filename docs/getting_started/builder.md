@@ -227,9 +227,9 @@ GRAPEVNE, simply unzip it, move into the `build` folder launch the workflow by t
 
 This will launch the same series of steps
 as the `Build and Test` button, but without needing the
-GRAPEVNE application. There is also a `./run_docker.sh` script for launching a `docker`
-container that will pre-configure itself before launchign your workflow. These can be
-run locally, or remotely, as required.
+GRAPEVNE application. There is also a `./build_container.sh` script for creating a
+container from the provided `Dockerfile`, and `./run_workflow.sh` which launches the
+container. These can be run locally, or remotely (i.e. cloud compute), as required.
 
 ## Building workflows for use as modules
 
@@ -240,7 +240,7 @@ since there are no special requirements to build a workflow for use as a module.
 In other words, any workflow build that you create can be imported and used as
 a module (so long as the graph is _valid_, more on this in a future tutorial).
 Clicking `Build as Module` creates a module, which is identical to the `Build as Workflow`
-button, except that we do not include the launch scripts `run.sh` and `run_docker.sh`,
+button, except that we do not include the launch scripts,
 as modules are not intended to be launched independently.
 Once you build the module and unzip it, GRAPEVNE is able to read the
 configuration file and load the module ready for use. If all of the workflows

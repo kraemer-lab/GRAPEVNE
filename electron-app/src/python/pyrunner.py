@@ -144,11 +144,16 @@ def BuildAndRun(
                 ) as f:
                     Dockerfile = f.read()
                 with open(
-                    os.path.join(os.path.dirname(__file__), "run_docker_sh"), "r"
+                    os.path.join(os.path.dirname(__file__), "build_container_sh"), "r"
                 ) as f:
-                    docker_launcher = f.read()
+                    docker_build_container = f.read()
+                with open(
+                    os.path.join(os.path.dirname(__file__), "launch_container_sh"), "r"
+                ) as f:
+                    docker_launch_container = f.read()
                 # Write Dockerfile and launch script to zip
                 with ZipFile(zipfilename, "a") as zipfile:
+                    # Build container
                     zipfile.writestr(
                         "Dockerfile",
                         Dockerfile.replace(
@@ -156,11 +161,26 @@ def BuildAndRun(
                             " ".join(target_rules),
                         ),
                     )
-                    info = ZipInfo("run_docker.sh")
+                    # Build container
+                    info = ZipInfo("build_container.sh")
                     info.external_attr = 0o0100777 << 16  # give rwx permissions
                     zipfile.writestr(
                         info,
-                        docker_launcher.replace("#!/usr/bin/env bash", shell_launch),
+                        docker_build_container.replace(
+                            "#!/usr/bin/env bash", shell_launch
+                        ).replace(
+                            "$(snakemake --list)",
+                            " ".join(target_rules),
+                        ),
+                    )
+                    # Launch workflow
+                    info = ZipInfo("launch_container.sh")
+                    info.external_attr = 0o0100777 << 16  # give rwx permissions
+                    zipfile.writestr(
+                        info,
+                        docker_launch_container.replace(
+                            "#!/usr/bin/env bash", shell_launch
+                        ),
                     )
         data["zipfile"] = zipfilename
     return data
