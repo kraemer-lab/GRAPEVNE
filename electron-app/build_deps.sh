@@ -30,8 +30,8 @@ python -m PyInstaller src/python/pyrunner.py \
     --hidden-import smart_open.ssh \
     --hidden-import smart_open.webhdfs \
     --add-data "src/python/Dockerfile:." \
-    --add-data "src/python/run_docker_sh:." \
-    --add-data "../builder/builder/configutil.py:builder"
+    --add-data "src/python/build_container_sh:." \
+    --add-data "src/python/launch_container_sh:."
 
 # Ensure nodemapper has the most up-to-date electron api file
 cp src/api.ts ../nodemapper/src

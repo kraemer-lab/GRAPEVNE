@@ -40,6 +40,7 @@ export interface IBuilderState {
   environment_variables: string;
   display_module_settings: boolean;
   auto_validate_connections: boolean;
+  package_modules_in_workflow: boolean;
 }
 
 // Defaults
@@ -77,6 +78,7 @@ const builderStateInit: IBuilderState = {
   environment_variables: "",
   display_module_settings: false,
   auto_validate_connections: false,
+  package_modules_in_workflow: false,
 };
 
 // Nodemap
@@ -181,6 +183,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderToggleAutoValidateConnections, (state, action) => {
       state.auto_validate_connections = !state.auto_validate_connections;
+      console.info("[Reducer] " + action.type);
+    })
+    .addCase(actions.builderSetPackageModulesInWorkflow, (state, action) => {
+      state.package_modules_in_workflow = action.payload;
       console.info("[Reducer] " + action.type);
     })
     .addCase(actions.builderSelectSnakemakeBackend, (state, action) => {

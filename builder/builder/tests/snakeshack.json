@@ -1,0 +1,4013 @@
+{
+  "sha": "6fbcce099ed7b1383d2e659ea87aaebff3ff5053",
+  "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6fbcce099ed7b1383d2e659ea87aaebff3ff5053",
+  "tree": [
+    {
+      "path": ".gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6a3c6aa535f30bb230fb2b2f1edc6bdceea5eeec",
+      "size": 74,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/6a3c6aa535f30bb230fb2b2f1edc6bdceea5eeec"
+    },
+    {
+      "path": "LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30bb136dfd23ad5acc32f428c149acd8b5e4cecf",
+      "size": 1067,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/30bb136dfd23ad5acc32f428c149acd8b5e4cecf"
+    },
+    {
+      "path": "README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "caa41b379467ef696d647c698b45ff4c1de7924a",
+      "size": 813,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/caa41b379467ef696d647c698b45ff4c1de7924a"
+    },
+    {
+      "path": "workflows",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "89baed95358adf58d5ad84270b11e5dcc233990d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/89baed95358adf58d5ad84270b11e5dcc233990d"
+    },
+    {
+      "path": "workflows/Examples",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8981ec406a41e5de075cb8a0ce3d66b85ebe8db2",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/8981ec406a41e5de075cb8a0ce3d66b85ebe8db2"
+    },
+    {
+      "path": "workflows/Examples/modules",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4aab27de940fb69663220534362e714f21136236",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4aab27de940fb69663220534362e714f21136236"
+    },
+    {
+      "path": "workflows/Examples/modules/build(2)",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "04d0e76db45feabb9b549425827061d852c12fc6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/04d0e76db45feabb9b549425827061d852c12fc6"
+    },
+    {
+      "path": "workflows/Examples/modules/build(2)/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4dcbca3be9acb37fdbbebd87864b22023deb826c",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4dcbca3be9acb37fdbbebd87864b22023deb826c"
+    },
+    {
+      "path": "workflows/Examples/modules/build(2)/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "42bfe14c6ed25b76e354697077cfcb67374836cb",
+      "size": 1652,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/42bfe14c6ed25b76e354697077cfcb67374836cb"
+    },
+    {
+      "path": "workflows/Examples/modules/build(2)/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3ddc2b27fc994eff96fef77a4fee036993f92ce7",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/3ddc2b27fc994eff96fef77a4fee036993f92ce7"
+    },
+    {
+      "path": "workflows/Examples/modules/build(2)/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1914f3c0be2ad822c236e31c5f3f24e48d470f0d",
+      "size": 786,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/1914f3c0be2ad822c236e31c5f3f24e48d470f0d"
+    },
+    {
+      "path": "workflows/Examples/modules/build",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e535bbc6a6ce9ab4dff7f393b8c5a33f126d62d6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/e535bbc6a6ce9ab4dff7f393b8c5a33f126d62d6"
+    },
+    {
+      "path": "workflows/Examples/modules/build/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9c7e2a9befa57fc7e51f4cab3737c24fc39b78b4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9c7e2a9befa57fc7e51f4cab3737c24fc39b78b4"
+    },
+    {
+      "path": "workflows/Examples/modules/build/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "acf17e584feff2ac377b5f60d6b772316e7787d0",
+      "size": 1652,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/acf17e584feff2ac377b5f60d6b772316e7787d0"
+    },
+    {
+      "path": "workflows/Examples/modules/build/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "49e489e0de5818c375884b16dccdd4b82d44eccd",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/49e489e0de5818c375884b16dccdd4b82d44eccd"
+    },
+    {
+      "path": "workflows/Examples/modules/build/resources/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b01b4f6eb3fa8db635762a2f18bb3be1e720c111",
+      "size": 14,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b01b4f6eb3fa8db635762a2f18bb3be1e720c111"
+    },
+    {
+      "path": "workflows/Examples/modules/build/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e16ecd31db289eb0267225cbc12aad4c4f872a0e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/e16ecd31db289eb0267225cbc12aad4c4f872a0e"
+    },
+    {
+      "path": "workflows/Examples/modules/build/results/vocpl_provide_seeds_3",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "49e489e0de5818c375884b16dccdd4b82d44eccd",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/49e489e0de5818c375884b16dccdd4b82d44eccd"
+    },
+    {
+      "path": "workflows/Examples/modules/build/results/vocpl_provide_seeds_3/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b01b4f6eb3fa8db635762a2f18bb3be1e720c111",
+      "size": 14,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b01b4f6eb3fa8db635762a2f18bb3be1e720c111"
+    },
+    {
+      "path": "workflows/Examples/modules/build/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b327ccedcd043e3b9f36005f55f1c995b0ea67d2",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b327ccedcd043e3b9f36005f55f1c995b0ea67d2"
+    },
+    {
+      "path": "workflows/Examples/modules/build/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6888bca2269f7fa36a5352fe967799c2c10efae8",
+      "size": 786,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/6888bca2269f7fa36a5352fe967799c2c10efae8"
+    },
+    {
+      "path": "workflows/Examples/modules/build2",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6e889138b6967bca817bda644bcd8f6ca1f04700",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6e889138b6967bca817bda644bcd8f6ca1f04700"
+    },
+    {
+      "path": "workflows/Examples/modules/build2/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "511d368dcbb91afd5e9653870a30f6398bf06f22",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/511d368dcbb91afd5e9653870a30f6398bf06f22"
+    },
+    {
+      "path": "workflows/Examples/modules/build2/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2150a07b806ccbf984c7d28720e53b1145101e14",
+      "size": 2406,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/2150a07b806ccbf984c7d28720e53b1145101e14"
+    },
+    {
+      "path": "workflows/Examples/modules/build2/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bd774617fa3d51e41d48fc2a940e5ad2c60a6a3f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/bd774617fa3d51e41d48fc2a940e5ad2c60a6a3f"
+    },
+    {
+      "path": "workflows/Examples/modules/build2/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "915a34e3f1d5b0699b66f1415e63dc089ad3420c",
+      "size": 1381,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/915a34e3f1d5b0699b66f1415e63dc089ad3420c"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6f443dcb45bcaa0836da8df96b3eddd6d8992e4a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6f443dcb45bcaa0836da8df96b3eddd6d8992e4a"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f1d407cb525e67e5b70cc773ceadc419dc23b348",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f1d407cb525e67e5b70cc773ceadc419dc23b348"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6c677da84a004279352a59dd4c57896ddb5798f1",
+      "size": 848,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/6c677da84a004279352a59dd4c57896ddb5798f1"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0aa39363efaad57d171d7fd920dc84a37b9b3eb1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0aa39363efaad57d171d7fd920dc84a37b9b3eb1"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/results/single_modules_copy_run",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b1eb1c4b7f8fef7d30c9d6827fa8755f7ad3bc17",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b1eb1c4b7f8fef7d30c9d6827fa8755f7ad3bc17"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/results/single_modules_copy_run/newfilename.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/results/utility_touch",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b1eb1c4b7f8fef7d30c9d6827fa8755f7ad3bc17",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b1eb1c4b7f8fef7d30c9d6827fa8755f7ad3bc17"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/results/utility_touch/newfilename.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "26c15d5aaf3cb18ca0e4c7b45bf84e57d52a1c6f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/26c15d5aaf3cb18ca0e4c7b45bf84e57d52a1c6f"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4f4034bc4e6a7e11c83133b555c55b2b4a93ff44",
+      "size": 514,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4f4034bc4e6a7e11c83133b555c55b2b4a93ff44"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/workflow/__pycache__",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "72bb28f834abeb50edfdd5cb69fab4ee349c305f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/72bb28f834abeb50edfdd5cb69fab4ee349c305f"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/workflow/__pycache__/configutil.cpython-311.pyc",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "31b614265c020b261980cfd84891c0ebfefc1531",
+      "size": 2415,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/31b614265c020b261980cfd84891c0ebfefc1531"
+    },
+    {
+      "path": "workflows/Examples/modules/param_map/workflow/configutil.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "39185e3121a5a9998909c80cb78e6f30194be53a",
+      "size": 1763,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/39185e3121a5a9998909c80cb78e6f30194be53a"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3b86a2d0bd6035bbb96bd105b7f08355d4728bc8",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/3b86a2d0bd6035bbb96bd105b7f08355d4728bc8"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "603b319f61a0a4a771de114cd8c4d847389f2984",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/603b319f61a0a4a771de114cd8c4d847389f2984"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "19a0960f554d8e0cab6d7d96982f4f3f0b710130",
+      "size": 111,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/19a0960f554d8e0cab6d7d96982f4f3f0b710130"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7e9a85ca57dc95ecf34b1b66732f631c8fd904c4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7e9a85ca57dc95ecf34b1b66732f631c8fd904c4"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fef08d6723acd2aa4e1e0a7fd811238d57fadecb",
+      "size": 722,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/fef08d6723acd2aa4e1e0a7fd811238d57fadecb"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "29c890309a07375de550fe6e714c5df48507d96b",
+      "size": 1018,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/29c890309a07375de550fe6e714c5df48507d96b"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4239b6b5e1f9e52c70b49e63b0fc2e1fed0f7708",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4239b6b5e1f9e52c70b49e63b0fc2e1fed0f7708"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ae16d069bdf100af0198a305e6b967edb0907da2",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ae16d069bdf100af0198a305e6b967edb0907da2"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c6239876f87175ce0cad0746497c53b744e89df3",
+      "size": 729,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/c6239876f87175ce0cad0746497c53b744e89df3"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3cecef3c3b653666ddee1021a16dfe68164b1038",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/3cecef3c3b653666ddee1021a16dfe68164b1038"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e8792b0e88e698e449f0ce3e6cdabb23cb5369d2",
+      "size": 650,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e8792b0e88e698e449f0ce3e6cdabb23cb5369d2"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2_3.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "11070d582bf2f89535933e8cc06eb24c43a7f310",
+      "size": 1619,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/11070d582bf2f89535933e8cc06eb24c43a7f310"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2_3l.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "029f37ef7edf49b22d8bc97ca452c6ef91a7c68a",
+      "size": 1352,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/029f37ef7edf49b22d8bc97ca452c6ef91a7c68a"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2_3l",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "188e8da07781cb797a4e6db0e4894d69a26810d0",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/188e8da07781cb797a4e6db0e4894d69a26810d0"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2_3l/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7bb0e4bac726f12a1e3312b92e23e529c45a8eb1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7bb0e4bac726f12a1e3312b92e23e529c45a8eb1"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2_3l/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecfdf971a329d3feaf34ce9c9eefe27cbff6b62f",
+      "size": 1750,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ecfdf971a329d3feaf34ce9c9eefe27cbff6b62f"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2_3l/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5bc4f5f1036808de401260578f1ad54d0a6e0ca7",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5bc4f5f1036808de401260578f1ad54d0a6e0ca7"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2_3l/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3cde1b571b6df41108c30ddd00417881c0b92e33",
+      "size": 979,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/3cde1b571b6df41108c30ddd00417881c0b92e33"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep2l.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5ca1ec761a639e41c24cfc31ea68a61bbcbf6d8a",
+      "size": 844,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/5ca1ec761a639e41c24cfc31ea68a61bbcbf6d8a"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep3.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "700431b4c22223de3726c9f92697bc7b706cf466",
+      "size": 2153,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/700431b4c22223de3726c9f92697bc7b706cf466"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep3_3.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7c18457d7219bf1089c4fb69dd529e3910b54331",
+      "size": 1619,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/7c18457d7219bf1089c4fb69dd529e3910b54331"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep3_3l.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c7129d8560ccc7f1c4ea8dd8fb6de4225d54803a",
+      "size": 1250,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/c7129d8560ccc7f1c4ea8dd8fb6de4225d54803a"
+    },
+    {
+      "path": "workflows/Examples/modules/sleep3l.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30dbe62410329297ba589fe7b7825df41dc1584d",
+      "size": 1759,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/30dbe62410329297ba589fe7b7825df41dc1584d"
+    },
+    {
+      "path": "workflows/Examples/modules/test.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "4fbbb5d80da725e1c1ba7aa994cb0b762333de91",
+      "size": 876,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4fbbb5d80da725e1c1ba7aa994cb0b762333de91"
+    },
+    {
+      "path": "workflows/Examples/modules/test_local.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "7e4dca186a7dc8092450038e09d26121fc7d1777",
+      "size": 894,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/7e4dca186a7dc8092450038e09d26121fc7d1777"
+    },
+    {
+      "path": "workflows/Examples/sources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b0818b4ffa375a71bfdf7ca1bbcece1bbcccebbf",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b0818b4ffa375a71bfdf7ca1bbcece1bbcccebbf"
+    },
+    {
+      "path": "workflows/Examples/sources/touch",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "55d6f99d71d25dc13efff9374e84f172ea6323fb",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/55d6f99d71d25dc13efff9374e84f172ea6323fb"
+    },
+    {
+      "path": "workflows/Examples/sources/touch/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2fc15d83f235138ecaa88f047b4cc97e68d7bf48",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/2fc15d83f235138ecaa88f047b4cc97e68d7bf48"
+    },
+    {
+      "path": "workflows/Examples/sources/touch/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d839266cb2ba3c3d5406821d7ecedcb7ae5a192a",
+      "size": 53,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/d839266cb2ba3c3d5406821d7ecedcb7ae5a192a"
+    },
+    {
+      "path": "workflows/Examples/sources/touch/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "83fbfcafe8eed0ddd96681e6ba52a58b360004bb",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/83fbfcafe8eed0ddd96681e6ba52a58b360004bb"
+    },
+    {
+      "path": "workflows/Examples/sources/touch/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "544c0f4819c7150a3b7879fc75ed7067a8474bfc",
+      "size": 453,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/544c0f4819c7150a3b7879fc75ed7067a8474bfc"
+    },
+    {
+      "path": "workflows/Examples/sources/touch/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/Examples/sources/touch/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2d8d98fefb057af11284e7a77293d5daf7b73857",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/2d8d98fefb057af11284e7a77293d5daf7b73857"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b494e6a94f35ddbf06de8acd561a616ea09a1594",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b494e6a94f35ddbf06de8acd561a616ea09a1594"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/combine",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0602f2a43161af1c01a0f0c826cc9ef66dc49a78",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0602f2a43161af1c01a0f0c826cc9ef66dc49a78"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/combine/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ab79d409fa4fd451c4ea10a69d8acccd901dcf21",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ab79d409fa4fd451c4ea10a69d8acccd901dcf21"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/combine/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e7d1b6824d78f5b9090cb82c9456d06c82eddf0",
+      "size": 47,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/9e7d1b6824d78f5b9090cb82c9456d06c82eddf0"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/combine/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "856c0773d27de66fa7f322f2a39b424eb2db918b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/856c0773d27de66fa7f322f2a39b424eb2db918b"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/combine/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ee2990dca075b357b2749fce1e00309cb4e77b26",
+      "size": 34,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ee2990dca075b357b2749fce1e00309cb4e77b26"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/connector_copy",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "74a97d33b5ef0a02aa7c57f97c9fa2a32744a571",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/74a97d33b5ef0a02aa7c57f97c9fa2a32744a571"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/connector_copy/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c34d4e065ad14e84fc42d60216046cee0f482da6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c34d4e065ad14e84fc42d60216046cee0f482da6"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/connector_copy/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/connector_copy/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4b386a3edf7267113984c131a34e4f973585982c",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4b386a3edf7267113984c131a34e4f973585982c"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/connector_copy/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e457a137b06e594cc732fea25d828f83c5855a4a",
+      "size": 654,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e457a137b06e594cc732fea25d828f83c5855a4a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/connector_copy/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/connector_copy/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/copy",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f430990a8d518c09b5d2ee20cb6ebab5a739254e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f430990a8d518c09b5d2ee20cb6ebab5a739254e"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/copy/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c34d4e065ad14e84fc42d60216046cee0f482da6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c34d4e065ad14e84fc42d60216046cee0f482da6"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/copy/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/copy/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "73e6ccdd46d6b6f21c5282b87acb4552840b66d8",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/73e6ccdd46d6b6f21c5282b87acb4552840b66d8"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/copy/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5502e98515e880965e71b6d0d8711aec01dc7a3",
+      "size": 644,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e5502e98515e880965e71b6d0d8711aec01dc7a3"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/copy/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/connectors/copy/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "78c42d3a18178c2d0595f623b827737a82741da7",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/78c42d3a18178c2d0595f623b827737a82741da7"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/add_reference_sequence",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cd5c71311b6ef5ac58581c3d7126d4f805034294",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/cd5c71311b6ef5ac58581c3d7126d4f805034294"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/add_reference_sequence/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3220c94d8a8c537253f5c6f2663dc37a84e953d2",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/3220c94d8a8c537253f5c6f2663dc37a84e953d2"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/add_reference_sequence/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "89433ae0ba44d667c60900d7150770310e857175",
+      "size": 279,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/89433ae0ba44d667c60900d7150770310e857175"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/add_reference_sequence/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8c262d2a88b5c8d95587cb79061086664e9b6f3f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/8c262d2a88b5c8d95587cb79061086664e9b6f3f"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/add_reference_sequence/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6322d0115bc62a21fcce4711a03669f44a57801a",
+      "size": 816,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/6322d0115bc62a21fcce4711a03669f44a57801a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/add_reference_sequence/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "af8667b11878543edfceda172f67451c9e5b518a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/af8667b11878543edfceda172f67451c9e5b518a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/add_reference_sequence/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4282551897087205b44778646fb638667abb947b",
+      "size": 26,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4282551897087205b44778646fb638667abb947b"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c38a6fb6125984f7919a32c7f77b791d6c843ca1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c38a6fb6125984f7919a32c7f77b791d6c843ca1"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b47518fe984e6c01666f108aad98eb4f2749a1b1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b47518fe984e6c01666f108aad98eb4f2749a1b1"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a62468c06cab64184e478922d3eb744fe8d4419",
+      "size": 292,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/5a62468c06cab64184e478922d3eb744fe8d4419"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "111f62843af1f45913bbde380e577f86f1466445",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/111f62843af1f45913bbde380e577f86f1466445"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e3fae5a038ad22ff2a454d981554e2499fc80584",
+      "size": 955,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e3fae5a038ad22ff2a454d981554e2499fc80584"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "af8667b11878543edfceda172f67451c9e5b518a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/af8667b11878543edfceda172f67451c9e5b518a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4282551897087205b44778646fb638667abb947b",
+      "size": 26,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4282551897087205b44778646fb638667abb947b"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "119a1681acef57a57a263fc1072539abf18fef8f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/119a1681acef57a57a263fc1072539abf18fef8f"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_gisaid_by_seq_name/workflow/scripts/extract_gisaid_metadata_by_seq_name.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "e821f988c78fae1037c2e84d521cea2f1672e0a5",
+      "size": 256,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e821f988c78fae1037c2e84d521cea2f1672e0a5"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "637040e864a0bb28f41bd81f5d78b5c1f965b322",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/637040e864a0bb28f41bd81f5d78b5c1f965b322"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c7d0fce4bd7074d348eccfabc3bda712830e844e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c7d0fce4bd7074d348eccfabc3bda712830e844e"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "38bad7d967bce7ac5780601afe5d2cf007c96df9",
+      "size": 162,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/38bad7d967bce7ac5780601afe5d2cf007c96df9"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5e085948c45e4b0076097af87c9fd141d74b18eb",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5e085948c45e4b0076097af87c9fd141d74b18eb"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3e06090244032f65852d9bd855cb402a30cc96ac",
+      "size": 518,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/3e06090244032f65852d9bd855cb402a30cc96ac"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "af8667b11878543edfceda172f67451c9e5b518a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/af8667b11878543edfceda172f67451c9e5b518a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4282551897087205b44778646fb638667abb947b",
+      "size": 26,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4282551897087205b44778646fb638667abb947b"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ccabf6005bb5e05e882d5763a4f10c2e2d0411c7",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ccabf6005bb5e05e882d5763a4f10c2e2d0411c7"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_seq_names/workflow/scripts/extract_nextclade_seq_names.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "f2d9e01be5e7b164c5c9cf47e8166be96b21a95c",
+      "size": 192,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f2d9e01be5e7b164c5c9cf47e8166be96b21a95c"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a974b0bf5e512f3c93fb9a697b130739f56e96fa",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a974b0bf5e512f3c93fb9a697b130739f56e96fa"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "536f2f34fb5de1dbcbe8f046bde91a5642b4c824",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/536f2f34fb5de1dbcbe8f046bde91a5642b4c824"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "81c38bec34deec8f55f7003e894aa8843f0ed410",
+      "size": 296,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/81c38bec34deec8f55f7003e894aa8843f0ed410"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "aa34c68f8bb52781c87611b75d664dda8a7e1d6e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/aa34c68f8bb52781c87611b75d664dda8a7e1d6e"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "915dfad8449546d4dbca8e67b60baa5aed15cd2b",
+      "size": 950,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/915dfad8449546d4dbca8e67b60baa5aed15cd2b"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9e98727390d6b0980586dd0fc3f87fc4585f4ceb",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9e98727390d6b0980586dd0fc3f87fc4585f4ceb"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9163f9df39af8aee6d8cd18438d992a5108a45d2",
+      "size": 69,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/9163f9df39af8aee6d8cd18438d992a5108a45d2"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "558a6275edf8796b302be1e92252431f87ff2e71",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/558a6275edf8796b302be1e92252431f87ff2e71"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/extract_nextclade_sequences/workflow/scripts/extract_nextclade_sequences.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "5385fdf073d0db8cb67bd8b9d9f0f0e619fb6ce0",
+      "size": 206,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/5385fdf073d0db8cb67bd8b9d9f0f0e619fb6ce0"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c5b5ab76bbf6ff3192aa64881a5f62d2fb9bab46",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c5b5ab76bbf6ff3192aa64881a5f62d2fb9bab46"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f53e307193c0f3ac4452841c4564c90dedb893f9",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f53e307193c0f3ac4452841c4564c90dedb893f9"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c577bbd117bafce1243b991168a939fbe9e05833",
+      "size": 160,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/c577bbd117bafce1243b991168a939fbe9e05833"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ab468cb26e3cf7a901716c704eb12ab6a5a5517d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ab468cb26e3cf7a901716c704eb12ab6a5a5517d"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "070828f406f0aba7f02578ad88f956b90d86df8d",
+      "size": 740,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/070828f406f0aba7f02578ad88f956b90d86df8d"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cfc4beff27d572dad753231d7d3958bdcb9248fb",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/cfc4beff27d572dad753231d7d3958bdcb9248fb"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f307802fe96cacc8ea95245b366c4974cadefc75",
+      "size": 68,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f307802fe96cacc8ea95245b366c4974cadefc75"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid/workflow/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cb614cfd9a4a4da4fd0cc656b16210cbcc1bc927",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/cb614cfd9a4a4da4fd0cc656b16210cbcc1bc927"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/gisaid/workflow/scripts/process_gisaid_metadata.R",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "9fa7bb5bc31cb2de46ca6db02853ad1543202d50",
+      "size": 3098,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/9fa7bb5bc31cb2de46ca6db02853ad1543202d50"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e7dacb2deb3a2b223dc9c0312127b2e63476d324",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/e7dacb2deb3a2b223dc9c0312127b2e63476d324"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a5cc04e4ce7813a72ce29672da6b0899d1f6543e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a5cc04e4ce7813a72ce29672da6b0899d1f6543e"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "59078b8cc1851665544ba7a6e0687bd0e9ab169f",
+      "size": 172,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/59078b8cc1851665544ba7a6e0687bd0e9ab169f"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fb8a6d7266d031ba51ca1fd7a6260b276259876f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/fb8a6d7266d031ba51ca1fd7a6260b276259876f"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "626b86fb1d1c3db4df157226c4fe31dd82f98d60",
+      "size": 634,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/626b86fb1d1c3db4df157226c4fe31dd82f98d60"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "af8667b11878543edfceda172f67451c9e5b518a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/af8667b11878543edfceda172f67451c9e5b518a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4282551897087205b44778646fb638667abb947b",
+      "size": 26,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4282551897087205b44778646fb638667abb947b"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign/workflow/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b43980d388b80447d3b9c7a7d9f077e69afe42d5",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b43980d388b80447d3b9c7a7d9f077e69afe42d5"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextalign/workflow/scripts/run_nextalign.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "a089c7751cf3e3de1b71a036c6e37a0fc8fd2b22",
+      "size": 313,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a089c7751cf3e3de1b71a036c6e37a0fc8fd2b22"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextclade",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fd28bdd7204ccef6071df0508371f988e1f03b70",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/fd28bdd7204ccef6071df0508371f988e1f03b70"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextclade/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5c46b023bb96f8682a8e08eb55980a353db161b3",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5c46b023bb96f8682a8e08eb55980a353db161b3"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextclade/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b7ba347b399c211d6eb151242d0f7d36daa3c228",
+      "size": 154,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b7ba347b399c211d6eb151242d0f7d36daa3c228"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextclade/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "60bb60cffc375771b5300559cc14b346286d0e25",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/60bb60cffc375771b5300559cc14b346286d0e25"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextclade/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "5a20151c1cb6ddd59ed24de843e14c7d7e5068a8",
+      "size": 768,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/5a20151c1cb6ddd59ed24de843e14c7d7e5068a8"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextclade/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5d2a96141f8996dfecebfa2d0326ad54e67e2021",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5d2a96141f8996dfecebfa2d0326ad54e67e2021"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/nextclade/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "052ec0b3c54c4ec392d3596ab70d8ba16998cf3e",
+      "size": 73,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/052ec0b3c54c4ec392d3596ab70d8ba16998cf3e"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "668776b95bd3eb0f80f8705bcabf6c8f28359df8",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/668776b95bd3eb0f80f8705bcabf6c8f28359df8"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a579f75f71aa3d31783665d844b97b1bbbed9b3a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a579f75f71aa3d31783665d844b97b1bbbed9b3a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "41c9c151d37185260af63fcc735cb14c129c5a93",
+      "size": 159,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/41c9c151d37185260af63fcc735cb14c129c5a93"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "99aed7b067d8b0d6633c2bacd57b198246a8ce49",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/99aed7b067d8b0d6633c2bacd57b198246a8ce49"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c8b4c96f746440dd5cb6f72abd089b333523caa5",
+      "size": 675,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/c8b4c96f746440dd5cb6f72abd089b333523caa5"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "81c713dc2d05409431cc0a62752c37e11792f3a8",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/81c713dc2d05409431cc0a62752c37e11792f3a8"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a76a50bb7fb5ef11d3e2ee1b240832bf36dbaae6",
+      "size": 68,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a76a50bb7fb5ef11d3e2ee1b240832bf36dbaae6"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ae5b89c1ee2b8b035253f91d1ce9b4dafa886d68",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ae5b89c1ee2b8b035253f91d1ce9b4dafa886d68"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/process_owid_case_data/workflow/scripts/process_owid_case_data.R",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "fb58ffb5ae6879a5b2499e665a5346d8c2176dec",
+      "size": 1435,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/fb58ffb5ae6879a5b2499e665a5346d8c2176dec"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7a90c61c2694cf5022fd74dd31485f4025e1ee65",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7a90c61c2694cf5022fd74dd31485f4025e1ee65"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7c1c11d389a38abf222bac5350cf6598636ccaed",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7c1c11d389a38abf222bac5350cf6598636ccaed"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "dfc496223c2d09f8e68765d4862dbddde099d8fe",
+      "size": 173,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/dfc496223c2d09f8e68765d4862dbddde099d8fe"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0e623f327fa4188629f3c1bb56ba5420c634f866",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0e623f327fa4188629f3c1bb56ba5420c634f866"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/scripts/extract_accessions.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "7b9e072588b60aacfe883f89ec5087f8edbff68f",
+      "size": 188,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/7b9e072588b60aacfe883f89ec5087f8edbff68f"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1d5cab6e271e523822381355cea0c0679d6ed88c",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1d5cab6e271e523822381355cea0c0679d6ed88c"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cbc07933e497aab8b579fe2500dd918a5581d817",
+      "size": 670,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/cbc07933e497aab8b579fe2500dd918a5581d817"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "af8667b11878543edfceda172f67451c9e5b518a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/af8667b11878543edfceda172f67451c9e5b518a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4282551897087205b44778646fb638667abb947b",
+      "size": 26,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4282551897087205b44778646fb638667abb947b"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0e623f327fa4188629f3c1bb56ba5420c634f866",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0e623f327fa4188629f3c1bb56ba5420c634f866"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/seq_accessions/workflow/scripts/extract_accessions.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "7b9e072588b60aacfe883f89ec5087f8edbff68f",
+      "size": 188,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/7b9e072588b60aacfe883f89ec5087f8edbff68f"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/sleep",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "77208c51d4bbf7b6faef15965e594bc5f81896c3",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/77208c51d4bbf7b6faef15965e594bc5f81896c3"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/sleep/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "faf77663fe53f1334f774a6d502a5d3978042388",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/faf77663fe53f1334f774a6d502a5d3978042388"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/sleep/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a73beb723f503f6edcee4fc9d1df6242f4d1e096",
+      "size": 113,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a73beb723f503f6edcee4fc9d1df6242f4d1e096"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/sleep/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7e9a85ca57dc95ecf34b1b66732f631c8fd904c4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7e9a85ca57dc95ecf34b1b66732f631c8fd904c4"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/sleep/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "fef08d6723acd2aa4e1e0a7fd811238d57fadecb",
+      "size": 722,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/fef08d6723acd2aa4e1e0a7fd811238d57fadecb"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/sleep/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/sleep/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "644ceac7ff36d996f73c8dbe5da8e3f6e771d294",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/644ceac7ff36d996f73c8dbe5da8e3f6e771d294"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7de759c90ab61614a6be10651f197687817de256",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7de759c90ab61614a6be10651f197687817de256"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8c64e659730ecd41a773bdd4e3c950c9c13e8fc0",
+      "size": 396,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/8c64e659730ecd41a773bdd4e3c950c9c13e8fc0"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0532b58e8689907818e2cdd9e4039db5f47bf88a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0532b58e8689907818e2cdd9e4039db5f47bf88a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e62251a5d0c569ded6bddcf7395602a6b7b4f53c",
+      "size": 1325,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e62251a5d0c569ded6bddcf7395602a6b7b4f53c"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7dbceafdc34dd5bc5a54227c00691f9ca503c81a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7dbceafdc34dd5bc5a54227c00691f9ca503c81a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9eb2f71677db2fea345b90a7ba2ef495fd3f5035",
+      "size": 56,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/9eb2f71677db2fea345b90a7ba2ef495fd3f5035"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6b6b5866727ba233287e5ff9a66900d6497b5adc",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6b6b5866727ba233287e5ff9a66900d6497b5adc"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/modules/subsample_gis_owid/workflow/scripts/case_incidence-informed_subsampling.R",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "c1fbdb698271a69b765317058e65286482ebccab",
+      "size": 8651,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/c1fbdb698271a69b765317058e65286482ebccab"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "860d3b5f415e222f431966b42b2b3816a5a33290",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/860d3b5f415e222f431966b42b2b3816a5a33290"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "591a66cc89e0f53e126ac5e72b897b520cc48ab4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/591a66cc89e0f53e126ac5e72b897b520cc48ab4"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b2e9f4a9f1e34c05fa5da11c92e4822f0c21690d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b2e9f4a9f1e34c05fa5da11c92e4822f0c21690d"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d5d4c796e7a762cfb61ad3f3fedd88afe568a033",
+      "size": 165,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/d5d4c796e7a762cfb61ad3f3fedd88afe568a033"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3c69734d596b4f9dc8af20b5c968fa05b715cf2a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/3c69734d596b4f9dc8af20b5c968fa05b715cf2a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4594f0affec17d5c6632b674dbf1bef8b2d041a7",
+      "size": 315,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4594f0affec17d5c6632b674dbf1bef8b2d041a7"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid_subsampled_seqs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2cf79b2be7c2e44f2c03a3827c48b57524e4117c",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/2cf79b2be7c2e44f2c03a3827c48b57524e4117c"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid_subsampled_seqs/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1d97ea9ec8e22073819394ef74692c8cad5b3f93",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1d97ea9ec8e22073819394ef74692c8cad5b3f93"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid_subsampled_seqs/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d21061badb69dae2d112cb3395468ac71b37ccb8",
+      "size": 186,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/d21061badb69dae2d112cb3395468ac71b37ccb8"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid_subsampled_seqs/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "010956bed704177c837a9ea71cf82f47d95ce73a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/010956bed704177c837a9ea71cf82f47d95ce73a"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_gisaid_subsampled_seqs/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cc8ee3674be8c7faf65f9b45bb34c6dc932799f0",
+      "size": 363,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/cc8ee3674be8c7faf65f9b45bb34c6dc932799f0"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_owid",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "92ee2b869059d722d327d44aaed3c3221a2a87b9",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/92ee2b869059d722d327d44aaed3c3221a2a87b9"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_owid/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a4fc2022f279174554543580200c9d43075f9911",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a4fc2022f279174554543580200c9d43075f9911"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_owid/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b38e4f4551c964b00fe708fc3f79a703291a8a6e",
+      "size": 149,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b38e4f4551c964b00fe708fc3f79a703291a8a6e"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_owid/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e8ab45f1b15868c5ffc8c4ec7ae02e9a0ffb6d70",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/e8ab45f1b15868c5ffc8c4ec7ae02e9a0ffb6d70"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_owid/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "79c82bdc1f5062b3157644bce32f32751275f09f",
+      "size": 309,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/79c82bdc1f5062b3157644bce32f32751275f09f"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_reference_seqs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4c9413439ecdbd5ec6aacd1891c83cc501f955e1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4c9413439ecdbd5ec6aacd1891c83cc501f955e1"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_reference_seqs/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c49d657fb55ab742de1d3a31467f6c32645df980",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c49d657fb55ab742de1d3a31467f6c32645df980"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_reference_seqs/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "86824b8f4b881322b474cd0df21d6f3ddf48b593",
+      "size": 168,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/86824b8f4b881322b474cd0df21d6f3ddf48b593"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_reference_seqs/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ca31e7aff3f4c9654e5fe7f4815a63af64e16b1e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ca31e7aff3f4c9654e5fe7f4815a63af64e16b1e"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_reference_seqs/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bb5f4cc06248baad3fb8e85d4f4272b699602dd7",
+      "size": 339,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/bb5f4cc06248baad3fb8e85d4f4272b699602dd7"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "40e4678e913badaeb22bf513a92d488681ec3fff",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/40e4678e913badaeb22bf513a92d488681ec3fff"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/.gitignore",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/CODE_OF_CONDUCT.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/CONTRIBUTING.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/LICENSE",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30bb136dfd23ad5acc32f428c149acd8b5e4cecf",
+      "size": 1067,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/30bb136dfd23ad5acc32f428c149acd8b5e4cecf"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/README.md",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43769288422b0c9871eb5657e0af868ea49bab77",
+      "size": 12,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/43769288422b0c9871eb5657e0af868ea49bab77"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9c65f7b42d2a0be4a3d4491589addae142134f6b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9c65f7b42d2a0be4a3d4491589addae142134f6b"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "68a06b469d29fd2c94be808c96744ede5fbfff68",
+      "size": 56,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/68a06b469d29fd2c94be808c96744ede5fbfff68"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c9e39879370c0b8fb1c89b971de0eb24c381b5e5",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c9e39879370c0b8fb1c89b971de0eb24c381b5e5"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cbca2162f2b4aa52ca913041aa9cf95f85318ab1",
+      "size": 2762,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/cbca2162f2b4aa52ca913041aa9cf95f85318ab1"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/rules",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d0d87ac4ccad5e703f076cd7cec6edee24f0286f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/d0d87ac4ccad5e703f076cd7cec6edee24f0286f"
+    },
+    {
+      "path": "workflows/OxfordPhyloGenetics/sources/get_remote_file/workflow/rules/common.smk",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0e91fa1554f375f8f7e6273c2bfce2ae71771724",
+      "size": 479,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0e91fa1554f375f8f7e6273c2bfce2ae71771724"
+    },
+    {
+      "path": "workflows/TutorialBuilder",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9d1ec477350975a2c398b8d70e4114454a4d8378",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9d1ec477350975a2c398b8d70e4114454a4d8378"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bfe4b7d9aaf41ec36faa90df08dbb0a2f18698a4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/bfe4b7d9aaf41ec36faa90df08dbb0a2f18698a4"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "41b57707e2add87e677f5c17ff3f963b392dac8f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/41b57707e2add87e677f5c17ff3f963b392dac8f"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b785cd119b543f699b4c2d78e114826f21ab9723",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b785cd119b543f699b4c2d78e114826f21ab9723"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8bcfac5212c705e3636d732f9392f508c470adf4",
+      "size": 192,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/8bcfac5212c705e3636d732f9392f508c470adf4"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "406ba44c680f430892f03991f354a9ca81dfadef",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/406ba44c680f430892f03991f354a9ca81dfadef"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/resources/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b5a6d4a749eb032616b78188b529596c9a75b471",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b5a6d4a749eb032616b78188b529596c9a75b471"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/resources/scripts/aggregate.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "03606be0b907e1093212c3aa6860a25ba321c5e5",
+      "size": 943,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/03606be0b907e1093212c3aa6860a25ba321c5e5"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "45b76c9962cbe6050ecb797080a09bf2c7713c91",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/45b76c9962cbe6050ecb797080a09bf2c7713c91"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9dd4fed093d3d29021eb392fddab59d0d99101bd",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9dd4fed093d3d29021eb392fddab59d0d99101bd"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/results/in/data.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "047b5a1c6a0c4a9b7669d722ba98661d6c574a12",
+      "size": 13952004,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/047b5a1c6a0c4a9b7669d722ba98661d6c574a12"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5e9e9ba4ff9e50d6badebd72744db939fbbb435d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5e9e9ba4ff9e50d6badebd72744db939fbbb435d"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6f98b53db355860e7c90eb81eca6ec72919178bf",
+      "size": 963,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/6f98b53db355860e7c90eb81eca6ec72919178bf"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6029669187a7be7ed5270e94e3f062b850dc5d9e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6029669187a7be7ed5270e94e3f062b850dc5d9e"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/AggregateByMonth/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a90705d87d1bccca062356ded45a2e5ba34b8feb",
+      "size": 110,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a90705d87d1bccca062356ded45a2e5ba34b8feb"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "07d58ea9d20869ca341dd5455e0f2bad875ab43f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/07d58ea9d20869ca341dd5455e0f2bad875ab43f"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7eef08a3f7bb153e6d37c55dc840e178edd352f1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7eef08a3f7bb153e6d37c55dc840e178edd352f1"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "450e0812389f7eb1da865c814bbed70491d739e7",
+      "size": 105,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/450e0812389f7eb1da865c814bbed70491d739e7"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0f1bdbc166b0b6b38134b037f1ffffae7ac6010e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0f1bdbc166b0b6b38134b037f1ffffae7ac6010e"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/resources/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "441a172224d1caf3349d0ddaf3fedede68a5fc5c",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/441a172224d1caf3349d0ddaf3fedede68a5fc5c"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/resources/scripts/filter.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "064f13cd1ee2e648da6dd3ffa980c07ad0a81f30",
+      "size": 711,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/064f13cd1ee2e648da6dd3ffa980c07ad0a81f30"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "45b76c9962cbe6050ecb797080a09bf2c7713c91",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/45b76c9962cbe6050ecb797080a09bf2c7713c91"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9dd4fed093d3d29021eb392fddab59d0d99101bd",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9dd4fed093d3d29021eb392fddab59d0d99101bd"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/results/in/data.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "047b5a1c6a0c4a9b7669d722ba98661d6c574a12",
+      "size": 13952004,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/047b5a1c6a0c4a9b7669d722ba98661d6c574a12"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0b0292d8a4f7657f047f39c5e3de347e9c09c65b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0b0292d8a4f7657f047f39c5e3de347e9c09c65b"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "06caa999aaf776e7268e67d56ae5264d19744c1f",
+      "size": 1285,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/06caa999aaf776e7268e67d56ae5264d19744c1f"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "14939bb719fe44edffebeefa71e02a17581abd11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/14939bb719fe44edffebeefa71e02a17581abd11"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Filter/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3275f4ecd337be5472e5859077da513394f2cfa4",
+      "size": 82,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/3275f4ecd337be5472e5859077da513394f2cfa4"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "dc37efa6c07f5e1eb5eb08ce9eb163606bf0f39a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/dc37efa6c07f5e1eb5eb08ce9eb163606bf0f39a"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "60550154ded7c736dcfef88d3968c47afbf78cdf",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/60550154ded7c736dcfef88d3968c47afbf78cdf"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f61e7dedb4d13e17b2b8429853735d995c361854",
+      "size": 123,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f61e7dedb4d13e17b2b8429853735d995c361854"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "931a72d35dbfb90dfd9f6a380592de45609214d9",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/931a72d35dbfb90dfd9f6a380592de45609214d9"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/resources/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8b1dbaceb7faf480da0ea929ea970b02eb2cfe28",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/8b1dbaceb7faf480da0ea929ea970b02eb2cfe28"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/resources/scripts/plotcol.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2e66833ea2a7ec2339e335ad7e72a4d6f701429b",
+      "size": 869,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/2e66833ea2a7ec2339e335ad7e72a4d6f701429b"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "45b76c9962cbe6050ecb797080a09bf2c7713c91",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/45b76c9962cbe6050ecb797080a09bf2c7713c91"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9dd4fed093d3d29021eb392fddab59d0d99101bd",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9dd4fed093d3d29021eb392fddab59d0d99101bd"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/results/in/data.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "047b5a1c6a0c4a9b7669d722ba98661d6c574a12",
+      "size": 13952004,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/047b5a1c6a0c4a9b7669d722ba98661d6c574a12"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5f7dfe029d0ab0ef61bc54143d1eecf4d47e90f8",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5f7dfe029d0ab0ef61bc54143d1eecf4d47e90f8"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "91365b7dfb84a8a225a00570e7a8e987f3e193bd",
+      "size": 862,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/91365b7dfb84a8a225a00570e7a8e987f3e193bd"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6029669187a7be7ed5270e94e3f062b850dc5d9e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6029669187a7be7ed5270e94e3f062b850dc5d9e"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Plot/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a90705d87d1bccca062356ded45a2e5ba34b8feb",
+      "size": 110,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a90705d87d1bccca062356ded45a2e5ba34b8feb"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "00603d2d0bb9fdd89defb550ea71fd1af0f31cc7",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/00603d2d0bb9fdd89defb550ea71fd1af0f31cc7"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2c73651ebc5c0727082b135bc014f475f6448365",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/2c73651ebc5c0727082b135bc014f475f6448365"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ca5e8b2b79dd060d75c5f171c77651d2c4b8a9c7",
+      "size": 118,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ca5e8b2b79dd060d75c5f171c77651d2c4b8a9c7"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e0dd1ca5ac8cbf02718510dc95e678ffb1c242f8",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/e0dd1ca5ac8cbf02718510dc95e678ffb1c242f8"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/resources/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "245f80f98593bff970741fe61d054aa8b0107b04",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/245f80f98593bff970741fe61d054aa8b0107b04"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/resources/scripts/select_col.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "521b44990bc951b6f2a27c8d0e5ff96e761c3b9b",
+      "size": 695,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/521b44990bc951b6f2a27c8d0e5ff96e761c3b9b"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "77d5b1a8220d68adf45bf059bd69ce6d822df775",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/77d5b1a8220d68adf45bf059bd69ce6d822df775"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3f17ae44a52e1b72a8639ada07b67cbd6fab35cb",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/3f17ae44a52e1b72a8639ada07b67cbd6fab35cb"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/results/in/data.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b0955a502997b8f1edf102d5254ae3a4f04fb08",
+      "size": 67605,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/7b0955a502997b8f1edf102d5254ae3a4f04fb08"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "41f956f05b6cb8b6077ba9db02baed362db5ffc6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/41f956f05b6cb8b6077ba9db02baed362db5ffc6"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b2e9d6f85f247789f13dc6a611109916a063b597",
+      "size": 885,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b2e9d6f85f247789f13dc6a611109916a063b597"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "70d3e6ca723c84e1d0bd78b7459a204a4fd3fccf",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/70d3e6ca723c84e1d0bd78b7459a204a4fd3fccf"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Select/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "53e28e2cc9c6dc9755703ae25eb06248ce8f5b65",
+      "size": 93,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/53e28e2cc9c6dc9755703ae25eb06248ce8f5b65"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fede930688c74a370fd60fd4e1142b4e6582af3e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/fede930688c74a370fd60fd4e1142b4e6582af3e"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f98af34f3e2ccd752dec24fc390391d084b142ad",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f98af34f3e2ccd752dec24fc390391d084b142ad"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "526978217b8c39080d85903dbdde3ac6cd1eb08f",
+      "size": 94,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/526978217b8c39080d85903dbdde3ac6cd1eb08f"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "afd810e8a87041195a93432cde54f480415b7286",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/afd810e8a87041195a93432cde54f480415b7286"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/resources/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d9c88f82922871de2841457ec87014ddbf44f323",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/d9c88f82922871de2841457ec87014ddbf44f323"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/resources/scripts/test.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "4056f33e94367d22185940c029831838905007a2",
+      "size": 34,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4056f33e94367d22185940c029831838905007a2"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d555de01fe762ea21882b90fa145f86fb7835343",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/d555de01fe762ea21882b90fa145f86fb7835343"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "852881244fbddd376589e1842135c6fa11c27898",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/852881244fbddd376589e1842135c6fa11c27898"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/results/in/infile.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "89f30661b30da3d16bc96ea238613b52262bee3c",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/89f30661b30da3d16bc96ea238613b52262bee3c"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "06c629a28d945a778593736bac19c94f8d013ae2",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/06c629a28d945a778593736bac19c94f8d013ae2"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f45748815953f3c6e048cdf531406fe26bd623d1",
+      "size": 756,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f45748815953f3c6e048cdf531406fe26bd623d1"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/TutorialBuilder/modules/Template/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a030b8994ccadbe82fb7cff7760f24ac2f5b4402",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a030b8994ccadbe82fb7cff7760f24ac2f5b4402"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/Download",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "553d45430628dbff88a12dc877b83aa7be70810e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/553d45430628dbff88a12dc877b83aa7be70810e"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/Download/benchmark",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cbb32c222ee82d608a2afe524ea2203a4681f149",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/cbb32c222ee82d608a2afe524ea2203a4681f149"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/Download/benchmark/out",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb801a256d1e330645822fd49b07e57263b2c17c",
+      "size": 111,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/cb801a256d1e330645822fd49b07e57263b2c17c"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/Download/benchmark/out.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/Download/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1da843809c71535d045ffc6f826b1ab7310cdb81",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1da843809c71535d045ffc6f826b1ab7310cdb81"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/Download/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1f3678c748771d57fe2bfe72e6b3e754f951853",
+      "size": 133,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f1f3678c748771d57fe2bfe72e6b3e754f951853"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/Download/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f7653c7728cbd05d52fcc644cb1e72f04d6bd1c0",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f7653c7728cbd05d52fcc644cb1e72f04d6bd1c0"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/Download/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "52b2745223b6193759b47a0ad7e8e80a61c0de3e",
+      "size": 522,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/52b2745223b6193759b47a0ad7e8e80a61c0de3e"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadRun",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0eb5ffbe33adfefec88d45a837fc04e36fb38478",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0eb5ffbe33adfefec88d45a837fc04e36fb38478"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadRun/benchmark",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cbb32c222ee82d608a2afe524ea2203a4681f149",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/cbb32c222ee82d608a2afe524ea2203a4681f149"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadRun/benchmark/out",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cb801a256d1e330645822fd49b07e57263b2c17c",
+      "size": 111,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/cb801a256d1e330645822fd49b07e57263b2c17c"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadRun/benchmark/out.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadRun/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1da843809c71535d045ffc6f826b1ab7310cdb81",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1da843809c71535d045ffc6f826b1ab7310cdb81"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadRun/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1f3678c748771d57fe2bfe72e6b3e754f951853",
+      "size": 133,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f1f3678c748771d57fe2bfe72e6b3e754f951853"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadRun/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bd272d2a82f8bc56f240b30d0457a19603301309",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/bd272d2a82f8bc56f240b30d0457a19603301309"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadRun/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "04f3c67d1530a7fd87092b7165223c9548d94021",
+      "size": 527,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/04f3c67d1530a7fd87092b7165223c9548d94021"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bc099e389d49a0b78ab990459403b38ed9dc48be",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/bc099e389d49a0b78ab990459403b38ed9dc48be"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/benchmark",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "069a6fe5600e6fab8e0886c84e2325a10b0a006c",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/069a6fe5600e6fab8e0886c84e2325a10b0a006c"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/benchmark/out",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecc5ddf88b7b8a3a8ecaf43c07606f6a2b018c1d",
+      "size": 112,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ecc5ddf88b7b8a3a8ecaf43c07606f6a2b018c1d"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/benchmark/out.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1da843809c71535d045ffc6f826b1ab7310cdb81",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1da843809c71535d045ffc6f826b1ab7310cdb81"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1f3678c748771d57fe2bfe72e6b3e754f951853",
+      "size": 133,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f1f3678c748771d57fe2bfe72e6b3e754f951853"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c334d3923edc81e32432d110e453f7c483c1b12e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c334d3923edc81e32432d110e453f7c483c1b12e"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/resources/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5552dd7b8c199c2cfb1a8b0b8fabc94c8349854b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5552dd7b8c199c2cfb1a8b0b8fabc94c8349854b"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/resources/scripts/move_file.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db64898a156612ed18e0ee7569e2489709c04b0c",
+      "size": 396,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/db64898a156612ed18e0ee7569e2489709c04b0c"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "de699751d381e44f85b89152fd48df9a305d201f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/de699751d381e44f85b89152fd48df9a305d201f"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "453dd76d6e209e5fe11e5a756c34aad0365faf02",
+      "size": 712,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/453dd76d6e209e5fe11e5a756c34aad0365faf02"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "faf08e76d43c31663eda28d60a07391b66c9872a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/faf08e76d43c31663eda28d60a07391b66c9872a"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadScript/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a806e00adff63187d12977ea6e90fb29f8baa16",
+      "size": 48,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/1a806e00adff63187d12977ea6e90fb29f8baa16"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "dd0c7a608cc00ac23bc41882e72e72e20037a072",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/dd0c7a608cc00ac23bc41882e72e72e20037a072"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/benchmark",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "069a6fe5600e6fab8e0886c84e2325a10b0a006c",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/069a6fe5600e6fab8e0886c84e2325a10b0a006c"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/benchmark/out",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ecc5ddf88b7b8a3a8ecaf43c07606f6a2b018c1d",
+      "size": 112,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ecc5ddf88b7b8a3a8ecaf43c07606f6a2b018c1d"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/benchmark/out.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1da843809c71535d045ffc6f826b1ab7310cdb81",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1da843809c71535d045ffc6f826b1ab7310cdb81"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f1f3678c748771d57fe2bfe72e6b3e754f951853",
+      "size": 133,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f1f3678c748771d57fe2bfe72e6b3e754f951853"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c334d3923edc81e32432d110e453f7c483c1b12e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c334d3923edc81e32432d110e453f7c483c1b12e"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/resources/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5552dd7b8c199c2cfb1a8b0b8fabc94c8349854b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5552dd7b8c199c2cfb1a8b0b8fabc94c8349854b"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/resources/scripts/move_file.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db64898a156612ed18e0ee7569e2489709c04b0c",
+      "size": 396,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/db64898a156612ed18e0ee7569e2489709c04b0c"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4e8c6df7bc8ad8677195b43053efcab2bf22cd7f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4e8c6df7bc8ad8677195b43053efcab2bf22cd7f"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a3ff4cbf0215074742ffd4a7c91fec04884b5498",
+      "size": 718,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a3ff4cbf0215074742ffd4a7c91fec04884b5498"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "faf08e76d43c31663eda28d60a07391b66c9872a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/faf08e76d43c31663eda28d60a07391b66c9872a"
+    },
+    {
+      "path": "workflows/TutorialBuilder/sources/DownloadShell/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1a806e00adff63187d12977ea6e90fb29f8baa16",
+      "size": 48,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/1a806e00adff63187d12977ea6e90fb29f8baa16"
+    },
+    {
+      "path": "workflows/Utility",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "2044bec5424d224334096872ebcb620449e7e0e1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/2044bec5424d224334096872ebcb620449e7e0e1"
+    },
+    {
+      "path": "workflows/Utility/modules",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1871ac6e863d1da5793cc76dc902817e40558af5",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1871ac6e863d1da5793cc76dc902817e40558af5"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bb4cb265931780a40d9969526b8751ee493c744d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/bb4cb265931780a40d9969526b8751ee493c744d"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "546d45bdb1ae6157a4e5b6d4b073fd5949497dd5",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/546d45bdb1ae6157a4e5b6d4b073fd5949497dd5"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1dab60d882fcb5a550dd120f4686e5950ab8c102",
+      "size": 111,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/1dab60d882fcb5a550dd120f4686e5950ab8c102"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "fafd0c6df04e5d6658cc4e3c4a3bfa5fd246b5b1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/fafd0c6df04e5d6658cc4e3c4a3bfa5fd246b5b1"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "42614585cc414e56c96278d05387c2496106527b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/42614585cc414e56c96278d05387c2496106527b"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/results/in/input.xml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4fea7d6d19a6db7415fb026e7f0222087f37fcee",
+      "size": 402124,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4fea7d6d19a6db7415fb026e7f0222087f37fcee"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "997ad7d9ff6d80779cb0e2b2cfbc7cbdc29437aa",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/997ad7d9ff6d80779cb0e2b2cfbc7cbdc29437aa"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cf47fd84b490d5b793ae88fc46fdcac14cfb37ff",
+      "size": 2664,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/cf47fd84b490d5b793ae88fc46fdcac14cfb37ff"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "45cc018363259911b8497c41bfb005ff304cca55",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/45cc018363259911b8497c41bfb005ff304cca55"
+    },
+    {
+      "path": "workflows/Utility/modules/BEAST/workflow/envs/conda.yml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "30c732f95f1be333c16bb623a3d78db0cd558ab6",
+      "size": 86,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/30c732f95f1be333c16bb623a3d78db0cd558ab6"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a95c245fe96a67c865c5258e1aa73db6beb69e7a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a95c245fe96a67c865c5258e1aa73db6beb69e7a"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8ab82cf47494fc9c6ed22c0d2f0fccaa2870b79e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/8ab82cf47494fc9c6ed22c0d2f0fccaa2870b79e"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50a1acbcb125211a52e0203a698566b5406d0275",
+      "size": 231,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/50a1acbcb125211a52e0203a698566b5406d0275"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "12c1db37cf69b4954b022bc53777affab9175206",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/12c1db37cf69b4954b022bc53777affab9175206"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/resources/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "db9abd89fb67af140f4d10b84532c9e1eea32b0f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/db9abd89fb67af140f4d10b84532c9e1eea32b0f"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/resources/scripts/test.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "900463f59977666bfb21bd74872b39bce8d29b65",
+      "size": 1258,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/900463f59977666bfb21bd74872b39bce8d29b65"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d1992b41291d8197603dcf7f7cbe1346aed44615",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/d1992b41291d8197603dcf7f7cbe1346aed44615"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9e780c1bcb481e97b4bb3329dab461db70c49285",
+      "size": 913,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/9e780c1bcb481e97b4bb3329dab461db70c49285"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6029669187a7be7ed5270e94e3f062b850dc5d9e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6029669187a7be7ed5270e94e3f062b850dc5d9e"
+    },
+    {
+      "path": "workflows/Utility/modules/Plot_XY/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a90705d87d1bccca062356ded45a2e5ba34b8feb",
+      "size": 110,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a90705d87d1bccca062356ded45a2e5ba34b8feb"
+    },
+    {
+      "path": "workflows/Utility/modules/Template",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "927f852a018a2ca89ec362bd67c47d1d016acf65",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/927f852a018a2ca89ec362bd67c47d1d016acf65"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ecb3a25afcca979cde4aa30c34cabb52b9f64650",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ecb3a25afcca979cde4aa30c34cabb52b9f64650"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "10bdc998a47a2971b43982e7e295975a9acf7f03",
+      "size": 63,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/10bdc998a47a2971b43982e7e295975a9acf7f03"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d555de01fe762ea21882b90fa145f86fb7835343",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/d555de01fe762ea21882b90fa145f86fb7835343"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "852881244fbddd376589e1842135c6fa11c27898",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/852881244fbddd376589e1842135c6fa11c27898"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/results/in/infile.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "89f30661b30da3d16bc96ea238613b52262bee3c",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/89f30661b30da3d16bc96ea238613b52262bee3c"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9d7dee0e47c0a6eab03581ceea4342b9abac65e9",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9d7dee0e47c0a6eab03581ceea4342b9abac65e9"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e2d030288fe413c0c9d69fa677f51ca4da0c115",
+      "size": 515,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/1e2d030288fe413c0c9d69fa677f51ca4da0c115"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/Utility/modules/Template/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "18ba4df00e3515542decf279bac3697d2511bd90",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/18ba4df00e3515542decf279bac3697d2511bd90"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "71cadf28008ce57b77f61f46e077081a11ed9ef1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/71cadf28008ce57b77f61f46e077081a11ed9ef1"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9f68be666aa41077dfc75e2f24857953d22e96a3",
+      "size": 71,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/9f68be666aa41077dfc75e2f24857953d22e96a3"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a2c1a8cd517fa1dc34b3b5254815e70abb674eea",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a2c1a8cd517fa1dc34b3b5254815e70abb674eea"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8b0c30fe59a5a5cb67eca504905b4a188b40a5a1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/8b0c30fe59a5a5cb67eca504905b4a188b40a5a1"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/results/in/data.csv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7f4f9c7f5264992b2cd0c64639095d7fe67cad39",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7f4f9c7f5264992b2cd0c64639095d7fe67cad39"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0046f29385ce8fc7cbc1d9e427c941a57787fa8f",
+      "size": 517,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0046f29385ce8fc7cbc1d9e427c941a57787fa8f"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/Utility/modules/condacopy/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/Utility/modules/select",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "e3c9a886bf6241ac80c3d46d0c0ac7fac48f0876",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/e3c9a886bf6241ac80c3d46d0c0ac7fac48f0876"
+    },
+    {
+      "path": "workflows/Utility/modules/select/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "72f620169d3e040300895eeda5d35b2aa5f7dd08",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/72f620169d3e040300895eeda5d35b2aa5f7dd08"
+    },
+    {
+      "path": "workflows/Utility/modules/select/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "831dee67ab7d63813e00693526b8efefcfc74956",
+      "size": 59,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/831dee67ab7d63813e00693526b8efefcfc74956"
+    },
+    {
+      "path": "workflows/Utility/modules/select/logs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "373be0e4e569f6820c9b50b9f1cb030794eb891f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/373be0e4e569f6820c9b50b9f1cb030794eb891f"
+    },
+    {
+      "path": "workflows/Utility/modules/select/logs/select.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/Utility/modules/select/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "836838eb292d8be417c37bed13f187be4bc83234",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/836838eb292d8be417c37bed13f187be4bc83234"
+    },
+    {
+      "path": "workflows/Utility/modules/select/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f57294a2dae0dd7d523cae6b673bf1633e06cdb0",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f57294a2dae0dd7d523cae6b673bf1633e06cdb0"
+    },
+    {
+      "path": "workflows/Utility/modules/select/results/in/item",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/Utility/modules/select/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "840b43cd6d5f2a4829aea2602b3824b1f684a267",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/840b43cd6d5f2a4829aea2602b3824b1f684a267"
+    },
+    {
+      "path": "workflows/Utility/modules/select/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "7b83bba99c6d788ec3e017804e00a6992ea67b55",
+      "size": 433,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/7b83bba99c6d788ec3e017804e00a6992ea67b55"
+    },
+    {
+      "path": "workflows/Utility/modules/select/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "cfc4beff27d572dad753231d7d3958bdcb9248fb",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/cfc4beff27d572dad753231d7d3958bdcb9248fb"
+    },
+    {
+      "path": "workflows/Utility/modules/select/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f307802fe96cacc8ea95245b366c4974cadefc75",
+      "size": 68,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f307802fe96cacc8ea95245b366c4974cadefc75"
+    },
+    {
+      "path": "workflows/Utility/modules/touch",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c3d72b5c24461274824293831baa07fab1ed99d1",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c3d72b5c24461274824293831baa07fab1ed99d1"
+    },
+    {
+      "path": "workflows/Utility/modules/touch/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f357f591a69449e9da2887d4b5a32e9cdc8f72be",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f357f591a69449e9da2887d4b5a32e9cdc8f72be"
+    },
+    {
+      "path": "workflows/Utility/modules/touch/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43afb74eb20abbb5a07e1d47166c98bc23dbd336",
+      "size": 73,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/43afb74eb20abbb5a07e1d47166c98bc23dbd336"
+    },
+    {
+      "path": "workflows/Utility/modules/touch/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5f9162f455b513468f1c42f33446c4019f4a5eed",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5f9162f455b513468f1c42f33446c4019f4a5eed"
+    },
+    {
+      "path": "workflows/Utility/modules/touch/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "905c27b1984960f26f80ed57e6f782619d0d57b7",
+      "size": 336,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/905c27b1984960f26f80ed57e6f782619d0d57b7"
+    },
+    {
+      "path": "workflows/Utility/modules/touch/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/Utility/modules/touch/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/vocpl",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d89cbd14455bff2d1321ea7eb320738c4152995f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/d89cbd14455bff2d1321ea7eb320738c4152995f"
+    },
+    {
+      "path": "workflows/vocpl/build.sh",
+      "mode": "100755",
+      "type": "blob",
+      "sha": "d310238e43b6911170a8968bbe5df3b8ec823624",
+      "size": 457,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/d310238e43b6911170a8968bbe5df3b8ec823624"
+    },
+    {
+      "path": "workflows/vocpl/modules",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1cd536e5adc480ec4da12d996c80a069d5fc4f74",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1cd536e5adc480ec4da12d996c80a069d5fc4f74"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "648cf453a2620165e7db3c1cab36a01b8822a240",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/648cf453a2620165e7db3c1cab36a01b8822a240"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "40aa1ae31c1278091e9ca2b8ea75a81162f4d22b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/40aa1ae31c1278091e9ca2b8ea75a81162f4d22b"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b837e9484c38ccf7556e1e723620067c6d962da2",
+      "size": 138,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b837e9484c38ccf7556e1e723620067c6d962da2"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c399a6a25829b0d4399fea5ca0fa2894a1b0d0a6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c399a6a25829b0d4399fea5ca0fa2894a1b0d0a6"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/resources/beta.metadata.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "177ba55a5472cb3306744b2a6ad6d678940e0022",
+      "size": 5639605,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/177ba55a5472cb3306744b2a6ad6d678940e0022"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "333f6d3cd212026f976b338ab69a9451482bdcb6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/333f6d3cd212026f976b338ab69a9451482bdcb6"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/seeds",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "661e16bf1acf03911429b3eeeefc2eb947ad3983",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/661e16bf1acf03911429b3eeeefc2eb947ad3983"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/seeds/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0368e58ef381b05b549d404601172e501dd0f903",
+      "size": 15,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0368e58ef381b05b549d404601172e501dd0f903"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/treetime",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c4e58c7f926ed1673eb9c21fc4a863fccfe9ed12",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c4e58c7f926ed1673eb9c21fc4a863fccfe9ed12"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/treetime/s123456",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "63dae5a8f512cd27b06bcb0cbbc929abbb0c92bb",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/63dae5a8f512cd27b06bcb0cbbc929abbb0c92bb"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/treetime/s123456/TreeTime_iter",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "626a9c2a22f08f0baf1614e1a8c70acd2119f95b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/626a9c2a22f08f0baf1614e1a8c70acd2119f95b"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/treetime/s123456/TreeTime_iter/ml_treetime.final.nwk",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "512b5fd06f420af492e4c2189d8620bfe5794551",
+      "size": 3053,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/512b5fd06f420af492e4c2189d8620bfe5794551"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/treetime/s2342321",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7ae5ff1b3041d8cee4ad5db2a15fe5dbacf3779b",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7ae5ff1b3041d8cee4ad5db2a15fe5dbacf3779b"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/treetime/s2342321/TreeTime_iter",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4f886049ee38bff434855979d9698a5ba686c6b9",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4f886049ee38bff434855979d9698a5ba686c6b9"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/results/treetime/s2342321/TreeTime_iter/ml_treetime.final.nwk",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "23d03bb7e84ad5820c64a904266ae07662ac777b",
+      "size": 3054,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/23d03bb7e84ad5820c64a904266ae07662ac777b"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b73abbdd3d6e8da93a960239b28edb412c433098",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b73abbdd3d6e8da93a960239b28edb412c433098"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/scripts/extract_dta.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3f98b3e18917deea88fd70998bc0e09251c35ee5",
+      "size": 1759,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/3f98b3e18917deea88fd70998bc0e09251c35ee5"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/scripts/sort_dates.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1e4b932d42da1f5f82a22f16a69d530d1827edef",
+      "size": 1604,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/1e4b932d42da1f5f82a22f16a69d530d1827edef"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6f7c09f0efb589a86180c197720e2e33b9c4bf87",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6f7c09f0efb589a86180c197720e2e33b9c4bf87"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e2fc2659ddf4ba862d75705c42f8ee74d764c9e3",
+      "size": 3604,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e2fc2659ddf4ba862d75705c42f8ee74d764c9e3"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a118805aa4684fd3aebc22498bcb353e426172a4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a118805aa4684fd3aebc22498bcb353e426172a4"
+    },
+    {
+      "path": "workflows/vocpl/modules/dta/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "545d32c39599664b44195cd456c199f02491243b",
+      "size": 108,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/545d32c39599664b44195cd456c199f02491243b"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "823a43d507e9f00b6d807f8f90119beb3e41a6f4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/823a43d507e9f00b6d807f8f90119beb3e41a6f4"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "be74cc0cc1e7db3e9abfa70863ba7f12f8bb3bf7",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/be74cc0cc1e7db3e9abfa70863ba7f12f8bb3bf7"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "25f8c25247ae229ef35b5bef708a94b4c2cef55c",
+      "size": 264,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/25f8c25247ae229ef35b5bef708a94b4c2cef55c"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/dag.svg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "54dc2539cd6b8a957a097cf526af60803dfd5597",
+      "size": 1705,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/54dc2539cd6b8a957a097cf526af60803dfd5597"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "42bb8251c1be94c30d08d031f93a287d84970a4f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/42bb8251c1be94c30d08d031f93a287d84970a4f"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/results/fasta",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "5792cc5ebf80e464c056d4834c745e87e3599311",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/5792cc5ebf80e464c056d4834c745e87e3599311"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/results/fasta/s123456",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4f2d113893fcd66de8456aff7d2423ece556375a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4f2d113893fcd66de8456aff7d2423ece556375a"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/results/fasta/s123456/nextalign.aligned.fasta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a6f63636f48ab718217ffd4cd62ff5c8322ef05",
+      "size": 1497048,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0a6f63636f48ab718217ffd4cd62ff5c8322ef05"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/results/fasta/s2342321",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "837323a2db8e843963c27aec4658b16d41dc420d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/837323a2db8e843963c27aec4658b16d41dc420d"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/results/fasta/s2342321/nextalign.aligned.fasta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cfa0441cd40a28d014f1e3098977d862deecbb64",
+      "size": 1497053,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/cfa0441cd40a28d014f1e3098977d862deecbb64"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/results/seeds",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "661e16bf1acf03911429b3eeeefc2eb947ad3983",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/661e16bf1acf03911429b3eeeefc2eb947ad3983"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/results/seeds/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0368e58ef381b05b549d404601172e501dd0f903",
+      "size": 15,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0368e58ef381b05b549d404601172e501dd0f903"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f793b5451e723d2e4bd9cfd1748b2c51b2d14321",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f793b5451e723d2e4bd9cfd1748b2c51b2d14321"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "aba24281a711a4e332d16fd3d225a6ce7520a32a",
+      "size": 3262,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/aba24281a711a4e332d16fd3d225a6ce7520a32a"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "3e27a4c7cc78d9d256ce52d6fbec94704dbc9938",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/3e27a4c7cc78d9d256ce52d6fbec94704dbc9938"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/workflow/envs/fasttree.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "47cc4479845afcb18c98aa5fb60833d0a6760592",
+      "size": 50,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/47cc4479845afcb18c98aa5fb60833d0a6760592"
+    },
+    {
+      "path": "workflows/vocpl/modules/ml_tree/workflow/envs/iqtree2.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "26bdbe927dd7970af545b15262f1a6177f617055",
+      "size": 48,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/26bdbe927dd7970af545b15262f1a6177f617055"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b88f243b745d44df35a732e4d881420a0b654745",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b88f243b745d44df35a732e4d881420a0b654745"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "06e3b2faadb4a8651a6b10e2c6940c04bd83aad7",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/06e3b2faadb4a8651a6b10e2c6940c04bd83aad7"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "3dc315ce1e29ccb3b35390f59537be79a09aa1b3",
+      "size": 274,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/3dc315ce1e29ccb3b35390f59537be79a09aa1b3"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "122f084d4b904228703765976efc2d5021f68eda",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/122f084d4b904228703765976efc2d5021f68eda"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/resources/genemap.gff",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "bfd939385c692d368ef718bd7d75e9d916ddbc27",
+      "size": 1021,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/bfd939385c692d368ef718bd7d75e9d916ddbc27"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/resources/reference.fasta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9ab72ad17b9e9e5a4adbf62b4fc3511b28c7351e",
+      "size": 30430,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/9ab72ad17b9e9e5a4adbf62b4fc3511b28c7351e"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "38d99e3c3c366b856e15e146af73ae9d91ff0299",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/38d99e3c3c366b856e15e146af73ae9d91ff0299"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/results/fasta",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "1f05fb7d6c26b093777903ba7ba5f4be14163212",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/1f05fb7d6c26b093777903ba7ba5f4be14163212"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/results/fasta/s123456",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b090fdce017c805ff129f5859ecdd53d83f3241d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b090fdce017c805ff129f5859ecdd53d83f3241d"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/results/fasta/s123456/subsample_aln.fasta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/results/fasta/s654321",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b090fdce017c805ff129f5859ecdd53d83f3241d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b090fdce017c805ff129f5859ecdd53d83f3241d"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/results/fasta/s654321/subsample_aln.fasta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/results/seeds",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c8077097b6b0f752f1fdf63f88a2bdaf4ca2de86",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c8077097b6b0f752f1fdf63f88a2bdaf4ca2de86"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/results/seeds/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3f21b1f14bc54aafbe7bbeaa537f60eb52da516",
+      "size": 14,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/d3f21b1f14bc54aafbe7bbeaa537f60eb52da516"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "63f23ed8a96e218082b96bb48ba82d649949fa5d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/63f23ed8a96e218082b96bb48ba82d649949fa5d"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "4c82ecada874b749ac50b597d1706974f3f3689a",
+      "size": 1828,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/4c82ecada874b749ac50b597d1706974f3f3689a"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "037bae8662bf262223ea43d5da0dc96237cfaa81",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/037bae8662bf262223ea43d5da0dc96237cfaa81"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0d6e87a81dd47f3f58729c0f0da4666c5d1f02d2",
+      "size": 51,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0d6e87a81dd47f3f58729c0f0da4666c5d1f02d2"
+    },
+    {
+      "path": "workflows/vocpl/modules/nextalign/workflow/test.snk",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a54f96ef204de2651c3d5d9ac330f06a22315a1f",
+      "size": 336,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a54f96ef204de2651c3d5d9ac330f06a22315a1f"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bd4fedd1addc5a81c4823da4da9fc0ac25042e6d",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/bd4fedd1addc5a81c4823da4da9fc0ac25042e6d"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0eff4006da6470bb6703ec7aacbcdf40692e6fd4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0eff4006da6470bb6703ec7aacbcdf40692e6fd4"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "154d502062209b87db57031f742080e5bd4f8d9c",
+      "size": 46,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/154d502062209b87db57031f742080e5bd4f8d9c"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "f2af5f06d19539f89e504edacd94bbf9ccfce0ba",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/f2af5f06d19539f89e504edacd94bbf9ccfce0ba"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "9599fdeb034597d90d72d2f58396dee096885b79",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/9599fdeb034597d90d72d2f58396dee096885b79"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/results/in/file1",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/results/in/file2",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/results/in/file3",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0ddef1fc3c1be33d7ad91123f6f3380b518b5f40",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0ddef1fc3c1be33d7ad91123f6f3380b518b5f40"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c8297615e4e2feec62ddeb19c4986c38ffa42722",
+      "size": 685,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/c8297615e4e2feec62ddeb19c4986c38ffa42722"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "615c4c434b139887d36b93a89213a39ae7c44f1e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/615c4c434b139887d36b93a89213a39ae7c44f1e"
+    },
+    {
+      "path": "workflows/vocpl/modules/passthrough/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "05d00a1e660200b48404ff342ca3047119f48530",
+      "size": 37,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/05d00a1e660200b48404ff342ca3047119f48530"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "36fb5817f9c7c96cb1fa5f27d77856229f818f33",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/36fb5817f9c7c96cb1fa5f27d77856229f818f33"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "019eb11e7b764e32e36cd552db0faf3c3a5e2720",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/019eb11e7b764e32e36cd552db0faf3c3a5e2720"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c1f8c5154584e6750297cf61a7980396abb2a4c5",
+      "size": 149,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/c1f8c5154584e6750297cf61a7980396abb2a4c5"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c399a6a25829b0d4399fea5ca0fa2894a1b0d0a6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c399a6a25829b0d4399fea5ca0fa2894a1b0d0a6"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/resources/beta.metadata.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "177ba55a5472cb3306744b2a6ad6d678940e0022",
+      "size": 5639605,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/177ba55a5472cb3306744b2a6ad6d678940e0022"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "8936b4ff2ec7084d30c4f6520d87480bd8a29c6f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/8936b4ff2ec7084d30c4f6520d87480bd8a29c6f"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c8077097b6b0f752f1fdf63f88a2bdaf4ca2de86",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c8077097b6b0f752f1fdf63f88a2bdaf4ca2de86"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/results/in/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d3f21b1f14bc54aafbe7bbeaa537f60eb52da516",
+      "size": 14,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/d3f21b1f14bc54aafbe7bbeaa537f60eb52da516"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "db667b69ada182a0d8d0ee4a1b2e6bfef367b109",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/db667b69ada182a0d8d0ee4a1b2e6bfef367b109"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "528cf10d1fa69accc68f3c7cb0152759b2498427",
+      "size": 2201,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/528cf10d1fa69accc68f3c7cb0152759b2498427"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "df25aca5d822327dfd41e423991355813fa3526e",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/df25aca5d822327dfd41e423991355813fa3526e"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_alignment/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "28efb012c57ad02cbe82091c1e899cdb66ebff03",
+      "size": 62,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/28efb012c57ad02cbe82091c1e899cdb66ebff03"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "6726616c935c50163c4dc3e1317b36c8b17946ff",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/6726616c935c50163c4dc3e1317b36c8b17946ff"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "b7f8e517346082daa94712d923c1fa2ed3c2c3e9",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/b7f8e517346082daa94712d923c1fa2ed3c2c3e9"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "2b37bbe2f09d0aa852121df54207fb3ab13e38c4",
+      "size": 630,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/2b37bbe2f09d0aa852121df54207fb3ab13e38c4"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/logs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "0f1a00295617ce0f7dbba0709bb05e25b9b8af22",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/0f1a00295617ce0f7dbba0709bb05e25b9b8af22"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/logs/subsample_ids_metadata.log",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "929f81eb4de20eaa20f8f281aa2ffe9c5f4adc40",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/929f81eb4de20eaa20f8f281aa2ffe9c5f4adc40"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "7b469a238fe8975ba9deef291beb46b2a48e9479",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/7b469a238fe8975ba9deef291beb46b2a48e9479"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input/beta.metadata.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "177ba55a5472cb3306744b2a6ad6d678940e0022",
+      "size": 5639605,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/177ba55a5472cb3306744b2a6ad6d678940e0022"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b01b4f6eb3fa8db635762a2f18bb3be1e720c111",
+      "size": 14,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b01b4f6eb3fa8db635762a2f18bb3be1e720c111"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input/subsampling",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ea63a6e65ef07cdbd481a7ee204f96f6a5ac7a68",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ea63a6e65ef07cdbd481a7ee204f96f6a5ac7a68"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input/subsampling/beta_scaled_global_data.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0de10641d8adfd0e9befd86e5544186326a01509",
+      "size": 130491,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0de10641d8adfd0e9befd86e5544186326a01509"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input/subsampling/filters.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d9fb7cc8bfe01b10b903deace108a73cc344fb53",
+      "size": 89,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/d9fb7cc8bfe01b10b903deace108a73cc344fb53"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input/subsampling/keep.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "8a9400f7222975ecdda0f28a4d91f1c6981f36d7",
+      "size": 29,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/8a9400f7222975ecdda0f28a4d91f1c6981f36d7"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input/subsampling/matrix_genomes_unit_corrected.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0f1e0e210ecc5a50e6cadb0c759f72de3e04cb17",
+      "size": 15016,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0f1e0e210ecc5a50e6cadb0c759f72de3e04cb17"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/resources/ex_input/subsampling/remove.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "d2724ef95fb85dc523781dbda1db318e5302e579",
+      "size": 17,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/d2724ef95fb85dc523781dbda1db318e5302e579"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "73a553f188bcd2c5d3eea7f285c4202421c4ff44",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/73a553f188bcd2c5d3eea7f285c4202421c4ff44"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/results/in",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "49e489e0de5818c375884b16dccdd4b82d44eccd",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/49e489e0de5818c375884b16dccdd4b82d44eccd"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/results/in/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b01b4f6eb3fa8db635762a2f18bb3be1e720c111",
+      "size": 14,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b01b4f6eb3fa8db635762a2f18bb3be1e720c111"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/scripts",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c8775637204709e1172d8dffd1539ab69bdb507f",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c8775637204709e1172d8dffd1539ab69bdb507f"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/scripts/subsampler_timeseries.py",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "43beb5fbc35c3483bb78af61136a2f984d8f701e",
+      "size": 20574,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/43beb5fbc35c3483bb78af61136a2f984d8f701e"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "ea7141072aca18c1da061ab14b2c898319361d33",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/ea7141072aca18c1da061ab14b2c898319361d33"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e5a6dce9c03ece5641d6e6cc5ac39f9cb48e890d",
+      "size": 2456,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e5a6dce9c03ece5641d6e6cc5ac39f9cb48e890d"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c44c714c67ee5d7ffc125ff3a454f2edf2bd6a8a",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c44c714c67ee5d7ffc125ff3a454f2edf2bd6a8a"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a41659b6d888570055eea43872272d690c9ec377",
+      "size": 125,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a41659b6d888570055eea43872272d690c9ec377"
+    },
+    {
+      "path": "workflows/vocpl/modules/subsample_ids_metadata/workflow/test.snk",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f628ca519b15352f06d211518eb3d61ef6e8f932",
+      "size": 424,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f628ca519b15352f06d211518eb3d61ef6e8f932"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "298d9254870d38e1aa01d85b16e05eec197c3407",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/298d9254870d38e1aa01d85b16e05eec197c3407"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "653c415d254507b90933d5ff0ecd647d1a566f47",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/653c415d254507b90933d5ff0ecd647d1a566f47"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "e73215cd7f4639cfb76de09649aa6fb9a095cfbd",
+      "size": 288,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/e73215cd7f4639cfb76de09649aa6fb9a095cfbd"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "c399a6a25829b0d4399fea5ca0fa2894a1b0d0a6",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/c399a6a25829b0d4399fea5ca0fa2894a1b0d0a6"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/resources/beta.metadata.tsv",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "177ba55a5472cb3306744b2a6ad6d678940e0022",
+      "size": 5639605,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/177ba55a5472cb3306744b2a6ad6d678940e0022"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08925935ba3d7d6269156827680a393ac86a3438",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08925935ba3d7d6269156827680a393ac86a3438"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/ml_tree",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a2f0d20eb5206018c26ff32ed1984a0fe4b3e5f4",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a2f0d20eb5206018c26ff32ed1984a0fe4b3e5f4"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/ml_tree/s123456",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bdf5c244b718603bbe2e0fa939e9f2b10f928d32",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/bdf5c244b718603bbe2e0fa939e9f2b10f928d32"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/ml_tree/s123456/aligned.outgroup_added.fasta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0a6f63636f48ab718217ffd4cd62ff5c8322ef05",
+      "size": 1497048,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0a6f63636f48ab718217ffd4cd62ff5c8322ef05"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/ml_tree/s123456/ml_tree.treefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f84891ba94a918aa7305b65d4c695927aca1adf9",
+      "size": 3059,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f84891ba94a918aa7305b65d4c695927aca1adf9"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/ml_tree/s2342321",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "dee6cb70656e941ba9897264cd5933eb4ba29234",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/dee6cb70656e941ba9897264cd5933eb4ba29234"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/ml_tree/s2342321/aligned.outgroup_added.fasta",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "cfa0441cd40a28d014f1e3098977d862deecbb64",
+      "size": 1497053,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/cfa0441cd40a28d014f1e3098977d862deecbb64"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/ml_tree/s2342321/ml_tree.treefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "db50c9b0add68fc58f2b5cbbb79aaba19f99c5d1",
+      "size": 3064,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/db50c9b0add68fc58f2b5cbbb79aaba19f99c5d1"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/seeds",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "661e16bf1acf03911429b3eeeefc2eb947ad3983",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/661e16bf1acf03911429b3eeeefc2eb947ad3983"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/results/seeds/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0368e58ef381b05b549d404601172e501dd0f903",
+      "size": 15,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/0368e58ef381b05b549d404601172e501dd0f903"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "4755ae6341e1dec0de0a3b658874e0d72471b642",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/4755ae6341e1dec0de0a3b658874e0d72471b642"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ad19da7a8b7d45f72868fea8185218f7917d3084",
+      "size": 5603,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ad19da7a8b7d45f72868fea8185218f7917d3084"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "a8137d19e078d8d669930b714f42b59743a69b69",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/a8137d19e078d8d669930b714f42b59743a69b69"
+    },
+    {
+      "path": "workflows/vocpl/modules/treetime/workflow/envs/treetime.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "a48f2b2b4e42c836df0ba4dffa93b6157daf5343",
+      "size": 95,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/a48f2b2b4e42c836df0ba4dffa93b6157daf5343"
+    },
+    {
+      "path": "workflows/vocpl/sources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "bc021f505482e0920d6bf9bceae1082c5cef98ac",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/bc021f505482e0920d6bf9bceae1082c5cef98ac"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "87e50bff5506833a2b4cfd52ea0415170bbcd537",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/87e50bff5506833a2b4cfd52ea0415170bbcd537"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds/config",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "d9639198956477476279888cd973bacfd7d73901",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/d9639198956477476279888cd973bacfd7d73901"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds/config/config.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "c5ab88915450fb8bfab614c4c18330c7c25c1421",
+      "size": 24,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/c5ab88915450fb8bfab614c4c18330c7c25c1421"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds/resources",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "49e489e0de5818c375884b16dccdd4b82d44eccd",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/49e489e0de5818c375884b16dccdd4b82d44eccd"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds/resources/seeds.txt",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "b01b4f6eb3fa8db635762a2f18bb3be1e720c111",
+      "size": 14,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/b01b4f6eb3fa8db635762a2f18bb3be1e720c111"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds/workflow",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "42f0c1a0238d370f13456053dc9f87cca0802f13",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/42f0c1a0238d370f13456053dc9f87cca0802f13"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds/workflow/Snakefile",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "f0ed8f49a1c58ba8bd4fd01deb4b8d4e5567ebdc",
+      "size": 311,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/f0ed8f49a1c58ba8bd4fd01deb4b8d4e5567ebdc"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds/workflow/envs",
+      "mode": "040000",
+      "type": "tree",
+      "sha": "08b525d91366c3b91b761e046e83704ae5a98a11",
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/trees/08b525d91366c3b91b761e046e83704ae5a98a11"
+    },
+    {
+      "path": "workflows/vocpl/sources/provide_seeds/workflow/envs/conda.yaml",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "ece543fa7628aa7903dc7445fe02219758f4f508",
+      "size": 23,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/ece543fa7628aa7903dc7445fe02219758f4f508"
+    },
+    {
+      "path": "workflows/vocpl/workflow_github.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "1215c94bbad50c753f4cbfc27151a5c0350a8110",
+      "size": 4116,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/1215c94bbad50c753f4cbfc27151a5c0350a8110"
+    },
+    {
+      "path": "workflows/vocpl/workflow_local.json",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "9c945c4e78d8e66772496c01d103080df7de6fb3",
+      "size": 5915,
+      "url": "https://api.github.com/repos/jsbrittain/snakeshack/git/blobs/9c945c4e78d8e66772496c01d103080df7de6fb3"
+    }
+  ],
+  "truncated": false
+}
