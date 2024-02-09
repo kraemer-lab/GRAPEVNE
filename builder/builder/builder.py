@@ -10,8 +10,8 @@ import tempfile
 from typing import List
 from typing import Optional
 from typing import Tuple
-from typing import Union
 from typing import TypedDict
+from typing import Union
 
 import cachetools
 import requests
@@ -204,8 +204,10 @@ class Model:
         if len(module_output_namespaces) == 1:
             c["output_namespace"] = module_output_namespaces[0]
         else:
-            raise ValueError("Multiple output namespaces not currently supported. "
-                             "Requested: ", module_output_namespaces)
+            raise ValueError(
+                "Multiple output namespaces not currently supported. " "Requested: ",
+                module_output_namespaces,
+            )
         # Add configurations for each module
         for node in self.nodes:
             cnode = node.config.copy()
@@ -292,17 +294,19 @@ class Model:
                 ignore=shutil.ignore_patterns(*ignore_anywhere),
             )
         # Redirect snakefile location in config
-        node.snakefile = str(pathlib.Path(
-            "modules",
-            "local",
-            m_repo_name,
-            "workflows",
-            m_project_foldername,
-            m_type_foldername,
-            m_modulename_foldername,
-            m_workflow_foldername,
-            "Snakefile",
-        ))
+        node.snakefile = str(
+            pathlib.Path(
+                "modules",
+                "local",
+                m_repo_name,
+                "workflows",
+                m_project_foldername,
+                m_type_foldername,
+                m_modulename_foldername,
+                m_workflow_foldername,
+                "Snakefile",
+            )
+        )
 
     @staticmethod
     def PackageModule_Remote(build_path: str, node: Node) -> None:
@@ -381,16 +385,18 @@ class Model:
             with open(blob_path, "w") as file:
                 file.write(response.text)
         # Redirect snakefile location in config
-        node.snakefile = str(pathlib.Path(
-            "modules",
-            m_repo_name,
-            "workflows",
-            m_project_foldername,
-            m_type_foldername,
-            m_modulename_foldername,
-            m_workflow_foldername,
-            "Snakefile",
-        ))
+        node.snakefile = str(
+            pathlib.Path(
+                "modules",
+                m_repo_name,
+                "workflows",
+                m_project_foldername,
+                m_type_foldername,
+                m_modulename_foldername,
+                m_workflow_foldername,
+                "Snakefile",
+            )
+        )
 
     def PackageModules(self, build_path: str) -> None:
         # Copy modules to the workflow directory

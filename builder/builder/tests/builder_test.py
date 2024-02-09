@@ -1,10 +1,10 @@
-import pytest
-from unittest.mock import patch
-
+import json
 import pathlib
 import shutil
-import json
 from dataclasses import dataclass
+from unittest.mock import patch
+
+import pytest
 
 from builder.builder import Model
 from builder.builder import YAMLToConfig
@@ -317,8 +317,8 @@ def test_PackageModule_Remote():
                 "function": "github",
                 "kwargs": {
                     "branch": "main",
-                    "path": "workflows/Utility/modules/touch/workflow/Snakefile"
-                }
+                    "path": "workflows/Utility/modules/touch/workflow/Snakefile",
+                },
             }
         },
     )
@@ -327,7 +327,7 @@ def test_PackageModule_Remote():
     shutil.rmtree(pathlib.Path(build_path), ignore_errors=True)
     # Package module
     with open("builder/tests/snakeshack.json") as file:
-        github_tree = json.load(file)['tree']
+        github_tree = json.load(file)["tree"]
     with patch("builder.builder.Model.GetRemoteModule_Tree") as tree_mock:
         with patch("requests.get") as requests_mock:
             tree_mock.return_value = github_tree

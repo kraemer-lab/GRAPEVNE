@@ -341,15 +341,13 @@ interface IBuild_RunWithDocker_SingleModuleWorkflow {
   expand_module?: boolean;
 }
 
-const Build_RunWithDocker_SingleModuleWorkflow = async (
-  {
-    driver,
-    modulename,
-    target_outfiles,
-    payload_outfiles,
-    expand_module
-  }: IBuild_RunWithDocker_SingleModuleWorkflow
-) => {
+const Build_RunWithDocker_SingleModuleWorkflow = async ({
+  driver,
+  modulename,
+  target_outfiles,
+  payload_outfiles,
+  expand_module,
+}: IBuild_RunWithDocker_SingleModuleWorkflow) => {
   console.log("::: test Build, then launch in Docker");
 
   // Drag-and-drop module from modules-list into scene
