@@ -377,6 +377,7 @@ def test_ResolveParameterLinks_2chains():
     assert c["module2"]["config"]["params"]["param2"] == "value1"
     assert c["module3"]["config"]["params"]["param3"] == "value1"
 
+
 def test_PackageModule_Local():
     m = Model()
     node = m.AddModule(
