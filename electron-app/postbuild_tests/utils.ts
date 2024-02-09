@@ -279,7 +279,10 @@ const BuildAndRun_MultiModuleWorkflow = async (
     connections,
     outfiles,
   );
-  await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
+  await MultiModuleWorkflow_BuildAndCheck({
+    driver: driver,
+    target_files: target_files,
+  });
   await MultiModuleWorkflow_TidyUp(driver, target_files);
 };
 
@@ -340,11 +343,17 @@ export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
   return target_files;
 };
 
-export const MultiModuleWorkflow_BuildAndCheck = async (
-  driver: webdriver.ThenableWebDriver,
-  target_files: string[],
-  should_fail = false,
-) => {
+interface IMultiModuleWorkflow_BuildAndCheck {
+  driver: webdriver.ThenableWebDriver;
+  target_files: string[];
+  should_fail?: boolean;
+}
+
+export const MultiModuleWorkflow_BuildAndCheck = async ({
+  driver,
+  target_files,
+  should_fail,
+}: IMultiModuleWorkflow_BuildAndCheck) => {
   console.log("::: test Build and Test the workflow (build-and-check)");
 
   // Build and test; assert output files exist

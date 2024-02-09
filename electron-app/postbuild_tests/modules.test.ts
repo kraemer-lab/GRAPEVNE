@@ -512,7 +512,7 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("single_modules_copy_run", "data.csv"),
+        path.join("results", "single_modules_copy_run", "data.csv"),
       ],
     ],
   ])(
@@ -538,7 +538,10 @@ describe("modules", () => {
       expect(msg.returncode).toEqual(0); // 0 = success
 
       // Build and run the workflow (should pass)
-      await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
+      await MultiModuleWorkflow_BuildAndCheck({
+        driver: driver,
+        target_files: target_files,
+      });
       await MultiModuleWorkflow_TidyUp(driver, target_files);
 
       // Change the source filename (not yet linked to target module)
@@ -553,11 +556,11 @@ describe("modules", () => {
       expect(msg.returncode).toEqual(1); // 1 = missing dependency
 
       // Build should fail
-      await MultiModuleWorkflow_BuildAndCheck(
-        driver,
-        target_files,
-        true, // should_fail
-      );
+      await MultiModuleWorkflow_BuildAndCheck({
+        driver: driver,
+        target_files: target_files,
+        should_fail: true,
+      });
       await MultiModuleWorkflow_TidyUp(driver, target_files);
 
       // Form parameter link between modules
@@ -582,15 +585,21 @@ describe("modules", () => {
       expect(msg.returncode).toEqual(0); // 0 = success
 
       // Build and run the (linked) workflow (should pass)
-      outfiles[0] = path.join("single_modules_copy_run", "newfile.csv");
+      outfiles[0] = path.join(
+        "results",
+        "single_modules_copy_run",
+        "newfile.csv",
+      );
       target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
         driver,
         modulenames,
         connections,
         outfiles,
       );
-      console.log("target_files", target_files);
-      await MultiModuleWorkflow_BuildAndCheck(driver, target_files);
+      await MultiModuleWorkflow_BuildAndCheck({
+        driver: driver,
+        target_files: target_files,
+      });
       await MultiModuleWorkflow_TidyUp(driver, target_files);
 
       // Delete the parameter link between modules
