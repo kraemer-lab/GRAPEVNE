@@ -333,12 +333,22 @@ const BuildAndRun_MultiModuleWorkflow = async (
   console.log("<<< test Build and Test the workflow");
 };
 
+interface IBuild_RunWithDocker_SingleModuleWorkflow {
+  driver: webdriver.ThenableWebDriver;
+  modulename: string;
+  target_outfiles: string[];
+  payload_outfiles: string[];
+  expand_module?: boolean;
+}
+
 const Build_RunWithDocker_SingleModuleWorkflow = async (
-  driver: webdriver.ThenableWebDriver,
-  modulename: string,
-  target_outfiles: string[],
-  payload_outfiles: string[],
-  expand_module = false,
+  {
+    driver,
+    modulename,
+    target_outfiles,
+    payload_outfiles,
+    expand_module
+  }: IBuild_RunWithDocker_SingleModuleWorkflow
 ) => {
   console.log("::: test Build, then launch in Docker");
 

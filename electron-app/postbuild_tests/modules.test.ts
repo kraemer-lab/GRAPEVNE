@@ -567,11 +567,13 @@ describe("modules", () => {
     "Build, extract zip, run in Docker: module '%s'",
     async (modulename, target_files, payload_files) => {
       await Build_RunWithDocker_SingleModuleWorkflow(
-        driver,
-        modulename,
-        target_files,
-        payload_files,
-        true, // expand_module
+        {
+          driver: driver,
+          modulename: modulename,
+          target_outfiles: target_files,
+          payload_outfiles: payload_files,
+          expand_module: true,
+        }
       );
     },
     20 * ONE_MINUTE,
@@ -610,11 +612,13 @@ describe("modules", () => {
 
       // Build and run workflow
       await Build_RunWithDocker_SingleModuleWorkflow(
-        driver,
-        modulename,
-        target_files,
-        payload_files,
-        false, // expand_module
+        {
+          driver: driver,
+          modulename: modulename,
+          target_outfiles: target_files,
+          payload_outfiles: payload_files,
+          expand_module: false,
+        }
       );
 
       // Unset workflow packaging option

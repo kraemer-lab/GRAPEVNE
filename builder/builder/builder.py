@@ -11,6 +11,7 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
+from typing import TypedDict
 
 import cachetools
 import requests
@@ -29,6 +30,15 @@ logging.basicConfig(
 logging.info("Working directory: %s", os.getcwd())
 
 
+class SnakefileRemotePath(TypedDict):
+    function: str
+    args: List[str]
+    kwargs: dict
+
+
+Snakefile = Union[str, SnakefileRemotePath]
+
+
 class Node:
     """Node class for use with the workflow Model"""
 
@@ -37,10 +47,7 @@ class Node:
         name: str,
         rulename: str,
         nodetype: str,
-        snakefile: Union[
-            str,  # Path to Snakefile
-            dict,  # {function: str, args: List, kwargs: dict}
-        ] = "",
+        snakefile: Snakefile = "",
         config=None,
         input_namespace: Namespace = "",
         output_namespace: str = "",
@@ -90,7 +97,7 @@ class Module(Node):
         kwargs["input_namespace"] = kwargs["config"].get("input_namespace", None)
         super().__init__(name, **kwargs)
 
-    def _GetConfigFileinfo(self) -> Union[str, dict]:
+    def _GetConfigFileinfo(self) -> Snakefile:
         """Returns the config filename, or an equivalent dict for remote files"""
         if isinstance(self.snakefile, str):
             # Local file
@@ -197,16 +204,8 @@ class Model:
         if len(module_output_namespaces) == 1:
             c["output_namespace"] = module_output_namespaces[0]
         else:
-            # Could support multiple output namespaces by automatically adding
-            # a convergence module, but this might be better left to the user
-            # as a deliberate action.
-            # raise ValueError("Multiple output namespaces not currently supported. "
-            #                 "Requested: ", module_output_namespaces)
-            print(
-                "Multiple output namespaces not currently supported. Request: ",
-                module_output_namespaces,
-            )
-            print("Continuing for debug purposes...")
+            raise ValueError("Multiple output namespaces not currently supported. "
+                             "Requested: ", module_output_namespaces)
         # Add configurations for each module
         for node in self.nodes:
             cnode = node.config.copy()
@@ -242,7 +241,8 @@ class Model:
             }
         return c
 
-    def PackageModule_Local(self, build_path: str, node: Node) -> None:
+    @staticmethod
+    def PackageModule_Local(build_path: str, node: Node) -> None:
         """Packages a local module into the build directory
 
         Assumes node.snakemake is a string representing the path to the module
@@ -253,28 +253,31 @@ class Model:
         m_path = os.path.dirname(os.path.normpath(node.snakefile))
         try:
             m_pathlist = m_path.split(os.path.sep)
-            m_workflow_foldername = m_pathlist[-1]
-            m_modulename_foldername = m_pathlist[-2]
-            m_type_foldername = m_pathlist[-3]
-            m_project_foldername = m_pathlist[-4]
-            m_workflows_foldername = m_pathlist[-5]
+            (
+                m_repo_name,
+                m_workflows_foldername,
+                m_project_foldername,
+                m_type_foldername,
+                m_modulename_foldername,
+                m_workflow_foldername,
+            ) = m_pathlist[-6:]
             if m_workflows_foldername != "workflows":
                 raise IndexError
-            m_repo_name = m_pathlist[-6]
         except IndexError:
             raise ValueError("Module Snakefile is not in the expected folder structure")
         # Recreate folder structure in the build directory
-        dest = os.path.join(
+        dest = pathlib.Path(
             build_path,
             "workflow",  # base 'workflow' folder
-            "modules",  # downloaded modules are stored in a 'modules' sub-folder
-            m_repo_name,  # imported module root folder, equivalent to repo name
+            "modules",  # packaged modules are stored in a 'modules' sub-folder
+            "local",  # local modules are stored in a 'local' sub-folder (equiv. owner)
+            m_repo_name,  # imported module root folder (equivalent to repo name)
             "workflows",
             m_project_foldername,
             m_type_foldername,
             m_modulename_foldername,
         )
-        src = os.path.normpath(os.path.join(m_path, os.pardir))
+        src = os.path.normpath(pathlib.Path(m_path, os.pardir))
         pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
         # Copy module to the build directory
         ignore_in_root = ["results", "logs", "benchmarks"]
@@ -283,14 +286,15 @@ class Model:
         keep_folders = set(folders_in_root) - set(ignore_in_root)
         for folder in keep_folders:
             shutil.copytree(
-                os.path.join(src, folder),
-                os.path.join(dest, folder),
+                pathlib.Path(src, folder),
+                pathlib.Path(dest, folder),
                 dirs_exist_ok=True,
                 ignore=shutil.ignore_patterns(*ignore_anywhere),
             )
         # Redirect snakefile location in config
-        node.snakefile = os.path.join(
+        node.snakefile = str(pathlib.Path(
             "modules",
+            "local",
             m_repo_name,
             "workflows",
             m_project_foldername,
@@ -298,21 +302,11 @@ class Model:
             m_modulename_foldername,
             m_workflow_foldername,
             "Snakefile",
-        )
+        ))
 
-    def PackageModule_Remote(self, build_path: str, node: Node) -> None:
-        """Packages a remote module into the build directory
-
-        Assumes node.snakemake is a dict with the following structure:
-        {
-            "function": "github",
-            "args": ["repo/name"],
-            "kwargs": {
-                "branch": "main",  # key can also be "tag" or "commit"
-                "path": "workflow/Snakefile"
-            }
-        }
-        """
+    @staticmethod
+    def PackageModule_Remote(build_path: str, node: Node) -> None:
+        """Packages a remote module into the build directory"""
         # Validate node.snakemake
         if not isinstance(node.snakefile, dict):
             raise ValueError(
@@ -327,8 +321,8 @@ class Model:
             [k in node.snakefile["kwargs"] for k in ["branch", "tag", "commit"]]
         ):
             raise ValueError(
-                "Remote module requires a branch, tag or commit to be specified, kwargs: "
-                + str(node.snakefile["kwargs"])
+                "Remote module requires a branch, tag or commit to be specified, "
+                f"kwargs: {node.snakefile['kwargs']}"
             )
         if "path" not in node.snakefile["kwargs"]:
             raise ValueError(
@@ -336,21 +330,24 @@ class Model:
                 + str(node.snakefile["kwargs"])
             )
         # Identify remote folder structure
+        m_path = node.snakefile["kwargs"]["path"]
         try:
-            m_path = node.snakefile["kwargs"]["path"]
             m_pathlist = m_path.split(os.path.sep)[:-1]
-            m_workflow_foldername = m_pathlist[-1]
-            m_modulename_foldername = m_pathlist[-2]
-            m_type_foldername = m_pathlist[-3]
-            m_project_foldername = m_pathlist[-4]
-            m_workflows_foldername = m_pathlist[-5]
+            (
+                *m_base_path,
+                m_workflows_foldername,
+                m_project_foldername,
+                m_type_foldername,
+                m_modulename_foldername,
+                m_workflow_foldername,
+            ) = m_pathlist
             if m_workflows_foldername != "workflows":
                 raise IndexError
             m_repo_name = os.path.join(*node.snakefile["args"][0].split("/"))
         except IndexError:
             raise ValueError("Module Snakefile is not in the expected folder structure")
         # Recreate folder structure in the build directory
-        dest = os.path.join(
+        dest = pathlib.Path(
             build_path,
             "workflow",  # base 'workflow' folder
             "modules",  # downloaded modules are stored in a 'modules' sub-folder
@@ -364,25 +361,27 @@ class Model:
             branch = node.snakefile["kwargs"].get("commit", None)
         if not branch:
             raise ValueError(
-                "Remote module requires a branch, tag or commit to be specified, kwargs: "
-                + str(node.snakefile["kwargs"])
+                "Remote module requires a branch, tag or commit to be specified, "
+                f"kwargs: {node.snakefile['kwargs']}"
             )
         # Copy github directory structure to the build directory
-        blobs = self.GetRemoteModule_BlobTree(node)
+        blobs = Model.GetRemoteModule_BlobTree(node)
         for blob in blobs:
-            url = f"https://raw.githubusercontent.com/{m_repo_name}/{branch}/{blob['path']}"
+            url = (
+                "https://raw.githubusercontent.com/"
+                f"{m_repo_name}/{branch}/{blob['path']}"
+            )
             response = requests.get(url)
             if response.status_code != 200:
                 raise ValueError("Invalid response from github API: " + str(response))
-            response_text = response.text
             # Create directories
-            blob_path = os.path.join(dest, blob["path"])
+            blob_path = pathlib.Path(dest, blob["path"])
             pathlib.Path(os.path.dirname(blob_path)).mkdir(parents=True, exist_ok=True)
             # Write file
             with open(blob_path, "w") as file:
-                file.write(response_text)
+                file.write(response.text)
         # Redirect snakefile location in config
-        node.snakefile = os.path.join(
+        node.snakefile = str(pathlib.Path(
             "modules",
             m_repo_name,
             "workflows",
@@ -391,7 +390,7 @@ class Model:
             m_modulename_foldername,
             m_workflow_foldername,
             "Snakefile",
-        )
+        ))
 
     def PackageModules(self, build_path: str) -> None:
         # Copy modules to the workflow directory
@@ -403,13 +402,14 @@ class Model:
                 # Remote file
                 self.PackageModule_Remote(build_path, node)
 
-    def GetRemoteModule_BlobTree(self, node: Node) -> List[str]:
+    @staticmethod
+    def GetRemoteModule_BlobTree(node: Node) -> List[dict]:
         """Returns the folder structure for a remote module"""
         if not isinstance(node.snakefile, dict):
             raise ValueError("Remote module configuration expected")
         owner, repo = node.snakefile["args"][0].split("/")
         module_folder = "/".join(node.snakefile["kwargs"]["path"].split("/")[:-2]) + "/"
-        print(f"{owner=}, {repo=}, {module_folder=}")
+        logging.debug(f"{owner=}, {repo=}, {module_folder=}")
         # branch identifier can actually be branch, tag or commit
         branch = node.snakefile["kwargs"].get("branch", None)
         if not branch:
@@ -418,21 +418,25 @@ class Model:
             branch = node.snakefile["kwargs"].get("commit", None)
         if not branch:
             raise ValueError(
-                "Remote module requires a branch, tag or commit to be specified, kwargs: "
-                + str(node.snakefile["kwargs"])
+                "Remote module requires a branch, tag or commit to be specified, "
+                f"kwargs: {node.snakefile['kwargs']}"
             )
         # Form github API query url - note that this queries the full repo tree
-        tree = self.GetRemoteModule_Tree(owner, repo, branch)
+        tree = Model.GetRemoteModule_Tree(owner, repo, branch)
         return [d for d in tree if module_folder in d["path"] and d["type"] == "blob"]
 
+    @staticmethod
     @cachetools.cached(cache=cachetools.TTLCache(maxsize=64, ttl=600))  # 10 mins cache
-    def GetRemoteModule_Tree(self, owner, repo, branch) -> List[dict]:
+    def GetRemoteModule_Tree(owner, repo, branch) -> dict:
         """Returns the folder structure for a remote repo
 
         This method is time-to-live cached to avoid repeated calls to the github API
         for modules within the same repository.
         """
-        url = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{branch}?recursive=1"
+        url = (
+            "https://api.github.com/repos/"
+            f"{owner}/{repo}/git/trees/{branch}?recursive=1"
+        )
         response = requests.get(url)
         if response.status_code != 200:
             raise ValueError("Invalid response from github API: " + str(response))
@@ -533,9 +537,10 @@ class Model:
                 "Requested '" + mapping[1] + "'"
             )
         if isinstance(mapping[0], dict):
-            assert isinstance(
-                node_to.input_namespace, dict
-            ), "Connector mapping is a dictionary but the destination node does not have a dictionary input namespace"
+            assert isinstance(node_to.input_namespace, dict), (
+                "Connector mapping is a dictionary but the destination node does not "
+                "have a dictionary input namespace"
+            )
             for k, v in mapping[0].items():
                 incoming_node = self.GetNodeByName(v)
                 if not incoming_node:
@@ -743,9 +748,7 @@ class Model:
                     "No matching node found for name: " + list(new_orphan_inputs)[0]
                 )
         elif isinstance(node.input_namespace, dict):
-            # raise ValueError("Input dictionary namespaces not supported yet")
-            print("Input dictionary namespaces not supported yet")
-            print("Continuing for debug purposes...")
+            raise ValueError("Input dictionary namespaces not supported yet")
         elif node.input_namespace is None:
             # Module is a Source and (no incoming connections)
             pass
