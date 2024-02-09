@@ -454,6 +454,14 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
     if (stdout) console.log(stdout);
     if (stderr) console.log(stderr);
 
+    // Build docker image
+    console.log("Build docker image");
+    let { stdout, stderr } = await execPromise(
+      path.join(buildfolder, "build_container.sh"),
+    );
+    if (stdout) console.log(stdout);
+    if (stderr) console.log(stderr);
+
     // Launch docker and wait for process to finish
     console.log("Launch docker and wait for process to finish");
     ({ stdout, stderr } = await execPromise(
