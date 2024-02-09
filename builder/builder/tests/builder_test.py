@@ -1,7 +1,25 @@
+import json
+import pathlib
+import shutil
+from dataclasses import dataclass
+from unittest.mock import patch
+
 import pytest
 
 from builder.builder import Model
 from builder.builder import YAMLToConfig
+
+workflows_folder = "builder/tests/workflows"
+
+
+@dataclass
+class RequestMock:
+    status_code = 200
+    text = "response text"
+
+    def __init__(self, status_code, text):
+        self.status_code = status_code
+        self.text = text
 
 
 def test_BuildSnakefile():
@@ -247,3 +265,92 @@ config["modules"]["name1"]="first"
 config["modules"]["name2"]="second"
 """
     assert YAMLToConfig(content) == target
+
+
+def test_PackageModule_Local():
+    m = Model()
+    node = m.AddModule(
+        "module1",
+        {
+            "snakefile": str(
+                pathlib.Path(workflows_folder)
+                / "project"
+                / "sources"
+                / "module1"
+                / "workflow"
+                / "snakefile"
+            )
+        },
+    )
+    build_path = "test_build_path"
+    # Ensure build path is empty
+    shutil.rmtree(pathlib.Path(build_path), ignore_errors=True)
+    # Package module
+    m.PackageModule_Local(build_path, node)
+    # Verify packaging
+    workflow_path = (
+        pathlib.Path(build_path)
+        / "workflow"
+        / "modules"
+        / "local"
+        / "tests"
+        / "workflows"
+        / "project"
+        / "sources"
+        / "module1"
+    )
+    assert (workflow_path / "workflow" / "Snakefile").exists()
+    assert (workflow_path / "workflow" / "envs" / "conda.yaml").exists()
+    assert (workflow_path / "config" / "config.yaml").exists()
+    # Clean up
+    shutil.rmtree(pathlib.Path(build_path))
+
+
+def test_PackageModule_Remote():
+    # This test uses a public github repository
+    m = Model()
+    node = m.AddModule(
+        "module1",
+        {
+            "snakefile": {
+                "args": ["jsbrittain/snakeshack"],
+                "function": "github",
+                "kwargs": {
+                    "branch": "main",
+                    "path": "workflows/Utility/modules/touch/workflow/Snakefile",
+                },
+            }
+        },
+    )
+    build_path = "test_build_path_remote"
+    # Ensure build path is empty
+    shutil.rmtree(pathlib.Path(build_path), ignore_errors=True)
+    # Package module
+    with open("builder/tests/snakeshack.json") as file:
+        github_tree = json.load(file)["tree"]
+    with patch("builder.builder.Model.GetRemoteModule_Tree") as tree_mock:
+        with patch("requests.get") as requests_mock:
+            tree_mock.return_value = github_tree
+            requests_mock.side_effect = [
+                RequestMock(200, "file 1 contents"),
+                RequestMock(200, "file 2 contents"),
+                RequestMock(200, "file 3 contents"),
+            ]
+            m.PackageModule_Remote(build_path, node)
+    # Verify packaging
+    workflow_path = (
+        pathlib.Path(build_path)
+        / "workflow"
+        / "modules"
+        / "jsbrittain"
+        / "snakeshack"
+        / "workflows"
+        / "Utility"
+        / "modules"
+        / "touch"
+    )
+    assert (workflow_path / "workflow" / "Snakefile").exists()
+    assert (workflow_path / "workflow" / "envs" / "conda.yaml").exists()
+    assert (workflow_path / "config" / "config.yaml").exists()
+    # Clean up
+    shutil.rmtree(pathlib.Path(build_path))

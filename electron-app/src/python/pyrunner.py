@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 import tempfile
+from typing import List
 from zipfile import ZipFile
 from zipfile import ZipInfo
 
@@ -50,6 +51,7 @@ def BuildAndRun(
         build_path=build_path,
         clean_build=clean_build,  # clean build folder before build
         create_zip=create_zip,  # create zip file
+        package_modules=data.get("package_modules", False),  # package modules
     )
     targets = data.get("targets", [])
     target_modules = m.LookupRuleNames(targets)
@@ -79,8 +81,9 @@ def BuildAndRun(
             },
         }
     )
-    snakemake_list = response["stdout"].split("\n")
+    snakemake_list: List[str] = list(filter(None, response["stdout"].split("\n")))
     logging.debug("snakemake --list output: %s", snakemake_list)
+    logging.debug(f"target_modules: {target_modules}")
     target_rules = []
     for target in target_modules:
         if not target:
