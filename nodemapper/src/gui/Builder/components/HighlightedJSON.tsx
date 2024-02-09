@@ -343,7 +343,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         });
       };
 
-      // Callback to connect parameters between modules
+      // Callback to disconnect parameters between modules
       const disconnectParameter = () => {
         console.log("Disconnect parameter: ", key);
         const node = getNodeById(props.nodeid, nodes);
