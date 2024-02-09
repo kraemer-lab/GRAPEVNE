@@ -590,6 +590,7 @@ describe("modules", () => {
         path.join(
           "workflow",
           "modules",
+          "local",
           "test-repo",
           "workflows",
           "single_modules",

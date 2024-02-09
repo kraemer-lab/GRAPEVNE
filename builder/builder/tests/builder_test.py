@@ -299,7 +299,7 @@ def test_PackageModule_Local():
         / "sources"
         / "module1"
     )
-    assert (workflow_path / "workflow" / "snakefile").exists()
+    assert (workflow_path / "workflow" / "Snakefile").exists()
     assert (workflow_path / "workflow" / "envs" / "conda.yaml").exists()
     assert (workflow_path / "config" / "config.yaml").exists()
     # Clean up
@@ -349,7 +349,7 @@ def test_PackageModule_Remote():
         / "modules"
         / "touch"
     )
-    assert (workflow_path / "workflow" / "snakefile").exists()
+    assert (workflow_path / "workflow" / "Snakefile").exists()
     assert (workflow_path / "workflow" / "envs" / "conda.yaml").exists()
     assert (workflow_path / "config" / "config.yaml").exists()
     # Clean up
