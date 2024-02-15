@@ -189,7 +189,46 @@ class Model:
     def BuildSnakefileConfig(self) -> str:
         """Builds the workflow configuration as YAML"""
         c = self.ConstructSnakefileConfig()
-        return yaml.dump(c)
+        return yaml.dump(c, sort_keys=False)
+
+    def ResolveLinkValue(self, metadata: dict):
+        """Resolves a link value"""
+        link_from = metadata["link"]
+        link_module = link_from[0]
+        linked_module = self.GetNodeByName(link_module)
+        if not linked_module:
+            linked_module = self.GetNodeByRuleName(link_module)
+            if not linked_module:
+                raise ValueError(
+                    "No matching node found for link source: " + link_from[0]
+                )
+        assert link_from[1] == "config"
+        config_from = linked_module.config
+        link_path = link_from[2:-1]
+        for link in link_path:
+            config_from = config_from[link]
+        value = config_from[link_from[-1]]
+        metadata_name = ":" + link_from[-1]
+        # If metadata is present, use it
+        if config_from.get(metadata_name, None):
+            metadata = config_from[metadata_name]
+            if metadata.get("link", None):
+                # Resolve link value
+                value = self.ResolveLinkValue(metadata)
+        return value
+
+    def ResolveParameterLinks(self, cnode) -> dict:
+        """Resolves parameter links in the configuration file"""
+        cnode_updated = cnode.copy()
+        for k, v in cnode.items():
+            if k.startswith(":"):
+                param_name = k[1:]
+                if v.get("link", None):
+                    value = self.ResolveLinkValue(v)
+                    cnode_updated[param_name] = value
+            elif isinstance(v, dict):
+                cnode_updated[k] = self.ResolveParameterLinks(v)
+        return cnode_updated
 
     def ConstructSnakefileConfig(self) -> dict:
         """Builds the workflow configuration as a dictionary"""
@@ -200,6 +239,7 @@ class Model:
         if len(module_output_namespaces) == 0:
             # Model has no orphan outputs, so will form a Terminal module
             # This will most likely need marking in the config somewhere.
+            # TODO
             ...
         if len(module_output_namespaces) == 1:
             c["output_namespace"] = module_output_namespaces[0]
@@ -211,6 +251,7 @@ class Model:
         # Add configurations for each module
         for node in self.nodes:
             cnode = node.config.copy()
+            cnode = self.ResolveParameterLinks(cnode)
 
             # Input namespace
             if node.input_namespace:
@@ -737,9 +778,9 @@ class Model:
         new_orphan_outputs = sorted(
             list(set(self.ExposeOrphanOutputs()) - set(orphan_outputs_prior))
         )
-        assert (
-            len(new_orphan_outputs) <= 1
-        ), "More than one new orphan output found: " + str(new_orphan_outputs)
+        assert len(new_orphan_outputs) <= 1, (
+            "More than one new orphan output found: " + str(new_orphan_outputs)
+        )
 
         # Preserve incoming connections to parent node
         if len(new_orphan_inputs) == 0:
@@ -919,7 +960,16 @@ def BuildFromJSON(
         # Return composite string
         logging.debug("Returning single file build...")
         logging.debug(f"{m.BuildSnakefileConfig()}, {m.BuildSnakefile()}")
-        return ((m.BuildSnakefileConfig(), m.BuildSnakefile())), m, ""
+        return (
+            (
+                (
+                    m.BuildSnakefileConfig(),
+                    m.BuildSnakefile(),
+                )
+            ),
+            m,
+            "",
+        )
     else:
         # Create (zipped) workflow and return as binary object
         build_path = m.SaveWorkflow(build_path, clean_build, package_modules)

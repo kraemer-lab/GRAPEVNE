@@ -1,60 +1,63 @@
-import _ from "lodash";
-import React from "react";
-import BuilderEngine from "../BuilderEngine";
-import { useRef } from "react";
-import { useState } from "react";
-import { useCallback } from "react";
-import { useAppSelector } from "redux/store/hooks";
-import { useAppDispatch } from "redux/store/hooks";
+import _ from 'lodash';
+import React, { useCallback, useRef, useState } from 'react';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import BuilderEngine from '../BuilderEngine';
 
-import { builderAddNode } from "redux/actions";
-import { builderSetNodes } from "redux/actions";
-import { builderSetEdges } from "redux/actions";
-import { builderNodeSelected } from "redux/actions";
-import { builderNodeDeselected } from "redux/actions";
-import { builderUpdateNodeInfo } from "redux/actions";
-import { builderUpdateStatusText } from "redux/actions";
+import {
+  builderAddNode,
+  builderNodeDeselected,
+  builderNodeSelected,
+  builderSetEdges,
+  builderSetNodes,
+  builderUpdateStatusText,
+} from 'redux/actions';
 
-import ReactFlow from "reactflow";
-import { Node } from "reactflow";
-import { Edge } from "reactflow";
-import { Panel } from "reactflow";
-import { Handle } from "reactflow";
-import { addEdge } from "reactflow";
-import { BaseEdge } from "reactflow";
-import { Controls } from "reactflow";
-import { Position } from "reactflow";
-import { NodeProps } from "reactflow";
-import { EdgeProps } from "reactflow";
-import { Background } from "reactflow";
-import { Connection } from "reactflow";
-import { NodeChange } from "reactflow";
-import { EdgeChange } from "reactflow";
-import { getBezierPath } from "reactflow";
-import { useNodesState } from "reactflow";
-import { useEdgesState } from "reactflow";
-import { applyNodeChanges } from "reactflow";
-import { applyEdgeChanges } from "reactflow";
-import { EdgeLabelRenderer } from "reactflow";
+import { Edge, Node, NodeData } from 'NodeMap/scene/Flow'; // Custom Node definition
 
-import ContextMenu from "./ContextMenu";
+import ReactFlow, {
+  Background,
+  BaseEdge,
+  Connection,
+  Controls,
+  EdgeChange,
+  EdgeLabelRenderer,
+  EdgeProps,
+  Handle,
+  NodeChange,
+  NodeProps,
+  NodeResizeControl,
+  Panel,
+  Position,
+  ResizeControlVariant,
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+  getBezierPath,
+} from 'reactflow';
 
-import "reactflow/dist/style.css";
-import styles from "./flow.module.css";
-import "./flow.css";
+import ContextMenu from './ContextMenu';
 
-import dagre from "dagre";
+import { faLeftRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import 'reactflow/dist/style.css';
+import './flow.css';
+import styles from './flow.module.css';
 
-const getLayoutedElements = (
-  nodes: Node[],
-  edges: Edge[],
-  direction = "TB",
-) => {
+import dagre from 'dagre';
+
+const nodeResizeControlStyle = {
+  background: 'transparent',
+  border: 'none',
+  width: '98%',
+  color: 'white',
+};
+
+const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
   const nodeWidth = 172;
   const nodeHeight = 36;
 
   // Allow dagre to determine layout
-  const isHorizontal = direction === "LR";
+  const isHorizontal = direction === 'LR';
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
   dagreGraph.setGraph({ rankdir: direction });
@@ -87,43 +90,26 @@ const proOptions = {
   hideAttribution: true,
 };
 
-export type ModuleData = {
-  // Place graphical only settings here
-  color: string;
-
-  // Keep GRAPEVNE module configuration isolated from any graphical settings
-  config: {
-    name: string;
-    type: string;
-    config: {
-      snakefile: string;
-      docstring?: string | null;
-      config: {
-        input_namespace: string | Record<string, string> | null;
-        output_namespace: string | null;
-        params?: Record<string, unknown> | null;
-      };
-    };
-  };
-};
-
 export const wranglename = (name: string) => {
-  return name
-    .replace(/ /g, "_")
-    .replace(/\(/g, "_")
-    .replace(/\)/g, "_")
-    .toLowerCase();
+  return name.replace(/ /g, '_').replace(/\(/g, '_').replace(/\)/g, '_').toLowerCase();
 };
 
-const ModuleNode = (props: NodeProps<ModuleData>) => {
+const ModuleNode = (props: NodeProps<NodeData>) => {
+  const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
+  let selected = false;
+  if (nodeinfo) {
+    const nodeinfo_id = JSON.parse(nodeinfo)['id'];
+    selected = nodeinfo_id === props.id;
+  }
+
   // Extract input_namespace and wrap as list as necessary
-  const input_namespace =
-    props.data?.config?.config?.config.input_namespace ?? null;
+  const node_config = props.data?.config?.config?.config ?? null;
+  const input_namespace = node_config.input_namespace ?? null;
   let input_namespaces: string[];
   let named_inputs = false;
-  if (typeof input_namespace === "string") {
+  if (typeof input_namespace === 'string') {
     // Only display if input_namespace does not start with '_'
-    if (input_namespace.startsWith("_")) {
+    if (input_namespace.startsWith('_')) {
       input_namespaces = [];
     } else {
       input_namespaces = [input_namespace];
@@ -135,86 +121,120 @@ const ModuleNode = (props: NodeProps<ModuleData>) => {
     input_namespaces = Object.keys(input_namespace);
     // Remove input_namespaces where input_namespace value starts with '_'
     input_namespaces = input_namespaces.filter((name) => {
-      return !input_namespace[name].startsWith("_");
+      return !input_namespace[name].startsWith('_');
     });
   }
 
   return (
-    <div
-      className={styles.Node}
-      style={{
-        backgroundColor: props.data.color,
-      }}
-    >
-      <div className={styles.HeaderPanel}>
-        <div className={styles.HeaderText}>{props.data.config.name}</div>
-      </div>
-      {!named_inputs ? (
-        <>
-          {input_namespaces.length == 1 ? (
-            <Handle
-              className={styles.HandleInput}
-              id={input_namespaces[0]}
-              key={input_namespaces[0]}
-              type="target"
-              position={Position.Left}
-              style={{ top: "50%" }}
-            />
-          ) : null}
-          <Handle
-            className={styles.HandleOutput}
-            id="out"
-            type="source"
-            position={Position.Right}
-            style={{ top: "50%" }}
-          />
-        </>
-      ) : (
-        <div
-          className={styles.BodyPanel}
-          style={{
-            height: `${input_namespaces.length * 18 - 4}px`,
-          }}
-        >
-          {input_namespaces.map((name) => (
-            <div key={"div-" + name}>
+    <>
+      <div
+        className={styles.Node}
+        style={{
+          backgroundColor: props.data.color,
+        }}
+      >
+        {selected && (
+          <NodeResizeControl
+            style={nodeResizeControlStyle}
+            minWidth={120}
+            minHeight={50}
+            variant={ResizeControlVariant.Line}
+            position="top-right"
+            shouldResize={(e, params) => params.direction[1] === 0}
+          >
+            <span
+              style={{
+                float: 'right',
+                color: '#bebebe',
+              }}
+            >
+              <FontAwesomeIcon icon={faLeftRight} />
+            </span>
+          </NodeResizeControl>
+        )}
+        <div className={styles.HeaderPanel}>
+          <div className={styles.HeaderText}>{props.data.config.name}</div>
+        </div>
+        {!named_inputs ? (
+          <>
+            {input_namespaces.length == 1 && (
               <Handle
                 className={styles.HandleInput}
-                id={name}
-                key={name}
+                id={input_namespaces[0]}
+                key={input_namespaces[0]}
                 type="target"
                 position={Position.Left}
-                style={{ top: `${input_namespaces.indexOf(name) * 18 + 38}px` }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  console.log("Input handle clicked: ", event.target);
-                }}
-              >
-                <div
-                  className={styles.InputPortLabel}
-                  style={{
-                    pointerEvents: "none", // pass-through click events
-                  }}
-                >
-                  {name}
-                </div>
-              </Handle>
-            </div>
-          ))}
-          <div>
+                style={{ top: '50%' }}
+              />
+            )}
             <Handle
               className={styles.HandleOutput}
               id="out"
               type="source"
               position={Position.Right}
-              style={{
-                top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
-              }}
+              style={{ top: '50%' }}
             />
+          </>
+        ) : (
+          <div
+            className={styles.BodyPanel}
+            style={{
+              height: `${input_namespaces.length * 18 - 4}px`,
+            }}
+          >
+            {input_namespaces.map((name) => {
+              // Format port name
+              const port_name_split = name.split('$');
+              let port_name = node_config[port_name_split[0]]?.name ?? null;
+              if (!port_name) {
+                port_name = name;
+              } else if (port_name_split.length > 1 && port_name_split[1] !== '') {
+                port_name = port_name + ' [' + name.split('$')[1] + ']';
+              }
+
+              return (
+                <div key={'div-' + name}>
+                  <Handle
+                    className={styles.HandleInput}
+                    id={name}
+                    key={name}
+                    type="target"
+                    position={Position.Left}
+                    style={{
+                      top: `${input_namespaces.indexOf(name) * 18 + 38}px`,
+                    }}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      console.debug('Input handle clicked: ', event.target);
+                    }}
+                  ></Handle>
+                  <div
+                    className={styles.InputPortLabel}
+                    style={{
+                      pointerEvents: 'none', // pass-through click events
+                      top: `${input_namespaces.indexOf(name) * 18 + 32}px`,
+                    }}
+                  >
+                    {port_name}
+                  </div>
+                </div>
+              );
+            })}
+            <div>
+              <Handle
+                className={styles.HandleOutput}
+                id="out"
+                type="source"
+                position={Position.Right}
+                style={{
+                  top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
+                }}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 
@@ -249,10 +269,10 @@ export const ButtonEdge = ({
       <EdgeLabelRenderer>
         <div
           style={{
-            position: "absolute",
+            position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             fontSize: 12,
-            pointerEvents: "all",
+            pointerEvents: 'all',
           }}
           className="nodrag nopan"
         >
@@ -280,6 +300,19 @@ const edgeTypes = {
 export const getNodeById = (id: string, nodes: Node[]): Node | null => {
   for (const node of nodes) {
     if (node.id === id) {
+      return node;
+    }
+  }
+  return null;
+};
+
+export const getNodeName = (node: Node): string => {
+  return node.data.config.name;
+};
+
+export const getNodeByName = (name: string, nodes: Node[]): Node | null => {
+  for (const node of nodes) {
+    if (node.data.config.name === name) {
       return node;
     }
   }
@@ -322,6 +355,11 @@ const Flow = () => {
   const ref = useRef(null);
 
   const onNodesChange = (changes: NodeChange[]) => {
+    // Allow node removal to be handled by onNodesDelete
+    if (changes.some((change) => change.type === 'remove')) {
+      return;
+    }
+    // Otherwise, apply changes to nodes
     dispatch(builderSetNodes(applyNodeChanges(changes, nodes)));
   };
 
@@ -330,9 +368,7 @@ const Flow = () => {
   };
 
   const onConnect = (connection: Connection) => {
-    dispatch(
-      builderSetEdges(addEdge({ ...connection, type: "buttonedge" }, edges)),
-    );
+    dispatch(builderSetEdges(addEdge({ ...connection, type: 'buttonedge' }, edges)));
   };
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
@@ -350,28 +386,70 @@ const Flow = () => {
     // Position context menu; right-align if it is too close to the edge of the pane
     setMenu({
       id: node.id,
-      top:
-        event.clientY - pane.top < pane.height - 200 &&
-        event.clientY - pane.top,
+      top: event.clientY - pane.top < pane.height - 200 && event.clientY - pane.top,
       bottom:
-        event.clientY - pane.top >= pane.height - 200 &&
-        pane.height - (event.clientY - pane.top),
-      left:
-        event.clientX - pane.left < pane.width - 200 &&
-        event.clientX - pane.left,
+        event.clientY - pane.top >= pane.height - 200 && pane.height - (event.clientY - pane.top),
+      left: event.clientX - pane.left < pane.width - 200 && event.clientX - pane.left,
       right:
-        event.clientX - pane.left >= pane.width - 200 &&
-        pane.width - (event.clientX - pane.left),
+        event.clientX - pane.left >= pane.width - 200 && pane.width - (event.clientX - pane.left),
     });
   };
 
-  const onNodesDelete = (nodes: Node[]) => {
+  const RemoveLinkParameters = (removed_nodes: Node[]) => {
+    const removed_nodes_names = removed_nodes.map(getNodeName);
+    const StripLinks = (config: Record<string, unknown>) => {
+      if (config === null || config === undefined) {
+        return config;
+      }
+      const keys = Object.keys(config);
+      for (const key of keys) {
+        if (key.startsWith(':')) {
+          const metadata = config[key] as Record<string, unknown>;
+          const link = metadata['link'] as string[];
+          if (link === undefined || link === null) {
+            continue;
+          }
+          if (removed_nodes_names.includes(link[0])) {
+            delete metadata['link'];
+            if (Object.keys(metadata).length === 0) {
+              delete config[key];
+            }
+          }
+        } else if (typeof config[key] === 'object') {
+          config[key] = StripLinks(config[key] as Record<string, unknown>);
+        }
+      }
+      return config;
+    };
+
+    const remaining_nodes = nodes
+      .filter((node) => {
+        return !removed_nodes.map((n) => n.id).includes(node.id);
+      })
+      .map((node) => {
+        const newnode = JSON.parse(JSON.stringify(node));
+        const node_config = newnode.data.config.config.config ?? null;
+        if (!node_config) {
+          return node_config;
+        }
+        // Recursively remove links to removed nodes
+        const new_node_config = StripLinks(node_config);
+        newnode.data.config.config.config = new_node_config;
+        return newnode;
+      });
+    dispatch(builderSetNodes(remaining_nodes));
+  };
+
+  const onNodesDelete = (removed_nodes: Node[]) => {
+    // Strip any active links to the removed nodes
+    RemoveLinkParameters(removed_nodes);
     // Close module parameters pane (if open)
     dispatch(builderNodeDeselected());
+    console.log('Removed nodes: ', removed_nodes);
   };
 
   const onPaneClick = useCallback(() => {
-    console.log("Pane clicked");
+    console.debug('Pane clicked');
     // Close context menu (if open)
     setMenu(null);
     // Close module parameters pane (if open)
@@ -380,13 +458,13 @@ const Flow = () => {
 
   const onDrop = (event) => {
     event.preventDefault();
-    const type = event.dataTransfer.getData("flow-diagram-node");
+    const type = event.dataTransfer.getData('flow-diagram-node');
     // check if the dropped element is valid
-    if (typeof type === "undefined" || !type) {
+    if (typeof type === 'undefined' || !type) {
       return;
     }
     const app = BuilderEngine.Instance;
-    const data = JSON.parse(event.dataTransfer.getData("flow-diagram-node"));
+    const data = JSON.parse(event.dataTransfer.getData('flow-diagram-node'));
     const point = reactFlowInstance.screenToFlowPosition({
       x: event.clientX,
       y: event.clientY,
@@ -402,21 +480,21 @@ const Flow = () => {
       dispatch(builderUpdateStatusText(`Loading module ${module_name}...`));
       // Get repository details from module
       const repo = {};
-      if (typeof workflow["snakefile"] === "string") {
-        repo["type"] = "local";
-        repo["repo"] = workflow["snakefile"];
+      if (typeof workflow['snakefile'] === 'string') {
+        repo['type'] = 'local';
+        repo['repo'] = workflow['snakefile'];
       } else {
         // TODO: Assumes github directory listing (not compatible with branch listing)
-        repo["type"] = "github";
-        repo["repo"] = workflow["snakefile"]["args"][0];
+        repo['type'] = 'github';
+        repo['repo'] = workflow['snakefile']['args'][0];
       }
       const query: Record<string, unknown> = {
-        query: "builder/get-remote-module-config",
+        query: 'builder/get-remote-module-config',
         data: {
-          format: "Snakefile",
+          format: 'Snakefile',
           content: {
             repo: repo,
-            snakefile: workflow["snakefile"],
+            snakefile: workflow['snakefile'],
           },
         },
       };
@@ -426,14 +504,14 @@ const Flow = () => {
       getConfig(query)
         .then((config) => {
           // Extract docstring
-          const docstring = config["docstring"];
-          delete config["docstring"];
+          const docstring = config['docstring'];
+          delete config['docstring'];
           (data.config as Query).config = config;
           (data.config as Query).docstring = docstring;
           // Add node to graph
           const newnode = {
             id: app.getUniqueNodeID(nodes),
-            type: "standard",
+            type: 'standard',
             data: {
               color: color,
               config: {
@@ -448,16 +526,14 @@ const Flow = () => {
           dispatch(builderUpdateStatusText(`Module loaded.`));
         })
         .catch((error) => {
-          console.log(error);
-          dispatch(
-            builderUpdateStatusText(`FAILED to load module ${module_name}.`),
-          );
+          console.error(error);
+          dispatch(builderUpdateStatusText(`FAILED to load module ${module_name}.`));
         });
     } else {
       // Module already contains a valid configuration
       const newnode = {
         id: app.getUniqueNodeID(nodes),
-        type: "standard",
+        type: 'standard',
         data: {
           config: { ...data, name: app.EnsureUniqueName(module_name, nodes) },
         },
@@ -469,7 +545,7 @@ const Flow = () => {
 
   const onDragOver = (event) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.dropEffect = 'move';
   };
 
   const onLayout = useCallback(
@@ -503,7 +579,7 @@ const Flow = () => {
       <Controls />
       <Background />
       <Panel position="top-right">
-        <button id="buttonReactflowArrange" onClick={() => onLayout("LR")}>
+        <button id="buttonReactflowArrange" onClick={() => onLayout('LR')}>
           Arrange
         </button>
       </Panel>
@@ -512,4 +588,5 @@ const Flow = () => {
   );
 };
 
+export { Edge, Node } from 'NodeMap/scene/Flow';
 export default Flow;

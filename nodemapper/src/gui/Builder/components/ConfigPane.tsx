@@ -1,13 +1,11 @@
-import React from "react";
-import BuilderSettings from "./BuilderSettings";
-import NodeInfoRenderer from "./NodeInfoRenderer";
-import { useAppSelector } from "redux/store/hooks";
-import { ConfigPaneDisplay } from "redux/types";
+import React from 'react';
+import { useAppSelector } from 'redux/store/hooks';
+import { ConfigPaneDisplay } from 'redux/types';
+import BuilderSettings from './BuilderSettings';
+import NodeInfoRenderer from './NodeInfoRenderer';
 
 export const ConfigPane: React.FC = () => {
-  const configPaneDisplay = useAppSelector(
-    (state) => state.builder.config_pane_display,
-  );
+  const configPaneDisplay = useAppSelector((state) => state.builder.config_pane_display);
 
   switch (configPaneDisplay) {
     case ConfigPaneDisplay.Node:
@@ -15,7 +13,7 @@ export const ConfigPane: React.FC = () => {
     case ConfigPaneDisplay.Settings:
       return <BuilderSettings />;
     default:
-      return <></>;
+      return null;
   }
 };
 

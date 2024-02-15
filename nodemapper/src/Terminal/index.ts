@@ -1,1 +1,1 @@
-export * from "./TerminalController";
+export * from './TerminalController';

@@ -1,46 +1,44 @@
-import React from "react";
-import styled from "@emotion/styled";
-import { TrayWidget } from "./TrayWidget";
-import { TrayItemWidget } from "./TrayItemWidget";
-import { useAppDispatch } from "redux/store/hooks";
-import { useAppSelector } from "redux/store/hooks";
-import { builderUpdateStatusText } from "redux/actions";
+import styled from '@emotion/styled';
+import React from 'react';
+import { builderUpdateStatusText } from 'redux/actions';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import { TrayItemWidget } from './TrayItemWidget';
+import { TrayWidget } from './TrayWidget';
 
-import BuilderEngine from "../BuilderEngine";
-import styles from "./styles.module.css";
+import BuilderEngine from '../BuilderEngine';
 
 const InputStyled = styled.input({
-  color: "white",
-  fontFamily: "Helvetica, Arial",
-  padding: "5px",
-  margin: "0px 10px",
-  border: "solid 1px ${(p) => p.color}",
-  borderRadius: "5px",
-  marginBottom: "2px",
-  marginTop: "2px",
-  cursor: "pointer",
-  width: "100%",
-  background: "var(--background-color)",
-  flexGrow: "0",
-  flexShrink: "0",
-  boxSizing: "border-box",
+  color: 'white',
+  fontFamily: 'Helvetica, Arial',
+  padding: '5px',
+  margin: '0px 10px',
+  border: 'solid 1px ${(p) => p.color}',
+  borderRadius: '5px',
+  marginBottom: '2px',
+  marginTop: '2px',
+  cursor: 'pointer',
+  width: '100%',
+  background: 'var(--background-color)',
+  flexGrow: '0',
+  flexShrink: '0',
+  boxSizing: 'border-box',
 });
 
 const SelectStyled = styled.select({
-  color: "white",
-  fontFamily: "Helvetica, Arial",
-  padding: "5px",
-  margin: "0px 10px",
-  border: "solid 1px ${(p) => p.color}",
-  borderRadius: "5px",
-  marginBottom: "2px",
-  marginTop: "2px",
-  cursor: "pointer",
-  width: "100%",
-  background: "var(--background-color)",
-  flexGrow: "0",
-  flexShrink: "0",
-  boxSizing: "border-box",
+  color: 'white',
+  fontFamily: 'Helvetica, Arial',
+  padding: '5px',
+  margin: '0px 10px',
+  border: 'solid 1px ${(p) => p.color}',
+  borderRadius: '5px',
+  marginBottom: '2px',
+  marginTop: '2px',
+  cursor: 'pointer',
+  width: '100%',
+  background: 'var(--background-color)',
+  flexGrow: '0',
+  flexShrink: '0',
+  boxSizing: 'border-box',
 });
 
 const hash = (s: string) => {
@@ -59,47 +57,40 @@ const hash = (s: string) => {
 const RepoBrowser = () => {
   const dispatch = useAppDispatch();
   const modules = useAppSelector((state) => state.builder.modules_list);
-  const [filterSelection, setFilterSelection] = React.useState("");
-  const [searchterm, setSearchterm] = React.useState("");
+  const [filterSelection, setFilterSelection] = React.useState('');
+  const [searchterm, setSearchterm] = React.useState('');
   let modules_list = modules; // create a mutable copy
 
   // Check for a valid module list
   if (modules_list === undefined) {
     dispatch(
       builderUpdateStatusText(
-        "ERROR: Module list failed to load - check that the repository name is " +
-          "correct and is reachable",
+        'ERROR: Module list failed to load - check that the repository name is ' +
+          'correct and is reachable',
       ),
     );
-    modules_list = "[]";
+    modules_list = '[]';
   }
 
   const updateTrayItems = (filterSelection: string, searchterm: string) =>
     JSON.parse(modules_list)
+      .filter((m) => m['name'].startsWith(filterSelection) || filterSelection === '(all)')
       .filter(
-        (m) =>
-          m["name"].startsWith(filterSelection) || filterSelection === "(all)",
-      )
-      .filter(
-        (m) =>
-          m["name"].toLowerCase().includes(searchterm.toLowerCase()) ||
-          searchterm === "",
+        (m) => m['name'].toLowerCase().includes(searchterm.toLowerCase()) || searchterm === '',
       )
       .map((m) => (
         <TrayItemWidget
           key={hash(JSON.stringify(m))}
           model={m}
-          name={m["name"]}
-          color={BuilderEngine.GetModuleTypeColor(m["type"])}
+          name={m['name']}
+          color={BuilderEngine.GetModuleTypeColor(m['type'])}
         />
       ));
 
-  const [trayitems, setTrayitems] = React.useState(
-    updateTrayItems("(all)", ""),
-  );
+  const [trayitems, setTrayitems] = React.useState(updateTrayItems('(all)', ''));
   React.useEffect(() => {
-    setFilterSelection("(all)");
-    setTrayitems(updateTrayItems("(all)", ""));
+    setFilterSelection('(all)');
+    setTrayitems(updateTrayItems('(all)', ''));
   }, [modules]);
 
   const onChangeOrgList = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -114,10 +105,10 @@ const RepoBrowser = () => {
 
   // Extract unique organisations from the module names for a filter list
   const organisaton_list = JSON.parse(modules_list)
-    .map((m) => m["name"].match(/\((.*?)\)/)[0]) // extract organisation name
+    .map((m) => m['name'].match(/\((.*?)\)/)[0]) // extract organisation name
     .filter((v, i, a) => a.indexOf(v) === i) // remove duplicates
     .sort(); // sort alphabetically
-  organisaton_list.unshift("(all)"); // add "(all)" to the top of the list
+  organisaton_list.unshift('(all)'); // add "(all)" to the top of the list
   const organisaton_list_options = organisaton_list.map((m) => (
     <option key={m} value={m}>
       {m}
@@ -135,12 +126,7 @@ const RepoBrowser = () => {
         onChange={onChangeSearchTerm}
       />
 
-      <SelectStyled
-        name="orglist"
-        id="orglist"
-        value={filterSelection}
-        onChange={onChangeOrgList}
-      >
+      <SelectStyled name="orglist" id="orglist" value={filterSelection} onChange={onChangeOrgList}>
         {organisaton_list_options}
       </SelectStyled>
 

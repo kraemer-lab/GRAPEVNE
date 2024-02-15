@@ -1,13 +1,8 @@
-import BuilderEngine from "gui/Builder/BuilderEngine";
-import * as actions from "../actions";
+import * as actions from '../actions';
 
-import { Node } from "reactflow";
-import { Edge } from "reactflow";
-import { OnConnect } from "reactflow";
-import { createReducer } from "@reduxjs/toolkit";
-import { OnNodesChange } from "reactflow";
-import { OnEdgesChange } from "reactflow";
-import { ConfigPaneDisplay } from "redux/types";
+import { createReducer } from '@reduxjs/toolkit';
+import { Edge, Node } from 'NodeMap/scene/Flow';
+import { ConfigPaneDisplay } from 'redux/types';
 
 const displayAPI = window.displayAPI;
 
@@ -50,13 +45,13 @@ const default_edges = [] as Edge[];
 // State
 const builderStateInit: IBuilderState = {
   // Builder state
-  statustext: "Idle",
-  nodeinfo: "{}", // {} required to be a valid JSON string
+  statustext: 'Idle',
+  nodeinfo: '{}', // {} required to be a valid JSON string
   can_selected_expand: true,
   terminal_visibile: false,
   config_pane_display: ConfigPaneDisplay.None,
-  logtext: " ",
-  modules_list: "[]",
+  logtext: ' ',
+  modules_list: '[]',
 
   // react-flow parameters
   nodes: default_nodes,
@@ -66,16 +61,16 @@ const builderStateInit: IBuilderState = {
   repositories: [
     // Default - should be overwritten by local state
     {
-      type: "github", // local | github
-      label: "Kraemer Lab",
-      listing_type: "DirectoryListing", // LocalFilesystem | DirectoryListing | BranchListing
-      repo: "kraemer-lab/vneyard",
+      type: 'github', // local | github
+      label: 'Kraemer Lab',
+      listing_type: 'DirectoryListing', // LocalFilesystem | DirectoryListing | BranchListing
+      repo: 'kraemer-lab/vneyard',
     },
   ],
-  snakemake_backend: "builtin", // builtin | system
-  snakemake_args: "--cores 1 --use-conda",
-  conda_backend: "builtin", // builtin | system
-  environment_variables: "",
+  snakemake_backend: 'builtin', // builtin | system
+  snakemake_args: '--cores 1 --use-conda',
+  conda_backend: 'builtin', // builtin | system
+  environment_variables: '',
   display_module_settings: false,
   auto_validate_connections: false,
   package_modules_in_workflow: false,
@@ -86,134 +81,145 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
   builder
     .addCase(actions.builderSetNodes, (state, action) => {
       state.nodes = action.payload as Node[];
-      console.log("Set nodes: ", state.nodes);
-      console.info("[Reducer] " + action.type);
+      console.log('Set nodes: ', state.nodes);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderAddNode, (state, action) => {
       state.nodes = state.nodes.concat(action.payload as Node);
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderAddNodes, (state, action) => {
       state.nodes = state.nodes.concat(action.payload as Node[]);
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetEdges, (state, action) => {
       state.edges = action.payload as Edge[];
-      console.log("Set edges: ", state.edges);
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderUpdateNode, (state, action) => {
+      const newnode = action.payload as Node;
+      state.nodes = state.nodes.map((node) => {
+        return node.id === newnode.id ? newnode : node;
+      });
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderLoadNodemap, (state, action) => {
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSaveNodemap, (state, action) => {
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderBuildAsModule, (state, action) => {
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderBuildAsWorkflow, (state, action) => {
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderAddLink, (state, action) => {
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderNodeSelected, (state, action) => {
       // Action intercepted in middleware to control display
       state.config_pane_display = ConfigPaneDisplay.Node;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderNodeSelectedByID, (state, action) => {
+      // Action intercepted in middleware to control display
+      state.config_pane_display = ConfigPaneDisplay.Node;
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderNodeDeselected, (state, action) => {
       // Action intercepted in middleware to control display
       state.config_pane_display = ConfigPaneDisplay.None;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderGetRemoteModules, (state, action) => {
       // Get list of remote actions
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateModulesList, (state, action) => {
       state.modules_list = JSON.stringify(action.payload);
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {
       setStatusText(state, action.payload);
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateNodeInfo, (state, action) => {
       state.nodeinfo = action.payload;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateNodeInfoKey, (state, action) => {
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetRepositoryTarget, (state, action) => {
       state.repositories = action.payload as IRepo[];
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderToggleTerminalVisibility, (state, action) => {
       state.terminal_visibile = !state.terminal_visibile;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderOpenTerminal, (state, action) => {
       state.terminal_visibile = true;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
       state.snakemake_args = action.payload;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetDisplayModuleSettings, (state, action) => {
       state.display_module_settings = action.payload;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetAutoValidateConnections, (state, action) => {
       state.auto_validate_connections = action.payload;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderToggleAutoValidateConnections, (state, action) => {
       state.auto_validate_connections = !state.auto_validate_connections;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetPackageModulesInWorkflow, (state, action) => {
       state.package_modules_in_workflow = action.payload;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSelectSnakemakeBackend, (state, action) => {
       state.snakemake_backend = action.payload;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSelectCondaBackend, (state, action) => {
       state.conda_backend = action.payload;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetEnvironmentVars, (state, action) => {
       state.environment_variables = action.payload;
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderLogEvent, (state, action) => {
       addLogEvent(state, action.payload);
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateSettings, (state, action) => {
       const local_config = action.payload as Record<string, unknown>;
       for (const key in local_config) {
         state[key] = local_config[key];
       }
-      console.info("[Reducer] " + action.type);
+      console.info('[Reducer] ' + action.type);
     });
 });
 
 const setStatusText = (state: IBuilderState, text: string) => {
-  if (text === "" || text === null || text === undefined) text = "Idle";
+  if (text === '' || text === null || text === undefined) text = 'Idle';
   state.statustext = text;
   return state;
 };
 
 const addLogEvent = (state: IBuilderState, text: string) => {
-  if (state.logtext === " ") state.logtext = "";
-  if (text[text.length - 1] !== "\n") text += "\n";
+  if (state.logtext === ' ') state.logtext = '';
+  if (text[text.length - 1] !== '\n') text += '\n';
   state.logtext += text;
-  if (state.logtext === "") state.logtext = " ";
+  if (state.logtext === '') state.logtext = ' ';
 };
 
 export default builderReducer;

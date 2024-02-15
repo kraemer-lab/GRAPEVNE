@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 // Layout for main window, including sliding-pane support
 const Runner = () => {

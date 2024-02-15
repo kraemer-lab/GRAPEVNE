@@ -1,23 +1,14 @@
-import _ from "lodash";
-import React from "react";
-import styled from "@emotion/styled";
-import BuilderEngine from "../BuilderEngine";
-import InfoPanel from "./InfoPanel";
-import ResizeHandle from "./ResizeHandle";
-import TerminalController from "Terminal/TerminalController";
+import styled from '@emotion/styled';
+import TerminalController from 'Terminal/TerminalController';
+import React from 'react';
+import InfoPanel from './InfoPanel';
+import ResizeHandle from './ResizeHandle';
 
-import Flow from "./Flow";
-import { Node } from "reactflow";
-import { useAppSelector } from "redux/store/hooks";
-import { useAppDispatch } from "redux/store/hooks";
-import { builderAddNode } from "redux/actions";
-import { builderNodeSelected } from "redux/actions";
-import { builderNodeDeselected } from "redux/actions";
-import { builderUpdateStatusText } from "redux/actions";
-import { Panel } from "react-resizable-panels";
-import { PanelGroup } from "react-resizable-panels";
+import { Panel, PanelGroup } from 'react-resizable-panels';
+import { useAppSelector } from 'redux/store/hooks';
+import Flow from './Flow';
 
-import styles from "./styles.module.css";
+import styles from './styles.module.css';
 
 const builderAPI = window.builderAPI;
 type Query = Record<string, unknown>;
@@ -57,9 +48,7 @@ const Layer = styled.div`
  * 2. Panel group (tabbed panel group for e.g. log display)
  */
 const Canvas = () => {
-  const configPaneOpen = useAppSelector(
-    (state) => state.builder.config_pane_display,
-  );
+  const configPaneOpen = useAppSelector((state) => state.builder.config_pane_display);
 
   return (
     <Body>

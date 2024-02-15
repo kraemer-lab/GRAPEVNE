@@ -1,9 +1,8 @@
-import React from "react";
-import { useState } from "react";
-import { useAppSelector } from "redux/store/hooks";
+import React, { useState } from 'react';
+import { useAppSelector } from 'redux/store/hooks';
 
 const StatusBar: React.FC = () => {
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
   const statustext = useAppSelector((state) => state.builder.statustext);
   React.useEffect(() => {
     setStatus(statustext);
@@ -13,7 +12,7 @@ const StatusBar: React.FC = () => {
       className="status-bar"
       style={{
         fontSize: 14,
-        marginLeft: "10px",
+        marginLeft: '10px',
       }}
     >
       {status ? status : <br />}
