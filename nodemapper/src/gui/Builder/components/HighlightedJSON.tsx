@@ -158,8 +158,7 @@ export const checkParameter_IsModuleRoot = (value) => {
 export const checkParameter_IsInModuleConfigLayer = (node, keylist, key) => {
   if (node === undefined || node === null) return false;
   // Is the parameters parent a module root?
-  const json = JSON.parse(JSON.stringify(node))['data']['config']['config'];
-  let jsonObj = json;
+  let jsonObj = JSON.parse(JSON.stringify(node))['data']['config']['config'];
   for (let i = 0; i < keylist.length; i++) {
     jsonObj = jsonObj[keylist[i]];
     if (jsonObj === undefined) return false;
