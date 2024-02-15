@@ -449,9 +449,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                     saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                     cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
                     value={value}
-                    onSave={(value) => {
-                      setValue(value);
-                    }}
+                    onSave={setValue}
                     saveOnBlur={true}
                   />
                 )}
