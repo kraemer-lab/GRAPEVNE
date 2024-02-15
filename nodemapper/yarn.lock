@@ -30,6 +30,7 @@ __metadata:
   linkType: hard
 
 "@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4, @babel/code-frame@npm:^7.12.13, @babel/code-frame@npm:^7.23.5":
+<<<<<<< HEAD
   version: 7.23.5
   resolution: "@babel/code-frame@npm:7.23.5"
   dependencies:
@@ -52,6 +53,8 @@ __metadata:
   resolution: "@babel/core@npm:7.23.9"
 =======
 "@babel/code-frame@npm:^7.23.5":
+=======
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.5
   resolution: "@babel/code-frame@npm:7.23.5"
   dependencies:
@@ -61,20 +64,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/compat-data@npm:^7.22.6, @babel/compat-data@npm:^7.22.9, @babel/compat-data@npm:^7.23.3":
-  version: 7.23.3
-  resolution: "@babel/compat-data@npm:7.23.3"
-  checksum: c6af331753c34ee8a5678bc94404320826cb56b1dda3efc1311ec8fb0774e78225132f3c1acc988440ace667f14a838e297a822692b95758aa63da406e1f97a1
-  languageName: node
-  linkType: hard
-
-"@babel/compat-data@npm:^7.23.5":
+"@babel/compat-data@npm:^7.22.6, @babel/compat-data@npm:^7.23.3, @babel/compat-data@npm:^7.23.5":
   version: 7.23.5
   resolution: "@babel/compat-data@npm:7.23.5"
   checksum: 081278ed46131a890ad566a59c61600a5f9557bd8ee5e535890c8548192532ea92590742fd74bd9db83d74c669ef8a04a7e1c85cdea27f960233e3b83c3a957c
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3":
   version: 7.23.3
   resolution: "@babel/core@npm:7.23.3"
@@ -105,6 +102,9 @@ __metadata:
   resolution: "@babel/generator@npm:7.23.6"
 =======
 "@babel/core@npm:^7.23.9":
+=======
+"@babel/core@npm:^7.11.6, @babel/core@npm:^7.12.3, @babel/core@npm:^7.23.9":
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.9
   resolution: "@babel/core@npm:7.23.9"
   dependencies:
@@ -127,6 +127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@babel/generator@npm:^7.23.3, @babel/generator@npm:^7.7.2":
   version: 7.23.3
   resolution: "@babel/generator@npm:7.23.3"
@@ -141,6 +142,9 @@ __metadata:
   linkType: hard
 
 "@babel/generator@npm:^7.23.6":
+=======
+"@babel/generator@npm:^7.23.6, @babel/generator@npm:^7.7.2":
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.6
   resolution: "@babel/generator@npm:7.23.6"
   dependencies:
@@ -171,6 +175,7 @@ __metadata:
   linkType: hard
 
 "@babel/helper-compilation-targets@npm:^7.22.15, @babel/helper-compilation-targets@npm:^7.22.6, @babel/helper-compilation-targets@npm:^7.23.6":
+<<<<<<< HEAD
   version: 7.23.6
   resolution: "@babel/helper-compilation-targets@npm:7.23.6"
   dependencies:
@@ -184,6 +189,8 @@ __metadata:
   linkType: hard
 
 "@babel/helper-compilation-targets@npm:^7.23.6":
+=======
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.6
   resolution: "@babel/helper-compilation-targets@npm:7.23.6"
   dependencies:
@@ -386,6 +393,7 @@ __metadata:
   linkType: hard
 
 "@babel/helper-validator-option@npm:^7.22.15, @babel/helper-validator-option@npm:^7.23.5":
+<<<<<<< HEAD
   version: 7.23.5
   resolution: "@babel/helper-validator-option@npm:7.23.5"
   checksum: af45d5c0defb292ba6fd38979e8f13d7da63f9623d8ab9ededc394f67eb45857d2601278d151ae9affb6e03d5d608485806cd45af08b4468a0515cf506510e94
@@ -393,6 +401,8 @@ __metadata:
   linkType: hard
 
 "@babel/helper-validator-option@npm:^7.23.5":
+=======
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.5
   resolution: "@babel/helper-validator-option@npm:7.23.5"
   checksum: af45d5c0defb292ba6fd38979e8f13d7da63f9623d8ab9ededc394f67eb45857d2601278d151ae9affb6e03d5d608485806cd45af08b4468a0515cf506510e94
@@ -410,6 +420,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@babel/helpers@npm:^7.23.9":
   version: 7.23.9
   resolution: "@babel/helpers@npm:7.23.9"
@@ -426,6 +437,8 @@ __metadata:
   version: 7.23.4
   resolution: "@babel/highlight@npm:7.23.4"
 =======
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "@babel/helpers@npm:^7.23.9":
   version: 7.23.9
   resolution: "@babel/helpers@npm:7.23.9"
@@ -437,6 +450,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@babel/highlight@npm:^7.22.13":
   version: 7.22.20
   resolution: "@babel/highlight@npm:7.22.20"
@@ -454,6 +468,8 @@ __metadata:
   version: 7.23.9
   resolution: "@babel/parser@npm:7.23.9"
 =======
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "@babel/highlight@npm:^7.23.4":
   version: 7.23.4
   resolution: "@babel/highlight@npm:7.23.4"
@@ -465,6 +481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@babel/parser@npm:^7.0.0, @babel/parser@npm:^7.1.0, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.21.4, @babel/parser@npm:^7.22.15, @babel/parser@npm:^7.23.3":
   version: 7.23.3
   resolution: "@babel/parser@npm:7.23.3"
@@ -476,6 +493,9 @@ __metadata:
   linkType: hard
 
 "@babel/parser@npm:^7.23.9":
+=======
+"@babel/parser@npm:^7.0.0, @babel/parser@npm:^7.1.0, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.21.4, @babel/parser@npm:^7.23.9":
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.9
   resolution: "@babel/parser@npm:7.23.9"
   bin:
@@ -1155,6 +1175,7 @@ __metadata:
   linkType: hard
 
 "@babel/plugin-transform-optional-chaining@npm:^7.23.3, @babel/plugin-transform-optional-chaining@npm:^7.23.4":
+<<<<<<< HEAD
   version: 7.23.4
   resolution: "@babel/plugin-transform-optional-chaining@npm:7.23.4"
   dependencies:
@@ -1168,6 +1189,8 @@ __metadata:
   linkType: hard
 
 "@babel/plugin-transform-optional-chaining@npm:^7.23.4":
+=======
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.4
   resolution: "@babel/plugin-transform-optional-chaining@npm:7.23.4"
   dependencies:
@@ -1530,6 +1553,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.23.9, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
 =======
 "@babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
@@ -1547,6 +1571,9 @@ __metadata:
 "@babel/runtime@npm:^7.23.9":
 >>>>>>> 659cdcf (Parameter map (#203))
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+"@babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.23.9, @babel/runtime@npm:^7.5.5, @babel/runtime@npm:^7.7.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.8.7, @babel/runtime@npm:^7.9.2":
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.9
   resolution: "@babel/runtime@npm:7.23.9"
   dependencies:
@@ -1556,6 +1583,7 @@ __metadata:
   linkType: hard
 
 "@babel/template@npm:^7.22.15, @babel/template@npm:^7.23.9, @babel/template@npm:^7.3.3":
+<<<<<<< HEAD
   version: 7.23.9
   resolution: "@babel/template@npm:7.23.9"
   dependencies:
@@ -1572,6 +1600,8 @@ __metadata:
   resolution: "@babel/traverse@npm:7.23.9"
 =======
 "@babel/template@npm:^7.23.9":
+=======
+>>>>>>> 3f9ee1e (Merge main)
   version: 7.23.9
   resolution: "@babel/template@npm:7.23.9"
   dependencies:
@@ -1582,6 +1612,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@babel/traverse@npm:^7.23.2, @babel/traverse@npm:^7.23.3":
   version: 7.23.3
   resolution: "@babel/traverse@npm:7.23.3"
@@ -1606,6 +1637,8 @@ __metadata:
   version: 7.23.9
   resolution: "@babel/types@npm:7.23.9"
 =======
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "@babel/traverse@npm:^7.23.9":
   version: 7.23.9
   resolution: "@babel/traverse@npm:7.23.9"
@@ -1624,18 +1657,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0, @babel/types@npm:^7.20.7, @babel/types@npm:^7.22.15, @babel/types@npm:^7.22.19, @babel/types@npm:^7.22.5, @babel/types@npm:^7.23.0, @babel/types@npm:^7.23.3, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4":
-  version: 7.23.3
-  resolution: "@babel/types@npm:7.23.3"
-  dependencies:
-    "@babel/helper-string-parser": "npm:^7.22.5"
-    "@babel/helper-validator-identifier": "npm:^7.22.20"
-    to-fast-properties: "npm:^2.0.0"
-  checksum: 371a10dd9c8d8ebf48fc5d9e1b327dafd74453f8ea582dcbddd1cee5ae34e8881b743e783a86c08c04dcd1849b1842455472a911ae8a1c185484fe9b7b5f1595
-  languageName: node
-  linkType: hard
-
-"@babel/types@npm:^7.23.6, @babel/types@npm:^7.23.9":
+"@babel/types@npm:^7.0.0, @babel/types@npm:^7.20.7, @babel/types@npm:^7.22.15, @babel/types@npm:^7.22.19, @babel/types@npm:^7.22.5, @babel/types@npm:^7.23.0, @babel/types@npm:^7.23.4, @babel/types@npm:^7.23.6, @babel/types@npm:^7.23.9, @babel/types@npm:^7.3.3, @babel/types@npm:^7.4.4, @babel/types@npm:^7.8.3":
   version: 7.23.9
   resolution: "@babel/types@npm:7.23.9"
   dependencies:
@@ -1646,6 +1668,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@babel/types@npm:^7.8.3":
   version: 7.23.4
   resolution: "@babel/types@npm:7.23.4"
@@ -1658,6 +1681,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "@bcoe/v8-coverage@npm:^0.2.3":
   version: 0.2.3
   resolution: "@bcoe/v8-coverage@npm:0.2.3"
@@ -1768,6 +1793,7 @@ __metadata:
   linkType: hard
 
 "@emotion/serialize@npm:^1.1.2, @emotion/serialize@npm:^1.1.3":
+<<<<<<< HEAD
   version: 1.1.3
   resolution: "@emotion/serialize@npm:1.1.3"
   dependencies:
@@ -1781,6 +1807,8 @@ __metadata:
   linkType: hard
 
 "@emotion/serialize@npm:^1.1.3":
+=======
+>>>>>>> 3f9ee1e (Merge main)
   version: 1.1.3
   resolution: "@emotion/serialize@npm:1.1.3"
   dependencies:
@@ -1893,10 +1921,14 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@floating-ui/core@npm:^1.0.0":
 =======
 "@floating-ui/core@npm:^1.6.0":
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+"@floating-ui/core@npm:^1.0.0":
+>>>>>>> 3f9ee1e (Merge main)
   version: 1.6.0
   resolution: "@floating-ui/core@npm:1.6.0"
   dependencies:
@@ -1906,6 +1938,7 @@ __metadata:
   linkType: hard
 
 "@floating-ui/dom@npm:^1.6.1":
+<<<<<<< HEAD
 <<<<<<< HEAD
   version: 1.6.3
   resolution: "@floating-ui/dom@npm:1.6.3"
@@ -1921,6 +1954,14 @@ __metadata:
     "@floating-ui/utils": "npm:^0.2.1"
   checksum: f810ab62280e86f5f9199cf7f6123b1dd2a7b44b3b273caa7d3a23cf70ad12c3fb689053e6d3db7acf4f724dbd6d43693e2fc538e5d30d805dcabb9647f8f494
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+  version: 1.6.3
+  resolution: "@floating-ui/dom@npm:1.6.3"
+  dependencies:
+    "@floating-ui/core": "npm:^1.0.0"
+    "@floating-ui/utils": "npm:^0.2.0"
+  checksum: d6cac10877918ce5a8d1a24b21738d2eb130a0191043d7c0dd43bccac507844d3b4dc5d4107d3891d82f6007945ca8fb4207a1252506e91c37e211f0f73cf77e
+>>>>>>> 3f9ee1e (Merge main)
   languageName: node
   linkType: hard
 
@@ -1937,10 +1978,14 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@floating-ui/utils@npm:^0.2.0, @floating-ui/utils@npm:^0.2.1":
 =======
 "@floating-ui/utils@npm:^0.2.1":
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+"@floating-ui/utils@npm:^0.2.0, @floating-ui/utils@npm:^0.2.1":
+>>>>>>> 3f9ee1e (Merge main)
   version: 0.2.1
   resolution: "@floating-ui/utils@npm:0.2.1"
   checksum: ee77756712cf5b000c6bacf11992ffb364f3ea2d0d51cc45197a7e646a17aeb86ea4b192c0b42f3fbb29487aee918a565e84f710b8c3645827767f406a6b4cc9
@@ -2340,6 +2385,7 @@ __metadata:
   linkType: hard
 
 "@jridgewell/trace-mapping@npm:^0.3.12, @jridgewell/trace-mapping@npm:^0.3.17, @jridgewell/trace-mapping@npm:^0.3.18, @jridgewell/trace-mapping@npm:^0.3.20, @jridgewell/trace-mapping@npm:^0.3.9":
+<<<<<<< HEAD
   version: 0.3.22
   resolution: "@jridgewell/trace-mapping@npm:0.3.22"
   dependencies:
@@ -2350,6 +2396,8 @@ __metadata:
   linkType: hard
 
 "@jridgewell/trace-mapping@npm:^0.3.20":
+=======
+>>>>>>> 3f9ee1e (Merge main)
   version: 0.3.22
   resolution: "@jridgewell/trace-mapping@npm:0.3.22"
   dependencies:
@@ -2395,10 +2443,14 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@mui/base@npm:5.0.0-beta.36, @mui/base@npm:^5.0.0-beta.20":
 =======
 "@mui/base@npm:5.0.0-beta.36":
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+"@mui/base@npm:5.0.0-beta.36, @mui/base@npm:^5.0.0-beta.20":
+>>>>>>> 3f9ee1e (Merge main)
   version: 5.0.0-beta.36
   resolution: "@mui/base@npm:5.0.0-beta.36"
   dependencies:
@@ -2420,6 +2472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 "@mui/core-downloads-tracker@npm:^5.15.10":
   version: 5.15.10
@@ -2456,6 +2509,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "@mui/core-downloads-tracker@npm:^5.15.10":
   version: 5.15.10
   resolution: "@mui/core-downloads-tracker@npm:5.15.10"
@@ -2592,6 +2647,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@mui/utils@npm:^5.14.14, @mui/utils@npm:^5.15.9":
   version: 5.15.9
   resolution: "@mui/utils@npm:5.15.9"
@@ -2618,6 +2674,9 @@ __metadata:
   linkType: hard
 
 "@mui/utils@npm:^5.15.9":
+=======
+"@mui/utils@npm:^5.14.14, @mui/utils@npm:^5.15.9":
+>>>>>>> 3f9ee1e (Merge main)
   version: 5.15.9
   resolution: "@mui/utils@npm:5.15.9"
   dependencies:
@@ -3508,6 +3567,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@types/node@npm:*, @types/node@npm:^20.11.18":
   version: 20.11.18
   resolution: "@types/node@npm:20.11.18"
@@ -3523,6 +3583,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^20.11.18":
+=======
+"@types/node@npm:*, @types/node@npm:^20.11.18":
+>>>>>>> 3f9ee1e (Merge main)
   version: 20.11.18
   resolution: "@types/node@npm:20.11.18"
   dependencies:
@@ -3557,6 +3620,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "@types/prop-types@npm:*, @types/prop-types@npm:^15.7.11":
   version: 15.7.11
   resolution: "@types/prop-types@npm:15.7.11"
@@ -3571,6 +3635,9 @@ __metadata:
   linkType: hard
 
 "@types/prop-types@npm:^15.7.11":
+=======
+"@types/prop-types@npm:*, @types/prop-types@npm:^15.7.11":
+>>>>>>> 3f9ee1e (Merge main)
   version: 15.7.11
   resolution: "@types/prop-types@npm:15.7.11"
   checksum: e53423cf9d510515ef8b47ff42f4f1b65a7b7b37c8704e2dbfcb9a60defe0c0e1f3cb1acfdeb466bad44ca938d7c79bffdd51b48ffb659df2432169d0b27a132
@@ -3591,6 +3658,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 "@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.2.19":
   version: 18.2.19
@@ -3630,9 +3698,11 @@ __metadata:
   resolution: "@types/react-transition-group@npm:4.4.9"
 =======
 "@types/react-dom@npm:^18.2.19":
+=======
+"@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.2.19":
+>>>>>>> 3f9ee1e (Merge main)
   version: 18.2.19
   resolution: "@types/react-dom@npm:18.2.19"
->>>>>>> 659cdcf (Parameter map (#203))
   dependencies:
     "@types/react": "npm:*"
   checksum: 88d7c6daa4659f661d0c97985d9fca492f24b421a34bb614dcd94c343aed7bea121463149e97fb01ecaa693be17b7d1542cf71ddb1705f3889a81eb2639a88aa
@@ -3648,6 +3718,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "@types/react@npm:*":
   version: 18.2.37
   resolution: "@types/react@npm:18.2.37"
@@ -3661,6 +3732,9 @@ __metadata:
   linkType: hard
 
 "@types/react@npm:^18.2.55":
+=======
+"@types/react@npm:*, @types/react@npm:^18.2.55":
+>>>>>>> 3f9ee1e (Merge main)
   version: 18.2.55
   resolution: "@types/react@npm:18.2.55"
   dependencies:
@@ -4886,6 +4960,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "browserslist@npm:^4.21.9, browserslist@npm:^4.22.1":
   version: 4.22.1
   resolution: "browserslist@npm:4.22.1"
@@ -4901,6 +4976,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "bs-logger@npm:0.x":
   version: 0.2.6
   resolution: "bs-logger@npm:0.2.6"
@@ -5040,6 +5117,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "caniuse-lite@npm:^1.0.30001587":
   version: 1.0.30001587
   resolution: "caniuse-lite@npm:1.0.30001587"
@@ -5047,6 +5125,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "caniuse-lite@npm:^1.0.30001587":
   version: 1.0.30001587
   resolution: "caniuse-lite@npm:1.0.30001587"
@@ -5217,6 +5297,7 @@ __metadata:
   linkType: hard
 
 "clsx@npm:^2.0.0, clsx@npm:^2.1.0":
+<<<<<<< HEAD
   version: 2.1.0
   resolution: "clsx@npm:2.1.0"
   checksum: c09c00ad14f638366ca814097e6cab533dfa1972a358da5b557be487168acbb25b4c1395e89ffa842a8a61ba87a462d2b4885bc9d4f8410b598f3cb339599cdb
@@ -5224,6 +5305,8 @@ __metadata:
   linkType: hard
 
 "clsx@npm:^2.1.0":
+=======
+>>>>>>> 3f9ee1e (Merge main)
   version: 2.1.0
   resolution: "clsx@npm:2.1.0"
   checksum: c09c00ad14f638366ca814097e6cab533dfa1972a358da5b557be487168acbb25b4c1395e89ffa842a8a61ba87a462d2b4885bc9d4f8410b598f3cb339599cdb
@@ -5449,6 +5532,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "core-js-compat@npm:^3.31.0, core-js-compat@npm:^3.34.0":
   version: 3.36.0
   resolution: "core-js-compat@npm:3.36.0"
@@ -5466,6 +5550,9 @@ __metadata:
 <<<<<<< HEAD
 =======
 "core-js-compat@npm:^3.34.0":
+=======
+"core-js-compat@npm:^3.31.0, core-js-compat@npm:^3.34.0":
+>>>>>>> 3f9ee1e (Merge main)
   version: 3.36.0
   resolution: "core-js-compat@npm:3.36.0"
   dependencies:
@@ -5614,6 +5701,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "csstype@npm:^3.0.2, csstype@npm:^3.1.3":
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
@@ -5639,6 +5727,9 @@ __metadata:
   linkType: hard
 
 "csstype@npm:^3.1.3":
+=======
+"csstype@npm:^3.0.2, csstype@npm:^3.1.3":
+>>>>>>> 3f9ee1e (Merge main)
   version: 3.1.3
   resolution: "csstype@npm:3.1.3"
   checksum: 80c089d6f7e0c5b2bd83cf0539ab41474198579584fa10d86d0cafe0642202343cbc119e076a0b1aece191989477081415d66c9fefbf3c957fc2fc4b7009f248
@@ -6310,6 +6401,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "electron-to-chromium@npm:^1.4.668":
   version: 1.4.670
   resolution: "electron-to-chromium@npm:1.4.670"
@@ -6317,6 +6409,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "electron-to-chromium@npm:^1.4.668":
   version: 1.4.670
   resolution: "electron-to-chromium@npm:1.4.670"
@@ -7182,6 +7276,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.4":
   version: 1.15.5
   resolution: "follow-redirects@npm:1.15.5"
@@ -7198,6 +7293,9 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.15.4":
+=======
+"follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.15.4":
+>>>>>>> 3f9ee1e (Merge main)
   version: 1.15.5
   resolution: "follow-redirects@npm:1.15.5"
   peerDependenciesMeta:
@@ -9992,10 +10090,14 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "nanoid@npm:^3.3.7":
 =======
 "nanoid@npm:^3.3.6, nanoid@npm:^3.3.7":
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+"nanoid@npm:^3.3.7":
+>>>>>>> 3f9ee1e (Merge main)
   version: 3.3.7
   resolution: "nanoid@npm:3.3.7"
   bin:
@@ -10123,6 +10225,7 @@ __metadata:
   languageName: node
   linkType: hard
 
+<<<<<<< HEAD
 "node-releases@npm:^2.0.14":
   version: 2.0.14
   resolution: "node-releases@npm:2.0.14"
@@ -10130,6 +10233,8 @@ __metadata:
   languageName: node
   linkType: hard
 
+=======
+>>>>>>> 3f9ee1e (Merge main)
 "node-releases@npm:^2.0.14":
   version: 2.0.14
   resolution: "node-releases@npm:2.0.14"
@@ -10169,6 +10274,7 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.1"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
     "@material-ui/core": "npm:^4.12.4"
@@ -10188,6 +10294,8 @@ __metadata:
     babel-loader: "npm:^9.1.2"
 =======
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+>>>>>>> 3f9ee1e (Merge main)
     "@mui/icons-material": "npm:^5.15.10"
     "@mui/material": "npm:^5.15.10"
     "@mui/x-tree-view": "npm:^6.17.0"
@@ -10204,9 +10312,12 @@ __metadata:
     babel-jest: "npm:^29.7.0"
     babel-loader: "npm:^9.1.3"
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 659cdcf (Parameter map (#203))
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+>>>>>>> 3f9ee1e (Merge main)
     canvas: "npm:^2.11.2"
     core-js: "npm:^3.36.0"
     css-loader: "npm:^6.10.0"
@@ -10900,6 +11011,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "postcss@npm:^8.0.0, postcss@npm:^8.1.7, postcss@npm:^8.4.23, postcss@npm:^8.4.33, postcss@npm:^8.4.35":
   version: 8.4.35
   resolution: "postcss@npm:8.4.35"
@@ -10917,6 +11029,9 @@ __metadata:
   linkType: hard
 
 "postcss@npm:^8.4.33, postcss@npm:^8.4.35":
+=======
+"postcss@npm:^8.0.0, postcss@npm:^8.1.7, postcss@npm:^8.4.23, postcss@npm:^8.4.33, postcss@npm:^8.4.35":
+>>>>>>> 3f9ee1e (Merge main)
   version: 8.4.35
   resolution: "postcss@npm:8.4.35"
   dependencies:
@@ -11994,12 +12109,17 @@ __metadata:
 
 "semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.5.3, semver@npm:^7.5.4":
 <<<<<<< HEAD
+<<<<<<< HEAD
   version: 7.6.0
   resolution: "semver@npm:7.6.0"
 =======
   version: 7.5.4
   resolution: "semver@npm:7.5.4"
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+  version: 7.6.0
+  resolution: "semver@npm:7.6.0"
+>>>>>>> 3f9ee1e (Merge main)
   dependencies:
     lru-cache: "npm:^6.0.0"
   bin:
@@ -12712,6 +12832,7 @@ __metadata:
   linkType: hard
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 "terser@npm:^5.10.0, terser@npm:^5.26.0":
   version: 5.27.1
   resolution: "terser@npm:5.27.1"
@@ -12720,6 +12841,11 @@ __metadata:
   version: 5.24.0
   resolution: "terser@npm:5.24.0"
 >>>>>>> 6c6388d (Parameter map (#203))
+=======
+"terser@npm:^5.10.0, terser@npm:^5.26.0":
+  version: 5.27.1
+  resolution: "terser@npm:5.27.1"
+>>>>>>> 3f9ee1e (Merge main)
   dependencies:
     "@jridgewell/source-map": "npm:^0.3.3"
     acorn: "npm:^8.8.2"
@@ -12728,6 +12854,7 @@ __metadata:
   bin:
     terser: bin/terser
   checksum: 90357abb6849f6d8edf43620de341e05d4995b215d81ffe88168535e06eb8d7af364698f1789ec58b5c87a1cb87ca103f80b83ecdf1dbbd96190aea956dc2a4a
+<<<<<<< HEAD
   languageName: node
   linkType: hard
 
@@ -12742,6 +12869,8 @@ __metadata:
   bin:
     terser: bin/terser
   checksum: bed0d39d9a7f2b82c87173e48081c46426a8820ba1dcb864bbfccd2df2b7fb8498a7ea4c8ef045ccce5713b23a6b4c3a784967f1b9f3115adaa7f51712f6e6ae
+=======
+>>>>>>> 3f9ee1e (Merge main)
   languageName: node
   linkType: hard
 
