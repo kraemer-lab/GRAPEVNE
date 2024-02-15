@@ -201,7 +201,7 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
               // Format port name
               const port_name_split = name.split("$");
               let port_name = node_config[port_name_split[0]]?.name ?? null;
-              if (port_name === undefined || port_name === null) {
+              if (!port_name) {
                 port_name = name;
               } else if (
                 port_name_split.length > 1 &&
