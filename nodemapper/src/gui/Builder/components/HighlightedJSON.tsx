@@ -2,7 +2,7 @@ import React from 'react';
 import EasyEdit from 'react-easy-edit';
 import ParameterList from './ParameterList';
 
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faTimes, faLink } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { Types } from 'react-easy-edit';
@@ -128,7 +128,7 @@ const ConnectParameter = (props: { connectParameter }) => {
       onClick={() => props.connectParameter()}
     >
       {' '}
-      🔗
+      <FontAwesomeIcon icon={faLink} />
     </span>
   );
 };
