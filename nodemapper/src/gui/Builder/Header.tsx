@@ -81,93 +81,90 @@ const Header = () => {
   return (
     <>
       <link href="http://fonts.googleapis.com/css?family=Oswald" rel="stylesheet" type="text/css" />
-      <div
+      {/*
+        *** LOAD function needs to assign eventListeners on load
+      <Button
+        id="btnBuilderLoadScene"
+        className="btn"
+        onClick={btnLoadScene}
       >
-        {/*
-          *** LOAD function needs to assign eventListeners on load
-        <Button
-          id="btnBuilderLoadScene"
-          className="btn"
-          onClick={btnLoadScene}
-        >
-          LOAD
-        </Button>
+        LOAD
+      </Button>
 
-        <Button
-          id="btnBuilderSaveScene"
-          className="btn"
-          onClick={btnSaveScene}
-        >
-          SAVE
-        </Button>
-        */}
-        <Button
-          id="btnBuilderGetModuleList"
-          className="btn"
-          onClick={btnGetModuleList}
-          variant="outlined"
-        >
-          GET MODULE LIST
-        </Button>
+      <Button
+        id="btnBuilderSaveScene"
+        className="btn"
+        onClick={btnSaveScene}
+      >
+        SAVE
+      </Button>
+      */}
+      <Button
+        id="btnBuilderGetModuleList"
+        className="btn"
+        onClick={btnGetModuleList}
+        variant="outlined"
+      >
+        GET MODULE LIST
+      </Button>
 
-        <Button
-          id="btnBuildAndRunDropdown"
-          aria-controls={open ? 'buildAndRunDropdown-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={btnBuildAndRunDropdownClick}
-          variant="outlined"
-        >
-          BUILD & RUN ...
-        </Button>
+      <Button
+        id="btnBuildAndRunDropdown"
+        aria-controls={open ? 'buildAndRunDropdown-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={btnBuildAndRunDropdownClick}
+        variant="outlined"
+      >
+        BUILD & RUN ...
+      </Button>
 
-        <Menu
-          id="buildAndRunDropdown-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={btnBuildAndRunDropdownClose}
-          MenuListProps={{
-            'aria-labelledby': 'buildAndRunDropdown',
-          }}
+      <Menu
+        id="buildAndRunDropdown-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={btnBuildAndRunDropdownClose}
+        MenuListProps={{
+          'aria-labelledby': 'buildAndRunDropdown',
+        }}
+      >
+        <MenuItem
+          id="btnBuilderBuildAndTest"
+          onClick={btnRun}
         >
-          <MenuItem
-            id="btnBuilderBuildAndTest"
-            onClick={btnRun}
-          >
-            TEST BUILD
-          </MenuItem>
-          <MenuItem
-            id="btnBuilderBuildAsModule"
-            onClick={btnBuildAsModule}
-          >
-            BUILD AS MODULE
-          </MenuItem>
-          <MenuItem
-            id="btnBuilderBuildAsWorkflow"
-            onClick={btnBuildAsWorkflow}
-          >
-            BUILD AS WORKFLOW
-          </MenuItem>
-        </Menu>
+          TEST BUILD
+        </MenuItem>
+        <MenuItem
+          id="btnBuilderBuildAsModule"
+          onClick={btnBuildAsModule}
+        >
+          BUILD AS MODULE
+        </MenuItem>
+        <MenuItem
+          id="btnBuilderBuildAsWorkflow"
+          onClick={btnBuildAsWorkflow}
+        >
+          BUILD AS WORKFLOW
+        </MenuItem>
+      </Menu>
 
-        <Button
-          id="btnBuilderCleanBuildFolder"
-          className="btn"
-          onClick={btnCleanBuildFolder}
-          variant="outlined"
-        >
-          DELETE TEST BUILD
-        </Button>
+      <Button
+        id="btnBuilderCleanBuildFolder"
+        className="btn"
+        onClick={btnCleanBuildFolder}
+        variant="outlined"
+      >
+        DELETE TEST BUILD
+      </Button>
 
-        <Button
-          id="btnBuilderClearScene"
-          className="btn"
-          onClick={btnClearScene}
-          variant="outlined"
-        >
-          CLEAR GRAPH
-        </Button>
-      </div>
+      <Button
+        id="btnBuilderClearScene"
+        className="btn"
+        onClick={btnClearScene}
+        variant="outlined"
+      >
+        CLEAR GRAPH
+      </Button>
     </>
   );
 };
