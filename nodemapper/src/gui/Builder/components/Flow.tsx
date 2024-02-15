@@ -312,7 +312,6 @@ export const getNodeName = (node: Node): string => {
 
 export const getNodeByName = (name: string, nodes: Node[]): Node | null => {
   for (const node of nodes) {
-    console.log('Checking node: ', node.data.config.name, ' for ', name);
     if (node.data.config.name === name) {
       return node;
     }
