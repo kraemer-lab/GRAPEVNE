@@ -23,4 +23,3 @@ module other_workflow:
     snakefile: "Snakefile.sub"
 
 use rule * from other_workflow exclude gen_rule1 as other_*
-

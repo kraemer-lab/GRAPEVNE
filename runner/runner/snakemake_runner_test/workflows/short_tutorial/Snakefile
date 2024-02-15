@@ -60,4 +60,3 @@ rule in_samples:
         "data/samples/A.fastq",
         "data/samples/B.fastq",
         "data/samples/C.fastq"
-

@@ -37,4 +37,3 @@ rule rule_5:
 rule gen_rule1:
   output:
         "results/rule1"
-
