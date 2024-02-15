@@ -1,24 +1,17 @@
-import React from "react";
-import BuilderEngine from "./BuilderEngine";
+import React from 'react';
 
-import { useState } from "react";
-import { useAppDispatch } from "redux/store/hooks";
-import { useAppSelector } from "redux/store/hooks";
+import { useAppDispatch } from 'redux/store/hooks';
 
-import { displayUpdateNodeInfo } from "redux/actions";
-
-import { builderSetNodes } from "redux/actions";
-import { builderSetEdges } from "redux/actions";
-import { builderLoadNodemap } from "redux/actions";
-import { builderSaveNodemap } from "redux/actions";
-import { builderBuildAndRun } from "redux/actions";
-import { builderOpenTerminal } from "redux/actions";
-import { builderBuildAsModule } from "redux/actions";
-import { builderBuildAsWorkflow } from "redux/actions";
-import { builderNodeDeselected } from "redux/actions";
-import { builderCleanBuildFolder } from "redux/actions";
-import { builderGetRemoteModules } from "redux/actions";
-import { builderToggleTerminalVisibility } from "redux/actions";
+import {
+  builderBuildAndRun,
+  builderBuildAsModule,
+  builderBuildAsWorkflow,
+  builderCleanBuildFolder,
+  builderGetRemoteModules,
+  builderNodeDeselected,
+  builderSetEdges,
+  builderSetNodes,
+} from 'redux/actions';
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -70,18 +63,14 @@ const Header = () => {
 
   return (
     <>
-      <link
-        href="http://fonts.googleapis.com/css?family=Oswald"
-        rel="stylesheet"
-        type="text/css"
-      />
+      <link href="http://fonts.googleapis.com/css?family=Oswald" rel="stylesheet" type="text/css" />
       <div
         style={{
-          display: "flex",
+          display: 'flex',
           fontSize: 18,
           marginLeft: 0,
           marginBottom: 2,
-          alignItems: "center",
+          alignItems: 'center',
         }}
       >
         {/*
@@ -102,44 +91,24 @@ const Header = () => {
           SAVE
         </button>
         */}
-        <button
-          id="btnBuilderGetModuleList"
-          className="btn"
-          onClick={btnGetModuleList}
-        >
+        <button id="btnBuilderGetModuleList" className="btn" onClick={btnGetModuleList}>
           GET MODULE LIST
         </button>
         |
         <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
           TEST BUILD
         </button>
-        <button
-          id="btnBuilderCleanBuildFolder"
-          className="btn"
-          onClick={btnCleanBuildFolder}
-        >
+        <button id="btnBuilderCleanBuildFolder" className="btn" onClick={btnCleanBuildFolder}>
           DELETE TEST BUILD
         </button>
-        <button
-          id="btnBuilderBuildAsModule"
-          className="btn"
-          onClick={btnBuildAsModule}
-        >
+        <button id="btnBuilderBuildAsModule" className="btn" onClick={btnBuildAsModule}>
           BUILD AS MODULE
         </button>
-        <button
-          id="btnBuilderBuildAsWorkflow"
-          className="btn"
-          onClick={btnBuildAsWorkflow}
-        >
+        <button id="btnBuilderBuildAsWorkflow" className="btn" onClick={btnBuildAsWorkflow}>
           BUILD AS WORKFLOW
         </button>
         |
-        <button
-          id="btnBuilderClearScene"
-          className="btn"
-          onClick={btnClearScene}
-        >
+        <button id="btnBuilderClearScene" className="btn" onClick={btnClearScene}>
           CLEAR GRAPH
         </button>
       </div>

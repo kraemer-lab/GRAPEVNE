@@ -61,7 +61,9 @@ def test_Snakefile_SplitByRules():
 
 
 def test_FullTokenizeFromFile():
-    filename = os.path.abspath("../examples/snakemake-short-tutorial/Snakefile")
+    filename = os.path.abspath(
+        "runner/snakemake_runner_test/workflows/short_tutorial/Snakefile"
+    )
     blocks = FullTokenizeFromFile(filename)
     expected_links = [
         ["call_variants", "all"],
@@ -85,7 +87,9 @@ def test_FullTokenizeFromFile():
 
 
 def test_SplitByRulesFromFile():
-    filename = os.path.abspath("../examples/snakemake-short-tutorial/Snakefile")
+    filename = os.path.abspath(
+        "runner/snakemake_runner_test/workflows/short_tutorial/Snakefile"
+    )
     blocks = SplitByRulesFromFile(filename)
     # Some datafiles are present, so those links are not included in the DAG
     expected_links = [
@@ -103,7 +107,9 @@ def test_SplitByRulesFromFile():
 
 
 def test_SplitByRulesFromFile_submodules():
-    filename = os.path.abspath("../examples/submodules/Snakefile")
+    filename = os.path.abspath(
+        "runner/snakemake_runner_test/workflows/submodules/Snakefile"
+    )
     blocks = SplitByRulesFromFile(filename)
     # Some datafiles are present, so those links are not included in the DAG
     expected_links = [
@@ -118,7 +124,9 @@ def test_SplitByRulesFromFile_submodules():
 
 
 def test_SplitByRulesFileContent():
-    filename = os.path.abspath("../examples/snakemake-short-tutorial/Snakefile")
+    filename = os.path.abspath(
+        "runner/snakemake_runner_test/workflows/short_tutorial/Snakefile"
+    )
     with open(filename, "r") as file:
         blocks = SplitByRulesFileContent(file.read())
     expected_links = [

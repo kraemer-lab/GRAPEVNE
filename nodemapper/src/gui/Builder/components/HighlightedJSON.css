@@ -16,7 +16,6 @@
 }
 
 .line {
-  margin-left: 1rem;
 }
 
 .key {
@@ -31,6 +30,11 @@
 
 .string:hover {
   background-color: #555555;
+}
+
+.linked {
+  color: #797b19;
+  font-style: italic;
 }
 
 .number {

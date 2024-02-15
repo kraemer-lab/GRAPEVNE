@@ -1,18 +1,16 @@
-import React from "react";
-import Runner from "./Runner/Runner";
-import Builder from "./Builder/Builder";
+import React from 'react';
+import Builder from './Builder/Builder';
+import Runner from './Runner/Runner';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import "./Buttons.css";
+import './Buttons.css';
 
 interface MenuChoiceRenderProps {
   selection: number;
 }
 
-const MenuChoiceRender: React.FC<MenuChoiceRenderProps> = (
-  props: MenuChoiceRenderProps,
-) => {
+const MenuChoiceRender: React.FC<MenuChoiceRenderProps> = (props: MenuChoiceRenderProps) => {
   const selection = props.selection;
   if (selection == 0) {
     return <Builder />;
@@ -28,16 +26,16 @@ const MainPage = () => {
     <>
       <div
         style={{
-          display: "flex",
-          height: "100%",
-          width: "100%",
-          flexFlow: "column",
+          display: 'flex',
+          height: '100%',
+          width: '100%',
+          flexFlow: 'column',
         }}
       >
         <div
           className="header"
           style={{
-            flex: "0 1 auto",
+            flex: '0 1 auto',
           }}
         >
           <link
@@ -61,7 +59,7 @@ const MainPage = () => {
             */}
           </div>
         </div>
-        <div className="body" style={{ flex: "1 1 auto", overflowY: "auto" }}>
+        <div className="body" style={{ flex: '1 1 auto', overflowY: 'auto' }}>
           <MenuChoiceRender selection={menuChoice} />
         </div>
       </div>

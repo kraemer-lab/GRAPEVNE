@@ -1,6 +1,5 @@
-import React from "react";
-import { Terminal } from "xterm";
-import TerminalController from "Terminal/TerminalController";
+import TerminalController from 'Terminal/TerminalController';
+import React from 'react';
 
 class TerminalWindow extends React.Component {
   terminal: TerminalController;
@@ -22,8 +21,8 @@ class TerminalWindow extends React.Component {
       <div
         ref={this.xtermRef}
         style={{
-          width: "100%",
-          height: "100%",
+          width: '100%',
+          height: '100%',
         }}
       />
     );

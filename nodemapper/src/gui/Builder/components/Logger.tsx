@@ -1,12 +1,8 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { useAppDispatch } from "redux/store/hooks";
-import { useAppSelector } from "redux/store/hooks";
-import { builderLogEvent } from "redux/actions";
+import React from 'react';
+import { builderLogEvent } from 'redux/actions';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-import { LazyLog } from "react-lazylog";
-import { ScrollFollow } from "react-lazylog";
+import { LazyLog, ScrollFollow } from 'react-lazylog';
 
 const builderAPI = window.builderAPI;
 

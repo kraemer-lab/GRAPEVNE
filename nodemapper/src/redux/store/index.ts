@@ -1,8 +1,8 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { runnerMiddleware } from "redux/middleware/runner";
-import { builderMiddleware } from "redux/middleware/builder";
-import { displayMiddleware } from "redux/middleware/display";
-import rootReducer from "redux/reducers";
+import { configureStore } from '@reduxjs/toolkit';
+import { builderMiddleware } from 'redux/middleware/builder';
+import { displayMiddleware } from 'redux/middleware/display';
+import { runnerMiddleware } from 'redux/middleware/runner';
+import rootReducer from 'redux/reducers';
 
 const store = configureStore({
   reducer: rootReducer,

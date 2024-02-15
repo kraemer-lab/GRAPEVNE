@@ -1,8 +1,8 @@
-import React from "react";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
+import React from 'react';
+import { Terminal } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
 
-import "./../../node_modules/xterm/css/xterm.css";
+import './../../node_modules/xterm/css/xterm.css';
 
 // Ensure that the terminal is only mounted once
 let terminal_mounted = false;
