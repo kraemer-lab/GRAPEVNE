@@ -375,7 +375,7 @@ const NodeSelected = (node: Node, dispatch) => {
     id: node.id,
     name: node.data.config.name,
     type: node.data.config.type,
-    code: JSON.stringify(node.data.config.config, null, 2),
+    nodeparams: JSON.stringify(node.data.config.config, null, 2),
   };
   // Open module parameters pane
   dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
@@ -383,14 +383,7 @@ const NodeSelected = (node: Node, dispatch) => {
 
 const NodeSelectedByID = (id: string, nodes: Node[], dispatch) => {
   const node = getNodeById(id, nodes) as Node;
-  const payload = {
-    id: node.id,
-    name: node.data.config.name,
-    type: node.data.config.type,
-    code: JSON.stringify(node.data.config.config, null, 2),
-  };
-  // Open module parameters pane
-  dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+  NodeSelected(node, dispatch);
 };
 
 interface INodeDeselectedDispatch {

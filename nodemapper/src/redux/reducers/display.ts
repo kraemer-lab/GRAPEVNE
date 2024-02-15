@@ -16,8 +16,7 @@ const displayReducer = createReducer(displayStateInit, (builder) => {
       state.nodeinfo = action.payload;
       console.info('[Reducer] ' + action.type);
     })
-    .addCase(action.displaySaveCodeSnippet, (state, action) => {
-      // TODO: Update codesnippet in node
+    .addCase(action.displaySaveNodeparams, (state, action) => {
       console.info('[Reducer] ' + action.type);
     })
     .addCase(action.displayStoreFolderInfo, (state, action) => {

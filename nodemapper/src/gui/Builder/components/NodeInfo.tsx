@@ -50,20 +50,20 @@ const DocString = (props: DocStringProps) => {
 };
 
 const NodeInfo = () => {
-  const [codesnippet, setCodesnippet] = useState('');
+  const [nodeparams, setNodeparams] = useState('');
   const [docstring, setDocstring] = useState('');
   const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (nodeinfo === '') {
-      setCodesnippet('');
+      setNodeparams('');
     } else {
       // Extricate docstring from codesnippet
-      const code = JSON.parse(JSON.parse(nodeinfo).code);
-      setDocstring(code.docstring);
-      delete code.docstring;
-      setCodesnippet(JSON.stringify(code));
+      const nodeparamsObj = JSON.parse(JSON.parse(nodeinfo).nodeparams);
+      setDocstring(nodeparamsObj.docstring);
+      delete nodeparamsObj.docstring;
+      setNodeparams(JSON.stringify(nodeparamsObj));
     }
   }, [nodeinfo]);
 
@@ -94,7 +94,7 @@ const NodeInfo = () => {
               overflowY: 'auto',
             }}
           >
-            <HighlightedJSON nodeid={JSON.parse(nodeinfo).id} json={codesnippet} />
+            <HighlightedJSON nodeid={JSON.parse(nodeinfo).id} json={nodeparams} />
           </Panel>
         </PanelGroup>
       </Content>

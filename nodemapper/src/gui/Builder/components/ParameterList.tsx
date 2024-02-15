@@ -69,37 +69,39 @@ const detemineInputNodes = (
   showSelfNodes: boolean,
 ): InputNodesType => {
   const input_nodes: InputNodesType = {};
-    if (showAllNodes || showSelfNodes) {
-        nodes.forEach((n) => {
-            input_nodes[n.id] = {
-                label: getNodeName(n),
-                node: n,
-            };
-        });
-    }
-    if (showAllNodes) {
-        // Remove self node (if not showing self node)
-        if (!showSelfNodes) {
-            delete input_nodes[id];
-        }
-    } else {
-        if (showSelfNodes) {
-            // Add self node (if showing self node)
-            input_nodes[id] = {
-                label: getNodeName(node_to),
-                node: node_to,
-            };
-        } else {
-            edges.forEach((e) => {
-                if (e.target === id) {
-                    input_nodes[e.targetHandle] = {
-                        label: e.targetHandle,
-                        node: getNodeById(e.source, nodes),
-                    };
-                }
-            });
-        }
-    }
+  if (showAllNodes || showSelfNodes) {
+      nodes.forEach((n) => {
+          input_nodes[n.id] = {
+              label: getNodeName(n),
+              node: n,
+          };
+      });
+  }
+  if (showAllNodes) {
+      // Remove self node (if not showing self node)
+      if (!showSelfNodes) {
+          delete input_nodes[id];
+      }
+  } else {
+      if (showSelfNodes) {
+          // Add self node (if showing self node)
+          input_nodes[id] = {
+              label: getNodeName(node_to),
+              node: node_to,
+          };
+      } else {
+          edges.forEach((e) => {
+              if (e.target === id) {
+                  input_nodes[e.targetHandle] = {
+                      label: e.targetHandle,
+                      node: getNodeById(e.source, nodes),
+                  };
+              }
+          });
+      }
+  }
+  return input_nodes;
+};
 
 export default function ParameterList({
   id,
