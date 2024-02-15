@@ -423,9 +423,7 @@ const Flow = () => {
   };
 
   const RemoveLinkParameters = (removed_nodes: Node[]) => {
-    const removed_nodes_names = removed_nodes.map((node) => {
-      return getNodeName(node);
-    });
+    const removed_nodes_names = removed_nodes.map(getNodeName);
     const StripLinks = (config: Record<string, unknown>) => {
       if (config === null || config === undefined) {
         return config;
