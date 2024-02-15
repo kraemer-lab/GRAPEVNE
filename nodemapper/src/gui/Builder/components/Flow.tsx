@@ -112,7 +112,7 @@ export const wranglename = (name: string) => {
 const ModuleNode = (props: NodeProps<NodeData>) => {
   const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
   let selected = false;
-  if (nodeinfo !== null && nodeinfo !== undefined && nodeinfo !== "") {
+  if (nodeinfo) {
     const nodeinfo_id = JSON.parse(nodeinfo)["id"];
     selected = nodeinfo_id === props.id;
   }
