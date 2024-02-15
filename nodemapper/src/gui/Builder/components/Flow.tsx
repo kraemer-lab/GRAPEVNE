@@ -456,7 +456,7 @@ const Flow = () => {
       .map((node) => {
         const newnode = JSON.parse(JSON.stringify(node));
         const node_config = newnode.data.config.config.config ?? null;
-        if (node_config === null || node_config === undefined) {
+        if (!node_config) {
           return node_config;
         }
         // Recursively remove links to removed nodes
