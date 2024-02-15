@@ -1,10 +1,8 @@
-import * as globals from "redux/globals";
+import * as globals from 'redux/globals';
 
-import { displayGetFolderInfo } from "redux/actions";
-import { displayUpdateNodeInfo } from "redux/actions";
-import { displayStoreFolderInfo } from "redux/actions";
+import { displayGetFolderInfo } from 'redux/actions';
 
-import { runnerUpdateStatusText } from "redux/actions";
+import { runnerUpdateStatusText } from 'redux/actions';
 
 type Query = Record<string, unknown>;
 
@@ -18,11 +16,11 @@ export const runnerMiddleware = ({ getState, dispatch }) => {
     return (action) => {
       // action.type
       //       .payload
-      if (action.type.split("/")[0] === "runner") {
-        console.log("Middleware [runner]: ", action);
+      if (action.type.split('/')[0] === 'runner') {
+        console.log('Middleware [runner]: ', action);
       }
       switch (action.type) {
-        case "runner/delete-results":
+        case 'runner/delete-results':
           DeleteResults(dispatch, getState().display.folderinfo);
           break;
         default:
@@ -38,11 +36,11 @@ export const runnerMiddleware = ({ getState, dispatch }) => {
 ///////////////////////////////////////////////////////////////////////////////
 
 const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
-  dispatch(runnerUpdateStatusText("Deleting Results..."));
+  dispatch(runnerUpdateStatusText('Deleting Results...'));
   const query: Query = {
-    query: "runner/deleteresults",
+    query: 'runner/deleteresults',
     data: {
-      format: "Snakefile",
+      format: 'Snakefile',
       content: JSON.parse(folderinfo).foldername,
     },
   };
@@ -51,15 +49,15 @@ const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
     dispatch(displayGetFolderInfo());
   };
   switch (backend) {
-    case "rest":
-      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+    case 'rest':
+      query['data']['content'] = JSON.stringify(query['data']['content']);
       SubmitQuery(query, dispatch, callback);
       break;
-    case "electron":
+    case 'electron':
       callback((await runnerAPI.LoadWorkflow(query)) as Query);
       break;
     default:
-      console.error("Unknown backend: ", backend);
+      console.error('Unknown backend: ', backend);
   }
 };
 
@@ -68,7 +66,7 @@ const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
 ///////////////////////////////////////////////////////////////////////////////
 
 const RebuildNodeMap = (content: Query, dispatch): void => {
-  throw new Error("Not implemented");
+  throw new Error('Not implemented');
 
   // Rebuild map from returned (segmented) representation
   /*const nodeMapEngine = RunnerEngine.Instance;
@@ -96,56 +94,49 @@ const RebuildNodeMap = (content: Query, dispatch): void => {
   dispatch(runnerLintSnakefile());*/
 };
 
-const QueryAndLoadTextFile = (
-  onLoad: (result, filename: string) => void,
-): void => {
+const QueryAndLoadTextFile = (onLoad: (result, filename: string) => void): void => {
   // eslint-disable-line @typescript-eslint/ban-types
   // Opens a file dialog, then executes readerEvent
-  const input = document.createElement("input");
-  input.type = "file";
+  const input = document.createElement('input');
+  input.type = 'file';
   input.onchange = (e) => {
     const file = (e.target as HTMLInputElement).files[0];
     const reader = new FileReader();
-    reader.readAsText(file, "UTF-8");
-    reader.onload = (readerEvent) =>
-      onLoad(readerEvent.target.result, file.name);
+    reader.readAsText(file, 'UTF-8');
+    reader.onload = (readerEvent) => onLoad(readerEvent.target.result, file.name);
   };
   input.click();
 };
 
-const SubmitQuery = (
-  query: Query,
-  dispatch,
-  callback: (content: Query) => void,
-): void => {
+const SubmitQuery = (query: Query, dispatch, callback: (content: Query) => void): void => {
   // POST request handler
   const postRequest = async () => {
     const postRequestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json;charset=UTF-8" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       body: JSON.stringify(query),
     };
-    console.info("Sending query: ", query);
-    fetch(API_ENDPOINT + "/post", postRequestOptions)
+    console.info('Sending query: ', query);
+    fetch(API_ENDPOINT + '/post', postRequestOptions)
       .then((response) => {
         if (response.ok) {
           return response.json();
         }
-        dispatch(runnerUpdateStatusText("Error: " + response.statusText));
+        dispatch(runnerUpdateStatusText('Error: ' + response.statusText));
         throw response;
       })
       .then((data) => {
         if (data !== null) processResponse(data, callback);
-        console.info("Got response: ", data);
+        console.info('Got response: ', data);
       })
       .catch((error) => {
-        console.error("Error during query: ", error);
+        console.error('Error during query: ', error);
       });
   };
 
   const processResponse = (content: Query, callback) => {
-    console.log("Process response: ", content);
-    dispatch(runnerUpdateStatusText(""));
+    console.log('Process response: ', content);
+    dispatch(runnerUpdateStatusText(''));
     callback(content);
   };
 

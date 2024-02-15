@@ -778,9 +778,9 @@ class Model:
         new_orphan_outputs = sorted(
             list(set(self.ExposeOrphanOutputs()) - set(orphan_outputs_prior))
         )
-        assert (
-            len(new_orphan_outputs) <= 1
-        ), "More than one new orphan output found: " + str(new_orphan_outputs)
+        assert len(new_orphan_outputs) <= 1, (
+            "More than one new orphan output found: " + str(new_orphan_outputs)
+        )
 
         # Preserve incoming connections to parent node
         if len(new_orphan_inputs) == 0:

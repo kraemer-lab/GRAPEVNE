@@ -1,43 +1,34 @@
-import React from "react";
-import EasyEdit from "react-easy-edit";
-import BuilderEngine from "../BuilderEngine";
-import ParameterList from "./ParameterList";
+import React from 'react';
+import EasyEdit from 'react-easy-edit';
+import ParameterList from './ParameterList';
 
-import { getNodeById } from "./Flow";
-import { useState } from "react";
-import { useReducer } from "react";
-import { Types } from "react-easy-edit";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { getNodeByName } from "./Flow";
-import { useAppSelector } from "redux/store/hooks";
-import { useAppDispatch } from "redux/store/hooks";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { builderUpdateNodeInfoKey } from "redux/actions";
-import { builderUpdateNode } from "redux/actions";
-import { builderNodeSelectedByID } from "redux/actions";
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useState } from 'react';
+import { Types } from 'react-easy-edit';
+import { builderUpdateNode, builderUpdateNodeInfoKey } from 'redux/actions';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import { getNodeById, getNodeByName } from './Flow';
 
-import { styled } from "@mui/material/styles";
-import { TreeView } from "@mui/x-tree-view/TreeView";
-import { TreeItem } from "@mui/x-tree-view/TreeItem";
-import { createTheme } from "@mui/material/styles";
-import { ThemeProvider } from "@mui/material/styles";
-import type {} from "@mui/x-tree-view/themeAugmentation";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import { TreeView } from '@mui/x-tree-view/TreeView';
+import type {} from '@mui/x-tree-view/themeAugmentation';
 
-import "./HighlightedJSON.css";
+import './HighlightedJSON.css';
 
 export const theme = createTheme({
   components: {
     MuiTreeItem: {
       styleOverrides: {
         content: {
-          padding: "0px",
+          padding: '0px',
         },
         iconContainer: {
-          display: "none",
+          display: 'none',
         },
         label: {
-          padding: "0px",
+          padding: '0px',
         },
       },
     },
@@ -49,12 +40,7 @@ export const theme = createTheme({
  * https://codepen.io/benshope/pen/BxVpjo
  */
 
-const protectedNames = [
-  "input_namespace",
-  "output_namespace",
-  "snakefile",
-  "docstring",
-];
+const protectedNames = ['input_namespace', 'output_namespace', 'snakefile', 'docstring'];
 
 interface IHighlightJSONProps {
   keylist: string[];
@@ -72,7 +58,7 @@ interface HighlightedJSONProps {
 
 export const lookupKey = (json, keylist: string[], key: string) => {
   // If key is the empty string, return the last key in the keylist
-  if (key === "") {
+  if (key === '') {
     key = keylist[keylist.length - 1];
     keylist = keylist.slice(0, keylist.length - 1);
   }
@@ -97,7 +83,7 @@ const lookupKeyGlobal = (
   }
 
   // If key is the empty string, return the last key in the keylist
-  if (key === "") {
+  if (key === '') {
     if (keylist.length === 0) {
       return undefined;
     }
@@ -118,14 +104,14 @@ const lookupKeyGlobal = (
     return undefined;
   }
   const value = lookupKey(config, keylist, key);
-  const metadata = lookupKey(config, keylist, ":" + key);
+  const metadata = lookupKey(config, keylist, ':' + key);
 
   // If the key is linked to another parameter, follow the link
-  if (metadata !== undefined && metadata["link"] !== undefined) {
-    let link_from = metadata["link"];
+  if (metadata !== undefined && metadata['link'] !== undefined) {
+    let link_from = metadata['link'];
     const link_node = link_from[0];
     link_from = link_from.slice(1, link_from.length);
-    return lookupKeyGlobal(json, link_node, link_from, "", lookup_count + 1);
+    return lookupKeyGlobal(json, link_node, link_from, '', lookup_count + 1);
   } else {
     // Otherwise, return the simple value
     return value;
@@ -136,12 +122,12 @@ const ConnectParameter = (props: { connectParameter }) => {
   return (
     <span
       style={{
-        cursor: "pointer",
-        fontSize: "0.8em",
+        cursor: 'pointer',
+        fontSize: '0.8em',
       }}
       onClick={() => props.connectParameter()}
     >
-      {" "}
+      {' '}
       🔗
     </span>
   );
@@ -151,12 +137,12 @@ const DisconnectParameter = (props: { disconnectParameter }) => {
   return (
     <span
       style={{
-        cursor: "pointer",
-        color: "#8B0000",
+        cursor: 'pointer',
+        color: '#8B0000',
       }}
       onClick={() => props.disconnectParameter()}
     >
-      {" "}
+      {' '}
       <FontAwesomeIcon icon={faTimes} />
     </span>
   );
@@ -165,14 +151,14 @@ const DisconnectParameter = (props: { disconnectParameter }) => {
 export const checkParameter_IsModuleRoot = (value) => {
   if (value === undefined) return false;
   // Parameter is a module root if it contains a 'snakefile' field
-  if (Object.keys(value).includes("snakefile")) return true;
+  if (Object.keys(value).includes('snakefile')) return true;
   return false;
 };
 
 export const checkParameter_IsInModuleConfigLayer = (node, keylist, key) => {
   if (node === undefined || node === null) return false;
   // Is the parameters parent a module root?
-  const json = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
+  const json = JSON.parse(JSON.stringify(node))['data']['config']['config'];
   let jsonObj = json;
   for (let i = 0; i < keylist.length; i++) {
     jsonObj = jsonObj[keylist[i]];
@@ -185,40 +171,30 @@ export const checkParameter_IsInModuleConfigLayer = (node, keylist, key) => {
 const HighlightedJSON = (props: HighlightedJSONProps) => {
   const nodes = useAppSelector((state) => state.builder.nodes);
   const dispatch = useAppDispatch();
-  const display_module_settings = useAppSelector(
-    (state) => state.builder.display_module_settings,
-  );
+  const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
   const [menu, setMenu] = useState(null);
   let nodeId = 0;
 
   // Parse JSON string
   const json_str: string = props.json;
-  if (
-    json_str === "" ||
-    json_str === undefined ||
-    json_str === JSON.stringify({})
-  )
+  if (json_str === '' || json_str === undefined || json_str === JSON.stringify({}))
     return <div className="json"></div>;
   const json = JSON.parse(json_str);
 
   const concertinaIfHierarchicalModule = (json) => {
-    if (display_module_settings)
-      return Array.from({ length: 999 }, (_, i) => i.toString());
+    if (display_module_settings) return Array.from({ length: 999 }, (_, i) => i.toString());
     if (json === undefined) return [];
-    const jsonConfig = json["config"];
+    const jsonConfig = json['config'];
     if (jsonConfig === undefined) return [];
     // Check for hierarchical module
     for (const key in jsonConfig) {
-      if (
-        jsonConfig[key] != undefined &&
-        jsonConfig[key]["snakefile"] !== undefined
-      ) {
-        console.log("Hierarchical module");
+      if (jsonConfig[key] != undefined && jsonConfig[key]['snakefile'] !== undefined) {
+        console.log('Hierarchical module');
         return [];
       }
     }
     // Non-hierarchical module, expand all
-    console.log("Non-hierarchical module");
+    console.log('Non-hierarchical module');
     return Array.from({ length: 999 }, (_, i) => i.toString());
   };
 
@@ -233,36 +209,34 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
     const fieldlist = Object.keys(jsonObj).map((key) => {
       let value = jsonObj[key];
       let valueType: string = typeof value;
-      const isSimpleValue =
-        ["string", "number", "boolean"].includes(valueType) || !value;
-      if (isSimpleValue && valueType === "object") {
-        valueType = "null" as undefined;
+      const isSimpleValue = ['string', 'number', 'boolean'].includes(valueType) || !value;
+      if (isSimpleValue && valueType === 'object') {
+        valueType = 'null' as undefined;
       }
       let isProtectedValue = false;
       if (isSimpleValue) {
         isProtectedValue = protectedNames.includes(key);
       }
-      if (isProtectedValue && valueType === "null") {
-        value = "(null)";
+      if (isProtectedValue && valueType === 'null') {
+        value = '(null)';
         valueType = null;
       }
       const isHiddenValue =
-        !display_module_settings &&
-        (protectedNames.includes(key) || key.startsWith(":"));
+        !display_module_settings && (protectedNames.includes(key) || key.startsWith(':'));
       if (isHiddenValue) {
         return <div key={key}></div>;
       }
 
       // Check whether parameter has a corresponding metadata entry
-      const metadata = lookupKey(json, keylist, ":" + key);
+      const metadata = lookupKey(json, keylist, ':' + key);
       const valueOptions = [];
       let isParameterConnected = false;
-      let parameterValue = "(link)";
+      let parameterValue = '(link)';
       if (metadata !== undefined) {
         // Determine the type of the parameter
-        if (metadata["type"] === "select") {
-          valueType = "select";
-          for (const option of metadata["options"]) {
+        if (metadata['type'] === 'select') {
+          valueType = 'select';
+          for (const option of metadata['options']) {
             valueOptions.push({
               label: option,
               value: option,
@@ -270,16 +244,16 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
           }
         }
         // Check whether the parameter is linked to another parameter
-        if (metadata["link"] !== undefined) {
-          let link_from = metadata["link"];
+        if (metadata['link'] !== undefined) {
+          let link_from = metadata['link'];
           const link_node = link_from[0];
           link_from = link_from.slice(1, link_from.length);
-          parameterValue = lookupKeyGlobal(json, link_node, link_from, "");
+          parameterValue = lookupKeyGlobal(json, link_node, link_from, '');
           if (parameterValue === undefined) {
-            parameterValue = "(linked value is undefined)";
+            parameterValue = '(linked value is undefined)';
           }
-          if (parameterValue === "") {
-            parameterValue = "(linked value is empty)";
+          if (parameterValue === '') {
+            parameterValue = '(linked value is empty)';
           }
           isParameterConnected = true;
         }
@@ -299,36 +273,25 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
       // If the key is a module config, skip rendering of the key (but render children)
       const node = getNodeById(props.nodeid, nodes);
-      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(
-        node,
-        keylist,
-        key,
-      );
+      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist, key);
       if (isInModuleConfigLayer && !display_module_settings) {
         // Of the parameters in the module config layer, continue rendering only the
         // 'config' children, which contains the actual parameters
-        if (key !== "config") {
+        if (key !== 'config') {
           return null;
         } else {
-          return (
-            <HighlightJSON
-              keylist={[...keylist, key]}
-              key={(nodeId++).toString()}
-            />
-          );
+          return <HighlightJSON keylist={[...keylist, key]} key={(nodeId++).toString()} />;
         }
       }
 
       // Callback to update field in central state (triggers re-render)
       const setValue = (value) => {
-        dispatch(
-          builderUpdateNodeInfoKey({ keys: [...keylist, key], value: value }),
-        );
+        dispatch(builderUpdateNodeInfoKey({ keys: [...keylist, key], value: value }));
       };
 
       // Callback to connect parameters between modules
       const connectParameter = () => {
-        console.log("Connect parameter: ", key);
+        console.log('Connect parameter: ', key);
         setMenu({
           id: props.nodeid,
           keylist: keylist,
@@ -345,33 +308,33 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
       // Callback to disconnect parameters between modules
       const disconnectParameter = () => {
-        console.log("Disconnect parameter: ", key);
+        console.log('Disconnect parameter: ', key);
         const node = getNodeById(props.nodeid, nodes);
         const newnode = JSON.parse(JSON.stringify(node));
         const module_settings = newnode.data.config.config;
-        const metadata = lookupKey(module_settings, keylist, ":" + key);
-        delete metadata["link"];
+        const metadata = lookupKey(module_settings, keylist, ':' + key);
+        delete metadata['link'];
         if (Object.keys(metadata).length === 0) {
           const parent = lookupKey(
             module_settings,
             keylist.slice(0, keylist.length - 1),
             keylist[keylist.length - 1],
           );
-          delete parent[":" + key];
+          delete parent[':' + key];
         }
         dispatch(builderUpdateNode(newnode));
       };
 
       return (
-        <div style={{ cursor: "default" }} key={key} className="line">
+        <div style={{ cursor: 'default' }} key={key} className="line">
           {isProtectedValue ? (
             <span>
               <span className="key">{label}:</span>
               <span
                 className="protected"
                 style={{
-                  display: "inline-block",
-                  height: "25px",
+                  display: 'inline-block',
+                  height: '25px',
                 }}
               >
                 {value}
@@ -383,13 +346,13 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
               <span
                 className="linked"
                 style={{
-                  display: "inline-block",
-                  height: "25px",
+                  display: 'inline-block',
+                  height: '25px',
                 }}
               >
                 <EasyEdit
                   type={Types.TEXT}
-                  style={{ cursor: "text" }}
+                  style={{ cursor: 'text' }}
                   onHoverCssClass="easyedit-hover"
                   value={parameterValue}
                   onSave={(value) => {
@@ -406,31 +369,31 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
               <span
                 className={valueType}
                 style={{
-                  display: "inline-block",
-                  height: "25px",
+                  display: 'inline-block',
+                  height: '25px',
                 }}
               >
-                {valueType === "boolean" ? (
+                {valueType === 'boolean' ? (
                   <EasyEdit
                     type={Types.SELECT}
-                    style={{ cursor: "text" }}
+                    style={{ cursor: 'text' }}
                     onHoverCssClass="easyedit-hover"
                     saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                     cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-                    value={value ? "true" : "false"}
+                    value={value ? 'true' : 'false'}
                     options={[
-                      { label: "true", value: true },
-                      { label: "false", value: false },
+                      { label: 'true', value: true },
+                      { label: 'false', value: false },
                     ]}
                     onSave={(value) => {
-                      setValue(value === "true");
+                      setValue(value === 'true');
                     }}
                     saveOnBlur={true}
                   />
-                ) : valueType === "select" ? (
+                ) : valueType === 'select' ? (
                   <EasyEdit
                     type={Types.SELECT}
-                    style={{ cursor: "text" }}
+                    style={{ cursor: 'text' }}
                     onHoverCssClass="easyedit-hover"
                     saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                     cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
@@ -442,7 +405,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 ) : (
                   <EasyEdit
                     type={Types.TEXT}
-                    style={{ cursor: "text" }}
+                    style={{ cursor: 'text' }}
                     onHoverCssClass="easyedit-hover"
                     saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                     cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
@@ -472,9 +435,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
     <div
       className="json"
       style={{
-        borderStyle: "solid",
-        borderWidth: "1px 0px 0px 0px",
-        padding: "2px",
+        borderStyle: 'solid',
+        borderWidth: '1px 0px 0px 0px',
+        padding: '2px',
       }}
     >
       <ThemeProvider theme={theme}>

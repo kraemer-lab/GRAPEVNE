@@ -1,6 +1,6 @@
-import * as React from "react";
-import styled from "@emotion/styled";
-import { wranglename } from "./Flow";
+import styled from '@emotion/styled';
+import * as React from 'react';
+import { wranglename } from './Flow';
 
 type Query = Record<string, unknown>;
 
@@ -26,14 +26,11 @@ export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
   render() {
     return (
       <Tray
-        id={"modulelist-" + wranglename(this.props.name)}
+        id={'modulelist-' + wranglename(this.props.name)}
         color={this.props.color}
         draggable={true}
         onDragStart={(event) => {
-          event.dataTransfer.setData(
-            "flow-diagram-node",
-            JSON.stringify(this.props.model),
-          );
+          event.dataTransfer.setData('flow-diagram-node', JSON.stringify(this.props.model));
         }}
         className="tray-item"
       >

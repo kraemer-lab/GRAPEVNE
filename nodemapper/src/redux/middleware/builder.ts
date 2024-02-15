@@ -1,24 +1,19 @@
-import React from "react";
-import BuilderEngine from "gui/Builder/BuilderEngine";
-import * as globals from "redux/globals";
+import BuilderEngine from 'gui/Builder/BuilderEngine';
+import * as globals from 'redux/globals';
 
-import { builderSetNodes } from "redux/actions";
-import { builderLogEvent } from "redux/actions";
-import { builderBuildAsModule } from "redux/actions";
-import { builderBuildAsWorkflow } from "redux/actions";
-import { builderNodeSelected } from "redux/actions";
-import { builderNodeDeselected } from "redux/actions";
-import { builderUpdateNodeInfo } from "redux/actions";
-import { builderUpdateSettings } from "redux/actions";
-import { builderNodeSelectedByID } from "redux/actions";
-import { builderUpdateStatusText } from "redux/actions";
-import { builderUpdateModulesList } from "redux/actions";
+import {
+  builderLogEvent,
+  builderNodeSelected,
+  builderSetNodes,
+  builderUpdateModulesList,
+  builderUpdateNodeInfo,
+  builderUpdateSettings,
+  builderUpdateStatusText,
+} from 'redux/actions';
 
-import { Node } from "NodeMap/scene/Flow";
-import { Edge } from "reactflow";
-import { getNodeById } from "gui/Builder/components/Flow";
-import { setNodeName } from "gui/Builder/components/Flow";
-import { setNodeWorkflow } from "gui/Builder/components/Flow";
+import { Node } from 'NodeMap/scene/Flow';
+import { getNodeById, setNodeName, setNodeWorkflow } from 'gui/Builder/components/Flow';
+import { Edge } from 'reactflow';
 
 type Query = Record<string, unknown>;
 
@@ -33,13 +28,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
   return (next) => {
     return (action) => {
       // action.type, action.payload
-      if (action.type.split("/")[0] === "builder") {
-        console.log("Middleware [builder]: ", action);
+      if (action.type.split('/')[0] === 'builder') {
+        console.log('Middleware [builder]: ', action);
       }
       switch (action.type) {
-        case "builder/build-as-module":
+        case 'builder/build-as-module':
           BuildAs(
-            "builder/build-as-module",
+            'builder/build-as-module',
             builderAPI.BuildAsModule,
             dispatch,
             getState().builder.snakemake_args,
@@ -52,9 +47,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           );
           break;
 
-        case "builder/build-as-workflow":
+        case 'builder/build-as-workflow':
           BuildAs(
-            "builder/build-as-workflow",
+            'builder/build-as-workflow',
             builderAPI.BuildAsWorkflow,
             dispatch,
             getState().builder.snakemake_args,
@@ -67,7 +62,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           );
           break;
 
-        case "builder/build-and-run":
+        case 'builder/build-and-run':
           BuildAndRun(
             dispatch,
             getState().builder.snakemake_args,
@@ -79,11 +74,11 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           );
           break;
 
-        case "builder/clean-build-folder":
+        case 'builder/clean-build-folder':
           CleanBuildFolder(dispatch);
           break;
 
-        case "builder/add-link":
+        case 'builder/add-link':
           /*AddLink(
             action,
             getState().builder.auto_validate_connections,
@@ -92,7 +87,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           );*/
           break;
 
-        case "builder/check-node-dependencies":
+        case 'builder/check-node-dependencies':
           CheckNodeDependencies(
             action.payload,
             getState().builder.nodes,
@@ -102,19 +97,19 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           );
           break;
 
-        case "builder/node-selected":
+        case 'builder/node-selected':
           NodeSelected(action.payload, dispatch);
           break;
 
-        case "builder/node-selected-by-id":
+        case 'builder/node-selected-by-id':
           NodeSelectedByID(action.payload, getState().builder.nodes, dispatch);
           break;
 
-        case "builder/node-deselected":
+        case 'builder/node-deselected':
           NodeDeselected(dispatch);
           break;
 
-        case "builder/update-node-info-key":
+        case 'builder/update-node-info-key':
           UpdateNodeInfoKey(
             action,
             dispatch,
@@ -123,7 +118,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           );
           break;
 
-        case "builder/update-node-info-name":
+        case 'builder/update-node-info-name':
           UpdateNodeInfoName(
             action,
             dispatch,
@@ -132,23 +127,23 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           );
           break;
 
-        case "builder/get-remote-modules":
+        case 'builder/get-remote-modules':
           GetRemoteModules(dispatch, getState().builder.repositories);
           break;
 
-        case "builder/update-modules-list":
+        case 'builder/update-modules-list':
           UpdateModulesList(dispatch);
           break;
 
-        case "builder/update-status-text":
+        case 'builder/update-status-text':
           UpdateStatusText(dispatch, action.payload);
           break;
 
-        case "builder/read-store-config":
+        case 'builder/read-store-config':
           ReadStoreConfig(dispatch);
           break;
 
-        case "builder/write-store-config":
+        case 'builder/write-store-config':
           WriteStoreConfig(getState().builder);
           break;
 
@@ -195,12 +190,12 @@ const BuildAs = async (
   nodes: Node[],
   edges: Edge[],
 ) => {
-  dispatchString(builderUpdateStatusText("Building workflow..."));
+  dispatchString(builderUpdateStatusText('Building workflow...'));
   const app = BuilderEngine.Instance;
   const query: Query = {
     query: query_name,
     data: {
-      format: "Snakefile",
+      format: 'Snakefile',
       content: app.GetModuleListJSON(nodes, edges),
       targets: app.GetLeafNodeNames(nodes, edges),
       args: snakemake_args,
@@ -212,34 +207,31 @@ const BuildAs = async (
   };
   const callback = (result) => {
     // Download returned content as file
-    const filename = "build.zip";
-    const element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:application/zip;base64," + encodeURIComponent(result),
-    );
-    element.setAttribute("download", filename);
-    element.style.display = "none";
+    const filename = 'build.zip';
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:application/zip;base64,' + encodeURIComponent(result));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
     // Report success (this should be returned by the backend, but that is currently
     // set-up to return the [binary] zip file); console.logs are important for
     // post-build tests
-    console.log({ query: query["query"], returncode: 0 });
+    console.log({ query: query['query'], returncode: 0 });
     // Update status
-    dispatchString(builderUpdateStatusText(" ")); // Idle
+    dispatchString(builderUpdateStatusText(' ')); // Idle
   };
   switch (backend as string) {
-    case "rest":
-      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+    case 'rest':
+      query['data']['content'] = JSON.stringify(query['data']['content']);
       SubmitQueryExpectZip(query, callback);
       break;
-    case "electron":
+    case 'electron':
       callback(await builder_api_fcn(query));
       break;
     default:
-      console.error("Unknown backend: ", backend);
+      console.error('Unknown backend: ', backend);
   }
 };
 
@@ -252,14 +244,12 @@ const BuildAndRun = async (
   nodes: Node[],
   edges: Edge[],
 ) => {
-  dispatchString(
-    builderUpdateStatusText("Building workflow and launching a test run..."),
-  );
+  dispatchString(builderUpdateStatusText('Building workflow and launching a test run...'));
   const app = BuilderEngine.Instance;
   const query: Query = {
-    query: "builder/build-and-run",
+    query: 'builder/build-and-run',
     data: {
-      format: "Snakefile",
+      format: 'Snakefile',
       content: app.GetModuleListJSON(nodes, edges),
       targets: app.GetLeafNodeNames(nodes, edges),
       args: snakemake_args,
@@ -270,34 +260,34 @@ const BuildAndRun = async (
   };
   const callback = (content: Query) => {
     console.log(content);
-    if (content["returncode"] !== 0) {
+    if (content['returncode'] !== 0) {
       // Report error
-      dispatchString(builderUpdateStatusText("Workflow run FAILED."));
+      dispatchString(builderUpdateStatusText('Workflow run FAILED.'));
       return;
     }
-    dispatchString(builderUpdateStatusText(" ")); // Idle
+    dispatchString(builderUpdateStatusText(' ')); // Idle
   };
   switch (backend as string) {
-    case "rest":
-      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+    case 'rest':
+      query['data']['content'] = JSON.stringify(query['data']['content']);
       SubmitQuery(query, dispatchString, callback);
       break;
-    case "electron":
+    case 'electron':
       callback(await builderAPI.BuildAndRun(query));
       break;
     default:
-      console.error("Unknown backend: ", backend);
+      console.error('Unknown backend: ', backend);
   }
 };
 
 const CleanBuildFolder = async (dispatchString: TPayloadString) => {
   const app = BuilderEngine.Instance;
   const query: Query = {
-    query: "builder/clean-build-folder",
+    query: 'builder/clean-build-folder',
     data: {
-      format: "Snakefile",
+      format: 'Snakefile',
       content: {
-        path: "", // Path currently set in builder package
+        path: '', // Path currently set in builder package
       },
     },
   };
@@ -305,15 +295,15 @@ const CleanBuildFolder = async (dispatchString: TPayloadString) => {
     console.log(result);
   };
   switch (backend as string) {
-    case "rest":
-      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+    case 'rest':
+      query['data']['content'] = JSON.stringify(query['data']['content']);
       SubmitQuery(query, dispatchString, callback);
       break;
-    case "electron":
+    case 'electron':
       callback(await builderAPI.CleanBuildFolder(query));
       break;
     default:
-      console.error("Unknown backend: ", backend);
+      console.error('Unknown backend: ', backend);
   }
 };
 
@@ -335,52 +325,48 @@ const CheckNodeDependencies = async (
 
   // Submit Build request
   const query: Query = {
-    query: "runner/check-node-dependencies",
+    query: 'runner/check-node-dependencies',
     data: {
-      format: "Snakefile",
+      format: 'Snakefile',
       content: JSON.stringify(jsDeps),
       backend: snakemake_backend,
     },
   };
   // Set node grey to indicate checking
   const node_type = app.getNodeType(node);
-  const all_nodes = app.setNodeColor(node, "rgb(192,192,192)", nodes);
+  const all_nodes = app.setNodeColor(node, 'rgb(192,192,192)', nodes);
   dispatch(builderSetNodes(all_nodes));
 
   const callback = (data: Query) => {
-    dispatch(builderUpdateStatusText(""));
-    switch (data["body"]["status"]) {
-      case "ok":
-        data["returncode"] = 0;
+    dispatch(builderUpdateStatusText(''));
+    switch (data['body']['status']) {
+      case 'ok':
+        data['returncode'] = 0;
         dispatch(
           builderSetNodes(
-            app.setNodeColor(
-              node,
-              BuilderEngine.GetModuleTypeColor(node_type),
-              nodes,
-            ),
+            app.setNodeColor(node, BuilderEngine.GetModuleTypeColor(node_type), nodes),
           ),
         );
         break;
-      case "missing":
-        data["returncode"] = 1;
-        dispatch(builderSetNodes(app.setNodeColor(node, "red", nodes)));
+      case 'missing':
+        data['returncode'] = 1;
+        dispatch(builderSetNodes(app.setNodeColor(node, 'red', nodes)));
         break;
       default:
-        data["returncode"] = -1;
-        console.error("Unexpected response: ", data["body"]);
+        data['returncode'] = -1;
+        console.error('Unexpected response: ', data['body']);
     }
     console.log(data);
   };
   switch (backend as string) {
-    case "rest":
+    case 'rest':
       postRequestCheckNodeDependencies(query, dispatch, callback);
       break;
-    case "electron":
+    case 'electron':
       callback(await runnerAPI.CheckNodeDependencies(query));
       break;
     default:
-      console.error("Unknown backend: ", backend);
+      console.error('Unknown backend: ', backend);
   }
 };
 
@@ -413,17 +399,12 @@ interface INodeDeselectedDispatch {
 type TNodeDeselectedDispatch = (action: INodeDeselectedDispatch) => void;
 
 const NodeDeselected = (dispatch: TNodeDeselectedDispatch) => {
-  dispatch(builderUpdateNodeInfo(""));
+  dispatch(builderUpdateNodeInfo(''));
 };
 
-const UpdateNodeInfoKey = (
-  action: IPayloadRecord,
-  dispatch,
-  nodeinfo,
-  nodes: Node[],
-): void => {
+const UpdateNodeInfoKey = (action: IPayloadRecord, dispatch, nodeinfo, nodes: Node[]): void => {
   // Update field for node
-  console.log("Middleware: UpdateNodeInfoKey");
+  console.log('Middleware: UpdateNodeInfoKey');
   const node = getNodeById(nodeinfo.id, nodes) as Node;
   if (node !== null) {
     const workflow = JSON.parse(JSON.stringify(node.data.config.config));
@@ -442,21 +423,16 @@ const UpdateNodeInfoKey = (
       const newnode = getNodeById(nodeinfo.id, newnodes);
       dispatch(builderNodeSelected(newnode));
     } else {
-      console.error("Failed to update node workflow: ", nodeinfo, workflow);
+      console.error('Failed to update node workflow: ', nodeinfo, workflow);
     }
   } else {
-    console.log("Node not found: ", nodeinfo);
+    console.log('Node not found: ', nodeinfo);
   }
 };
 
-const UpdateNodeInfoName = (
-  action: IPayloadString,
-  dispatch,
-  nodeinfo,
-  nodes: Node[],
-): void => {
+const UpdateNodeInfoName = (action: IPayloadString, dispatch, nodeinfo, nodes: Node[]): void => {
   // Update field for node
-  console.log("Middleware: UpdateNodeInfoName");
+  console.log('Middleware: UpdateNodeInfoName');
   const builder = BuilderEngine.Instance;
   const node = getNodeById(nodeinfo.id, nodes) as Node;
   if (node !== null) {
@@ -466,24 +442,21 @@ const UpdateNodeInfoName = (
       dispatch(builderSetNodes(newnodes));
       const newnode = getNodeById(nodeinfo.id, newnodes);
       dispatch(builderNodeSelected(newnode));
-    } else console.error("Failed to update node name: ", nodeinfo, name);
+    } else console.error('Failed to update node name: ', nodeinfo, name);
   } else {
-    console.log("Node not found: ", nodeinfo);
+    console.log('Node not found: ', nodeinfo);
   }
 };
 
-const GetRemoteModules = async (
-  dispatchString: TPayloadString,
-  repo: string,
-) => {
+const GetRemoteModules = async (dispatchString: TPayloadString, repo: string) => {
   // Get list of remote modules
-  dispatchString(builderUpdateStatusText("Loading modules..."));
-  console.log("Repository settings: ", repo);
+  dispatchString(builderUpdateStatusText('Loading modules...'));
+  console.log('Repository settings: ', repo);
   const app = BuilderEngine.Instance;
   const query: Query = {
-    query: "builder/get-remote-modules",
+    query: 'builder/get-remote-modules',
     data: {
-      format: "Snakefile",
+      format: 'Snakefile',
       content: {
         url: repo,
       },
@@ -491,31 +464,31 @@ const GetRemoteModules = async (
   };
   const callback = (content: Query) => {
     console.log(content);
-    if (content["returncode"] !== 0) {
+    if (content['returncode'] !== 0) {
       // Report error
-      dispatchString(builderUpdateStatusText(content["body"] as string));
+      dispatchString(builderUpdateStatusText(content['body'] as string));
     } else {
-      dispatchString(builderUpdateStatusText("Modules loaded."));
-      dispatchString(builderUpdateModulesList(content["body"] as string));
+      dispatchString(builderUpdateStatusText('Modules loaded.'));
+      dispatchString(builderUpdateModulesList(content['body'] as string));
     }
   };
   let response: Record<string, undefined>;
   switch (backend as string) {
-    case "rest":
-      query["data"]["content"] = JSON.stringify(query["data"]["content"]);
+    case 'rest':
+      query['data']['content'] = JSON.stringify(query['data']['content']);
       SubmitQuery(query, dispatchString, callback);
       break;
-    case "electron":
+    case 'electron':
       callback(await builderAPI.GetRemoteModules(query));
       break;
     default:
-      console.error("Unknown backend: ", backend);
+      console.error('Unknown backend: ', backend);
   }
 };
 
 const UpdateModulesList = (dispatch: TPayloadString) => {
   // Update list of modules - done in reducer
-  dispatch(builderUpdateStatusText(""));
+  dispatch(builderUpdateStatusText(''));
 };
 
 // Write persistent state to electron frontend
@@ -548,22 +521,19 @@ const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
 // POST request handlers
 ///////////////////////////////////////////////////////////////////////////////
 
-const SubmitQueryExpectZip = (
-  query: Query,
-  callback: (content: unknown) => void,
-) => {
+const SubmitQueryExpectZip = (query: Query, callback: (content: unknown) => void) => {
   // POST request handler
   const postZIPRequest = async () => {
     const postRequestOptions = {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json;charset=UTF-8",
-        responseType: "blob",
+        'Content-Type': 'application/json;charset=UTF-8',
+        responseType: 'blob',
       },
       body: JSON.stringify(query),
     };
-    console.info("Sending query: ", query);
-    fetch(API_ENDPOINT + "/post", postRequestOptions)
+    console.info('Sending query: ', query);
+    fetch(API_ENDPOINT + '/post', postRequestOptions)
       .then((response) => {
         if (response.ok) {
           const reader = response.body.getReader();
@@ -587,7 +557,7 @@ const SubmitQueryExpectZip = (
       })
       .then((stream) =>
         new Response(stream, {
-          headers: { "Content-type": "application/zip" },
+          headers: { 'Content-type': 'application/zip' },
         }).text(),
       )
       .then((result) => {
@@ -603,27 +573,27 @@ const postRequestCheckNodeDependencies = async (
   callback: (data: Query) => void,
 ) => {
   const postRequestOptions = {
-    method: "POST",
-    headers: { "Content-Type": "application/json;charset=UTF-8" },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
     body: JSON.stringify(query),
   };
-  console.info("Sending query: ", query);
-  dispatch(builderUpdateStatusText("Checking node dependencies..."));
-  fetch(API_ENDPOINT + "/post", postRequestOptions)
+  console.info('Sending query: ', query);
+  dispatch(builderUpdateStatusText('Checking node dependencies...'));
+  fetch(API_ENDPOINT + '/post', postRequestOptions)
     .then((response) => {
       if (response.ok) {
         return response.json();
       }
-      console.error("Error: " + response.statusText);
-      dispatch(builderUpdateStatusText("Error: " + response.statusText));
+      console.error('Error: ' + response.statusText);
+      dispatch(builderUpdateStatusText('Error: ' + response.statusText));
       throw response;
     })
     .then((data) => {
-      console.info("Got response: ", data);
+      console.info('Got response: ', data);
       callback(data);
     })
     .catch((error) => {
-      console.error("Error during query: ", error);
+      console.error('Error during query: ', error);
     });
 };
 
@@ -631,33 +601,33 @@ const SubmitQuery = (query: Query, dispatch, callback) => {
   // POST request handler
   const postRequest = async () => {
     const postRequestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json;charset=UTF-8" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       body: JSON.stringify(query),
     };
-    console.info("Sending query: ", query);
-    fetch(API_ENDPOINT + "/post", postRequestOptions)
+    console.info('Sending query: ', query);
+    fetch(API_ENDPOINT + '/post', postRequestOptions)
       .then((response) => {
         if (response.ok) {
           return response.json();
         }
-        dispatch(builderUpdateStatusText("Error: " + response.statusText));
+        dispatch(builderUpdateStatusText('Error: ' + response.statusText));
         throw response;
       })
       .then((data) => {
         if (data !== null) {
           processResponse(data, callback);
         }
-        console.info("Got response: ", data);
+        console.info('Got response: ', data);
       })
       .catch((error) => {
-        console.error("Error during query: ", error);
+        console.error('Error during query: ', error);
       });
   };
 
   const processResponse = (content: JSON, callback) => {
-    console.log("Process response: ", content);
-    dispatch(builderUpdateStatusText(""));
+    console.log('Process response: ', content);
+    dispatch(builderUpdateStatusText(''));
     callback(content);
   };
 

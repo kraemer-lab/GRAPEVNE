@@ -1,19 +1,20 @@
-import React from "react";
-import RepoOptions from "./RepoOptions";
+import React from 'react';
+import RepoOptions from './RepoOptions';
 
-import { useEffect } from "react";
-import { useAppDispatch } from "redux/store/hooks";
-import { useAppSelector } from "redux/store/hooks";
-import { builderWriteStoreConfig } from "redux/actions";
-import { builderSetSnakemakeArgs } from "redux/actions";
-import { builderSetEnvironmentVars } from "redux/actions";
-import { builderSelectSnakemakeBackend } from "redux/actions";
-import { builderSetDisplayModuleSettings } from "redux/actions";
-import { builderSetAutoValidateConnections } from "redux/actions";
-import { builderSetPackageModulesInWorkflow } from "redux/actions";
+import { useEffect } from 'react';
+import {
+  builderSelectSnakemakeBackend,
+  builderSetAutoValidateConnections,
+  builderSetDisplayModuleSettings,
+  builderSetEnvironmentVars,
+  builderSetPackageModulesInWorkflow,
+  builderSetSnakemakeArgs,
+  builderWriteStoreConfig,
+} from 'redux/actions';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 const default_input_size = 35;
-const panel_background_color = "#2e3746";
+const panel_background_color = '#2e3746';
 
 const BuilderSettings = () => {
   const dispatch = useAppDispatch();
@@ -29,18 +30,10 @@ const BuilderSettings = () => {
     return () => onComponentUnmount();
   }, []);
 
-  const snakemake_backend = useAppSelector(
-    (state) => state.builder.snakemake_backend,
-  );
-  const snakemake_args = useAppSelector(
-    (state) => state.builder.snakemake_args,
-  );
-  const environment_vars = useAppSelector(
-    (state) => state.builder.environment_variables,
-  );
-  const display_module_settings = useAppSelector(
-    (state) => state.builder.display_module_settings,
-  );
+  const snakemake_backend = useAppSelector((state) => state.builder.snakemake_backend);
+  const snakemake_args = useAppSelector((state) => state.builder.snakemake_args);
+  const environment_vars = useAppSelector((state) => state.builder.environment_variables);
+  const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
   const auto_validate_connections = useAppSelector(
     (state) => state.builder.auto_validate_connections,
   );
@@ -48,14 +41,11 @@ const BuilderSettings = () => {
     (state) => state.builder.package_modules_in_workflow,
   );
 
-  const SetSnakemakeArgs = (args: string) =>
-    dispatch(builderSetSnakemakeArgs(args));
+  const SetSnakemakeArgs = (args: string) => dispatch(builderSetSnakemakeArgs(args));
 
-  const SetEnvironmentVars = (args: string) =>
-    dispatch(builderSetEnvironmentVars(args));
+  const SetEnvironmentVars = (args: string) => dispatch(builderSetEnvironmentVars(args));
 
-  const selectSnakemakeBackend = (value: string) =>
-    dispatch(builderSelectSnakemakeBackend(value));
+  const selectSnakemakeBackend = (value: string) => dispatch(builderSelectSnakemakeBackend(value));
 
   const SetDisplayModuleSettings = (value: boolean) =>
     dispatch(builderSetDisplayModuleSettings(value));
@@ -70,22 +60,22 @@ const BuilderSettings = () => {
     <>
       <div
         style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          width: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <div
           style={{
-            display: "flex",
-            width: "100%",
-            maxWidth: "600px",
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            alignSelf: "flex-start",
-            padding: "10px",
-            gap: "10px",
+            display: 'flex',
+            width: '100%',
+            maxWidth: '600px',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignSelf: 'flex-start',
+            padding: '10px',
+            gap: '10px',
           }}
         >
           <div>
@@ -95,7 +85,7 @@ const BuilderSettings = () => {
             <div
               style={{
                 backgroundColor: panel_background_color,
-                padding: "5px",
+                padding: '5px',
               }}
             >
               <p>
@@ -106,7 +96,7 @@ const BuilderSettings = () => {
                 <select
                   defaultValue={snakemake_backend}
                   onChange={(e) => selectSnakemakeBackend(e.target.value)}
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                 >
                   <option value="builtin">Built-in</option>
                   <option value="system">System</option>
@@ -120,7 +110,7 @@ const BuilderSettings = () => {
                   size={default_input_size}
                   value={snakemake_args}
                   onChange={(e) => SetSnakemakeArgs(e.target.value)}
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                 />
               </p>
             </div>
@@ -129,7 +119,7 @@ const BuilderSettings = () => {
             <div
               style={{
                 backgroundColor: panel_background_color,
-                padding: "5px",
+                padding: '5px',
               }}
             >
               <p>
@@ -143,7 +133,7 @@ const BuilderSettings = () => {
                   size={default_input_size}
                   value={environment_vars}
                   onChange={(e) => SetEnvironmentVars(e.target.value)}
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                 />
               </p>
             </div>
@@ -152,7 +142,7 @@ const BuilderSettings = () => {
             <div
               style={{
                 backgroundColor: panel_background_color,
-                padding: "5px",
+                padding: '5px',
               }}
             >
               <p>
@@ -165,10 +155,7 @@ const BuilderSettings = () => {
                   checked={display_module_settings}
                   onChange={(e) => SetDisplayModuleSettings(e.target.checked)}
                 />
-                <label htmlFor="display_module_settings">
-                  {" "}
-                  Display module settings
-                </label>
+                <label htmlFor="display_module_settings"> Display module settings</label>
               </p>
               <p>
                 <input
@@ -177,22 +164,17 @@ const BuilderSettings = () => {
                   checked={auto_validate_connections}
                   onChange={(e) => SetAutoValidateConnections(e.target.checked)}
                 />
-                <label htmlFor="auto_validate_connections">
-                  {" "}
-                  Auto-validate connections
-                </label>
+                <label htmlFor="auto_validate_connections"> Auto-validate connections</label>
               </p>
               <p>
                 <input
                   type="checkbox"
                   id="package_modules_in_workflow"
                   checked={package_modules_in_workflow}
-                  onChange={(e) =>
-                    SetPackageModulesInWorkflow(e.target.checked)
-                  }
+                  onChange={(e) => SetPackageModulesInWorkflow(e.target.checked)}
                 />
                 <label htmlFor="package_modules_in_workflow">
-                  {" "}
+                  {' '}
                   Package all modules in workflow
                 </label>
               </p>

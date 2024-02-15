@@ -1,37 +1,32 @@
-import React from "react";
-import BuilderEngine from "../BuilderEngine";
+import React from 'react';
 
-import { Node } from "./Flow";
-import { Edge } from "./Flow";
-import { getNodeById } from "./Flow";
-import { getNodeName } from "./Flow";
-import { ModuleType } from "NodeMap/scene/Module";
-import { useAppSelector } from "redux/store/hooks";
-import { useAppDispatch } from "redux/store/hooks";
-import { builderUpdateNode } from "redux/actions";
-import { builderNodeSelected } from "redux/actions";
+import { ModuleType } from 'NodeMap/scene/Module';
+import { builderNodeSelected, builderUpdateNode } from 'redux/actions';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import { Edge, Node, getNodeById, getNodeName } from './Flow';
 
-import { checkParameter_IsModuleRoot } from "./HighlightedJSON";
-import { checkParameter_IsInModuleConfigLayer } from "./HighlightedJSON";
-import { lookupKey } from "./HighlightedJSON";
-import { theme } from "./HighlightedJSON";
+import {
+  checkParameter_IsInModuleConfigLayer,
+  checkParameter_IsModuleRoot,
+  lookupKey,
+  theme,
+} from './HighlightedJSON';
 
-import { styled } from "@mui/material/styles";
-import { TreeView } from "@mui/x-tree-view/TreeView";
-import { TreeItem } from "@mui/x-tree-view/TreeItem";
-import { ThemeProvider } from "@mui/material/styles";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ThemeProvider, styled } from '@mui/material/styles';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import { TreeView } from '@mui/x-tree-view/TreeView';
 
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Unstable_Grid2";
-import Paper from "@mui/material/Paper";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Unstable_Grid2';
 
-import "./ParameterList.css";
+import './ParameterList.css';
 
-const protectedNames = ["input_namespace", "output_namespace"];
+const protectedNames = ['input_namespace', 'output_namespace'];
 
 interface ParameterListProps {
   id: string;
@@ -55,11 +50,11 @@ interface IModuleEntryProps {
 }
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
   padding: theme.spacing(1),
-  textAlign: "left",
-  overflow: "auto",
+  textAlign: 'left',
+  overflow: 'auto',
   color: theme.palette.text.secondary,
 }));
 
@@ -128,49 +123,37 @@ export default function ParameterList({
   const [showAllNodes, setShowAllNodes] = React.useState(false);
   const [showSelfNodes, setShowSelfNodes] = React.useState(false);
 
+  // Get node, name and parameter pairs
   const node_to = getNodeById(id, nodes);
+  const node_json = JSON.parse(JSON.stringify(node_to))['data'] as ModuleType;
+  const json = node_json?.config?.config ?? null;
+  if (json === null) {
+    return null;
+  }
   const node_name = getNodeName(node_to);
   const dispatch = useAppDispatch();
   let nodeId = 0;
 
   // Format keyitem and keylist together
-  const keylist_str = [...keylist.slice(2, keylist.length), keyitem].join("/");
-  const keylist_str_full = [node_name, ...keylist, keyitem].join("/");
+  const keylist_str = [...keylist.slice(2, keylist.length), keyitem].join('/');
+  const keylist_str_full = [node_name, ...keylist, keyitem].join('/');
 
   // Get list of nodes that are connected as inputs to this node
-  const input_nodes = detemineInputNodes(
-    id,
-    node_to,
-    nodes,
-    edges,
-    showAllNodes,
-    showSelfNodes,
-  );
+  const input_nodes = detemineInputNodes(id, node_to, nodes, edges, showAllNodes, showSelfNodes);
 
   // Determine if parameter is already connected to another parameter
   let isConnected = false;
   const node = getNodeById(id, nodes);
   const module_settings = node.data.config.config;
-  const metadata = lookupKey(module_settings, keylist, ":" + keyitem);
-  let target_keylist_str = "";
+  const metadata = lookupKey(module_settings, keylist, ':' + keyitem);
+  let target_keylist_str = '';
   if (metadata !== undefined) {
-    isConnected = metadata["link"] !== undefined;
-    if (isConnected) target_keylist_str = metadata["link"].join("/");
-  }
-
-  // Get parameter pairs from node
-  const node_json = JSON.parse(JSON.stringify(node_to))["data"] as ModuleType;
-  const json = node_json?.config?.config ?? null;
-  if (json === null) {
-    return null;
+    isConnected = metadata['link'] !== undefined;
+    if (isConnected) target_keylist_str = metadata['link'].join('/');
   }
 
   // Handle parameter selection
-  const onParameterSelect = (
-    node_from: Node,
-    keylist_from,
-    key_from: string,
-  ) => {
+  const onParameterSelect = (node_from: Node, keylist_from, key_from: string) => {
     const param_from = [node_from.data.config.name, ...keylist_from, key_from];
     const param_to = [...keylist.slice(1, keylist.length), keyitem];
 
@@ -180,15 +163,15 @@ export default function ParameterList({
     let pmap = node_config;
     for (let i = 0; i < keylist.length; i++) {
       if (pmap[keylist[i]] === undefined)
-        throw new Error("ParameterList: Keylist not found in node");
+        throw new Error('ParameterList: Keylist not found in node');
       pmap = pmap[keylist[i]];
     }
-    let pmap_metadata = pmap[":" + keyitem]; // metadata record
+    let pmap_metadata = pmap[':' + keyitem]; // metadata record
     if (pmap_metadata === undefined) {
-      pmap[":" + keyitem] = {};
-      pmap_metadata = pmap[":" + keyitem];
+      pmap[':' + keyitem] = {};
+      pmap_metadata = pmap[':' + keyitem];
     }
-    pmap_metadata["link"] = param_from;
+    pmap_metadata['link'] = param_from;
 
     // Update node with new parameter map
     newnode_to.data.config.config = node_config;
@@ -197,19 +180,19 @@ export default function ParameterList({
   };
 
   const disconnectParameter = () => {
-    console.log("Disconnect parameter: ", keyitem);
+    console.log('Disconnect parameter: ', keyitem);
     const node = getNodeById(id, nodes);
     const newnode = JSON.parse(JSON.stringify(node));
     const module_settings = newnode.data.config.config;
-    const metadata = lookupKey(module_settings, keylist, ":" + keyitem);
-    delete metadata["link"];
+    const metadata = lookupKey(module_settings, keylist, ':' + keyitem);
+    delete metadata['link'];
     if (Object.keys(metadata).length === 0) {
       const parent = lookupKey(
         module_settings,
         keylist.slice(0, keylist.length - 1),
         keylist[keylist.length - 1],
       );
-      delete parent[":" + keyitem];
+      delete parent[':' + keyitem];
     }
     dispatch(builderUpdateNode(newnode));
     dispatch(builderNodeSelected(newnode));
@@ -227,9 +210,8 @@ export default function ParameterList({
       const node_name = getNodeName(node);
       const value = jsonObj[key];
       const valueType: string = typeof value;
-      const isSimpleValue =
-        ["string", "number", "boolean"].includes(valueType) || !value;
-      const isHiddenValue = protectedNames.includes(key) || key.startsWith(":");
+      const isSimpleValue = ['string', 'number', 'boolean'].includes(valueType) || !value;
+      const isHiddenValue = protectedNames.includes(key) || key.startsWith(':');
       if (isHiddenValue) {
         return null;
       }
@@ -244,30 +226,22 @@ export default function ParameterList({
       }
 
       // If the key is a module config, skip rendering of the key (but render children)
-      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(
-        node,
-        keylist,
-        key,
-      );
+      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist, key);
       if (isInModuleConfigLayer) {
         // Of the parameters in the module config layer, continue rendering only the
         // 'config' children, which contains the actual parameters
-        if (key !== "config") {
+        if (key !== 'config') {
           return null;
         } else {
           return (
-            <NodeParameters
-              node={node}
-              keylist={[...keylist, key]}
-              key={(nodeId++).toString()}
-            />
+            <NodeParameters node={node} keylist={[...keylist, key]} key={(nodeId++).toString()} />
           );
         }
       }
 
       // Determine if parameter is valid
       let canBeConnected = true;
-      const identifier = [node_name, ...keylist, key].join("/");
+      const identifier = [node_name, ...keylist, key].join('/');
       if (identifier === keylist_str_full) {
         // Is this parameter the originating target?
         canBeConnected = false;
@@ -275,15 +249,15 @@ export default function ParameterList({
 
       const DisplaySimpleValue = () => {
         // Is the parameter the target of our already connected parameter?
-        const identifier = [node_name, ...keylist, key].join("/");
+        const identifier = [node_name, ...keylist, key].join('/');
         if (canBeConnected) {
           if (identifier === target_keylist_str) {
             return (
               <TreeItem
-                style={{ color: "#1876d2" }}
-                key={node.id + "__" + identifier}
+                style={{ color: '#1876d2' }}
+                key={node.id + '__' + identifier}
                 nodeId={(nodeId++).toString()}
-                label={key + ": " + value}
+                label={key + ': ' + value}
                 onClick={() => onParameterSelect(node, keylist, key)}
               >
                 <Button
@@ -291,7 +265,7 @@ export default function ParameterList({
                   variant="outlined"
                   startIcon={<FontAwesomeIcon icon={faTimes} />}
                   size="small"
-                  style={{ maxHeight: "25px" }}
+                  style={{ maxHeight: '25px' }}
                   onClick={disconnectParameter}
                 >
                   Disconnect
@@ -301,9 +275,9 @@ export default function ParameterList({
           } else {
             return (
               <TreeItem
-                key={node.id + "__" + identifier}
+                key={node.id + '__' + identifier}
                 nodeId={(nodeId++).toString()}
-                label={key + ": " + value}
+                label={key + ': ' + value}
                 onClick={() => onParameterSelect(node, keylist, key)}
               />
             );
@@ -311,10 +285,10 @@ export default function ParameterList({
         } else {
           return (
             <TreeItem
-              style={{ color: "#bebebe" }}
-              key={node.id + "__" + identifier}
+              style={{ color: '#bebebe' }}
+              key={node.id + '__' + identifier}
               nodeId={(nodeId++).toString()}
-              label={key + ": " + value}
+              label={key + ': ' + value}
             />
           );
         }
@@ -326,7 +300,7 @@ export default function ParameterList({
             <DisplaySimpleValue />
           ) : (
             <TreeItem
-              key={node.id + "__" + [...keylist, key].join("/")}
+              key={node.id + '__' + [...keylist, key].join('/')}
               nodeId={(nodeId++).toString()}
               label={label}
             >
@@ -344,24 +318,24 @@ export default function ParameterList({
       <div
         key={node.id}
         style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
         }}
       >
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "0px",
-            backgroundColor: "#eee",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0px',
+            backgroundColor: '#eee',
           }}
         >
           {showAllNodes || showSelfNodes ? (
-            <div>{"Node: " + label}</div>
+            <div>{'Node: ' + label}</div>
           ) : (
             <div>
-              {"Port: " + label}
+              {'Port: ' + label}
               <div>
                 <small>{node.data.config.name}</small>
               </div>
@@ -369,18 +343,14 @@ export default function ParameterList({
           )}
         </div>
         <div
-          key={node.id + "_p"}
+          key={node.id + '_p'}
           style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "3px",
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '3px',
           }}
         >
-          <TreeView
-            defaultExpanded={Array.from({ length: 999 }, (_, i) =>
-              i.toString(),
-            )}
-          >
+          <TreeView defaultExpanded={Array.from({ length: 999 }, (_, i) => i.toString())}>
             <NodeParameters node={node} keylist={[]} />
           </TreeView>
         </div>
@@ -390,23 +360,19 @@ export default function ParameterList({
 
   // Handle escape key
   document.onkeydown = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
+    if (e.key === 'Escape') {
       onclose();
     }
   };
 
   return (
-    <div
-      style={{ top, left, right, bottom, margin: "5px" }}
-      className="parameter-list"
-      {...props}
-    >
-      <p style={{ margin: "0.5em" }}>
+    <div style={{ top, left, right, bottom, margin: '5px' }} className="parameter-list" {...props}>
+      <p style={{ margin: '0.5em' }}>
         <big>
           <b>{keylist_str}</b>
-        </big>{" "}
+        </big>{' '}
         <i>{node_name}</i>
-        <span style={{ float: "right" }}>
+        <span style={{ float: 'right' }}>
           {isConnected ? (
             <span>
               <Button
@@ -416,12 +382,10 @@ export default function ParameterList({
                 onClick={disconnectParameter}
               >
                 Disconnect
-              </Button>{" "}
+              </Button>{' '}
             </span>
           ) : null}
-          <label htmlFor="checkParameterListShowSelfParams">
-            Show own parameters
-          </label>
+          <label htmlFor="checkParameterListShowSelfParams">Show own parameters</label>
           <Checkbox
             id="checkParameterListShowSelfParams"
             onChange={() => setShowSelfNodes(!showSelfNodes)}
@@ -436,16 +400,16 @@ export default function ParameterList({
           <Button
             id="btnParameterListClose"
             variant="outlined"
-            style={{ width: "25px", height: "25px", minWidth: "0" }}
+            style={{ width: '25px', height: '25px', minWidth: '0' }}
             onClick={onclose}
           >
             <FontAwesomeIcon icon={faTimes} />
           </Button>
         </span>
       </p>
-      <div style={{ width: "100%", height: "100%", backgroundColor: "white" }}>
+      <div style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
         <ThemeProvider theme={theme}>
-          <Box sx={{ width: "100%", height: "100%", overflowY: "auto" }}>
+          <Box sx={{ width: '100%', height: '100%', overflowY: 'auto' }}>
             <Grid
               container
               spacing={{

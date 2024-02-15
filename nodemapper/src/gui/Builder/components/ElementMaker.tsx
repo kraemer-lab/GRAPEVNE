@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 /*
  * ElementMaker code modified from:
@@ -12,9 +12,7 @@ interface ElementMakerProps {
   handleBlur: () => void;
   showInputEle: boolean;
 }
-export const ElementMaker: React.FC<ElementMakerProps> = (
-  props: ElementMakerProps,
-) => {
+export const ElementMaker: React.FC<ElementMakerProps> = (props: ElementMakerProps) => {
   // Render a span or input element based on the state of showInputEle (switched
   // by a double-click in the parent component)
   return (
@@ -32,9 +30,9 @@ export const ElementMaker: React.FC<ElementMakerProps> = (
           className={props.valueType}
           onDoubleClick={props.handleDoubleClick}
           style={{
-            display: "inline-block",
-            height: "25px",
-            minWidth: "300px",
+            display: 'inline-block',
+            height: '25px',
+            minWidth: '300px',
           }}
         >
           {props.value}

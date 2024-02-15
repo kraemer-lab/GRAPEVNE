@@ -1,5 +1,5 @@
-import React from "react";
-import NodeManager from "./NodeManager";
+import React from 'react';
+import NodeManager from './NodeManager';
 
 const MainBody = () => {
   return <NodeManager />;

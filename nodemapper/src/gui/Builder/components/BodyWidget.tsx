@@ -1,17 +1,16 @@
-import React from "react";
-import styled from "@emotion/styled";
+import styled from '@emotion/styled';
+import React from 'react';
 
-import RepoBrowser from "./RepoBrowser";
-import Canvas from "./Canvas";
-import ConfigPane from "./ConfigPane";
+import Canvas from './Canvas';
+import ConfigPane from './ConfigPane';
+import RepoBrowser from './RepoBrowser';
 
-import ResizeHandle from "./ResizeHandle";
-import { Panel } from "react-resizable-panels";
-import { PanelGroup } from "react-resizable-panels";
-import styles from "./styles.module.css";
+import { Panel, PanelGroup } from 'react-resizable-panels';
+import ResizeHandle from './ResizeHandle';
+import styles from './styles.module.css';
 
-import { useAppSelector } from "redux/store/hooks";
-import { ConfigPaneDisplay } from "redux/types";
+import { useAppSelector } from 'redux/store/hooks';
+import { ConfigPaneDisplay } from 'redux/types';
 
 const Body = styled.div`
   flex-grow: 1;
@@ -42,9 +41,7 @@ const Layer = styled.div`
  * 3. Right (configuration pane)
  */
 export const BodyWidget = () => {
-  const configPaneOpen = useAppSelector(
-    (state) => state.builder.config_pane_display,
-  );
+  const configPaneOpen = useAppSelector((state) => state.builder.config_pane_display);
 
   return (
     <div className={styles.Container}>
@@ -55,10 +52,10 @@ export const BodyWidget = () => {
               <div
                 className={styles.PanelContent}
                 style={{
-                  overflowY: "auto",
-                  flexDirection: "column",
-                  justifyContent: "flex-start",
-                  alignSelf: "flex-start",
+                  overflowY: 'auto',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-start',
+                  alignSelf: 'flex-start',
                 }}
               >
                 <RepoBrowser />
@@ -79,12 +76,7 @@ export const BodyWidget = () => {
             {configPaneOpen !== ConfigPaneDisplay.None ? (
               <>
                 <ResizeHandle />
-                <Panel
-                  className={styles.Panel}
-                  order={3}
-                  defaultSize={30}
-                  collapsible={true}
-                >
+                <Panel className={styles.Panel} order={3} defaultSize={30} collapsible={true}>
                   <div className={styles.PanelContent}>
                     <ConfigPane />
                   </div>

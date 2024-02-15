@@ -1,22 +1,21 @@
-import React from "react";
-import NodeInfo from "./NodeInfo";
-import EasyEdit from "react-easy-edit";
-import BuilderEngine from "../BuilderEngine";
+import React from 'react';
+import EasyEdit from 'react-easy-edit';
+import BuilderEngine from '../BuilderEngine';
+import NodeInfo from './NodeInfo';
 
-import { Types } from "react-easy-edit";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { useAppDispatch } from "redux/store/hooks";
-import { useAppSelector } from "redux/store/hooks";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { builderSetNodes } from "redux/actions";
-import { builderSetEdges } from "redux/actions";
-import { builderNodeSelected } from "redux/actions";
-import { builderNodeDeselected } from "redux/actions";
-import { builderUpdateNodeInfoName } from "redux/actions";
-import { builderCheckNodeDependencies } from "redux/actions";
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Types } from 'react-easy-edit';
+import {
+  builderCheckNodeDependencies,
+  builderNodeDeselected,
+  builderSetEdges,
+  builderSetNodes,
+  builderUpdateNodeInfoName,
+} from 'redux/actions';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-import { Node, Edge } from "reactflow";
+import { Edge, Node } from 'reactflow';
 
 interface IPayload {
   id: string;
@@ -53,21 +52,14 @@ const ExpandButton = (props: ExpandProps) => {
   const nodes = useAppSelector((state) => state.builder.nodes);
   const edges = useAppSelector((state) => state.builder.edges);
 
-  const showExpand = useAppSelector(
-    (state) => state.builder.can_selected_expand,
-  );
+  const showExpand = useAppSelector((state) => state.builder.can_selected_expand);
 
   const btnExpand = () => {
     // Expand the selected node into it's constituent modules
     const app = BuilderEngine.Instance;
-    const [nodes0, edges0] = app.ExpandNodeByName(
-      props.nodeinfo.name as string,
-      nodes,
-      edges,
-    );
-    console.log("newnodes", newnodes);
-    if (nodes0 !== null && nodes0 !== undefined)
-      setNewNodes({ nodes: nodes0, edges: edges0 });
+    const [nodes0, edges0] = app.ExpandNodeByName(props.nodeinfo.name as string, nodes, edges);
+    console.log('newnodes', newnodes);
+    if (nodes0 !== null && nodes0 !== undefined) setNewNodes({ nodes: nodes0, edges: edges0 });
   };
 
   React.useEffect(() => {
@@ -114,22 +106,22 @@ const NodeInfoRenderer = (props) => {
 
   return (
     <div
-      key={"nodeinfo-" + nodeinfo.id} // ensures render defaults are reset when node is changed
+      key={'nodeinfo-' + nodeinfo.id} // ensures render defaults are reset when node is changed
       style={{
-        display: "flex",
-        width: "100%",
-        height: "100%",
-        flexFlow: "column",
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+        flexFlow: 'column',
       }}
     >
       <div
         style={{
-          borderStyle: "solid",
-          borderWidth: "1px 0px 0px 0px",
-          flex: "0 0 auto",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
+          borderStyle: 'solid',
+          borderWidth: '1px 0px 0px 0px',
+          flex: '0 0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <div>
@@ -147,15 +139,13 @@ const NodeInfoRenderer = (props) => {
         </div>
         <div>
           <ValidateButton nodename={nodeinfo.name} />
-          {PermitNodeExpand(nodeinfo, nodes) ? (
-            <ExpandButton nodeinfo={nodeinfo} />
-          ) : null}
+          {PermitNodeExpand(nodeinfo, nodes) ? <ExpandButton nodeinfo={nodeinfo} /> : null}
         </div>
       </div>
       <div
         style={{
-          flex: "1 1 auto",
-          overflowY: "auto",
+          flex: '1 1 auto',
+          overflowY: 'auto',
         }}
       >
         <NodeInfo />

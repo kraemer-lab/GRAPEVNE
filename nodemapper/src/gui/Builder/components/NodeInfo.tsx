@@ -1,18 +1,14 @@
-import React from "react";
-import styled from "@emotion/styled";
-import HighlightedJSON from "./HighlightedJSON";
-import ResizeHandle from "./ResizeHandle";
-import styles from "./styles.module.css";
+import styled from '@emotion/styled';
+import React from 'react';
+import HighlightedJSON from './HighlightedJSON';
+import ResizeHandle from './ResizeHandle';
+import styles from './styles.module.css';
 
-import { useState } from "react";
-import { useEffect } from "react";
-import { Component } from "react";
-import { useAppSelector } from "redux/store/hooks";
-import { useAppDispatch } from "redux/store/hooks";
-import { Panel } from "react-resizable-panels";
-import { PanelGroup } from "react-resizable-panels";
+import { useEffect, useState } from 'react';
+import { Panel, PanelGroup } from 'react-resizable-panels';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-import "./HighlightedJSON.css";
+import './HighlightedJSON.css';
 
 const Content = styled.div`
   display: flex;
@@ -36,16 +32,16 @@ const DocString = (props: DocStringProps) => {
     <div
       className="docstring"
       style={{
-        borderStyle: "solid",
-        borderWidth: "1px 0px 0px 0px",
-        flex: "0 0 auto",
+        borderStyle: 'solid',
+        borderWidth: '1px 0px 0px 0px',
+        flex: '0 0 auto',
         flexGrow: 1,
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "top",
-        whiteSpace: "pre-wrap", // preserves newlines in docstring
-        color: "#cccccc",
-        borderColor: "#ffffff",
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'top',
+        whiteSpace: 'pre-wrap', // preserves newlines in docstring
+        color: '#cccccc',
+        borderColor: '#ffffff',
       }}
     >
       <p>{props.docstring}</p>
@@ -54,14 +50,14 @@ const DocString = (props: DocStringProps) => {
 };
 
 const NodeInfo = () => {
-  const [codesnippet, setCodesnippet] = useState("");
-  const [docstring, setDocstring] = useState("");
+  const [codesnippet, setCodesnippet] = useState('');
+  const [docstring, setDocstring] = useState('');
   const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (nodeinfo === "") {
-      setCodesnippet("");
+    if (nodeinfo === '') {
+      setCodesnippet('');
     } else {
       // Extricate docstring from codesnippet
       const code = JSON.parse(JSON.parse(nodeinfo).code);
@@ -75,9 +71,7 @@ const NodeInfo = () => {
     <>
       <Content>
         <PanelGroup direction="vertical">
-          {docstring === undefined ||
-          docstring === null ||
-          docstring === "" ? null : (
+          {docstring === undefined || docstring === null || docstring === '' ? null : (
             <>
               <Panel
                 className={styles.Panel}
@@ -85,7 +79,7 @@ const NodeInfo = () => {
                 defaultSize={40}
                 collapsible={true}
                 style={{
-                  overflowY: "auto",
+                  overflowY: 'auto',
                 }}
               >
                 <DocString docstring={docstring} />
@@ -97,13 +91,10 @@ const NodeInfo = () => {
             className={styles.Panel}
             order={1}
             style={{
-              overflowY: "auto",
+              overflowY: 'auto',
             }}
           >
-            <HighlightedJSON
-              nodeid={JSON.parse(nodeinfo).id}
-              json={codesnippet}
-            />
+            <HighlightedJSON nodeid={JSON.parse(nodeinfo).id} json={codesnippet} />
           </Panel>
         </PanelGroup>
       </Content>

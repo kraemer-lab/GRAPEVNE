@@ -1,6 +1,6 @@
-import * as React from "react";
-import styled from "@emotion/styled";
-import { css, Global } from "@emotion/react";
+import { css, Global } from '@emotion/react';
+import styled from '@emotion/styled';
+import * as React from 'react';
 
 export interface GridCanvasWidgetProps {
   color?: string;
@@ -62,10 +62,8 @@ export class GridCanvasWidget extends React.Component<
         <Global styles={Expand} />
         <Container
           id="nodemapper-canvas"
-          background={
-            this.props.background || "var(--color-background-default)"
-          }
-          color={this.props.color || "rgba(255,255,255, 0.05)"}
+          background={this.props.background || 'var(--color-background-default)'}
+          color={this.props.color || 'rgba(255,255,255, 0.05)'}
         >
           {this.props.children}
         </Container>

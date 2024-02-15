@@ -1,14 +1,12 @@
-import React from "react";
-import MainPage from "./MainPage";
-import BuilderSettings from "./Builder/components/BuilderSettings";
+import React from 'react';
+import BuilderSettings from './Builder/components/BuilderSettings';
+import MainPage from './MainPage';
 
-import { Route } from "react-router-dom";
-import { Routes } from "react-router-dom";
-import { BrowserRouter } from "react-router-dom";
-import { useAppDispatch } from "redux/store/hooks";
-import { builderReadStoreConfig } from "redux/actions";
+import { Route, Routes } from 'react-router-dom';
+import { builderReadStoreConfig } from 'redux/actions';
+import { useAppDispatch } from 'redux/store/hooks';
 
-import Sidenav from "./Sidenav";
+import Sidenav from './Sidenav';
 
 const Builder = () => <MainPage />;
 const Monitor = () => <h1>Monitor</h1>;
@@ -32,17 +30,17 @@ function App() {
     <div
       className="App"
       style={{
-        display: "flex",
-        width: "100vw",
-        height: "100vh",
-        overflow: "hidden",
+        display: 'flex',
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
       }}
     >
       <Sidenav />
       <main
         style={{
-          width: "100vw",
-          height: "100vh",
+          width: '100vw',
+          height: '100vh',
         }}
       >
         <Routes>
