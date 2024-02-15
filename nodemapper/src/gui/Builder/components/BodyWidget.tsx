@@ -73,7 +73,7 @@ export const BodyWidget = () => {
               </div>
             </Panel>
 
-            {configPaneOpen !== ConfigPaneDisplay.None ? (
+            {configPaneOpen !== ConfigPaneDisplay.None && (
               <>
                 <ResizeHandle />
                 <Panel className={styles.Panel} order={3} defaultSize={30} collapsible={true}>
@@ -82,7 +82,7 @@ export const BodyWidget = () => {
                   </div>
                 </Panel>
               </>
-            ) : null}
+            )}
           </PanelGroup>
         </Content>
       </Body>

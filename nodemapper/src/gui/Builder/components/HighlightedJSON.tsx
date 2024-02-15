@@ -415,9 +415,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   />
                 )}
               </span>
-              {canConnectParameter ? (
+              {canConnectParameter && (
                 <ConnectParameter connectParameter={connectParameter} />
-              ) : null}
+              )}
             </span>
           ) : (
             <TreeItem nodeId={(nodeId++).toString()} key={key} label={label}>

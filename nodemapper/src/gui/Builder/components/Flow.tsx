@@ -133,7 +133,7 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
           backgroundColor: props.data.color,
         }}
       >
-        {selected ? (
+        {selected && (
           <NodeResizeControl
             style={nodeResizeControlStyle}
             minWidth={120}
@@ -151,13 +151,13 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
               <FontAwesomeIcon icon={faLeftRight} />
             </span>
           </NodeResizeControl>
-        ) : null}
+        )}
         <div className={styles.HeaderPanel}>
           <div className={styles.HeaderText}>{props.data.config.name}</div>
         </div>
         {!named_inputs ? (
           <>
-            {input_namespaces.length == 1 ? (
+            {input_namespaces.length == 1 && (
               <Handle
                 className={styles.HandleInput}
                 id={input_namespaces[0]}
@@ -166,7 +166,7 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
                 position={Position.Left}
                 style={{ top: '50%' }}
               />
-            ) : null}
+            )}
             <Handle
               className={styles.HandleOutput}
               id="out"

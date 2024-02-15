@@ -373,7 +373,7 @@ export default function ParameterList({
         </big>{' '}
         <i>{node_name}</i>
         <span style={{ float: 'right' }}>
-          {isConnected ? (
+          {isConnected && (
             <span>
               <Button
                 id="btnParameterListRemove"
@@ -384,7 +384,7 @@ export default function ParameterList({
                 Disconnect
               </Button>{' '}
             </span>
-          ) : null}
+          )}
           <label htmlFor="checkParameterListShowSelfParams">Show own parameters</label>
           <Checkbox
             id="checkParameterListShowSelfParams"

@@ -139,7 +139,7 @@ const NodeInfoRenderer = (props) => {
         </div>
         <div>
           <ValidateButton nodename={nodeinfo.name} />
-          {PermitNodeExpand(nodeinfo, nodes) ? <ExpandButton nodeinfo={nodeinfo} /> : null}
+          {PermitNodeExpand(nodeinfo, nodes) && <ExpandButton nodeinfo={nodeinfo} />}
         </div>
       </div>
       <div
