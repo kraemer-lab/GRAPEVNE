@@ -200,7 +200,7 @@ export default function ParameterList({
 
   const NodeParameters = ({ node, keylist }: INodeParametersProps) => {
     // Isolate current branch in the json tree (indexed by keylist)
-    let jsonObj = JSON.parse(JSON.stringify(node))["data"]["config"]["config"];
+    let jsonObj = JSON.parse(JSON.stringify(node))['data']['config']['config'];
     for (let i = 0; i < keylist.length; i++) {
       jsonObj = jsonObj[keylist[i]];
     }

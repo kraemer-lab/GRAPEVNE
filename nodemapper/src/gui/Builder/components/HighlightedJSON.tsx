@@ -2,7 +2,7 @@ import React from 'react';
 import EasyEdit from 'react-easy-edit';
 import ParameterList from './ParameterList';
 
-import { faCheck, faTimes, faLink } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faLink, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { Types } from 'react-easy-edit';
@@ -415,9 +415,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   />
                 )}
               </span>
-              {canConnectParameter && (
-                <ConnectParameter connectParameter={connectParameter} />
-              )}
+              {canConnectParameter && <ConnectParameter connectParameter={connectParameter} />}
             </span>
           ) : (
             <TreeItem nodeId={(nodeId++).toString()} key={key} label={label}>
