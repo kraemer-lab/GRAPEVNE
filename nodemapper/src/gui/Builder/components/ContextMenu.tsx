@@ -1,10 +1,11 @@
 import React from 'react';
 import BuilderEngine from '../BuilderEngine';
 
-import { useCallback } from 'react';
-import { useReactFlow } from 'reactflow';
-import { useAppSelector } from 'redux/store/hooks';
-import { getNodeById } from './Flow';
+import { useCallback } from "react";
+import { useAppSelector } from "redux/store/hooks";
+import { useReactFlow } from "reactflow";
+import { getNodeById } from "./Flow";
+import Button from "@mui/material/Button";
 
 interface ContextMenuProps {
   id: string;
@@ -42,8 +43,8 @@ export default function ContextMenu({ id, top, left, right, bottom, ...props }: 
       <p style={{ margin: '0.5em' }}>
         <small>{node_name}</small>
       </p>
-      <button onClick={duplicateNode}>duplicate</button>
-      <button onClick={deleteNode}>delete</button>
+      <Button onClick={duplicateNode}>duplicate</Button>
+      <Button onClick={deleteNode}>delete</Button>
     </div>
   );
 }

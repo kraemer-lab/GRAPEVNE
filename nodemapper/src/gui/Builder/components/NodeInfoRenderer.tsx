@@ -15,7 +15,8 @@ import {
 } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-import { Edge, Node } from 'reactflow';
+import { Node, Edge } from "reactflow";
+import Button from "@mui/material/Button";
 
 interface IPayload {
   id: string;
@@ -37,9 +38,15 @@ const ValidateButton = (props: ValidateButtonProps) => {
   };
 
   return (
-    <button id="btnBuilderValidate" className="btn" onClick={btnValidate}>
+    <Button
+      id="btnBuilderValidate"
+      className="btn"
+      onClick={btnValidate}
+      variant="contained"
+      size="small"
+    >
       Validate
-    </button>
+    </Button>
   );
 };
 
@@ -73,9 +80,15 @@ const ExpandButton = (props: ExpandProps) => {
 
   if (showExpand) {
     return (
-      <button id="btnBuilderExpand" className="btn" onClick={btnExpand}>
+      <Button
+        id="btnBuilderExpand"
+        className="btn"
+        onClick={btnExpand}
+        variant="contained"
+        size="small"
+      >
         Expand
-      </button>
+      </Button>
     );
   } else {
     return null;

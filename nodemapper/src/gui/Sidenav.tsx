@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
-import styles from 'Sidenav.module.css';
+import styles from './Sidenav.module.css';
 
 export const navData = [
   {

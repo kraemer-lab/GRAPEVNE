@@ -7,39 +7,9 @@ import { TrayWidget } from './TrayWidget';
 
 import BuilderEngine from '../BuilderEngine';
 
-const InputStyled = styled.input({
-  color: 'white',
-  fontFamily: 'Helvetica, Arial',
-  padding: '5px',
-  margin: '0px 10px',
-  border: 'solid 1px ${(p) => p.color}',
-  borderRadius: '5px',
-  marginBottom: '2px',
-  marginTop: '2px',
-  cursor: 'pointer',
-  width: '100%',
-  background: 'var(--background-color)',
-  flexGrow: '0',
-  flexShrink: '0',
-  boxSizing: 'border-box',
-});
-
-const SelectStyled = styled.select({
-  color: 'white',
-  fontFamily: 'Helvetica, Arial',
-  padding: '5px',
-  margin: '0px 10px',
-  border: 'solid 1px ${(p) => p.color}',
-  borderRadius: '5px',
-  marginBottom: '2px',
-  marginTop: '2px',
-  cursor: 'pointer',
-  width: '100%',
-  background: 'var(--background-color)',
-  flexGrow: '0',
-  flexShrink: '0',
-  boxSizing: 'border-box',
-});
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 const hash = (s: string) => {
   let hash = 0,
@@ -93,7 +63,7 @@ const RepoBrowser = () => {
     setTrayitems(updateTrayItems('(all)', ''));
   }, [modules]);
 
-  const onChangeOrgList = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const onChangeOrgList = (event: SelectChangeEvent) => {
     setFilterSelection(event.target.value);
     setTrayitems(updateTrayItems(event.target.value, searchterm));
   };
@@ -110,25 +80,34 @@ const RepoBrowser = () => {
     .sort(); // sort alphabetically
   organisaton_list.unshift('(all)'); // add "(all)" to the top of the list
   const organisaton_list_options = organisaton_list.map((m) => (
-    <option key={m} value={m}>
+    <MenuItem key={m} value={m}>
       {m}
-    </option>
+    </MenuItem>
   ));
 
   return (
     <>
-      <InputStyled
-        type="text"
+      <TextField
         id="repo-searchterm"
         name="repo-searchterm"
         placeholder="Search"
         value={searchterm}
         onChange={onChangeSearchTerm}
+        variant="outlined"
+        size="small"
+        fullWidth
       />
 
-      <SelectStyled name="orglist" id="orglist" value={filterSelection} onChange={onChangeOrgList}>
+      <Select
+        name="orglist"
+        id="orglist"
+        value={filterSelection}
+        onChange={onChangeOrgList}
+        size="small"
+        fullWidth
+      >
         {organisaton_list_options}
-      </SelectStyled>
+      </Select>
 
       <TrayWidget>{trayitems}</TrayWidget>
     </>

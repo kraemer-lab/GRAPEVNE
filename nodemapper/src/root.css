@@ -1,6 +1,13 @@
 :root {
   --color-background-code: rgb(0 0 0 / 35%);
-  --color-background-default: #0a1829;
+  --color-background-default: #ffffff;
+
+  --color-sidebar-background: #eeeeee;
+  --color-sidebar-item: #000000;
+  --color-sidebar-item-hover: #244f7d1c;
+  --color-sidebar-menu-button: #b2bac2;
+
+  --color-canvas-background: #202124;
   --color-button-background: #2a3343;
   --color-button-background-hover: #454950;
   --color-button-border: #18181a;
@@ -8,8 +15,16 @@
   --color-default: #ffffff;
   --color-horizontal-rule: #454950;
   --color-link: #dcadff;
-  --color-panel-background: #192230;
-  --color-panel-background-alternate: #202124;
+
+  --color-flow-canvas-background: #def3f0;
+
+  --color-terminal-text: #ffffff;
+  --color-terminal-background: #000000;
+
+  --color-panel-background: #fcfcfc;  /* Side/Bottom Panels */
+  --color-panel-background-alternate: #d5d5d5;
+  --color-panel-settings-background: #d5d5d5;
+
   --color-solid-resize-bar: #454950;
   --color-solid-resize-bar-handle: rgb(255 255 255 / 20%);
 }

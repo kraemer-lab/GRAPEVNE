@@ -7,8 +7,20 @@ import { getMasterRepoListURL } from 'redux/globals';
 import { IRepo } from 'redux/reducers/builder';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+import Box from "@mui/material/Box";
+import List from "@mui/material/List";
+import Input from "@mui/material/Input";
+import Select from "@mui/material/Select";
+import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
+import Checkbox from "@mui/material/Checkbox";
+import ListItem from "@mui/material/ListItem";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import FormControl from "@mui/material/FormControl";
+import ListItemText from "@mui/material/ListItemText";
+
 const default_input_size = 35;
-const panel_background_color = '#2e3746';
 
 const RepoOptions: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -109,15 +121,8 @@ const RepoOptions: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: panel_background_color,
-        padding: '5px',
-      }}
-    >
-      <p>
-        <b>Repository list</b>
-      </p>
+    <div>
+      <Typography variant="h6">Repository List</Typography>
       <select
         id="selectBuilderSettingsRepositoryList"
         size={8}
@@ -136,42 +141,39 @@ const RepoOptions: React.FC = () => {
           width: '100%',
         }}
       >
-        <div
-          style={{
-            width: '50%',
-          }}
+        <Box
+          display="flex"
+          flexDirection="row"
+          width="100%"
+          justifyContent="flex-end"
         >
-          Add repository
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '100%',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <button
+          <Button
             id="buttonBuilderSettingsRepositoryLoadMasterList"
             onClick={() => OnClickReloadMasterList()}
-            style={{ marginRight: '5px' }}
+            style={{ marginRight: "5px" }}
+            size="small"
+            variant="contained"
           >
             RELOAD MASTER LIST
-          </button>
-          <button
+          </Button>
+          <Button
             id="buttonBuilderSettingsRepositoryListAddItem"
             onClick={() => OnClickAddItem()}
-            style={{ marginRight: '5px' }}
+            style={{ marginRight: "5px" }}
+            size="small"
+            variant="contained"
           >
             ADD
-          </button>
-          <button
+          </Button>
+          <Button
             id="buttonBuilderSettingsRepositoryListRemoveItem"
             onClick={() => OnClickRemoveItem()}
+            size="small"
+            variant="contained"
           >
             REMOVE
-          </button>
-        </div>
+          </Button>
+        </Box>
       </div>
       <div
         style={{
@@ -186,15 +188,15 @@ const RepoOptions: React.FC = () => {
             textAlign: 'right',
           }}
         >
-          Label:
+          <Typography variant="body1">Label:</Typography>
         </div>
-        <input
+        <TextField
           id="inputBuilderSettingsRepositoryLabel"
           type="text"
           value={repoLabel}
           onChange={(e) => setRepoLabel(e.target.value)}
-          size={default_input_size}
-          style={{ width: '100%' }}
+          size="small"
+          style={{ width: "100%" }}
         />
       </div>
       <div
@@ -210,18 +212,19 @@ const RepoOptions: React.FC = () => {
             textAlign: 'right',
           }}
         >
-          Type:
+          <Typography variant="body1">Type:</Typography>
         </div>
-        <select
+        <Select
           id="selectBuilderSettingsRepositoryType"
           value={repoFormType}
           onChange={(e) => selectRepositoryTarget(e.target.value)}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
+          size="small"
         >
-          <option value="GithubDirectory">Github (Directory Listing)</option>
-          <option value="LocalFilesystem">Local filesystem</option>
+          <MenuItem value="GithubDirectory">Github (Directory Listing)</MenuItem>
+          <MenuItem value="LocalFilesystem">Local filesystem</MenuItem>
           {/*<option value="GithubBranch">Github (Branch Listing)</option>*/}
-        </select>
+        </Select>
       </div>
       <div
         style={{
@@ -236,15 +239,15 @@ const RepoOptions: React.FC = () => {
             textAlign: 'right',
           }}
         >
-          URL:
+          <Typography variant="body1">URL:</Typography>
         </div>
-        <input
+        <TextField
           id="inputBuilderSettingsRepositoryURL"
           type="text"
-          size={default_input_size}
           value={repoURL}
           onChange={(e) => setRepoURL(e.target.value)}
-          style={{ width: '100%' }}
+          style={{ width: "100%" }}
+          size="small"
         />
       </div>
     </div>

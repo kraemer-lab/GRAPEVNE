@@ -3,6 +3,9 @@ import Header from './Header';
 import NodeManager from './NodeManager';
 import StatusBar from './StatusBar';
 
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+
 const Builder = () => {
   return (
     <>

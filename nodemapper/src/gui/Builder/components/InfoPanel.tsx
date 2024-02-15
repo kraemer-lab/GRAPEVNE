@@ -1,43 +1,77 @@
-import React from 'react';
-import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
-import { useAppSelector } from 'redux/store/hooks';
-import Logger from './Logger';
+import React from "react";
+import TerminalWindow from "./TerminalWindow";
+import Logger from "./Logger";
+import { useAppSelector } from "redux/store/hooks";
 
-const InfoPanel = () => {
-  const terminal_visible = useAppSelector((state) => state.builder.terminal_visibile);
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+const TabPanel = (props: TabPanelProps) => {
+  const { children, value, index, ...other } = props;
+
   return (
-    <Tabs
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
       style={{
-        display: 'flex',
-        flexDirection: 'column',
         width: '100%',
         height: '100%',
       }}
+      {...other}
     >
-      <TabList>
-        <Tab>Log</Tab>
-        {/*<Tab>Terminal</Tab>*/}
-      </TabList>
+      {value === index && (
+        <Box
+          sx={{ p: 3 }}
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
+        >
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
 
-      <TabPanel
-        style={{
-          height: '100%',
-          width: '100%',
-        }}
-      >
+const tabProps = (index: number) => {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `tabpanel-${index}`,
+  };
+}
+
+const InfoPanel = () => {
+  const terminal_visible = useAppSelector(
+    (state) => state.builder.terminal_visibile,
+  );
+
+  const [value, setValue] = React.useState(0);
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+  return (
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={value} onChange={handleChange} aria-label="footer tabs">
+          <Tab label="Log" {...tabProps(0)} />
+        </Tabs>
+      </Box>
+      <TabPanel value={value} index={0}>
         <Logger />
       </TabPanel>
-
-      {/*<TabPanel
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        <TerminalWindow />
-      </TabPanel>*/}
-    </Tabs>
+    </Box>
   );
 };
 

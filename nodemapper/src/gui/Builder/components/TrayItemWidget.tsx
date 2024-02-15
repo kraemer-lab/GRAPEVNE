@@ -11,7 +11,7 @@ export interface TrayItemWidgetProps {
 }
 
 export const Tray = styled.div<{ color: string }>`
-  color: white;
+  color: black;
   font-family: Helvetica, Arial;
   padding: 5px;
   margin: 0px 10px;

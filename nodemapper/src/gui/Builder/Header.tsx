@@ -13,8 +13,23 @@ import {
   builderSetNodes,
 } from 'redux/actions';
 
+import Menu from "@mui/material/Menu";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import MenuItem from "@mui/material/MenuItem";
+
 const Header = () => {
   const dispatch = useAppDispatch();
+
+  // Build and Run dropdown menu state
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const btnBuildAndRunDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const btnBuildAndRunDropdownClose = () => {
+    setAnchorEl(null);
+  };
 
   /*
   // Load nodemap from file
@@ -30,7 +45,6 @@ const Header = () => {
 
   // Load nodemap from file
   const btnClearScene = () => {
-    //BuilderEngine.Instance.ClearScene();
     dispatch(builderNodeDeselected());
     dispatch(builderSetNodes([]));
     dispatch(builderSetEdges([]));
@@ -39,6 +53,7 @@ const Header = () => {
   // Run - build and run the workflow
   const btnRun = () => {
     dispatch(builderBuildAndRun());
+    btnBuildAndRunDropdownClose();
   };
 
   // Clean build folder
@@ -49,11 +64,13 @@ const Header = () => {
   // Build as module
   const btnBuildAsModule = () => {
     dispatch(builderBuildAsModule());
+    btnBuildAndRunDropdownClose();
   };
 
   // Build as workflow
   const btnBuildAsWorkflow = () => {
     dispatch(builderBuildAsWorkflow());
+    btnBuildAndRunDropdownClose();
   };
 
   // Load modules from repository
@@ -65,52 +82,91 @@ const Header = () => {
     <>
       <link href="http://fonts.googleapis.com/css?family=Oswald" rel="stylesheet" type="text/css" />
       <div
-        style={{
-          display: 'flex',
-          fontSize: 18,
-          marginLeft: 0,
-          marginBottom: 2,
-          alignItems: 'center',
-        }}
       >
         {/*
           *** LOAD function needs to assign eventListeners on load
-        <button
+        <Button
           id="btnBuilderLoadScene"
           className="btn"
           onClick={btnLoadScene}
         >
           LOAD
-        </button>
+        </Button>
 
-        <button
+        <Button
           id="btnBuilderSaveScene"
           className="btn"
           onClick={btnSaveScene}
         >
           SAVE
-        </button>
+        </Button>
         */}
-        <button id="btnBuilderGetModuleList" className="btn" onClick={btnGetModuleList}>
+        <Button
+          id="btnBuilderGetModuleList"
+          className="btn"
+          onClick={btnGetModuleList}
+          variant="outlined"
+        >
           GET MODULE LIST
-        </button>
-        |
-        <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
-          TEST BUILD
-        </button>
-        <button id="btnBuilderCleanBuildFolder" className="btn" onClick={btnCleanBuildFolder}>
+        </Button>
+
+        <Button
+          id="btnBuildAndRunDropdown"
+          aria-controls={open ? 'buildAndRunDropdown-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={btnBuildAndRunDropdownClick}
+          variant="outlined"
+        >
+          BUILD & RUN ...
+        </Button>
+
+        <Menu
+          id="buildAndRunDropdown-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={btnBuildAndRunDropdownClose}
+          MenuListProps={{
+            'aria-labelledby': 'buildAndRunDropdown',
+          }}
+        >
+          <MenuItem
+            id="btnBuilderBuildAndTest"
+            onClick={btnRun}
+          >
+            TEST BUILD
+          </MenuItem>
+          <MenuItem
+            id="btnBuilderBuildAsModule"
+            onClick={btnBuildAsModule}
+          >
+            BUILD AS MODULE
+          </MenuItem>
+          <MenuItem
+            id="btnBuilderBuildAsWorkflow"
+            onClick={btnBuildAsWorkflow}
+          >
+            BUILD AS WORKFLOW
+          </MenuItem>
+        </Menu>
+
+        <Button
+          id="btnBuilderCleanBuildFolder"
+          className="btn"
+          onClick={btnCleanBuildFolder}
+          variant="outlined"
+        >
           DELETE TEST BUILD
-        </button>
-        <button id="btnBuilderBuildAsModule" className="btn" onClick={btnBuildAsModule}>
-          BUILD AS MODULE
-        </button>
-        <button id="btnBuilderBuildAsWorkflow" className="btn" onClick={btnBuildAsWorkflow}>
-          BUILD AS WORKFLOW
-        </button>
-        |
-        <button id="btnBuilderClearScene" className="btn" onClick={btnClearScene}>
+        </Button>
+
+        <Button
+          id="btnBuilderClearScene"
+          className="btn"
+          onClick={btnClearScene}
+          variant="outlined"
+        >
           CLEAR GRAPH
-        </button>
+        </Button>
       </div>
     </>
   );

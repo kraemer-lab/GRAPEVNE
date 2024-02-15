@@ -1,3 +1,7 @@
+.Canvas {
+  background-color: var(--color-flow-canvas-background);
+}
+
 .Node {
   min-height: 18px;
   min-width: 100px;

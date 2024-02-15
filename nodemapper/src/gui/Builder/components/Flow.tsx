@@ -35,13 +35,13 @@ import ReactFlow, {
   getBezierPath,
 } from 'reactflow';
 
-import ContextMenu from './ContextMenu';
-
 import { faLeftRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import 'reactflow/dist/style.css';
 import './flow.css';
 import styles from './flow.module.css';
+import Button from "@mui/material/Button";
+import ContextMenu from './ContextMenu';
 
 import dagre from 'dagre';
 
@@ -276,12 +276,12 @@ export const ButtonEdge = ({
           }}
           className="nodrag nopan"
         >
-          {/*<button
+          {/*<Button
             className={styles.ButtonEdge}
             onClick={(event) => onEdgeClick(event, id)}
           >
             -
-          </button>*/}
+          </Button>*/}
         </div>
       </EdgeLabelRenderer>
     </>
@@ -559,6 +559,7 @@ const Flow = () => {
   return (
     <ReactFlow
       ref={ref}
+      className={styles.Canvas}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       nodes={nodes}
@@ -579,9 +580,14 @@ const Flow = () => {
       <Controls />
       <Background />
       <Panel position="top-right">
-        <button id="buttonReactflowArrange" onClick={() => onLayout('LR')}>
+        <Button
+          id="buttonReactflowArrange"
+          onClick={() => onLayout("LR")}
+          variant="contained"
+          size="small"
+        >
           Arrange
-        </button>
+        </Button>
       </Panel>
       {menu && <ContextMenu onClick={onPaneClick} {...menu} />}
     </ReactFlow>

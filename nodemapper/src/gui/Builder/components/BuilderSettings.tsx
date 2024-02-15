@@ -13,8 +13,30 @@ import {
 } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Input from "@mui/material/Input";
+import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Checkbox from "@mui/material/Checkbox";
+import TextField from '@mui/material/TextField';
+import FormGroup from '@mui/material/FormGroup';
+import Typography from "@mui/material/Typography";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { styled } from '@mui/material/styles';
+
 const default_input_size = 35;
 const panel_background_color = '#2e3746';
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  margin: '5px 10px',
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 const BuilderSettings = () => {
   const dispatch = useAppDispatch();
@@ -56,133 +78,133 @@ const BuilderSettings = () => {
   const SetPackageModulesInWorkflow = (value: boolean) =>
     dispatch(builderSetPackageModulesInWorkflow(value));
 
+  const SnakemakeOptions = () => {
+    return (
+      <>
+        <Typography variant="h6">Snakemake</Typography>
+        <Typography variant="body1" align='left'>Backend</Typography>
+        <p>
+          <Select
+            defaultValue={snakemake_backend}
+            onChange={(e) => selectSnakemakeBackend(e.target.value)}
+            style={{ width: "100%" }}
+            size="small"
+          >
+            <MenuItem value="builtin">Built-in</MenuItem>
+            <MenuItem value="system">System</MenuItem>
+          </Select>
+        </p>
+        <Typography variant="body1" align='left'>Arguments</Typography>
+        <p>
+          <TextField
+            id="inputBuilderSettingsSnakemakeArgs"
+            type="text"
+            value={snakemake_args}
+            onChange={(e) => SetSnakemakeArgs(e.target.value)}
+            style={{ width: "100%" }}
+            size="small"
+          />
+        </p>
+      </>
+    );
+  };
+
+  const EnvironmentOptions = () => {
+    return (
+      <>
+        <Typography variant="h6">Environment</Typography>
+        <Typography variant="body1" align='left'>Variables</Typography>
+        <TextField
+          id="inputBuilderSettingsEnvironmentVars"
+          type="text"
+          value={environment_vars}
+          onChange={(e) => SetEnvironmentVars(e.target.value)}
+          style={{ width: "100%" }}
+          size="small"
+        />
+      </>
+    );
+  };
+
+  const InterfaceOptions = () => {
+    return (
+      <>
+        <Typography variant="h6">Interface</Typography>
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={display_module_settings}
+                onChange={(e) => SetDisplayModuleSettings(e.target.checked)}
+              />
+            }
+            label="Display module settings"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={auto_validate_connections}
+                onChange={(e) => SetAutoValidateConnections(e.target.checked)}
+              />
+            }
+            label="Auto-validate connections"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={package_modules_in_workflow}
+                onChange={(e) =>
+                  SetPackageModulesInWorkflow(e.target.checked)
+                }
+              />
+            }
+            label="Package all modules in workflow"
+          />
+        </FormGroup>
+      </>
+    );
+  };
+
   return (
-    <>
-      <div
-        style={{
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
+    <Box
+      sx={{
+          mb: 2,
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          width: "100%",
+          overflow: "hidden",
+          overflowY: "scroll",
+      }}
+    >
+      <Grid
+        container
+        spacing={0}
+        alignItems="center"
+        justifyContent="center"
       >
-        <div
-          style={{
-            display: 'flex',
-            width: '100%',
-            maxWidth: '600px',
-            flexDirection: 'column',
-            justifyContent: 'flex-start',
-            alignSelf: 'flex-start',
-            padding: '10px',
-            gap: '10px',
-          }}
-        >
-          <div>
+        <Grid item xs={8}>
+          <Item>
             <RepoOptions />
-          </div>
-          <div>
-            <div
-              style={{
-                backgroundColor: panel_background_color,
-                padding: '5px',
-              }}
-            >
-              <p>
-                <b>Snakemake</b>
-              </p>
-              <p>Backend</p>
-              <p>
-                <select
-                  defaultValue={snakemake_backend}
-                  onChange={(e) => selectSnakemakeBackend(e.target.value)}
-                  style={{ width: '100%' }}
-                >
-                  <option value="builtin">Built-in</option>
-                  <option value="system">System</option>
-                </select>
-              </p>
-              <p>Arguments</p>
-              <p>
-                <input
-                  id="inputBuilderSettingsSnakemakeArgs"
-                  type="text"
-                  size={default_input_size}
-                  value={snakemake_args}
-                  onChange={(e) => SetSnakemakeArgs(e.target.value)}
-                  style={{ width: '100%' }}
-                />
-              </p>
-            </div>
-          </div>
-          <div>
-            <div
-              style={{
-                backgroundColor: panel_background_color,
-                padding: '5px',
-              }}
-            >
-              <p>
-                <b>Environment</b>
-              </p>
-              <p>Variables</p>
-              <p>
-                <input
-                  id="inputBuilderSettingsEnvironmentVars"
-                  type="text"
-                  size={default_input_size}
-                  value={environment_vars}
-                  onChange={(e) => SetEnvironmentVars(e.target.value)}
-                  style={{ width: '100%' }}
-                />
-              </p>
-            </div>
-          </div>
-          <div>
-            <div
-              style={{
-                backgroundColor: panel_background_color,
-                padding: '5px',
-              }}
-            >
-              <p>
-                <b>Interface</b>
-              </p>
-              <p>
-                <input
-                  type="checkbox"
-                  id="display_module_settings"
-                  checked={display_module_settings}
-                  onChange={(e) => SetDisplayModuleSettings(e.target.checked)}
-                />
-                <label htmlFor="display_module_settings"> Display module settings</label>
-              </p>
-              <p>
-                <input
-                  type="checkbox"
-                  id="auto_validate_connections"
-                  checked={auto_validate_connections}
-                  onChange={(e) => SetAutoValidateConnections(e.target.checked)}
-                />
-                <label htmlFor="auto_validate_connections"> Auto-validate connections</label>
-              </p>
-              <p>
-                <input
-                  type="checkbox"
-                  id="package_modules_in_workflow"
-                  checked={package_modules_in_workflow}
-                  onChange={(e) => SetPackageModulesInWorkflow(e.target.checked)}
-                />
-                <label htmlFor="package_modules_in_workflow">
-                  {' '}
-                  Package all modules in workflow
-                </label>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+          </Item>
+        </Grid>
+        <Grid item xs={8}>
+          <Item>
+            <SnakemakeOptions />
+          </Item>
+        </Grid>
+        <Grid item xs={8}>
+          <Item>
+            <EnvironmentOptions />
+          </Item>
+        </Grid>
+        <Grid item xs={8}>
+          <Item>
+            <InterfaceOptions />
+          </Item>
+        </Grid>
+      </Grid>
+    </Box>
   );
 };
 
