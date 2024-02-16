@@ -8,7 +8,6 @@ import { HashRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
 
 import App from './gui/App';
-import './root.css';
 
 // Polyfill ResizeObserver which otherwise throws an error in tests
 global.ResizeObserver = require('resize-observer-polyfill');

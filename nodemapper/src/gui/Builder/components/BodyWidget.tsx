@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import React from 'react';
 
 import Canvas from './Canvas';
-import ConfigPane from './ConfigPane';
+import NodeInfoRenderer from './NodeInfoRenderer';
 import RepoBrowser from './RepoBrowser';
 
 import { Panel, PanelGroup } from 'react-resizable-panels';
@@ -11,6 +11,7 @@ import styles from './styles.module.css';
 
 import { useAppSelector } from 'redux/store/hooks';
 import { ConfigPaneDisplay } from 'redux/types';
+import { Box } from '@mui/material';
 
 const Body = styled.div`
   flex-grow: 1;
@@ -44,14 +45,14 @@ export const BodyWidget = () => {
   const configPaneOpen = useAppSelector((state) => state.builder.config_pane_display);
 
   return (
-    <div className={styles.Container}>
+    <Box className={styles.Container}>
       <Body>
         <Content>
           <PanelGroup direction="horizontal">
             <Panel className={styles.Panel} order={1} defaultSize={20}>
-              <div
+              <Box
                 className={styles.PanelContent}
-                style={{
+                sx={{
                   overflowY: 'auto',
                   flexDirection: 'column',
                   justifyContent: 'flex-start',
@@ -59,7 +60,7 @@ export const BodyWidget = () => {
                 }}
               >
                 <RepoBrowser />
-              </div>
+              </Box>
             </Panel>
             <ResizeHandle />
 
@@ -68,24 +69,24 @@ export const BodyWidget = () => {
               order={2}
               defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 50}
             >
-              <div className={styles.BottomRow}>
+              <Box className={styles.BottomRow}>
                 <Canvas />
-              </div>
+              </Box>
             </Panel>
 
             {configPaneOpen !== ConfigPaneDisplay.None && (
               <>
                 <ResizeHandle />
                 <Panel className={styles.Panel} order={3} defaultSize={30} collapsible={true}>
-                  <div className={styles.PanelContent}>
-                    <ConfigPane />
-                  </div>
+                  <Box className={styles.PanelContent}>
+                    <NodeInfoRenderer />
+                  </Box>
                 </Panel>
               </>
             )}
           </PanelGroup>
         </Content>
       </Body>
-    </div>
+    </Box>
   );
 };

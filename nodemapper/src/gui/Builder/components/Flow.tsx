@@ -37,11 +37,11 @@ import ReactFlow, {
 
 import { faLeftRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Button from '@mui/material/Button';
 import 'reactflow/dist/style.css';
+import ContextMenu from './ContextMenu';
 import './flow.css';
 import styles from './flow.module.css';
-import Button from "@mui/material/Button";
-import ContextMenu from './ContextMenu';
 
 import dagre from 'dagre';
 
@@ -582,7 +582,7 @@ const Flow = () => {
       <Panel position="top-right">
         <Button
           id="buttonReactflowArrange"
-          onClick={() => onLayout("LR")}
+          onClick={() => onLayout('LR')}
           variant="contained"
           size="small"
         >

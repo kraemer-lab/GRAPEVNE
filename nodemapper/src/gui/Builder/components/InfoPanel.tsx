@@ -1,12 +1,10 @@
-import React from "react";
-import TerminalWindow from "./TerminalWindow";
-import Logger from "./Logger";
-import { useAppSelector } from "redux/store/hooks";
+import React from 'react';
+import { useAppSelector } from 'redux/store/hooks';
+import Logger from './Logger';
 
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -18,7 +16,7 @@ const TabPanel = (props: TabPanelProps) => {
   const { children, value, index, ...other } = props;
 
   return (
-    <div
+    <Box
       role="tabpanel"
       hidden={value !== index}
       id={`tabpanel-${index}`}
@@ -31,30 +29,28 @@ const TabPanel = (props: TabPanelProps) => {
     >
       {value === index && (
         <Box
-          sx={{ p: 3 }}
-      style={{
-        width: '100%',
-        height: '100%',
-      }}
+          sx={{ p: 0 }}
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
         >
           {children}
         </Box>
       )}
-    </div>
+    </Box>
   );
-}
+};
 
 const tabProps = (index: number) => {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `tabpanel-${index}`,
   };
-}
+};
 
 const InfoPanel = () => {
-  const terminal_visible = useAppSelector(
-    (state) => state.builder.terminal_visibile,
-  );
+  const terminal_visible = useAppSelector((state) => state.builder.terminal_visibile);
 
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

@@ -15,8 +15,8 @@ import {
 } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-import { Node, Edge } from "reactflow";
-import Button from "@mui/material/Button";
+import Button from '@mui/material/Button';
+import { Edge, Node } from 'reactflow';
 
 interface IPayload {
   id: string;

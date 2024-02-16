@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import React from 'react';
 import { builderUpdateStatusText } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
@@ -7,9 +6,9 @@ import { TrayWidget } from './TrayWidget';
 
 import BuilderEngine from '../BuilderEngine';
 
-import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
 
 const hash = (s: string) => {
   let hash = 0,

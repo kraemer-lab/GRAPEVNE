@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAppSelector } from 'redux/store/hooks';
+import Box from '@mui/material/Box';
 
 const StatusBar: React.FC = () => {
   const [status, setStatus] = useState('');
@@ -8,7 +9,7 @@ const StatusBar: React.FC = () => {
     setStatus(statustext);
   }, [statustext]);
   return (
-    <div
+    <Box
       className="status-bar"
       style={{
         fontSize: 14,
@@ -16,7 +17,7 @@ const StatusBar: React.FC = () => {
       }}
     >
       {status ? status : <br />}
-    </div>
+    </Box>
   );
 };
 

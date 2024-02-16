@@ -13,10 +13,10 @@ import {
   builderSetNodes,
 } from 'redux/actions';
 
-import Menu from "@mui/material/Menu";
-import Button from "@mui/material/Button";
-import Checkbox from "@mui/material/Checkbox";
-import MenuItem from "@mui/material/MenuItem";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -79,8 +79,7 @@ const Header = () => {
   };
 
   return (
-    <>
-      <link href="http://fonts.googleapis.com/css?family=Oswald" rel="stylesheet" type="text/css" />
+    <Box>
       {/*
         *** LOAD function needs to assign eventListeners on load
       <Button
@@ -128,22 +127,13 @@ const Header = () => {
           'aria-labelledby': 'buildAndRunDropdown',
         }}
       >
-        <MenuItem
-          id="btnBuilderBuildAndTest"
-          onClick={btnRun}
-        >
+        <MenuItem id="btnBuilderBuildAndTest" onClick={btnRun}>
           TEST BUILD
         </MenuItem>
-        <MenuItem
-          id="btnBuilderBuildAsModule"
-          onClick={btnBuildAsModule}
-        >
+        <MenuItem id="btnBuilderBuildAsModule" onClick={btnBuildAsModule}>
           BUILD AS MODULE
         </MenuItem>
-        <MenuItem
-          id="btnBuilderBuildAsWorkflow"
-          onClick={btnBuildAsWorkflow}
-        >
+        <MenuItem id="btnBuilderBuildAsWorkflow" onClick={btnBuildAsWorkflow}>
           BUILD AS WORKFLOW
         </MenuItem>
       </Menu>
@@ -157,15 +147,10 @@ const Header = () => {
         DELETE TEST BUILD
       </Button>
 
-      <Button
-        id="btnBuilderClearScene"
-        className="btn"
-        onClick={btnClearScene}
-        variant="outlined"
-      >
+      <Button id="btnBuilderClearScene" className="btn" onClick={btnClearScene} variant="outlined">
         CLEAR GRAPH
       </Button>
-    </>
+    </Box>
   );
 };
 

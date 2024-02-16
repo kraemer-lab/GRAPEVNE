@@ -33,33 +33,33 @@ export const builderMiddleware = ({ getState, dispatch }) => {
       }
       switch (action.type) {
         case 'builder/build-as-module':
-          BuildAs(
-            'builder/build-as-module',
-            builderAPI.BuildAsModule,
-            dispatch,
-            getState().builder.snakemake_args,
-            getState().builder.snakemake_backend,
-            getState().builder.conda_backend,
-            getState().builder.environment_variables,
-            false, // package_modules (workflow only)
-            getState().builder.nodes,
-            getState().builder.edges,
-          );
+          BuildAs({
+            query_name: 'builder/build-as-module',
+            builder_api_fcn: builderAPI.BuildAsModule,
+            dispatchString: dispatch,
+            snakemake_args: getState().builder.snakemake_args,
+            snakemake_backend: getState().builder.snakemake_backend,
+            conda_backend: getState().builder.conda_backend,
+            environment_variables: getState().builder.environment_variables,
+            package_modules: false,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
           break;
 
         case 'builder/build-as-workflow':
-          BuildAs(
-            'builder/build-as-workflow',
-            builderAPI.BuildAsWorkflow,
-            dispatch,
-            getState().builder.snakemake_args,
-            getState().builder.snakemake_backend,
-            getState().builder.conda_backend,
-            getState().builder.environment_variables,
-            getState().builder.package_modules_in_workflow,
-            getState().builder.nodes,
-            getState().builder.edges,
-          );
+          BuildAs({
+            query_name: 'builder/build-as-workflow',
+            builder_api_fcn: builderAPI.BuildAsWorkflow,
+            dispatchString: dispatch,
+            snakemake_args: getState().builder.snakemake_args,
+            snakemake_backend: getState().builder.snakemake_backend,
+            conda_backend: getState().builder.conda_backend,
+            environment_variables: getState().builder.environment_variables,
+            package_modules: getState().builder.package_modules_in_workflow,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
           break;
 
         case 'builder/build-and-run':
@@ -79,12 +79,6 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/add-link':
-          /*AddLink(
-            action,
-            getState().builder.auto_validate_connections,
-            getState().builder.snakemake_backend,
-            dispatch
-          );*/
           break;
 
         case 'builder/check-node-dependencies':
@@ -178,18 +172,31 @@ interface IPayloadBool {
 }
 type TPayloadBool = (action: IPayloadBool) => void;
 
-const BuildAs = async (
-  query_name: string,
-  builder_api_fcn: (query: Query) => Promise<Query>,
-  dispatchString: TPayloadString,
-  snakemake_args: string,
-  snakemake_backend: string,
-  conda_backend: string,
-  environment_variables: string,
-  package_modules: boolean,
-  nodes: Node[],
-  edges: Edge[],
-) => {
+interface IBuildAs {
+  query_name: string;
+  builder_api_fcn: (query: Query) => Promise<Query>;
+  dispatchString: TPayloadString;
+  snakemake_args: string;
+  snakemake_backend: string;
+  conda_backend: string;
+  environment_variables: string;
+  package_modules: boolean;
+  nodes: Node[];
+  edges: Edge[];
+}
+
+const BuildAs = async ({
+  query_name,
+  builder_api_fcn,
+  dispatchString,
+  snakemake_args,
+  snakemake_backend,
+  conda_backend,
+  environment_variables,
+  package_modules,
+  nodes,
+  edges,
+}: IBuildAs) => {
   dispatchString(builderUpdateStatusText('Building workflow...'));
   const app = BuilderEngine.Instance;
   const query: Query = {

@@ -36,6 +36,7 @@ export interface IBuilderState {
   display_module_settings: boolean;
   auto_validate_connections: boolean;
   package_modules_in_workflow: boolean;
+  dark_mode: boolean;
 }
 
 // Defaults
@@ -74,6 +75,7 @@ const builderStateInit: IBuilderState = {
   display_module_settings: false,
   auto_validate_connections: false,
   package_modules_in_workflow: false,
+  dark_mode: false,
 };
 
 // Nodemap
@@ -205,6 +207,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       for (const key in local_config) {
         state[key] = local_config[key];
       }
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderToggleDarkMode, (state, action) => {
+      state.dark_mode = !state.dark_mode;
       console.info('[Reducer] ' + action.type);
     });
 });

@@ -7,18 +7,12 @@ import { getMasterRepoListURL } from 'redux/globals';
 import { IRepo } from 'redux/reducers/builder';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-import Box from "@mui/material/Box";
-import List from "@mui/material/List";
-import Input from "@mui/material/Input";
-import Select from "@mui/material/Select";
-import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import Checkbox from "@mui/material/Checkbox";
-import ListItem from "@mui/material/ListItem";
-import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
-import FormControl from "@mui/material/FormControl";
-import ListItemText from "@mui/material/ListItemText";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 const default_input_size = 35;
 
@@ -141,16 +135,11 @@ const RepoOptions: React.FC = () => {
           width: '100%',
         }}
       >
-        <Box
-          display="flex"
-          flexDirection="row"
-          width="100%"
-          justifyContent="flex-end"
-        >
+        <Box display="flex" flexDirection="row" width="100%" justifyContent="flex-end">
           <Button
             id="buttonBuilderSettingsRepositoryLoadMasterList"
             onClick={() => OnClickReloadMasterList()}
-            style={{ marginRight: "5px" }}
+            style={{ marginRight: '5px' }}
             size="small"
             variant="contained"
           >
@@ -159,7 +148,7 @@ const RepoOptions: React.FC = () => {
           <Button
             id="buttonBuilderSettingsRepositoryListAddItem"
             onClick={() => OnClickAddItem()}
-            style={{ marginRight: "5px" }}
+            style={{ marginRight: '5px' }}
             size="small"
             variant="contained"
           >
@@ -196,7 +185,7 @@ const RepoOptions: React.FC = () => {
           value={repoLabel}
           onChange={(e) => setRepoLabel(e.target.value)}
           size="small"
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
         />
       </div>
       <div
@@ -218,7 +207,7 @@ const RepoOptions: React.FC = () => {
           id="selectBuilderSettingsRepositoryType"
           value={repoFormType}
           onChange={(e) => selectRepositoryTarget(e.target.value)}
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
           size="small"
         >
           <MenuItem value="GithubDirectory">Github (Directory Listing)</MenuItem>
@@ -246,7 +235,7 @@ const RepoOptions: React.FC = () => {
           type="text"
           value={repoURL}
           onChange={(e) => setRepoURL(e.target.value)}
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
           size="small"
         />
       </div>
