@@ -58,7 +58,7 @@ const Canvas = () => {
             <Panel className={styles.Panel} defaultSize={70}>
               <Flow />
             </Panel>
-            <ResizeHandle orientation='horizontal' />
+            <ResizeHandle orientation="horizontal" />
             <Panel
               className={styles.Panel}
               defaultSize={30}

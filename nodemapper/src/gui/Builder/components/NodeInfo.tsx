@@ -84,7 +84,7 @@ const NodeInfo = () => {
               >
                 <DocString docstring={docstring} />
               </Panel>
-              <ResizeHandle orientation='vertical' />
+              <ResizeHandle orientation="vertical" />
             </>
           )}
           <Panel

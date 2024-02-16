@@ -1,23 +1,11 @@
 import React from 'react';
-import RepoOptions from './RepoOptions';
 
-import { useEffect } from 'react';
-import { builderSetEnvironmentVars, builderWriteStoreConfig } from 'redux/actions';
+import { builderSetEnvironmentVars } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { styled } from '@mui/material/styles';
-import FormControl from '@mui/material/FormControl';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-
-import InterfaceOptions from './InterfaceOptions';
-import SnakemakeOptions from './SnakemakeOptions';
 
 const EnvironmentOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
@@ -42,9 +30,7 @@ const EnvironmentOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) =>
             alignSelf: 'center',
           }}
         >
-          <Typography variant="body1">
-            Variables
-          </Typography>
+          <Typography variant="body1">Variables</Typography>
         </Box>
         <TextField
           id="inputBuilderSettingsEnvironmentVars"

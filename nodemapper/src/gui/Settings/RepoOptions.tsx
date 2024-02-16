@@ -14,7 +14,7 @@ import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-const RepoOptions: React.FC<{labelWidth: string}> = ({labelWidth}) => {
+const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
   const repoSettings = useAppSelector((state) => state.builder.repositories as IRepo[]);
 
@@ -85,7 +85,9 @@ const RepoOptions: React.FC<{labelWidth: string}> = ({labelWidth}) => {
   };
 
   const OnClickRemoveItem = () => {
-    const newRepoSettings = repoSettings.filter((repo) => !repoListSelectedItems.includes(repo.label));
+    const newRepoSettings = repoSettings.filter(
+      (repo) => !repoListSelectedItems.includes(repo.label),
+    );
     dispatch(builderSetRepositoryTarget(newRepoSettings));
   };
 

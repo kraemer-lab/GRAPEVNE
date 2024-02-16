@@ -9,9 +9,9 @@ import { Panel, PanelGroup } from 'react-resizable-panels';
 import ResizeHandle from './ResizeHandle';
 import styles from './styles.module.css';
 
+import { Box } from '@mui/material';
 import { useAppSelector } from 'redux/store/hooks';
 import { ConfigPaneDisplay } from 'redux/types';
-import { Box } from '@mui/material';
 
 const Body = styled.div`
   flex-grow: 1;
@@ -62,7 +62,7 @@ export const BodyWidget = () => {
                 <RepoBrowser />
               </Box>
             </Panel>
-            <ResizeHandle orientation='vertical' />
+            <ResizeHandle orientation="vertical" />
 
             <Panel
               className={styles.Panel}
@@ -76,13 +76,8 @@ export const BodyWidget = () => {
 
             {configPaneOpen !== ConfigPaneDisplay.None && (
               <>
-                <ResizeHandle orientation='vertical' />
-                <Panel
-                  className={styles.Panel}
-                  order={3}
-                  defaultSize={30}
-                  collapsible={true}
-                >
+                <ResizeHandle orientation="vertical" />
+                <Panel className={styles.Panel} order={3} defaultSize={30} collapsible={true}>
                   <Box className={styles.PanelContent}>
                     <NodeInfoRenderer />
                   </Box>

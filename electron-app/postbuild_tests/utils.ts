@@ -238,6 +238,18 @@ const EasyEdit_SetFieldByValue = async (
     .sendKeys(s);
 };
 
+const OverwriteInputField = async (
+  element: webdriver.WebElement,
+  newvalue: string,
+) => {
+  // Overwrite the input field with a new value (useful when 'clear' is unresponsive)
+  const oldvalue = await element.getAttribute("value");
+  let s = "";
+  for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
+  s += newvalue + Key.ENTER;
+  await element.sendKeys(s);
+};
+
 const SetCheckBox = async (
   checkbox: webdriver.WebElement,
   checked: boolean,
@@ -357,6 +369,7 @@ export const MultiModuleWorkflow_BuildAndCheck = async ({
   console.log("::: test Build and Test the workflow (build-and-check)");
 
   // Build and test; assert output files exist
+  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
   await driver.findElement(By.id("btnBuilderBuildAndTest")).click();
   const msg = await WaitForReturnCode(driver, "builder/build-and-run");
   expect(msg.returncode).toEqual(0);
@@ -440,6 +453,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
   // Build, outputs zip-file
   console.log("Build, outputs zip-file");
+  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
   await driver.findElement(By.id("btnBuilderBuildAsWorkflow")).click();
   const msg = await WaitForReturnCode(driver, "builder/build-as-workflow");
   expect(msg.returncode).toEqual(0);
@@ -538,6 +552,7 @@ export {
   FlushConsoleLog,
   WaitForReturnCode,
   SetCheckBoxByID,
+  OverwriteInputField,
   EasyEdit_SetFieldByKey,
   EasyEdit_SetFieldByValue,
   BuildAndRun_SingleModuleWorkflow,

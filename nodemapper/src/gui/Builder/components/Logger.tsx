@@ -1,8 +1,8 @@
+import { useTheme } from '@mui/material/styles';
 import React from 'react';
+import { LazyLog, ScrollFollow } from 'react-lazylog';
 import { builderLogEvent } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-import { useTheme } from '@mui/material/styles';
-import { LazyLog, ScrollFollow } from 'react-lazylog';
 
 const builderAPI = window.builderAPI;
 

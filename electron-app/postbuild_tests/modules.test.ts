@@ -22,6 +22,9 @@ import { MultiModuleWorkflow_CleanAndDetermineTargets } from "./utils";
 import { MultiModuleWorkflow_BuildAndCheck } from "./utils";
 import { MultiModuleWorkflow_TidyUp } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
+import { OverwriteInputField } from "./utils";
+
+import { Key } from "selenium-webdriver";
 
 const ONE_SEC = 1000;
 const TEN_SECS = 10 * ONE_SEC;
@@ -72,7 +75,7 @@ describe("modules", () => {
   test("Select test repository", async () => {
     console.log("::: test Select test repository");
     // Open settings pane
-    await driver.findElement(By.id("btnSidenavSettings")).click();
+    await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
     // Clear repository list
     const repo_list = new Select(
@@ -89,24 +92,21 @@ describe("modules", () => {
     expect(options.length).toEqual(0);
 
     // Set new (local) repository type
-    const repo_type = new Select(
-      await driver.findElement(By.id("selectBuilderSettingsRepositoryType")),
-    );
-    await repo_type.selectByVisibleText("Local filesystem");
+    const repo_type = await driver.findElement(By.id("selectBuilderSettingsRepositoryType"));
+    await repo_type.click();
+    await repo_type.findElement(By.xpath('//li[@data-value="LocalFilesystem"]')).click();
 
     // Set new (local) repository label
     const repo_label = await driver.findElement(
       webdriver.By.id("inputBuilderSettingsRepositoryLabel"),
     );
-    await repo_label.clear();
-    await repo_label.sendKeys("test-repo");
+    await OverwriteInputField(repo_label, "test-repo");
 
     // Set new (local) repository path
     const repo_path = await driver.findElement(
       webdriver.By.id("inputBuilderSettingsRepositoryURL"),
     );
-    await repo_path.clear();
-    await repo_path.sendKeys(path.join(__dirname, "test-repo"));
+    await OverwriteInputField(repo_path, path.join(__dirname, "test-repo"));
 
     // Add repository to repository list
     await driver
@@ -119,7 +119,7 @@ describe("modules", () => {
     await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
 
     // Close settings pane
-    await driver.findElement(By.id("btnSidenavBuilder")).click();
+    await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
     console.log("<<< test Select test repository");
   });
 
@@ -397,18 +397,16 @@ describe("modules", () => {
     "Build and Test the workflow: module '%s'",
     async (modulename, outfiles) => {
       // Open settings pane
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
         webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
-      await args.clear();
-      await args.sendKeys("--cores 1");
+      await OverwriteInputField(args, "--cores 1");
 
       // Close settings pane
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
-      console.log("<<< test Set snakemake arguments list to use conda");
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
 
       // Build and run workflow
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
@@ -475,17 +473,16 @@ describe("modules", () => {
     "Build and Test the workflow: module '%s'",
     async (modulenames, connections, outfiles) => {
       // Open settings pane
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
         webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
-      await args.clear();
-      await args.sendKeys("--cores 1");
+      await OverwriteInputField(args, "--cores 1");
 
       // Close settings pane
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
       console.log("<<< test Set snakemake arguments list to use conda");
 
       // Build and run workflow
@@ -628,26 +625,24 @@ describe("modules", () => {
     async () => {
       console.log("::: test Set snakemake arguments list to use conda");
       // Open settings panel
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
         webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
-      await args.clear();
-      await args.sendKeys("--cores 1 --use-conda");
+      await OverwriteInputField(args, "--cores 1 --use-conda");
 
       // Set conda environment path --- passthrough from test environment
       if (process.env.CONDA_PATH != undefined) {
         const args = await driver.findElement(
           webdriver.By.id("inputBuilderSettingsEnvironmentVars"),
         );
-        await args.clear();
-        await args.sendKeys(`PATH=${process.env.CONDA_PATH}`);
+        await OverwriteInputField(args, `PATH=${process.env.CONDA_PATH}`);
       }
 
       // Close settings pane
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
       console.log("<<< test Set snakemake arguments list to use conda");
     },
   );
@@ -733,9 +728,9 @@ describe("modules", () => {
     "Package workflow (container): module '%s'",
     async (modulename, target_files, payload_files) => {
       // Set workflow packaging option
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
       await SetCheckBoxByID(driver, "package_modules_in_workflow", true);
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
 
       // Build and run workflow
       await Build_RunWithDocker_SingleModuleWorkflow({
@@ -747,9 +742,9 @@ describe("modules", () => {
       });
 
       // Unset workflow packaging option
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
       await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
     },
     10 * ONE_MINUTE,
   ); // long timeout

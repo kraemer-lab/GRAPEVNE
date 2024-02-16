@@ -1,9 +1,8 @@
 import React from 'react';
 
+import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
 import { builderReadStoreConfig } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
-import { Box } from '@mui/material';
 
 import Navigation from './Navigation';
 
@@ -31,5 +30,5 @@ const App = () => {
       <Navigation />
     </ThemeProvider>
   );
-}
+};
 export default App;

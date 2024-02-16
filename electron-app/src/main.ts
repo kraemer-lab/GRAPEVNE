@@ -18,8 +18,7 @@ const createWindow = () => {
     },
   });
   if (app.isPackaged) {
-    //win.loadFile("index.html"); //prod
-    win.loadURL("http://localhost:5001"); //dev
+    win.loadFile("index.html"); //prod
   } else {
     win.loadURL("http://localhost:5001"); //dev
   }

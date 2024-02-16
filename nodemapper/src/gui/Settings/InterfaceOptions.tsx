@@ -39,6 +39,7 @@ const InterfaceOptions = () => {
         <FormControlLabel
           control={
             <Checkbox
+              id="display_module_settings"
               checked={display_module_settings}
               onChange={(e) => SetDisplayModuleSettings(e.target.checked)}
             />
@@ -48,6 +49,7 @@ const InterfaceOptions = () => {
         <FormControlLabel
           control={
             <Checkbox
+              id="auto_validate_connections"
               checked={auto_validate_connections}
               onChange={(e) => SetAutoValidateConnections(e.target.checked)}
             />
@@ -57,6 +59,7 @@ const InterfaceOptions = () => {
         <FormControlLabel
           control={
             <Checkbox
+              id="package_modules_in_workflow"
               checked={package_modules_in_workflow}
               onChange={(e) => SetPackageModulesInWorkflow(e.target.checked)}
             />

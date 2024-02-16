@@ -3,13 +3,13 @@ import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import { builderSelectSnakemakeBackend, builderSetSnakemakeArgs } from 'redux/actions';
 
+import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 
-const SnakemakeOptions: React.FC<{labelWidth: string}> = ({ labelWidth }) => {
+const SnakemakeOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
   const snakemake_backend = useAppSelector((state) => state.builder.snakemake_backend);
   const snakemake_args = useAppSelector((state) => state.builder.snakemake_args);
@@ -19,9 +19,7 @@ const SnakemakeOptions: React.FC<{labelWidth: string}> = ({ labelWidth }) => {
 
   return (
     <Box>
-      <Typography variant="h6">
-        Snakemake
-      </Typography>
+      <Typography variant="h6">Snakemake</Typography>
       <Box
         style={{
           display: 'flex',
@@ -62,9 +60,7 @@ const SnakemakeOptions: React.FC<{labelWidth: string}> = ({ labelWidth }) => {
             alignSelf: 'center',
           }}
         >
-          <Typography variant="body1">
-            Arguments:
-          </Typography>
+          <Typography variant="body1">Arguments:</Typography>
         </Box>
         <TextField
           id="inputBuilderSettingsSnakemakeArgs"

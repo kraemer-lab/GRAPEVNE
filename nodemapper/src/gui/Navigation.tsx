@@ -1,6 +1,6 @@
+import BuildIcon from '@mui/icons-material/Build';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import BuildIcon from '@mui/icons-material/Build';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,7 +16,6 @@ import { CSSObject, Theme, styled, useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import Builder from './Builder/Builder';
 import Settings from './Settings/Settings';
-import Typography from '@mui/material/Typography';
 
 const drawerWidth = 200;
 
@@ -67,10 +66,23 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-const NavItem = ({ text, Icon, open, onClick }: { text: string; Icon; open: boolean; onClick }) => {
+const NavItem = ({
+  id,
+  text,
+  Icon,
+  open,
+  onClick,
+}: {
+  id: string;
+  text: string;
+  Icon;
+  open: boolean;
+  onClick;
+}) => {
   return (
     <ListItem key={text} disablePadding sx={{ display: 'block' }}>
       <ListItemButton
+        id={id}
         sx={{
           minHeight: 48,
           justifyContent: open ? 'initial' : 'center',
@@ -129,6 +141,7 @@ export default function Navigation() {
         <Divider />
         <List>
           <NavItem
+            id="btnSidenavBuilder"
             text="Builder"
             Icon={BuildIcon}
             open={open}
@@ -138,6 +151,7 @@ export default function Navigation() {
         <Divider />
         <List>
           <NavItem
+            id="btnSidenavSettings"
             text="Settings"
             Icon={SettingsIcon}
             open={open}

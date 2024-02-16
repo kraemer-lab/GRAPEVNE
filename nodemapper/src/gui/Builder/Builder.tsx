@@ -1,9 +1,8 @@
+import Box from '@mui/material/Box';
 import React from 'react';
 import Header from './Header';
 import NodeManager from './NodeManager';
 import StatusBar from './StatusBar';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
 
 const Builder = () => {
   return (

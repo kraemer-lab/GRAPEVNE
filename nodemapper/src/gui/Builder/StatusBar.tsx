@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useAppSelector } from 'redux/store/hooks';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import React, { useState } from 'react';
+import { useAppSelector } from 'redux/store/hooks';
 
 const StatusBar: React.FC = () => {
   const [status, setStatus] = useState('');
@@ -16,9 +16,7 @@ const StatusBar: React.FC = () => {
         marginLeft: '10px',
       }}
     >
-      <Typography variant="body2">
-        {status ? status : <br />}
-      </Typography>
+      <Typography variant="body2">{status ? status : <br />}</Typography>
     </Box>
   );
 };
