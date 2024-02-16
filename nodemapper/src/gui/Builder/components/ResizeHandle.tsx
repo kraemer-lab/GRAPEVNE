@@ -1,12 +1,21 @@
 import React from 'react';
 import { PanelResizeHandle } from 'react-resizable-panels';
+import Divider from '@mui/material/Divider';
 
 import styles from './styles.module.css';
 
-export default function ResizeHandle({ className = '', id }: { className?: string; id?: string }) {
+export default function ResizeHandle({
+  orientation = 'horizontal',
+  className = '',
+  id,
+}: {
+  orientation?: 'horizontal' | 'vertical';
+  className?: string;
+  id?: string
+}) {
   return (
     <PanelResizeHandle className={[styles.ResizeHandleOuter, className].join(' ')} id={id}>
-      <div className={styles.ResizeHandleInner} />
+      <Divider orientation={orientation} />
     </PanelResizeHandle>
   );
 }

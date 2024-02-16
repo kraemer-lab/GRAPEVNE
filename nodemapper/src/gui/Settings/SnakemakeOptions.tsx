@@ -7,8 +7,9 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
-const SnakemakeOptions = () => {
+const SnakemakeOptions: React.FC<{labelWidth: string}> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
   const snakemake_backend = useAppSelector((state) => state.builder.snakemake_backend);
   const snakemake_args = useAppSelector((state) => state.builder.snakemake_args);
@@ -17,12 +18,26 @@ const SnakemakeOptions = () => {
   const SetSnakemakeArgs = (args: string) => dispatch(builderSetSnakemakeArgs(args));
 
   return (
-    <>
-      <Typography variant="h6">Snakemake</Typography>
-      <Typography variant="body1" align="left">
-        Backend
+    <Box>
+      <Typography variant="h6">
+        Snakemake
       </Typography>
-      <p>
+      <Box
+        style={{
+          display: 'flex',
+          gap: '10px',
+          flexDirection: 'row',
+        }}
+      >
+        <Box
+          style={{
+            width: labelWidth,
+            textAlign: 'right',
+            alignSelf: 'center',
+          }}
+        >
+          <Typography variant="body1">Backend:</Typography>
+        </Box>
         <Select
           defaultValue={snakemake_backend}
           onChange={(e) => selectSnakemakeBackend(e.target.value)}
@@ -32,11 +47,25 @@ const SnakemakeOptions = () => {
           <MenuItem value="builtin">Built-in</MenuItem>
           <MenuItem value="system">System</MenuItem>
         </Select>
-      </p>
-      <Typography variant="body1" align="left">
-        Arguments
-      </Typography>
-      <p>
+      </Box>
+      <Box
+        style={{
+          display: 'flex',
+          gap: '10px',
+          flexDirection: 'row',
+        }}
+      >
+        <Box
+          style={{
+            width: labelWidth,
+            textAlign: 'right',
+            alignSelf: 'center',
+          }}
+        >
+          <Typography variant="body1">
+            Arguments:
+          </Typography>
+        </Box>
         <TextField
           id="inputBuilderSettingsSnakemakeArgs"
           type="text"
@@ -45,8 +74,8 @@ const SnakemakeOptions = () => {
           style={{ width: '100%' }}
           size="small"
         />
-      </p>
-    </>
+      </Box>
+    </Box>
   );
 };
 

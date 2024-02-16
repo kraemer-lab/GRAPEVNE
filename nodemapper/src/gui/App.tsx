@@ -3,6 +3,7 @@ import React from 'react';
 import { builderReadStoreConfig } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
+import { Box } from '@mui/material';
 
 import Navigation from './Navigation';
 
@@ -27,7 +28,7 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Navigation />;
+      <Navigation />
     </ThemeProvider>
   );
 }

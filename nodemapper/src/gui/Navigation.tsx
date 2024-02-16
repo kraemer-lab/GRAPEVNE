@@ -16,6 +16,7 @@ import { CSSObject, Theme, styled, useTheme } from '@mui/material/styles';
 import * as React from 'react';
 import Builder from './Builder/Builder';
 import Settings from './Settings/Settings';
+import Typography from '@mui/material/Typography';
 
 const drawerWidth = 200;
 
@@ -92,7 +93,7 @@ const NavItem = ({ text, Icon, open, onClick }: { text: string; Icon; open: bool
   );
 };
 
-export default function MiniDrawer() {
+export default function Navigation() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState('Builder');
@@ -117,7 +118,7 @@ export default function MiniDrawer() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', flexGrow: 1, height: '100vh' }}>
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
@@ -148,8 +149,7 @@ export default function MiniDrawer() {
         component="main"
         sx={{
           flexGrow: 1,
-          width: '100vw',
-          height: '100vh',
+          height: '100%',
         }}
       >
         <ContentPicker />

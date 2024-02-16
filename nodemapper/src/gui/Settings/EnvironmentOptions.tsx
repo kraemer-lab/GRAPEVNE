@@ -19,27 +19,43 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import InterfaceOptions from './InterfaceOptions';
 import SnakemakeOptions from './SnakemakeOptions';
 
-const EnvironmentOptions = () => {
+const EnvironmentOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
 
   const environment_vars = useAppSelector((state) => state.builder.environment_variables);
   const SetEnvironmentVars = (args: string) => dispatch(builderSetEnvironmentVars(args));
 
   return (
-    <>
+    <Box>
       <Typography variant="h6">Environment</Typography>
-      <Typography variant="body1" align="left">
-        Variables
-      </Typography>
-      <TextField
-        id="inputBuilderSettingsEnvironmentVars"
-        type="text"
-        value={environment_vars}
-        onChange={(e) => SetEnvironmentVars(e.target.value)}
-        style={{ width: '100%' }}
-        size="small"
-      />
-    </>
+      <Box
+        style={{
+          display: 'flex',
+          gap: '10px',
+          flexDirection: 'row',
+        }}
+      >
+        <Box
+          style={{
+            width: labelWidth,
+            textAlign: 'right',
+            alignSelf: 'center',
+          }}
+        >
+          <Typography variant="body1">
+            Variables
+          </Typography>
+        </Box>
+        <TextField
+          id="inputBuilderSettingsEnvironmentVars"
+          type="text"
+          value={environment_vars}
+          onChange={(e) => SetEnvironmentVars(e.target.value)}
+          style={{ width: '100%' }}
+          size="small"
+        />
+      </Box>
+    </Box>
   );
 };
 

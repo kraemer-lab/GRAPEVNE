@@ -23,7 +23,6 @@
 .PanelContent {
   height: 100%;
   width: 100%;
-  background-color: var(--color-panel-background);
   display: flex;
   flex-direction: row;
   overflow: hidden;
@@ -37,7 +36,6 @@
 }
 
 .ResizeHandleOuter[data-resize-handle-active] {
-  background-color: var(--color-solid-resize-bar-handle);
 }
 
 .ResizeHandleInner {
@@ -46,25 +44,19 @@
   bottom: 0.25em;
   left: 0.25em;
   right: 0.25em;
-  background-color: var(--background-color);
   transition: background-color 0.2s linear;
 }
 
 .Button {
-  color: var(--color-default);
-  background-color: var(--color-button-background);
-  border: 1px solid var(--color-button-border);
   padding: 0.25rem 0.5rem;
   cursor: pointer;
 }
 
 .Button:hover {
-  background-color: var(--color-button-background-hover);
 }
 
 .Link {
   display: block;
-  color: var(--color-link);
   margin-bottom: 0.5rem;
 }
 

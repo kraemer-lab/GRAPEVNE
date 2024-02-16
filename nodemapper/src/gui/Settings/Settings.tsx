@@ -44,7 +44,6 @@ const Settings = () => {
   }, []);
 
   return (
-  <>
     <Box
       sx={{
         mb: 2,
@@ -53,13 +52,13 @@ const Settings = () => {
         height: '100%',
         width: '100%',
         overflow: 'hidden',
-        overflowY: 'scroll',
+        overflowY: 'auto',
       }}
     >
       <Box
         sx={{
           position: 'absolute',
-          top: 0,
+          top: '10px',
           alignSelf: 'flex-end',
         }}
       >
@@ -68,17 +67,17 @@ const Settings = () => {
       <Grid container spacing={0} alignItems="center" justifyContent="center">
         <Grid item xs={8}>
           <OptionsPanel>
-            <RepoOptions />
+            <RepoOptions labelWidth="25%" />
           </OptionsPanel>
         </Grid>
         <Grid item xs={8}>
           <OptionsPanel>
-            <SnakemakeOptions />
+            <SnakemakeOptions labelWidth="25%" />
           </OptionsPanel>
         </Grid>
         <Grid item xs={8}>
           <OptionsPanel>
-            <EnvironmentOptions />
+            <EnvironmentOptions labelWidth="25%" />
           </OptionsPanel>
         </Grid>
         <Grid item xs={8}>
@@ -88,7 +87,6 @@ const Settings = () => {
         </Grid>
       </Grid>
     </Box>
-  </>
   );
 };
 

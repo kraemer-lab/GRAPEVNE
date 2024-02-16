@@ -62,7 +62,7 @@ export const BodyWidget = () => {
                 <RepoBrowser />
               </Box>
             </Panel>
-            <ResizeHandle />
+            <ResizeHandle orientation='vertical' />
 
             <Panel
               className={styles.Panel}
@@ -76,8 +76,13 @@ export const BodyWidget = () => {
 
             {configPaneOpen !== ConfigPaneDisplay.None && (
               <>
-                <ResizeHandle />
-                <Panel className={styles.Panel} order={3} defaultSize={30} collapsible={true}>
+                <ResizeHandle orientation='vertical' />
+                <Panel
+                  className={styles.Panel}
+                  order={3}
+                  defaultSize={30}
+                  collapsible={true}
+                >
                   <Box className={styles.PanelContent}>
                     <NodeInfoRenderer />
                   </Box>
