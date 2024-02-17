@@ -113,10 +113,9 @@ const WaitForReturnCode = async (
           console.log("return msg received: ", msg);
           console.log("<<< WaitForReturnCode");
           return msg;
-        } else console.log("Skipping msg: ", msg, msg_set);
+        }
       }
     }
-    console.log("Skipping msg: ", msg, msg_set);
   }
 };
 
@@ -423,6 +422,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   await dragAndDrop(driver, module, canvas);
   // Give time for the config to load and for the module to be created on the canvas
   await driver.sleep(100);
+  await canvas.click(); // Click on the canvas to deselect the module
 
   // Open the module in the editor and Expand, replacing the module with its sub-modules
   //

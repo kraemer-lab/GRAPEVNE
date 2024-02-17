@@ -164,9 +164,9 @@ export async function builder_BuildAndRun(
         );
         stdout_callback("Workflow complete.");
         // Open containing folder
-        shell.showItemInFolder(
+        /*shell.showItemInFolder(
           ((query_run["data"] as Query)["content"] as Query)["workdir"] as string
-        );
+        );*/
         break;
 
       case "system":

@@ -24,8 +24,6 @@ import { MultiModuleWorkflow_TidyUp } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
 import { OverwriteInputField } from "./utils";
 
-import { Key } from "selenium-webdriver";
-
 const ONE_SEC = 1000;
 const TEN_SECS = 10 * ONE_SEC;
 const ONE_MINUTE = 60 * ONE_SEC;
@@ -533,6 +531,7 @@ describe("modules", () => {
         "runner/check-node-dependencies",
       );
       expect(msg.returncode).toEqual(0); // 0 = success
+      await driver.findElement(By.className("react-flow__pane")).click();
 
       // Build and run the workflow (should pass)
       await MultiModuleWorkflow_BuildAndCheck({
@@ -559,6 +558,7 @@ describe("modules", () => {
         should_fail: true,
       });
       await MultiModuleWorkflow_TidyUp(driver, target_files);
+      await driver.findElement(By.className("react-flow__pane")).click();
 
       // Form parameter link between modules
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -573,6 +573,7 @@ describe("modules", () => {
       await driver.wait(until.elementLocated(link_target), TEN_SECS);
       await driver.findElement(link_target).click();
       await driver.findElement(By.id("btnParameterListClose")).click();
+      await driver.findElement(By.className("react-flow__pane")).click();
 
       // Validation check (should pass)
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -598,6 +599,7 @@ describe("modules", () => {
         target_files: target_files,
       });
       await MultiModuleWorkflow_TidyUp(driver, target_files);
+      await driver.findElement(By.className("react-flow__pane")).click();
 
       // Delete the parameter link between modules
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
