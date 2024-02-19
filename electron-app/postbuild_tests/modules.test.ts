@@ -129,7 +129,7 @@ describe("modules", () => {
     expect(msg.returncode).toEqual(0);
     // Wait for module list to be populated
     await driver.wait(
-      until.elementLocated(By.id("modulelist-_single_modules__payload_shell")),
+      until.elementLocated(By.id("modulelist-payload_shell")),
       TEN_SECS,
     );
     console.log("<<< test Get local modules list");
@@ -145,7 +145,7 @@ describe("modules", () => {
       // Drag-and-drop the same hierarchical modules into the scene three times
       await driver.findElement(By.id("btnBuilderClearScene")).click();
       const module = await driver.findElement(
-        By.id("modulelist-_multi_modules__copy_run3"),
+        By.id("modulelist-copy_run3"),
       );
       const canvas = await driver.findElement(By.className("react-flow__pane"));
       for (const n of ["n0", "n1", "n2"]) {
@@ -303,6 +303,7 @@ describe("modules", () => {
     5 * ONE_MINUTE,
   );
 
+
   runif(!is_windows)(
     "Module validation (dependency checks)",
     async () => {
@@ -313,13 +314,13 @@ describe("modules", () => {
       const canvas = await driver.findElement(By.className("react-flow__pane"));
       await dragAndDrop(
         driver,
-        driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
+        driver.findElement(By.id(`modulelist-payload_run`)),
         canvas,
       );
       await driver.sleep(100);
       await dragAndDrop(
         driver,
-        driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
+        driver.findElement(By.id(`modulelist-copy_run`)),
         canvas,
       );
       await driver.sleep(100);
@@ -370,7 +371,7 @@ describe("modules", () => {
     // Drag-and-drop module from modules-list into scene
     await driver.findElement(By.id("btnBuilderClearScene")).click();
     const module = await driver.findElement(
-      By.id("modulelist-_single_modules__payload_shell"),
+      By.id("modulelist-payload_shell"),
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
     await dragAndDrop(driver, module, canvas);
@@ -384,12 +385,12 @@ describe("modules", () => {
 
   runif(!is_windows).each([
     [
-      "(single_modules) payload shell",
-      [path.join("results", "single_modules_payload_shell", "data.csv")],
+      "payload shell",
+      [path.join("results", "payload_shell", "data.csv")],
     ],
     [
-      "(single_modules) payload run",
-      [path.join("results", "single_modules_payload_run", "data.csv")],
+      "payload run",
+      [path.join("results", "payload_run", "data.csv")],
     ],
   ])(
     "Build and Test the workflow: module '%s'",
@@ -417,8 +418,8 @@ describe("modules", () => {
     [
       [
         // Modules to add to scene
-        "(single_modules) payload shell", // data-nodeid="n0"
-        "(single_modules) copy run", // data-nodeid="n1"
+        "payload shell", // data-nodeid="n0"
+        "copy run", // data-nodeid="n1"
       ],
       [
         // Connections to make between modules
@@ -426,18 +427,18 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("results", "single_modules_copy_run", "data.csv"),
+        path.join("results", "copy_run", "data.csv"),
       ],
     ],
     // Test: 2 (connect five modules, including 4 duplicates)
     [
       [
         // Modules to add to scene
-        "(single_modules) payload shell", // data-nodeid="n0"
-        "(single_modules) copy run", // data-nodeid="n1"
-        "(single_modules) copy run", // data-nodeid="n2"
-        "(single_modules) copy run", // data-nodeid="n3"
-        "(single_modules) copy run", // data-nodeid="n4"
+        "payload shell", // data-nodeid="n0"
+        "copy run", // data-nodeid="n1"
+        "copy run", // data-nodeid="n2"
+        "copy run", // data-nodeid="n3"
+        "copy run", // data-nodeid="n4"
       ],
       [
         // Connections to make between modules
@@ -448,15 +449,15 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("results", "single_modules_copy_run_3", "data.csv"),
+        path.join("results", "copy_run_3", "data.csv"),
       ],
     ],
     // Test: 3 (connect source to triple input module)
     [
       [
         // Modules to add to scene
-        "(single_modules) payload shell", // data-nodeid="n0"
-        "(single_modules) copy run multiport", // data-nodeid="n1"
+        "payload shell", // data-nodeid="n0"
+        "copy run multiport", // data-nodeid="n1"
       ],
       [
         // Connections to make between modules
@@ -464,7 +465,7 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("results", "single_modules_copy_run_multiport", "data.csv"),
+        path.join("results", "copy_run_multiport", "data.csv"),
       ],
     ],
   ])(
@@ -498,8 +499,8 @@ describe("modules", () => {
     [
       [
         // Modules to add to scene
-        "(single_modules) payload run", // data-nodeid="n0"
-        "(single_modules) copy run", // data-nodeid="n1"
+        "payload run", // data-nodeid="n0"
+        "copy run", // data-nodeid="n1"
       ],
       [
         // Connections to make between modules
@@ -507,7 +508,7 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("results", "single_modules_copy_run", "data.csv"),
+        path.join("results", "copy_run", "data.csv"),
       ],
     ],
   ])(
@@ -585,7 +586,7 @@ describe("modules", () => {
       // Build and run the (linked) workflow (should pass)
       outfiles[0] = path.join(
         "results",
-        "single_modules_copy_run",
+        "copy_run",
         "newfile.csv",
       );
       target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
@@ -664,8 +665,8 @@ describe("modules", () => {
   // Conda tests
   runif(is_installed(["mamba", "conda"], "any")).each([
     [
-      "(single_modules) conda",
-      [path.join("results", "single_modules_conda", "data.csv")],
+      "conda",
+      [path.join("results", "conda", "data.csv")],
     ],
   ])(
     "Build and Test the conda workflow: module '%s'",
@@ -679,7 +680,7 @@ describe("modules", () => {
   runif(is_installed(["docker"])).each([
     [
       // NOTE: This test relies on the remote module jsbrittain/snakeshack (Utilty) touch
-      "(single_modules) container_touch",
+      "container_touch",
       [
         // target files
         path.join("results", "utility_touch", "data.csv"),
@@ -705,10 +706,10 @@ describe("modules", () => {
   // Package workflow (container test)
   runif(is_installed(["docker"])).each([
     [
-      "(single_modules) payload run",
+      "payload run",
       [
         // target files
-        path.join("results", "single_modules_payload_run", "data.csv"),
+        path.join("results", "payload_run", "data.csv"),
       ],
       [
         // packaged payload files

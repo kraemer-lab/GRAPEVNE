@@ -1,4 +1,6 @@
 import styled from '@emotion/styled';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import React from 'react';
 import HighlightedJSON from './HighlightedJSON';
 import ResizeHandle from './ResizeHandle';
@@ -29,9 +31,9 @@ const DocString = (props: DocStringProps) => {
    * Apply custom styling to docstring
    */
   return (
-    <div
+    <Box
       className="docstring"
-      style={{
+      sx={{
         borderStyle: 'solid',
         borderWidth: '1px 0px 0px 0px',
         flex: '0 0 auto',
@@ -40,12 +42,11 @@ const DocString = (props: DocStringProps) => {
         justifyContent: 'space-between',
         alignItems: 'top',
         whiteSpace: 'pre-wrap', // preserves newlines in docstring
-        color: '#cccccc',
         borderColor: '#ffffff',
       }}
     >
-      <p>{props.docstring}</p>
-    </div>
+      <Typography>{props.docstring}</Typography>
+    </Box>
   );
 };
 
@@ -68,37 +69,35 @@ const NodeInfo = () => {
   }, [nodeinfo]);
 
   return (
-    <>
-      <Content>
-        <PanelGroup direction="vertical">
-          {docstring === undefined || docstring === null || docstring === '' ? null : (
-            <>
-              <Panel
-                className={styles.Panel}
-                order={0}
-                defaultSize={40}
-                collapsible={true}
-                style={{
-                  overflowY: 'auto',
-                }}
-              >
-                <DocString docstring={docstring} />
-              </Panel>
-              <ResizeHandle orientation="vertical" />
-            </>
-          )}
-          <Panel
-            className={styles.Panel}
-            order={1}
-            style={{
-              overflowY: 'auto',
-            }}
-          >
-            <HighlightedJSON nodeid={JSON.parse(nodeinfo).id} json={nodeparams} />
-          </Panel>
-        </PanelGroup>
-      </Content>
-    </>
+    <Content>
+      <PanelGroup direction="vertical">
+        {docstring === undefined || docstring === null || docstring === '' ? null : (
+          <>
+            <Panel
+              className={styles.Panel}
+              order={0}
+              defaultSize={40}
+              collapsible={true}
+              style={{
+                overflowY: 'auto',
+              }}
+            >
+              <DocString docstring={docstring} />
+            </Panel>
+            <ResizeHandle orientation="vertical" />
+          </>
+        )}
+        <Panel
+          className={styles.Panel}
+          order={1}
+          style={{
+            overflowY: 'auto',
+          }}
+        >
+          <HighlightedJSON nodeid={JSON.parse(nodeinfo).id} json={nodeparams} />
+        </Panel>
+      </PanelGroup>
+    </Content>
   );
 };
 

@@ -10,14 +10,28 @@ import { builderUpdateNode, builderUpdateNodeInfoKey } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { getNodeById, getNodeByName } from './Flow';
 
+import { Typography } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 
+import Box from '@mui/material/Box';
+
 import './HighlightedJSON.css';
 
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    key: true;
+    struct: true;
+  }
+}
+
+export const defaultTheme = createTheme();
 export const theme = createTheme({
+  palette: {
+    mode: 'light',
+  },
   components: {
     MuiTreeItem: {
       styleOverrides: {
@@ -29,11 +43,28 @@ export const theme = createTheme({
         },
         label: {
           padding: '0px',
+          color: defaultTheme.palette.text.secondary,
+          fontWeight: 'bold',
         },
       },
     },
+    MuiTypography: {
+      variants: [
+        {
+          props: { variant: 'key' },
+          style: {
+            color: defaultTheme.palette.text.secondary,
+            marginRight: '0.5rem',
+            fontWeight: 'normal',
+          },
+        },
+      ],
+    },
   },
 });
+
+const TypoKey = (props) => <Typography variant="key" {...props} />;
+const TypoStruct = (props) => <Typography variant="struct" {...props} />;
 
 /*
  * HighlightedJSON code modified from:
@@ -177,7 +208,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
   // Parse JSON string
   const json_str: string = props.json;
   if (json_str === '' || json_str === undefined || json_str === JSON.stringify({}))
-    return <div className="json"></div>;
+    return <Box className="json"></Box>;
   const json = JSON.parse(json_str);
 
   const concertinaIfHierarchicalModule = (json) => {
@@ -223,7 +254,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       const isHiddenValue =
         !display_module_settings && (protectedNames.includes(key) || key.startsWith(':'));
       if (isHiddenValue) {
-        return <div key={key}></div>;
+        return <Box key={key}></Box>;
       }
 
       // Check whether parameter has a corresponding metadata entry
@@ -325,10 +356,10 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       };
 
       return (
-        <div style={{ cursor: 'default' }} key={key} className="line">
+        <Box style={{ cursor: 'default' }} key={key} className="line">
           {isProtectedValue ? (
             <span>
-              <span className="key">{label}:</span>
+              <TypoKey className="key">{label}:</TypoKey>
               <span
                 className="protected"
                 style={{
@@ -341,7 +372,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
             </span>
           ) : isParameterConnected ? (
             <span>
-              <span className="key">{label}:</span>
+              <TypoKey className="key">{label}:</TypoKey>
               <span
                 className="linked"
                 style={{
@@ -364,7 +395,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
             </span>
           ) : isSimpleValue ? (
             <span>
-              <span className="key">{label}:</span>
+              <TypoKey className="key">{label}:</TypoKey>
               <span
                 className={valueType}
                 style={{
@@ -421,7 +452,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
               <HighlightJSON keylist={[...keylist, key]} />
             </TreeItem>
           )}
-        </div>
+        </Box>
       );
     });
     return <>{fieldlist}</>;
@@ -429,7 +460,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
 
   // Render the JSON tree
   return (
-    <div
+    <Box
       className="json"
       style={{
         borderStyle: 'solid',
@@ -444,7 +475,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       </ThemeProvider>
 
       {menu && <ParameterList {...menu} />}
-    </div>
+    </Box>
   );
 };
 

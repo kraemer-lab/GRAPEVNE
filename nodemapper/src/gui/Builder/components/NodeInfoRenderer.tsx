@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import React from 'react';
 import EasyEdit from 'react-easy-edit';
 import BuilderEngine from '../BuilderEngine';
@@ -64,9 +65,12 @@ const ExpandButton = (props: ExpandProps) => {
   const btnExpand = () => {
     // Expand the selected node into it's constituent modules
     const app = BuilderEngine.Instance;
-    const [nodes0, edges0] = app.ExpandNodeByName(props.nodeinfo.name as string, nodes, edges);
+    const [nodes0, edges0] = app.ExpandNodeByName(
+      props.nodeinfo.name as string,
+      nodes, edges);
     console.log('newnodes', newnodes);
-    if (nodes0 !== null && nodes0 !== undefined) setNewNodes({ nodes: nodes0, edges: edges0 });
+    if (nodes0 !== null && nodes0 !== undefined)
+      setNewNodes({ nodes: nodes0, edges: edges0 });
   };
 
   React.useEffect(() => {
@@ -118,26 +122,30 @@ const NodeInfoRenderer = (props) => {
   const node = app.getNodeByName(nodeinfo.name as string, nodes);
 
   return (
-    <div
+    <Box
       key={'nodeinfo-' + nodeinfo.id} // ensures render defaults are reset when node is changed
-      style={{
+      sx={{
         display: 'flex',
         width: '100%',
         height: '100%',
         flexFlow: 'column',
       }}
     >
-      <div
-        style={{
+      <Box
+        sx={{
           borderStyle: 'solid',
-          borderWidth: '1px 0px 0px 0px',
+          borderWidth: '0px 0px 1px 0px',
           flex: '0 0 auto',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
-        <div>
+        <Box
+          sx={{
+            fontWeight: 'bold',
+          }}
+        >
           <EasyEdit
             type={Types.TEXT}
             onHoverCssClass="easyedit-hover"
@@ -149,21 +157,21 @@ const NodeInfoRenderer = (props) => {
             }}
             saveOnBlur={true}
           />
-        </div>
-        <div>
+        </Box>
+        <Box>
           <ValidateButton nodename={nodeinfo.name} />
           {PermitNodeExpand(nodeinfo, nodes) && <ExpandButton nodeinfo={nodeinfo} />}
-        </div>
-      </div>
-      <div
-        style={{
+        </Box>
+      </Box>
+      <Box
+        sx={{
           flex: '1 1 auto',
           overflowY: 'auto',
         }}
       >
         <NodeInfo />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

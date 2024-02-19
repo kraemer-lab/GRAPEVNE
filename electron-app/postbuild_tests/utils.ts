@@ -340,7 +340,8 @@ export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
 ) => {
   console.log("::: test Build and Test the workflow (CleanAndDeterminTargets)");
   // Clean build folder (initial); assert target output does not exist
-  await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
+  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
+  await driver.findElement(By.id("btnCleanBuildFolder")).click();
   const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   const target_files = outfiles.map((outfile) => {
@@ -385,7 +386,8 @@ export const MultiModuleWorkflow_TidyUp = async (
   console.log("::: test Build and Test the workflow (tidy-up)");
 
   // Clean build folder (tidy-up); assert target output does not exist
-  await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
+  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
+  await driver.findElement(By.id("btnCleanBuildFolder")).click();
   const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {

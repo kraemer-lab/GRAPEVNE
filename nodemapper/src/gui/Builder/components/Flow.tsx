@@ -12,6 +12,7 @@ import {
   builderUpdateStatusText,
 } from 'redux/actions';
 
+import Box from '@mui/material/Box';
 import { Edge, Node, NodeData } from 'NodeMap/scene/Flow'; // Custom Node definition
 
 import ReactFlow, {
@@ -127,7 +128,7 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
 
   return (
     <>
-      <div
+      <Box
         className={styles.Node}
         style={{
           backgroundColor: props.data.color,
@@ -145,18 +146,18 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
             <span
               style={{
                 float: 'right',
-                color: '#bebebe',
+                color: '#dedede',
               }}
             >
               <FontAwesomeIcon icon={faLeftRight} />
             </span>
           </NodeResizeControl>
         )}
-        <div className={styles.HeaderPanel}>
-          <div className={styles.HeaderText}>{props.data.config.name}</div>
-        </div>
+        <Box className={styles.HeaderPanel}>
+          <Box className={styles.HeaderText}>{props.data.config.name}</Box>
+        </Box>
         {!named_inputs ? (
-          <>
+          <Box>
             {input_namespaces.length == 1 && (
               <Handle
                 className={styles.HandleInput}
@@ -174,12 +175,12 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
               position={Position.Right}
               style={{ top: '50%' }}
             />
-          </>
+          </Box>
         ) : (
-          <div
+          <Box
             className={styles.BodyPanel}
             style={{
-              height: `${input_namespaces.length * 18 - 4}px`,
+              height: `${input_namespaces.length * 18}px`,
             }}
           >
             {input_namespaces.map((name) => {
@@ -193,7 +194,7 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
               }
 
               return (
-                <div key={'div-' + name}>
+                <Box key={'div-' + name}>
                   <Handle
                     className={styles.HandleInput}
                     id={name}
@@ -207,20 +208,20 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
                       event.stopPropagation();
                       console.debug('Input handle clicked: ', event.target);
                     }}
-                  ></Handle>
-                  <div
+                  />
+                  <Box
                     className={styles.InputPortLabel}
                     style={{
                       pointerEvents: 'none', // pass-through click events
-                      top: `${input_namespaces.indexOf(name) * 18 + 32}px`,
+                      top: `${input_namespaces.indexOf(name) * 18 + 29}px`,
                     }}
                   >
                     {port_name}
-                  </div>
-                </div>
+                  </Box>
+                </Box>
               );
             })}
-            <div>
+            <Box>
               <Handle
                 className={styles.HandleOutput}
                 id="out"
@@ -230,10 +231,10 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
                   top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
                 }}
               />
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
-      </div>
+      </Box>
     </>
   );
 };
@@ -267,7 +268,7 @@ export const ButtonEdge = ({
     <>
       <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
       <EdgeLabelRenderer>
-        <div
+        <Box
           style={{
             position: 'absolute',
             transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
@@ -282,7 +283,7 @@ export const ButtonEdge = ({
           >
             -
           </Button>*/}
-        </div>
+        </Box>
       </EdgeLabelRenderer>
     </>
   );

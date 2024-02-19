@@ -6,8 +6,6 @@
 /* colours inspired by gruvbox dark mode */
 
 .easyedit-hover {
-  color: #fbf1c7;
-  background-color: #555555;
 }
 
 /* first line not indented */
@@ -19,17 +17,14 @@
 }
 
 .key {
-  font-weight: normal;
-  margin-right: 0.5rem;
-  color: #cccccc;
 }
 
 .string {
-  color: #b8bb26;
+  color: #4caf50;
 }
 
 .string:hover {
-  background-color: #555555;
+  background-color: #cceecc;
 }
 
 .linked {

@@ -49,7 +49,7 @@ export const BodyWidget = () => {
       <Body>
         <Content>
           <PanelGroup direction="horizontal">
-            <Panel className={styles.Panel} order={1} defaultSize={20}>
+            <Panel className={styles.Panel} order={1} defaultSize={20} collapsible={true}>
               <Box
                 className={styles.PanelContent}
                 sx={{

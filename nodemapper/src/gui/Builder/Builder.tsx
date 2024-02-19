@@ -1,4 +1,6 @@
 import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Paper from '@mui/material/Paper';
 import React from 'react';
 import Header from './Header';
 import NodeManager from './NodeManager';
@@ -14,15 +16,17 @@ const Builder = () => {
         flexFlow: 'column',
       }}
     >
-      <Box sx={{ flex: '0 1 auto', p: 1 }}>
+      <Paper sx={{ flex: '0 1 auto', p: 1 }} square={true}>
         <Header />
-      </Box>
-      <Box sx={{ flex: '1 1 auto', overflowY: 'auto', px: 1 }}>
+      </Paper>
+      <Divider />
+      <Paper sx={{ flex: '1 1 auto', overflowY: 'auto' }} square={true}>
         <NodeManager />
-      </Box>
-      <Box>
+      </Paper>
+      <Divider />
+      <Paper square={true}>
         <StatusBar />
-      </Box>
+      </Paper>
     </Box>
   );
 };

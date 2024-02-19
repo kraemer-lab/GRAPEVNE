@@ -158,12 +158,15 @@ export default function Navigation() {
             onClick={handleListItemClick}
           />
         </List>
+        <Divider />
       </Drawer>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           height: '100%',
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
         }}
       >
         <ContentPicker />

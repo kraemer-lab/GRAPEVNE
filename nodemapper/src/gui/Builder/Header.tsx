@@ -7,16 +7,17 @@ import {
   builderBuildAsModule,
   builderBuildAsWorkflow,
   builderCleanBuildFolder,
-  builderGetRemoteModules,
   builderNodeDeselected,
   builderSetEdges,
   builderSetNodes,
 } from 'redux/actions';
 
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -59,6 +60,7 @@ const Header = () => {
   // Clean build folder
   const btnCleanBuildFolder = () => {
     dispatch(builderCleanBuildFolder());
+    btnBuildAndRunDropdownClose();
   };
 
   // Build as module
@@ -73,13 +75,8 @@ const Header = () => {
     btnBuildAndRunDropdownClose();
   };
 
-  // Load modules from repository
-  const btnGetModuleList = () => {
-    dispatch(builderGetRemoteModules());
-  };
-
   return (
-    <Box>
+    <Stack direction="row" spacing={1} justifyContent="center">
       {/*
         *** LOAD function needs to assign eventListeners on load
       <Button
@@ -98,14 +95,6 @@ const Header = () => {
         SAVE
       </Button>
       */}
-      <Button
-        id="btnBuilderGetModuleList"
-        className="btn"
-        onClick={btnGetModuleList}
-        variant="outlined"
-      >
-        GET MODULE LIST
-      </Button>
 
       <Button
         id="btnBuildAndRunDropdown"
@@ -113,9 +102,10 @@ const Header = () => {
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={btnBuildAndRunDropdownClick}
-        variant="outlined"
+        endIcon={<KeyboardArrowDownIcon />}
+        variant="contained"
       >
-        BUILD & RUN ...
+        BUILD & RUN
       </Button>
 
       <Menu
@@ -130,6 +120,10 @@ const Header = () => {
         <MenuItem id="btnBuilderBuildAndTest" onClick={btnRun}>
           TEST BUILD
         </MenuItem>
+        <MenuItem id="btnCleanBuildFolder" onClick={btnCleanBuildFolder}>
+          DELETE TEST BUILD
+        </MenuItem>
+        <Divider />
         <MenuItem id="btnBuilderBuildAsModule" onClick={btnBuildAsModule}>
           BUILD AS MODULE
         </MenuItem>
@@ -138,19 +132,10 @@ const Header = () => {
         </MenuItem>
       </Menu>
 
-      <Button
-        id="btnBuilderCleanBuildFolder"
-        className="btn"
-        onClick={btnCleanBuildFolder}
-        variant="outlined"
-      >
-        DELETE TEST BUILD
-      </Button>
-
-      <Button id="btnBuilderClearScene" className="btn" onClick={btnClearScene} variant="outlined">
+      <Button id="btnBuilderClearScene" className="btn" onClick={btnClearScene} variant="contained">
         CLEAR GRAPH
       </Button>
-    </Box>
+    </Stack>
   );
 };
 
