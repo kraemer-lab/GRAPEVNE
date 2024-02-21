@@ -11,6 +11,7 @@ import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
@@ -20,6 +21,7 @@ import Paper from '@mui/material/Paper';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
 const hash = (s: string) => {
   let hash = 0,
@@ -37,6 +39,8 @@ const hash = (s: string) => {
 const RepoBrowser = () => {
   const dispatch = useAppDispatch();
   const modules = useAppSelector((state) => state.builder.modules_list);
+  const repositories = useAppSelector((state) => state.builder.repositories);
+  const loading = useAppSelector((state) => state.builder.modules_loading);
 
   const [filterFreetext, setFilterFreetext] = React.useState('');
   const [filterOrg, setFilterOrg] = React.useState('');
@@ -60,7 +64,7 @@ const RepoBrowser = () => {
     // We pass the filter values as parameters to ensure that the filters are applied
     // with the updated values, and not the state values which may not have refreshed
     JSON.parse(modules_list)
-      .filter((m) => m['repo'].startsWith(repo) || repo === '(all)')
+      .filter((m) => m['repo']['url'].startsWith(repo) || repo === '(all)')
       .filter((m) => m['org'].startsWith(org) || org === '(all)')
       .filter((m) => m['name'].toLowerCase().includes(freetext.toLowerCase()) || freetext === '')
       .map((m) => (
@@ -96,15 +100,42 @@ const RepoBrowser = () => {
 
   const filtered_modules = JSON.parse(modules);
 
+  const LookupRepoName = (repo: string) => {
+    for (let i = 0; i < repositories.length; i++) {
+      if (repositories[i]['repo'] === repo) {
+        return repositories[i]['label'];
+      }
+    }
+    return repo;
+  };
+
+  const ConstructRepoLabel = (repo: string) => {
+    if (repo === '(all)') {
+      return <Typography>{repo}</Typography>;
+    } else {
+      const repo_label = LookupRepoName(repo);
+      if (repo_label === repo) {
+        return <Typography>{repo}</Typography>;
+      } else {
+        return (
+          <Stack>
+            <Typography>{LookupRepoName(repo)}</Typography>
+            <Typography variant="caption">{repo}</Typography>
+          </Stack>
+        );
+      }
+    }
+  };
+
   // Extract unique repos from the module names for a filter list
   const repo_list = filtered_modules
-    .map((m) => m['repo'])
+    .map((m) => m['repo']['url'])
     .filter((v, i, a) => a.indexOf(v) === i) // remove duplicates
     .sort(); // sort alphabetically
   repo_list.unshift('(all)'); // add "(all)" to the top of the list
   const repo_list_options = repo_list.map((m) => (
     <MenuItem key={m} value={m}>
-      {m}
+      {ConstructRepoLabel(m)}
     </MenuItem>
   ));
 
@@ -126,8 +157,12 @@ const RepoBrowser = () => {
   };
 
   return (
-    <Box>
-      <Stack direction="column">
+    <Box
+      sx={{
+        height: '100%',
+      }}
+    >
+      <Stack direction="column" sx={{ height: '100%' }}>
         <Paper sx={{ p: 1 }}>
           <Button
             id="btnBuilderGetModuleList"
@@ -209,7 +244,19 @@ const RepoBrowser = () => {
             </Box>
           )}
         </Paper>
-        {filtered_modules.length > 0 && (
+        {loading && (
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        )}
+        {!loading && trayitems.length > 0 && (
           <>
             <Divider />
             <Paper sx={{ p: 1 }}>

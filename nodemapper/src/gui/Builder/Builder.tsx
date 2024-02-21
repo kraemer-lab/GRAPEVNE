@@ -3,7 +3,7 @@ import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import React from 'react';
 import Header from './Header';
-import NodeManager from './NodeManager';
+import MainBody from './MainBody';
 import StatusBar from './StatusBar';
 
 const Builder = () => {
@@ -21,7 +21,7 @@ const Builder = () => {
       </Paper>
       <Divider />
       <Paper sx={{ flex: '1 1 auto', overflowY: 'auto' }} square={true}>
-        <NodeManager />
+        <MainBody />
       </Paper>
       <Divider />
       <Paper square={true}>

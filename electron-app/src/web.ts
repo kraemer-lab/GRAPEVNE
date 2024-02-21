@@ -220,7 +220,11 @@ const GetLocalModules = (
           name: FormatName(workflow),
           type: module_classification,
           org: org,
-          repo: "(local)/" + path.basename(path.dirname(root_folder)),
+          repo: {
+            type: "local",
+            listing_type: "DirectoryListing",
+            url: root_folder,
+          },
           config: {
             snakefile: url_workflow,
             config: config,
@@ -352,7 +356,11 @@ const GetRemoteModulesGithubDirectoryListing = async (
           name: FormatName(workflow),
           type: module_classification,
           org: org,
-          repo: repo,
+          repo: {
+            type: "github",
+            listing_type: "DirectoryListing",
+            url: repo,
+          },
           config: {
             snakefile: snakefile,
             config: config,
@@ -420,7 +428,11 @@ const GetRemoteModulesGithubBranchListing = async (
       name: FormatName(module_name),
       type: module_classification,
       org: module_org,
-      repo: repo,
+      repo: {
+        type: "github",
+        listing_type: "DirectoryListing",
+        url: repo,
+      },
       config: {
         snakefile: {
           function: "github",

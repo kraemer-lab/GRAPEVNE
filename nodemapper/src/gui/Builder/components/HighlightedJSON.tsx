@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { getNodeById, getNodeByName } from './Flow';
 
 import { Typography } from '@mui/material';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import type {} from '@mui/x-tree-view/themeAugmentation';
@@ -27,41 +27,41 @@ declare module '@mui/material/Typography' {
   }
 }
 
-export const defaultTheme = createTheme();
-export const theme = createTheme({
-  palette: {
-    mode: 'light',
-  },
-  components: {
-    MuiTreeItem: {
-      styleOverrides: {
-        content: {
-          padding: '0px',
-        },
-        iconContainer: {
-          display: 'none',
-        },
-        label: {
-          padding: '0px',
-          color: defaultTheme.palette.text.secondary,
-          fontWeight: 'bold',
-        },
-      },
+export const generateTheme = (theme) =>
+  createTheme({
+    palette: {
+      mode: 'light',
     },
-    MuiTypography: {
-      variants: [
-        {
-          props: { variant: 'key' },
-          style: {
-            color: defaultTheme.palette.text.secondary,
-            marginRight: '0.5rem',
-            fontWeight: 'normal',
+    components: {
+      MuiTreeItem: {
+        styleOverrides: {
+          content: {
+            padding: '0px',
+          },
+          iconContainer: {
+            display: 'none',
+          },
+          label: {
+            padding: '0px',
+            color: theme.palette.text.secondary,
+            fontWeight: 'bold',
           },
         },
-      ],
+      },
+      MuiTypography: {
+        variants: [
+          {
+            props: { variant: 'key' },
+            style: {
+              color: theme.palette.text.secondary,
+              marginRight: '0.5rem',
+              fontWeight: 'normal',
+            },
+          },
+        ],
+      },
     },
-  },
-});
+  });
 
 const TypoKey = (props) => <Typography variant="key" {...props} />;
 const TypoStruct = (props) => <Typography variant="struct" {...props} />;
@@ -158,8 +158,9 @@ const ConnectParameter = (props: { connectParameter }) => {
       }}
       onClick={() => props.connectParameter()}
     >
-      {' '}
-      <FontAwesomeIcon icon={faLink} />
+      <TypoKey sx={{ marginLeft: '5px' }}>
+        <FontAwesomeIcon icon={faLink} />
+      </TypoKey>
     </span>
   );
 };
@@ -173,8 +174,9 @@ const DisconnectParameter = (props: { disconnectParameter }) => {
       }}
       onClick={() => props.disconnectParameter()}
     >
-      {' '}
-      <FontAwesomeIcon icon={faTimes} />
+      <TypoKey sx={{ marginLeft: '5px' }}>
+        <FontAwesomeIcon icon={faTimes} />
+      </TypoKey>
     </span>
   );
 };
@@ -382,8 +384,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
               >
                 <EasyEdit
                   type={Types.TEXT}
-                  style={{ cursor: 'text' }}
-                  onHoverCssClass="easyedit-hover"
+                  style={{ cursor: 'pointer' }}
+                  onHoverCssClass="string"
                   value={parameterValue}
                   onSave={(value) => {
                     return;
@@ -406,8 +408,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 {valueType === 'boolean' ? (
                   <EasyEdit
                     type={Types.SELECT}
-                    style={{ cursor: 'text' }}
-                    onHoverCssClass="easyedit-hover"
+                    style={{ cursor: 'pointer' }}
+                    onHoverCssClass="boolean"
                     saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                     cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
                     value={value ? 'true' : 'false'}
@@ -423,8 +425,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 ) : valueType === 'select' ? (
                   <EasyEdit
                     type={Types.SELECT}
-                    style={{ cursor: 'text' }}
-                    onHoverCssClass="easyedit-hover"
+                    style={{ cursor: 'pointer' }}
+                    onHoverCssClass="string"
                     saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                     cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
                     value={value}
@@ -435,8 +437,8 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 ) : (
                   <EasyEdit
                     type={Types.TEXT}
-                    style={{ cursor: 'text' }}
-                    onHoverCssClass="easyedit-hover"
+                    style={{ cursor: 'pointer' }}
+                    onHoverCssClass="string"
                     saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
                     cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
                     value={value}
@@ -466,7 +468,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         padding: '2px',
       }}
     >
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={generateTheme(useTheme())}>
         <TreeView defaultExpanded={concertinaIfHierarchicalModule(json)}>
           <HighlightJSON keylist={[]} />
         </TreeView>

@@ -152,7 +152,13 @@ describe("modules", () => {
       for (const n of ["n0", "n1", "n2"]) {
         console.log(`Dragging module to canvas: ${n}`);
         await driver.actions().dragAndDrop(module, canvas).perform();
-        await driver.sleep(100);
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//div[@data-id="${n}"]`,
+            ),
+          ),
+        );
       }
       await driver.findElement(By.id("buttonReactflowArrange")).click();
 

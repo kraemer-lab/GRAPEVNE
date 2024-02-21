@@ -23,6 +23,7 @@ export interface IBuilderState {
   config_pane_display: string;
   logtext: string;
   workdir: string;
+  modules_loading: boolean;
 
   // react-flow parameters
   nodes: Node[];
@@ -55,6 +56,7 @@ const builderStateInit: IBuilderState = {
   logtext: ' ',
   modules_list: '[]',
   workdir: '',
+  modules_loading: false,
 
   // react-flow parameters
   nodes: default_nodes,
@@ -217,6 +219,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderUpdateWorkdir, (state, action) => {
       state.workdir = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetModulesLoading, (state, action) => {
+      state.modules_loading = action.payload;
       console.info('[Reducer] ' + action.type);
     });
 });

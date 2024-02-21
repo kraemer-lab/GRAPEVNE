@@ -16,6 +16,7 @@ import {
 } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+import { useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import { Edge, Node } from 'reactflow';
@@ -119,6 +120,9 @@ const NodeInfoRenderer = (props) => {
     if (name && name !== nodeinfo.name) dispatch(builderUpdateNodeInfoName(name));
   };
 
+  // Get theme
+  const theme = useTheme();
+
   return (
     <Box
       key={'nodeinfo-' + nodeinfo.id} // ensures render defaults are reset when node is changed
@@ -140,6 +144,7 @@ const NodeInfoRenderer = (props) => {
         <Box
           sx={{
             fontWeight: 'bold',
+            color: theme.palette.primary.main,
           }}
         >
           <EasyEdit

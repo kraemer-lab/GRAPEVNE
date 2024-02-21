@@ -273,7 +273,7 @@ const ClearGraph = async (
 ) => {
   // Clear graph
   await driver.findElement(By.id("btnGraphDropdown")).click();
-await driver.findElement(By.id("btnBuilderClearScene")).click();
+  await driver.findElement(By.id("btnBuilderClearScene")).click();
   // Wait for Graph dropdown menu to close
   while (true) {
     try {

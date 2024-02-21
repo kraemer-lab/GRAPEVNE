@@ -5,6 +5,7 @@ import {
   builderLogEvent,
   builderNodeSelected,
   builderSetEdges,
+  builderSetModulesLoading,
   builderSetNodes,
   builderUpdateModulesList,
   builderUpdateNodeInfo,
@@ -463,9 +464,10 @@ const UpdateNodeInfoName = (action: IPayloadString, dispatch, nodeinfo, nodes: N
   }
 };
 
-const GetRemoteModules = async (dispatchString: TPayloadString, repo: string) => {
+const GetRemoteModules = async (dispatch, repo: string) => {
   // Get list of remote modules
-  dispatchString(builderUpdateStatusText('Loading modules...'));
+  dispatch(builderUpdateStatusText('Loading modules...'));
+  dispatch(builderSetModulesLoading(true));
   console.log('Repository settings: ', repo);
   const app = BuilderEngine.Instance;
   const query: Query = {
@@ -481,17 +483,19 @@ const GetRemoteModules = async (dispatchString: TPayloadString, repo: string) =>
     console.log(content);
     if (content['returncode'] !== 0) {
       // Report error
-      dispatchString(builderUpdateStatusText(content['body'] as string));
+      dispatch(builderSetModulesLoading(false));
+      dispatch(builderUpdateStatusText(content['body'] as string));
     } else {
-      dispatchString(builderUpdateStatusText('Modules loaded.'));
-      dispatchString(builderUpdateModulesList(content['body'] as string));
+      dispatch(builderUpdateModulesList(content['body'] as string));
+      dispatch(builderSetModulesLoading(false));
+      dispatch(builderUpdateStatusText('Modules loaded.'));
     }
   };
   let response: Record<string, undefined>;
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery(query, dispatchString, callback);
+      SubmitQuery(query, dispatch, callback);
       break;
     case 'electron':
       callback(await builderAPI.GetRemoteModules(query));
@@ -517,6 +521,7 @@ const WriteStoreConfig = async (state) => {
     display_module_settings: state.display_module_settings,
     auto_validate_connections: state.auto_validate_connections,
     package_modules_in_workflow: state.package_modules_in_workflow,
+    dark_mode: state.dark_mode,
   });
 };
 

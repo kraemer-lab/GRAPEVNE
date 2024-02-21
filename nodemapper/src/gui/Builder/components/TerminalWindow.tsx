@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import TerminalController from 'Terminal/TerminalController';
 import React from 'react';
 
@@ -18,7 +19,7 @@ class TerminalWindow extends React.Component {
 
   render() {
     return (
-      <div
+      <Box
         ref={this.xtermRef}
         style={{
           width: '100%',

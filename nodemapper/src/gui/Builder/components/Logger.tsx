@@ -4,6 +4,8 @@ import { LazyLog, ScrollFollow } from 'react-lazylog';
 import { builderLogEvent } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+import './Logger.css';
+
 const builderAPI = window.builderAPI;
 
 // Ensure we only mount the log listener once
@@ -31,11 +33,12 @@ const Logger = () => {
             text={logtext}
             follow={follow}
             onScroll={onScroll}
+            lineClassName="logline"
+            highlight={[]}
             style={{
-              color: theme.palette.text.primary,
               backgroundColor: theme.palette.background.paper,
+              color: theme.palette.text.primary,
             }}
-            /*enableSearch={true} // this enables search, but requires style overrides*/
             stream
           />
         </>
