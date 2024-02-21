@@ -5,6 +5,7 @@ import {
   builderLogEvent,
   builderNodeSelected,
   builderSetNodes,
+  builderSetEdges,
   builderUpdateModulesList,
   builderUpdateNodeInfo,
   builderUpdateSettings,
@@ -144,6 +145,14 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 
         case 'builder/open-results-folder':
           OpenResultsFolder(getState().builder.workdir);
+          break;
+        
+        case 'builder/load-scene':
+          LoadScene(dispatch);
+          break;
+
+        case 'builder/save-scene':
+          SaveScene(dispatch, getState().builder.nodes, getState().builder.edges);
           break;
 
         default:
@@ -650,3 +659,40 @@ const UpdateStatusText = (dispatch: TPayloadString, text: string) => {
   // Send a copy of the status text to the logger
   dispatch(builderLogEvent(text));
 };
+
+const LoadScene = (dispatch) => {
+  const element = document.createElement('input');
+  element.setAttribute('type', 'file');
+  element.setAttribute('accept', '.json');
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  element.onchange = (e) => {
+    const file = (e.target as HTMLInputElement).files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const scene = JSON.parse(e.target.result as string);
+      dispatch(builderSetNodes(scene.nodes));
+      dispatch(builderSetEdges(scene.edges));
+      dispatch(builderUpdateStatusText('Scene loaded.'));
+    };
+    reader.readAsText(file);
+  };
+  document.body.removeChild(element);
+};
+
+const SaveScene = (dispatch, nodes: Node[], edges: Edge[]) => {
+  const scene = {
+    nodes: nodes,
+    edges: edges,
+  };
+  const filename = 'scene.json';
+  const element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(scene, null, 2)));
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+  dispatch(builderUpdateStatusText('Scene saved.'));
+}

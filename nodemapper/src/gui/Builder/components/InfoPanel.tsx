@@ -17,22 +17,22 @@ const TabPanel = (props: TabPanelProps) => {
 
   return (
     <Box
-      role="tabpanel"
+      role="infopanel-tabpanel"
       hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
-      style={{
-        width: '100%',
+      id={`infopanel-tabpanel-${index}`}
+      aria-labelledby={`infopanel-tab-${index}`}
+      sx={{
         height: '100%',
+        width: '100%',
       }}
       {...other}
     >
       {value === index && (
         <Box
-          sx={{ p: 0 }}
-          style={{
+          sx={{
             width: '100%',
             height: '100%',
+            p: 0,
           }}
         >
           {children}
@@ -44,8 +44,8 @@ const TabPanel = (props: TabPanelProps) => {
 
 const tabProps = (index: number) => {
   return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `tabpanel-${index}`,
+    id: `infopanel-tab-${index}`,
+    'aria-controls': `infopanel-tabpanel-${index}`,
   };
 };
 
@@ -58,15 +58,17 @@ const InfoPanel = () => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ display: "flex", flexFlow: 'column', width: '100%', height: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="footer tabs">
           <Tab label="Log" {...tabProps(0)} />
         </Tabs>
       </Box>
-      <TabPanel value={value} index={0}>
-        <Logger />
-      </TabPanel>
+      <Box sx={{alignItems: 'stretch', height: '100%'}}>
+        <TabPanel value={value} index={0}>
+          <Logger />
+        </TabPanel>
+      </Box>
     </Box>
   );
 };

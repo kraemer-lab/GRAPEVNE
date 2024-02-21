@@ -463,8 +463,6 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
     <Box
       className="json"
       style={{
-        borderStyle: 'solid',
-        borderWidth: '1px 0px 0px 0px',
         padding: '2px',
       }}
     >

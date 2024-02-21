@@ -3,39 +3,11 @@ import TerminalController from 'Terminal/TerminalController';
 import React from 'react';
 import InfoPanel from './InfoPanel';
 import ResizeHandle from './ResizeHandle';
+import { Box } from '@mui/material';
 
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import { useAppSelector } from 'redux/store/hooks';
 import Flow from './Flow';
-
-import styles from './styles.module.css';
-
-const builderAPI = window.builderAPI;
-type Query = Record<string, unknown>;
-
-interface IPayload {
-  id: string;
-}
-
-const Body = styled.div`
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-grow: 1;
-  height: 100%;
-  overflow: clip;
-`;
-
-const Layer = styled.div`
-  position: relative;
-  flex-direction: vertical;
-  flex-grow: 1;
-`;
 
 /**
  * Canvas display area for the Builder application.
@@ -51,31 +23,31 @@ const Canvas = () => {
   const configPaneOpen = useAppSelector((state) => state.builder.config_pane_display);
 
   return (
-    <Body>
-      <Content>
-        <Layer>
-          <PanelGroup direction="vertical">
-            <Panel className={styles.Panel} defaultSize={70}>
-              <Flow />
-            </Panel>
-            <ResizeHandle orientation="horizontal" />
-            <Panel
-              className={styles.Panel}
-              defaultSize={30}
-              collapsible={true}
-              onResize={(size: number, _delta: number) => {
-                const term = TerminalController.Instance; // singleton instance
-                term.fitAddon.fit();
-              }}
-            >
-              <div className={styles.PanelContent}>
-                <InfoPanel />
-              </div>
-            </Panel>
-          </PanelGroup>
-        </Layer>
-      </Content>
-    </Body>
+    <PanelGroup direction="vertical">
+      <Panel defaultSize={70}>
+        <Flow />
+      </Panel>
+      <ResizeHandle orientation="horizontal" />
+      <Panel
+        defaultSize={30}
+        collapsible={true}
+        onResize={(size: number, _delta: number) => {
+          const term = TerminalController.Instance; // singleton instance
+          term.fitAddon.fit();
+        }}
+      >
+        <Box
+          sx={{
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          <InfoPanel />
+        </Box>
+      </Panel>
+    </PanelGroup>
   );
 };
 

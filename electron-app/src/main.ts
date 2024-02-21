@@ -145,6 +145,10 @@ app.whenReady().then(() => {
   );
 });
 
+app.on("will-quit", () => {
+  // Clean up
+});
+
 app.on("window-all-closed", () => {
   // TODO: Terminal does not respond after first launch on Mac
   //if (process.platform !== "darwin") app.quit();

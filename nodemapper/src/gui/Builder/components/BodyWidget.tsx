@@ -13,26 +13,6 @@ import { Box } from '@mui/material';
 import { useAppSelector } from 'redux/store/hooks';
 import { ConfigPaneDisplay } from 'redux/types';
 
-const Body = styled.div`
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-const Content = styled.div`
-  display: flex;
-  flex-grow: 1;
-  height: 100%;
-  overflow: clip;
-`;
-
-const Layer = styled.div`
-  position: relative;
-  flex-direction: vertical;
-  flex-grow: 1;
-`;
-
 /**
  * Main display body for the Builder application.
  *
@@ -45,48 +25,39 @@ export const BodyWidget = () => {
   const configPaneOpen = useAppSelector((state) => state.builder.config_pane_display);
 
   return (
-    <Box className={styles.Container}>
-      <Body>
-        <Content>
-          <PanelGroup direction="horizontal">
-            <Panel className={styles.Panel} order={1} defaultSize={20} collapsible={true}>
-              <Box
-                className={styles.PanelContent}
-                sx={{
-                  overflowY: 'auto',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-start',
-                  alignSelf: 'flex-start',
-                }}
-              >
-                <RepoBrowser />
-              </Box>
-            </Panel>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <PanelGroup direction="horizontal">
+        <Panel className={styles.Panel} order={1} defaultSize={20} collapsible={true}>
+          <Box
+            sx={{
+              overflowY: 'auto',
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignSelf: 'flex-start',
+              width: '100%',
+            }}
+          >
+            <RepoBrowser />
+          </Box>
+        </Panel>
+        <ResizeHandle orientation="vertical" />
+
+        <Panel
+          order={2}
+          defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 50}
+        >
+          <Canvas />
+        </Panel>
+
+        {configPaneOpen !== ConfigPaneDisplay.None && (
+          <>
             <ResizeHandle orientation="vertical" />
-
-            <Panel
-              className={styles.Panel}
-              order={2}
-              defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 50}
-            >
-              <Box className={styles.BottomRow}>
-                <Canvas />
-              </Box>
+            <Panel order={3} defaultSize={30} collapsible={true}>
+              <NodeInfoRenderer />
             </Panel>
-
-            {configPaneOpen !== ConfigPaneDisplay.None && (
-              <>
-                <ResizeHandle orientation="vertical" />
-                <Panel className={styles.Panel} order={3} defaultSize={30} collapsible={true}>
-                  <Box className={styles.PanelContent}>
-                    <NodeInfoRenderer />
-                  </Box>
-                </Panel>
-              </>
-            )}
-          </PanelGroup>
-        </Content>
-      </Body>
+          </>
+        )}
+      </PanelGroup>
     </Box>
   );
 };

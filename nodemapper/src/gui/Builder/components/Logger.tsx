@@ -1,6 +1,6 @@
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
-import { LazyLog, ScrollFollow } from 'react-lazylog';
+import { LazyLog, ScrollFollow, SearchBar } from 'react-lazylog';
 import { builderLogEvent } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
@@ -26,16 +26,19 @@ const Logger = () => {
     <ScrollFollow
       startFollowing={true}
       render={({ follow, onScroll }) => (
-        <LazyLog
-          text={logtext}
-          stream
-          follow={follow}
-          onScroll={onScroll}
-          style={{
-            color: theme.palette.text.primary,
-            backgroundColor: theme.palette.background.paper,
-          }}
-        />
+        <>
+          <LazyLog
+            text={logtext}
+            follow={follow}
+            onScroll={onScroll}
+            style={{
+              color: theme.palette.text.primary,
+              backgroundColor: theme.palette.background.paper,
+            }}
+            /*enableSearch={true} // this enables search, but requires style overrides*/
+            stream
+          />
+        </>
       )}
     />
   );

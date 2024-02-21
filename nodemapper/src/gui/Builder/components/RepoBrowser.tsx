@@ -15,6 +15,7 @@ import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
+import Item from '@mui/material/ListItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -167,6 +168,14 @@ const RepoBrowser = () => {
             </Grid>
           </Grid>
           {showSearchOptions && (
+            <Box
+              p={1}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+              }}
+            >
             <Box>
               <FormControl variant="outlined" fullWidth>
                 <InputLabel id="repolist-label">Repository</InputLabel>
@@ -183,7 +192,8 @@ const RepoBrowser = () => {
                   {repo_list_options}
                 </Select>
               </FormControl>
-
+            </Box>
+            <Box>
               <FormControl variant="outlined" fullWidth>
                 <InputLabel id="orglist-label">Project</InputLabel>
                 <Select
@@ -199,6 +209,7 @@ const RepoBrowser = () => {
                   {organisaton_list_options}
                 </Select>
               </FormControl>
+            </Box>
             </Box>
           )}
         </Paper>

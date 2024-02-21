@@ -12,6 +12,8 @@ import {
   builderSetEdges,
   builderSetNodes,
   builderOpenResultsFolder,
+  builderLoadScene,
+  builderSaveScene,
 } from 'redux/actions';
 
 import Button from '@mui/material/Button';
@@ -52,15 +54,13 @@ const Header = () => {
 
   // Load nodemap from file
   const btnLoadScene = () => {
-    alert('Load scene not implemented yet');
-    //BuilderEngine.Instance.LoadScene();
+    dispatch(builderLoadScene());
     btnGraphDropdownClose();
   };
 
   // Save nodemap to file
   const btnSaveScene = () => {
-    alert('Save scene not implemented yet');
-    //BuilderEngine.Instance.SaveScene();
+    dispatch(builderSaveScene());
     btnGraphDropdownClose();
   };
 
@@ -114,7 +114,7 @@ const Header = () => {
         endIcon={<KeyboardArrowDownIcon />}
         variant="contained"
       >
-        GRAPH
+        SCENE
       </Button>
 
       <Menu
@@ -126,14 +126,14 @@ const Header = () => {
           'aria-labelledby': 'graphDropdown',
         }}
       >
-        <MenuItem id="btnBuilderLoadScene" onClick={btnLoadScene} disabled>
-          LOAD GRAPH
+        <MenuItem id="btnBuilderLoadScene" onClick={btnLoadScene}>
+          LOAD
         </MenuItem>
-        <MenuItem id="btnBuilderSaveScene" onClick={btnSaveScene} disabled>
-          SAVE GRAPH
+        <MenuItem id="btnBuilderSaveScene" onClick={btnSaveScene}>
+          SAVE
         </MenuItem>
         <MenuItem id="btnBuilderClearScene" onClick={btnClearScene}>
-          CLEAR GRAPH
+          CLEAR
         </MenuItem>
       </Menu>
 

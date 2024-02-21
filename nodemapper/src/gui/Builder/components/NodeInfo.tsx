@@ -12,14 +12,6 @@ import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import './HighlightedJSON.css';
 
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  height: 100%;
-  overflow: clip;
-`;
-
 interface DocStringProps {
   docstring: string;
 }
@@ -34,8 +26,6 @@ const DocString = (props: DocStringProps) => {
     <Box
       className="docstring"
       sx={{
-        borderStyle: 'solid',
-        borderWidth: '1px 0px 0px 0px',
         flex: '0 0 auto',
         flexGrow: 1,
         display: 'flex',
@@ -69,9 +59,17 @@ const NodeInfo = () => {
   }, [nodeinfo]);
 
   return (
-    <Content>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        flexGrow: 1,
+        height: '100%',
+        overflow: 'clip',
+      }}
+    >
       <PanelGroup direction="vertical">
-        {docstring === undefined || docstring === null || docstring === '' ? null : (
+        {docstring !== undefined && docstring !== null && docstring !== '' && (
           <>
             <Panel
               className={styles.Panel}
@@ -84,7 +82,7 @@ const NodeInfo = () => {
             >
               <DocString docstring={docstring} />
             </Panel>
-            <ResizeHandle orientation="vertical" />
+            <ResizeHandle orientation="horizontal" />
           </>
         )}
         <Panel
@@ -97,7 +95,7 @@ const NodeInfo = () => {
           <HighlightedJSON nodeid={JSON.parse(nodeinfo).id} json={nodeparams} />
         </Panel>
       </PanelGroup>
-    </Content>
+    </Box>
   );
 };
 

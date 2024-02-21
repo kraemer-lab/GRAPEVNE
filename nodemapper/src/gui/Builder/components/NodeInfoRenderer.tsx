@@ -17,6 +17,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import { Edge, Node } from 'reactflow';
 
 interface IPayload {
@@ -134,8 +135,6 @@ const NodeInfoRenderer = (props) => {
     >
       <Box
         sx={{
-          borderStyle: 'solid',
-          borderWidth: '0px 0px 1px 0px',
           flex: '0 0 auto',
           display: 'flex',
           justifyContent: 'space-between',
@@ -164,6 +163,7 @@ const NodeInfoRenderer = (props) => {
           {PermitNodeExpand(nodeinfo, nodes) && <ExpandButton nodeinfo={nodeinfo} />}
         </Box>
       </Box>
+      <Divider />
       <Box
         sx={{
           flex: '1 1 auto',
