@@ -8,6 +8,7 @@ import * as webdriver from "selenium-webdriver";
 
 import { runif } from "./utils";
 import { is_windows } from "./utils";
+import { ClearGraph } from "./utils";
 import { dragAndDrop } from "./utils";
 import { is_installed } from "./utils";
 import { FlushConsoleLog } from "./utils";
@@ -143,7 +144,7 @@ describe("modules", () => {
       );
 
       // Drag-and-drop the same hierarchical modules into the scene three times
-      await driver.findElement(By.id("btnBuilderClearScene")).click();
+      await ClearGraph(driver);
       const module = await driver.findElement(
         By.id("modulelist-copy_run3"),
       );
@@ -303,14 +304,13 @@ describe("modules", () => {
     5 * ONE_MINUTE,
   );
 
-
   runif(!is_windows)(
     "Module validation (dependency checks)",
     async () => {
       console.log("::: test Module validation (dependency checks)");
 
       // Drag-and-drop a source and copy module into the scene
-      await driver.findElement(By.id("btnBuilderClearScene")).click();
+      await ClearGraph(driver);
       const canvas = await driver.findElement(By.className("react-flow__pane"));
       await dragAndDrop(
         driver,
@@ -369,7 +369,7 @@ describe("modules", () => {
     console.log("::: test Construct single module workflow in GRAPEVNE");
 
     // Drag-and-drop module from modules-list into scene
-    await driver.findElement(By.id("btnBuilderClearScene")).click();
+    await ClearGraph(driver);
     const module = await driver.findElement(
       By.id("modulelist-payload_shell"),
     );

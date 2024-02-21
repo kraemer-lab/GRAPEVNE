@@ -56,13 +56,15 @@ const RepoBrowser = () => {
     modules_list = '[]';
   }
 
-  const updateTrayItems = () =>
+  const updateTrayItems = (freetext: string, repo: string, org: string) =>
+    // We pass the filter values as parameters to ensure that the filters are applied
+    // with the updated values, and not the state values which may not have refreshed
     JSON.parse(modules_list)
-      .filter((m) => m['repo'].startsWith(filterRepo) || filterRepo === '(all)')
-      .filter((m) => m['org'].startsWith(filterOrg) || filterOrg === '(all)')
+      .filter((m) => m['repo'].startsWith(repo) || repo === '(all)')
+      .filter((m) => m['org'].startsWith(org) || org === '(all)')
       .filter(
         (m) =>
-          m['name'].toLowerCase().includes(filterFreetext.toLowerCase()) || filterFreetext === '',
+          m['name'].toLowerCase().includes(freetext.toLowerCase()) || freetext === '',
       )
       .map((m) => (
         <TrayItemWidget
@@ -73,26 +75,26 @@ const RepoBrowser = () => {
         />
       ));
 
-  const [trayitems, setTrayitems] = React.useState(updateTrayItems());
+  const [trayitems, setTrayitems] = React.useState(updateTrayItems('', '', ''));
   React.useEffect(() => {
     setFilterRepo('(all)');
     setFilterOrg('(all)');
-    setTrayitems(updateTrayItems());
+    setTrayitems(updateTrayItems('', '', ''));
   }, [modules]);
 
   const onChangeFilterFreetext = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterFreetext(event.target.value);
-    setTrayitems(updateTrayItems());
+    setTrayitems(updateTrayItems(event.target.value, filterRepo, filterOrg));
   };
 
   const onChangeRepoList = (event: SelectChangeEvent) => {
     setFilterRepo(event.target.value);
-    setTrayitems(updateTrayItems());
+    setTrayitems(updateTrayItems(filterFreetext, event.target.value, filterOrg));
   };
 
   const onChangeOrgList = (event: SelectChangeEvent) => {
     setFilterOrg(event.target.value);
-    setTrayitems(updateTrayItems());
+    setTrayitems(updateTrayItems(filterFreetext, filterRepo, event.target.value));
   };
 
   const filtered_modules = JSON.parse(modules);

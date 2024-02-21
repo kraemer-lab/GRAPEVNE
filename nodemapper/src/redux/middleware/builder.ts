@@ -9,6 +9,7 @@ import {
   builderUpdateNodeInfo,
   builderUpdateSettings,
   builderUpdateStatusText,
+  builderUpdateWorkdir,
 } from 'redux/actions';
 
 import { Node } from 'NodeMap/scene/Flow';
@@ -141,6 +142,10 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           WriteStoreConfig(getState().builder);
           break;
 
+        case 'builder/open-results-folder':
+          OpenResultsFolder(getState().builder.workdir);
+          break;
+
         default:
           break;
       }
@@ -227,7 +232,7 @@ const BuildAs = async ({
     // post-build tests
     console.log({ query: query['query'], returncode: 0 });
     // Update status
-    dispatchString(builderUpdateStatusText(' ')); // Idle
+    dispatchString(builderUpdateStatusText('')); // Idle
   };
   switch (backend as string) {
     case 'rest':
@@ -272,7 +277,8 @@ const BuildAndRun = async (
       dispatchString(builderUpdateStatusText('Workflow run FAILED.'));
       return;
     }
-    dispatchString(builderUpdateStatusText(' ')); // Idle
+    dispatchString(builderUpdateWorkdir(content['body']['workdir'] as string));
+    dispatchString(builderUpdateStatusText('')); // Idle
   };
   switch (backend as string) {
     case 'rest':
@@ -516,6 +522,11 @@ const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
   }
   dispatch(builderUpdateSettings(local_config));
 };
+
+// Open the current working directory with the native file explorer
+const OpenResultsFolder = async (workdir: string) => {
+  builderAPI.OpenResultsFolder(workdir);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // POST request handlers

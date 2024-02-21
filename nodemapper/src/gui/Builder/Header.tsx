@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useAppDispatch } from 'redux/store/hooks';
+import { useAppSelector } from 'redux/store/hooks';
 
 import {
   builderBuildAndRun,
@@ -10,6 +11,7 @@ import {
   builderNodeDeselected,
   builderSetEdges,
   builderSetNodes,
+  builderOpenResultsFolder,
 } from 'redux/actions';
 
 import Button from '@mui/material/Button';
@@ -22,33 +24,52 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 const Header = () => {
   const dispatch = useAppDispatch();
 
-  // Build and Run dropdown menu state
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  // Dropdown menu states
+  const [anchorEl_graph, setAnchorEl_graph] = React.useState<null | HTMLElement>(null);
+  const [anchorEl_buildandrun, setAnchorEl_buildandrun] = React.useState<null | HTMLElement>(null);
+  const open_graph = Boolean(anchorEl_graph);
+  const open_buildandrun = Boolean(anchorEl_buildandrun);
+
+  const btnGraphDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl_graph(event.currentTarget);
+  }
+
+  const btnGraphDropdownClose = () => {
+    setAnchorEl_graph(null);
+  }
+
   const btnBuildAndRunDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl_buildandrun(event.currentTarget);
   };
+  
   const btnBuildAndRunDropdownClose = () => {
-    setAnchorEl(null);
+    setAnchorEl_buildandrun(null);
   };
 
-  /*
+
+  // Has a test build been run yet?
+  const hasTestRun = useAppSelector((state) => state.builder.workdir !== '');
+
   // Load nodemap from file
   const btnLoadScene = () => {
-    BuilderEngine.Instance.LoadScene();
+    alert('Load scene not implemented yet');
+    //BuilderEngine.Instance.LoadScene();
+    btnGraphDropdownClose();
   };
 
   // Save nodemap to file
   const btnSaveScene = () => {
-    BuilderEngine.Instance.SaveScene();
+    alert('Save scene not implemented yet');
+    //BuilderEngine.Instance.SaveScene();
+    btnGraphDropdownClose();
   };
-  */
 
   // Load nodemap from file
   const btnClearScene = () => {
     dispatch(builderNodeDeselected());
     dispatch(builderSetNodes([]));
     dispatch(builderSetEdges([]));
+    btnGraphDropdownClose();
   };
 
   // Run - build and run the workflow
@@ -61,6 +82,7 @@ const Header = () => {
   const btnCleanBuildFolder = () => {
     dispatch(builderCleanBuildFolder());
     btnBuildAndRunDropdownClose();
+    btnGraphDropdownClose();
   };
 
   // Build as module
@@ -75,26 +97,45 @@ const Header = () => {
     btnBuildAndRunDropdownClose();
   };
 
+  // Open results folder
+  const btnOpenResultsFolder = () => {
+    dispatch(builderOpenResultsFolder());
+  };
+
   return (
     <Stack direction="row" spacing={1} justifyContent="center">
-      {/*
-        *** LOAD function needs to assign eventListeners on load
+      
       <Button
-        id="btnBuilderLoadScene"
-        className="btn"
-        onClick={btnLoadScene}
+        id="btnGraphDropdown"
+        aria-controls={open ? 'graph-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={btnGraphDropdownClick}
+        endIcon={<KeyboardArrowDownIcon />}
+        variant="contained"
       >
-        LOAD
+        GRAPH
       </Button>
 
-      <Button
-        id="btnBuilderSaveScene"
-        className="btn"
-        onClick={btnSaveScene}
+      <Menu
+        id="graph-menu"
+        anchorEl={anchorEl_graph}
+        open={open_graph}
+        onClose={btnGraphDropdownClose}
+        MenuListProps={{
+          'aria-labelledby': 'graphDropdown',
+        }}
       >
-        SAVE
-      </Button>
-      */}
+        <MenuItem id="btnBuilderLoadScene" onClick={btnLoadScene} disabled>
+          LOAD GRAPH
+        </MenuItem>
+        <MenuItem id="btnBuilderSaveScene" onClick={btnSaveScene} disabled>
+          SAVE GRAPH
+        </MenuItem>
+        <MenuItem id="btnBuilderClearScene" onClick={btnClearScene}>
+          CLEAR GRAPH
+        </MenuItem>
+      </Menu>
 
       <Button
         id="btnBuildAndRunDropdown"
@@ -110,8 +151,8 @@ const Header = () => {
 
       <Menu
         id="buildAndRunDropdown-menu"
-        anchorEl={anchorEl}
-        open={open}
+        anchorEl={anchorEl_buildandrun}
+        open={open_buildandrun}
         onClose={btnBuildAndRunDropdownClose}
         MenuListProps={{
           'aria-labelledby': 'buildAndRunDropdown',
@@ -132,8 +173,14 @@ const Header = () => {
         </MenuItem>
       </Menu>
 
-      <Button id="btnBuilderClearScene" className="btn" onClick={btnClearScene} variant="contained">
-        CLEAR GRAPH
+      <Button
+        id="btnBuilderOpenResultsFolder"
+        className="btn"
+        onClick={btnOpenResultsFolder}
+        variant="contained"
+        disabled={hasTestRun ? false : true}
+      >
+        OPEN RESULTS
       </Button>
     </Stack>
   );

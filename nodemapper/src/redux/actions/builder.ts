@@ -61,3 +61,5 @@ export const builderReadStoreConfig = createAction('builder/read-store-config');
 export const builderWriteStoreConfig = createAction('builder/write-store-config');
 
 export const builderToggleDarkMode = createAction('builder/toggle-dark-mode');
+export const builderOpenResultsFolder = createAction('builder/open-results-folder');
+export const builderUpdateWorkdir = createAction<string>('builder/update-workdir');

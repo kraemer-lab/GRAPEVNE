@@ -22,6 +22,7 @@ export interface IBuilderState {
   terminal_visibile: boolean;
   config_pane_display: string;
   logtext: string;
+  workdir: string;
 
   // react-flow parameters
   nodes: Node[];
@@ -53,6 +54,7 @@ const builderStateInit: IBuilderState = {
   config_pane_display: ConfigPaneDisplay.None,
   logtext: ' ',
   modules_list: '[]',
+  workdir: '',
 
   // react-flow parameters
   nodes: default_nodes,
@@ -144,7 +146,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {
-      setStatusText(state, action.payload);
+      state.statustext = setStatusText(action.payload);
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateNodeInfo, (state, action) => {
@@ -212,13 +214,17 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderToggleDarkMode, (state, action) => {
       state.dark_mode = !state.dark_mode;
       console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderUpdateWorkdir, (state, action) => {
+      state.workdir = action.payload;
+      console.info('[Reducer] ' + action.type);
     });
 });
 
-const setStatusText = (state: IBuilderState, text: string) => {
-  if (text === '' || text === null || text === undefined) text = 'Idle';
-  state.statustext = text;
-  return state;
+const setStatusText = (text: string) => {
+  if (text === '' || text === ' ' || text === null || text === undefined)
+    text = 'Idle';
+  return text;
 };
 
 const addLogEvent = (state: IBuilderState, text: string) => {

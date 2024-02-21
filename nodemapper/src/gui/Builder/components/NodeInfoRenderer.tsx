@@ -109,10 +109,6 @@ const NodeInfoRenderer = (props) => {
   const nodeinfoStr = useAppSelector((state) => state.builder.nodeinfo);
   const nodes = useAppSelector((state) => state.builder.nodes);
 
-  const SetNodeName = (name: string) => {
-    if (name) dispatch(builderUpdateNodeInfoName(name));
-  };
-
   if (!nodeinfoStr) return null;
   const nodeinfo = JSON.parse(nodeinfoStr);
   if (Object.keys(nodeinfo).length === 0) return null;
@@ -120,6 +116,11 @@ const NodeInfoRenderer = (props) => {
   // Get node to lock/unlock it during text edits
   const app = BuilderEngine.Instance;
   const node = app.getNodeByName(nodeinfo.name as string, nodes);
+  
+  const SetNodeName = (name: string) => {
+    if (name && (name !== nodeinfo.name))
+      dispatch(builderUpdateNodeInfoName(name));
+  };
 
   return (
     <Box

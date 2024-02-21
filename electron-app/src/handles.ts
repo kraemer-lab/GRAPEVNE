@@ -163,10 +163,6 @@ export async function builder_BuildAndRun(
           stderr_callback,
         );
         stdout_callback("Workflow complete.");
-        // Open containing folder
-        /*shell.showItemInFolder(
-          ((query_run["data"] as Query)["content"] as Query)["workdir"] as string
-        );*/
         break;
 
       case "system":
@@ -194,6 +190,11 @@ export async function builder_CleanBuildFolder(
   status_callback("Build folder cleaned.");
   data["returncode"] = 0;
   return data;
+}
+
+export async function builder_OpenResultsFolder(event: Event, workdir: string) {
+  shell.showItemInFolder(workdir);
+  return { query: "builder/open-results-folder", body: "OK", returncode: 0 };
 }
 
 ///////////////////////////////////////////////////////////////////////////////

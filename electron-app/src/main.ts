@@ -128,6 +128,7 @@ app.whenReady().then(() => {
       sendLogData(data + "\r\n"),
     ),
   );
+  ipcMain.handle("builder/open-results-folder", handles.builder_OpenResultsFolder);
 
   // Runner
   ipcMain.handle("runner/build", handles.runner_Build);

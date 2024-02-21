@@ -34,6 +34,8 @@ contextBridge.exposeInMainWorld("builderAPI", {
     ipcRenderer.invoke("builder/get-remote-modules", query),
   GetRemoteModuleConfig: (query: Query) =>
     ipcRenderer.invoke("builder/get-remote-module-config", query),
+  OpenResultsFolder: (workdir: string) =>
+    ipcRenderer.invoke("builder/open-results-folder", workdir),
   logEvent: (callback: (event: Event, data: string) => void) =>
     ipcRenderer.on("builder/log-event", callback),
 });

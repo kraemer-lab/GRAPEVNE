@@ -268,6 +268,25 @@ const SetCheckBoxByID = async (
   await SetCheckBox(checkbox, checked);
 };
 
+const ClearGraph = async (
+  driver: webdriver.ThenableWebDriver,
+) => {
+  // Clear graph
+  await driver.findElement(By.id("btnGraphDropdown")).click();
+await driver.findElement(By.id("btnBuilderClearScene")).click();
+  // Wait for Graph dropdown menu to close
+  while (true) {
+    try {
+      await driver.findElement(By.xpath('//ul[@aria-labelledby="graphDropdown"]'));
+      await driver.sleep(50);
+    }
+    catch (NoSuchElementError) {
+      // Element has closed
+      break;
+    }
+  }
+};
+
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
   modulename: string,
@@ -304,7 +323,7 @@ export const MultiModuleWorkflow_Setup = async (
 ) => {
   console.log("::: test Build and Test the workflow (setup)");
   // Drag-and-drop module from modules-list into scene
-  await driver.findElement(By.id("btnBuilderClearScene")).click();
+  await ClearGraph(driver);
   // Force modules to be loaded in order
   for (let k = 0; k < modulenames.length; k++) {
     const module = await driver.findElement(
@@ -416,7 +435,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
   // Drag-and-drop module from modules-list into scene
   console.log("Drag-and-drop module from modules-list into scene");
-  await driver.findElement(By.id("btnBuilderClearScene")).click();
+  await ClearGraph(driver);
   const module = await driver.findElement(
     By.id("modulelist-" + wranglename(modulename)),
   );
@@ -546,6 +565,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
 export {
   runif,
+  ClearGraph,
   is_installed,
   is_windows,
   is_not_windows,
