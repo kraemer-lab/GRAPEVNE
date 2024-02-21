@@ -16,7 +16,7 @@ export const faint = (color: string, amount: number) => {
   const g = parseColor(color.substring(3, 5));
   const b = parseColor(color.substring(5, 7));
   return `rgba(${r},${g},${b},${amount})`;
-}
+};
 
 export const Tray = styled.div<{ color: string }>`
   color: ${(p) => faint(p.color, 0.8)};

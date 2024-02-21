@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import React from 'react';
 
 import Canvas from './Canvas';
@@ -42,10 +41,7 @@ export const BodyWidget = () => {
         </Panel>
         <ResizeHandle orientation="vertical" />
 
-        <Panel
-          order={2}
-          defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 50}
-        >
+        <Panel order={2} defaultSize={configPaneOpen === ConfigPaneDisplay.None ? 80 : 50}>
           <Canvas />
         </Panel>
 

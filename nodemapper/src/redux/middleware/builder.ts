@@ -4,8 +4,8 @@ import * as globals from 'redux/globals';
 import {
   builderLogEvent,
   builderNodeSelected,
-  builderSetNodes,
   builderSetEdges,
+  builderSetNodes,
   builderUpdateModulesList,
   builderUpdateNodeInfo,
   builderUpdateSettings,
@@ -146,7 +146,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case 'builder/open-results-folder':
           OpenResultsFolder(getState().builder.workdir);
           break;
-        
+
         case 'builder/load-scene':
           LoadScene(dispatch);
           break;
@@ -535,7 +535,7 @@ const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
 // Open the current working directory with the native file explorer
 const OpenResultsFolder = async (workdir: string) => {
   builderAPI.OpenResultsFolder(workdir);
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // POST request handlers
@@ -688,11 +688,14 @@ const SaveScene = (dispatch, nodes: Node[], edges: Edge[]) => {
   };
   const filename = 'scene.json';
   const element = document.createElement('a');
-  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(scene, null, 2)));
+  element.setAttribute(
+    'href',
+    'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(scene, null, 2)),
+  );
   element.setAttribute('download', filename);
   element.style.display = 'none';
   document.body.appendChild(element);
   element.click();
   document.body.removeChild(element);
   dispatch(builderUpdateStatusText('Scene saved.'));
-}
+};

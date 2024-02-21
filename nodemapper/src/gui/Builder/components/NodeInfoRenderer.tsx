@@ -66,12 +66,9 @@ const ExpandButton = (props: ExpandProps) => {
   const btnExpand = () => {
     // Expand the selected node into it's constituent modules
     const app = BuilderEngine.Instance;
-    const [nodes0, edges0] = app.ExpandNodeByName(
-      props.nodeinfo.name as string,
-      nodes, edges);
+    const [nodes0, edges0] = app.ExpandNodeByName(props.nodeinfo.name as string, nodes, edges);
     console.log('newnodes', newnodes);
-    if (nodes0 !== null && nodes0 !== undefined)
-      setNewNodes({ nodes: nodes0, edges: edges0 });
+    if (nodes0 !== null && nodes0 !== undefined) setNewNodes({ nodes: nodes0, edges: edges0 });
   };
 
   React.useEffect(() => {
@@ -117,10 +114,9 @@ const NodeInfoRenderer = (props) => {
   // Get node to lock/unlock it during text edits
   const app = BuilderEngine.Instance;
   const node = app.getNodeByName(nodeinfo.name as string, nodes);
-  
+
   const SetNodeName = (name: string) => {
-    if (name && (name !== nodeinfo.name))
-      dispatch(builderUpdateNodeInfoName(name));
+    if (name && name !== nodeinfo.name) dispatch(builderUpdateNodeInfoName(name));
   };
 
   return (

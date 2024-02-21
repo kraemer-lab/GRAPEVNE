@@ -1,27 +1,26 @@
 import React from 'react';
 
-import { useAppDispatch } from 'redux/store/hooks';
-import { useAppSelector } from 'redux/store/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import {
   builderBuildAndRun,
   builderBuildAsModule,
   builderBuildAsWorkflow,
   builderCleanBuildFolder,
+  builderLoadScene,
   builderNodeDeselected,
+  builderOpenResultsFolder,
+  builderSaveScene,
   builderSetEdges,
   builderSetNodes,
-  builderOpenResultsFolder,
-  builderLoadScene,
-  builderSaveScene,
 } from 'redux/actions';
 
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import Divider from '@mui/material/Divider';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const Header = () => {
   const dispatch = useAppDispatch();
@@ -34,20 +33,19 @@ const Header = () => {
 
   const btnGraphDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl_graph(event.currentTarget);
-  }
+  };
 
   const btnGraphDropdownClose = () => {
     setAnchorEl_graph(null);
-  }
+  };
 
   const btnBuildAndRunDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl_buildandrun(event.currentTarget);
   };
-  
+
   const btnBuildAndRunDropdownClose = () => {
     setAnchorEl_buildandrun(null);
   };
-
 
   // Has a test build been run yet?
   const hasTestRun = useAppSelector((state) => state.builder.workdir !== '');
@@ -104,7 +102,6 @@ const Header = () => {
 
   return (
     <Stack direction="row" spacing={1} justifyContent="center">
-      
       <Button
         id="btnGraphDropdown"
         aria-controls={open ? 'graph-menu' : undefined}

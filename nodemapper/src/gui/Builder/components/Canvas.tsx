@@ -1,9 +1,8 @@
-import styled from '@emotion/styled';
+import { Box } from '@mui/material';
 import TerminalController from 'Terminal/TerminalController';
 import React from 'react';
 import InfoPanel from './InfoPanel';
 import ResizeHandle from './ResizeHandle';
-import { Box } from '@mui/material';
 
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import { useAppSelector } from 'redux/store/hooks';
@@ -38,10 +37,10 @@ const Canvas = () => {
       >
         <Box
           sx={{
-            height: "100%",
-            width: "100%",
-            display: "flex",
-            flexDirection: "row",
+            height: '100%',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
           }}
         >
           <InfoPanel />

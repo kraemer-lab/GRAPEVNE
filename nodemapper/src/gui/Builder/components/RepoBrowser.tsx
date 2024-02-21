@@ -7,6 +7,8 @@ import { TrayWidget } from './TrayWidget';
 import { builderGetRemoteModules } from 'redux/actions';
 import BuilderEngine from '../BuilderEngine';
 
+import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
@@ -15,12 +17,9 @@ import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
-import Item from '@mui/material/ListItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 
 const hash = (s: string) => {
   let hash = 0,
@@ -63,10 +62,7 @@ const RepoBrowser = () => {
     JSON.parse(modules_list)
       .filter((m) => m['repo'].startsWith(repo) || repo === '(all)')
       .filter((m) => m['org'].startsWith(org) || org === '(all)')
-      .filter(
-        (m) =>
-          m['name'].toLowerCase().includes(freetext.toLowerCase()) || freetext === '',
-      )
+      .filter((m) => m['name'].toLowerCase().includes(freetext.toLowerCase()) || freetext === '')
       .map((m) => (
         <TrayItemWidget
           key={hash(JSON.stringify(m))}
@@ -176,40 +172,40 @@ const RepoBrowser = () => {
                 gap: '8px',
               }}
             >
-            <Box>
-              <FormControl variant="outlined" fullWidth>
-                <InputLabel id="repolist-label">Repository</InputLabel>
-                <Select
-                  name="repolist"
-                  id="repolist"
-                  value={filterRepo}
-                  onChange={onChangeRepoList}
-                  label="Repository"
-                  labelId="repolist-label"
-                  size="small"
-                  fullWidth
-                >
-                  {repo_list_options}
-                </Select>
-              </FormControl>
-            </Box>
-            <Box>
-              <FormControl variant="outlined" fullWidth>
-                <InputLabel id="orglist-label">Project</InputLabel>
-                <Select
-                  name="orglist"
-                  id="orglist"
-                  value={filterOrg}
-                  onChange={onChangeOrgList}
-                  label="Project"
-                  labelId="orglist-label"
-                  size="small"
-                  fullWidth
-                >
-                  {organisaton_list_options}
-                </Select>
-              </FormControl>
-            </Box>
+              <Box>
+                <FormControl variant="outlined" fullWidth>
+                  <InputLabel id="repolist-label">Repository</InputLabel>
+                  <Select
+                    name="repolist"
+                    id="repolist"
+                    value={filterRepo}
+                    onChange={onChangeRepoList}
+                    label="Repository"
+                    labelId="repolist-label"
+                    size="small"
+                    fullWidth
+                  >
+                    {repo_list_options}
+                  </Select>
+                </FormControl>
+              </Box>
+              <Box>
+                <FormControl variant="outlined" fullWidth>
+                  <InputLabel id="orglist-label">Project</InputLabel>
+                  <Select
+                    name="orglist"
+                    id="orglist"
+                    value={filterOrg}
+                    onChange={onChangeOrgList}
+                    label="Project"
+                    labelId="orglist-label"
+                    size="small"
+                    fullWidth
+                  >
+                    {organisaton_list_options}
+                  </Select>
+                </FormControl>
+              </Box>
             </Box>
           )}
         </Paper>

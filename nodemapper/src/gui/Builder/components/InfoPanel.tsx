@@ -58,13 +58,13 @@ const InfoPanel = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", flexFlow: 'column', width: '100%', height: '100%' }}>
+    <Box sx={{ display: 'flex', flexFlow: 'column', width: '100%', height: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="footer tabs">
           <Tab label="Log" {...tabProps(0)} />
         </Tabs>
       </Box>
-      <Box sx={{alignItems: 'stretch', height: '100%'}}>
+      <Box sx={{ alignItems: 'stretch', height: '100%' }}>
         <TabPanel value={value} index={0}>
           <Logger />
         </TabPanel>

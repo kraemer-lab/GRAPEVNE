@@ -222,8 +222,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
 });
 
 const setStatusText = (text: string) => {
-  if (text === '' || text === ' ' || text === null || text === undefined)
-    text = 'Idle';
+  if (text === '' || text === ' ' || text === null || text === undefined) text = 'Idle';
   return text;
 };
 
