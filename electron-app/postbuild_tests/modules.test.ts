@@ -29,6 +29,15 @@ const ONE_SEC = 1000;
 const TEN_SECS = 10 * ONE_SEC;
 const ONE_MINUTE = 60 * ONE_SEC;
 
+let run_container_tests = true;
+process.argv.slice(2).forEach((arg) => {
+  console.log(`::: ${arg}`);
+  if (arg === "--no-containers") {
+    console.log("Skipping container tests");
+    run_container_tests = false;
+  }
+});
+
 /*
  * Note: These tests chain together, so they must be run in order.
  */
@@ -323,15 +332,26 @@ describe("modules", () => {
         driver.findElement(By.id(`modulelist-payload_run`)),
         canvas,
       );
-      await driver.sleep(100);
+      await driver.wait(
+        until.elementLocated(
+          By.xpath(
+            `//div[@data-id="n0"]`,
+          ),
+        ),
+      );
       await dragAndDrop(
         driver,
         driver.findElement(By.id(`modulelist-copy_run`)),
         canvas,
       );
-      await driver.sleep(100);
+      await driver.wait(
+        until.elementLocated(
+          By.xpath(
+            `//div[@data-id="n1"]`,
+          ),
+        ),
+      );
       await driver.findElement(By.id("buttonReactflowArrange")).click();
-      await driver.sleep(100);
 
       // Connect the modules together
       await driver
@@ -354,7 +374,7 @@ describe("modules", () => {
 
       // Change the expected file name in the source module
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
+      await driver.sleep(50); // Wait for module settings to expand
       await EasyEdit_SetFieldByKey(driver, "filename", "mismatch");
 
       // Select target module and click 'Validate'
@@ -381,9 +401,13 @@ describe("modules", () => {
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
     await dragAndDrop(driver, module, canvas);
-    // Give time for the module to be created on the canvas,
-    // and for the config to load
-    await driver.sleep(100);
+    await driver.wait(
+      until.elementLocated(
+        By.xpath(
+          `//div[@data-id="n0"]`,
+        ),
+      ),
+    );
 
     // Wait for module to be added to the scene and for the config to load
     console.log("<<< test Construct single module workflow in GRAPEVNE");
@@ -683,7 +707,7 @@ describe("modules", () => {
   ); // long timeout
 
   // Container tests
-  runif(is_installed(["docker"])).each([
+  runif(run_container_tests && is_installed(["docker"])).each([
     [
       // NOTE: This test relies on the remote module jsbrittain/snakeshack (Utilty) touch
       "container_touch",
@@ -696,7 +720,7 @@ describe("modules", () => {
       ],
     ],
   ])(
-    "Build, extract zip, run in Docker: module '%s'",
+    "Build, extract zip, run in Docker container: module '%s'",
     async (modulename, target_files, payload_files) => {
       await Build_RunWithDocker_SingleModuleWorkflow({
         driver: driver,
@@ -710,7 +734,7 @@ describe("modules", () => {
   ); // long timeout
 
   // Package workflow (container test)
-  runif(is_installed(["docker"])).each([
+  runif(run_container_tests && is_installed(["docker"])).each([
     [
       "payload run",
       [

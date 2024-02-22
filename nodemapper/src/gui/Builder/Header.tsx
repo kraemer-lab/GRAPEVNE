@@ -50,19 +50,19 @@ const Header = () => {
   // Has a test build been run yet?
   const hasTestRun = useAppSelector((state) => state.builder.workdir !== '');
 
-  // Load nodemap from file
+  // Load scene from file
   const btnLoadScene = () => {
     dispatch(builderLoadScene());
     btnGraphDropdownClose();
   };
 
-  // Save nodemap to file
+  // Save scene to file
   const btnSaveScene = () => {
     dispatch(builderSaveScene());
     btnGraphDropdownClose();
   };
 
-  // Load nodemap from file
+  // Clear scene / canvas
   const btnClearScene = () => {
     dispatch(builderNodeDeselected());
     dispatch(builderSetNodes([]));

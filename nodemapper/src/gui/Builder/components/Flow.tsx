@@ -476,6 +476,7 @@ const Flow = () => {
     const workflow = data.config as Query;
     const workflow_config = workflow.config as Query;
     // Check if module was provided with a configuration
+    document.body.style.cursor = 'wait';
     if (_.isEmpty(workflow_config)) {
       // Module was not provided with a configuration - attempt to load now
       dispatch(builderUpdateStatusText(`Loading module ${module_name}...`));
@@ -485,7 +486,7 @@ const Flow = () => {
         repo['type'] = 'local';
         repo['repo'] = workflow['snakefile'];
       } else {
-        // TODO: Assumes github directory listing (not compatible with branch listing)
+        // Assumes github directory listing (not compatible with branch listing)
         repo['type'] = 'github';
         repo['repo'] = workflow['snakefile']['args'][0];
       }
@@ -542,6 +543,7 @@ const Flow = () => {
       } as Node;
       dispatch(builderAddNode(newnode));
     }
+    document.body.style.cursor = 'default';
   };
 
   const onDragOver = (event) => {

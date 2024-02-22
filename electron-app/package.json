@@ -9,6 +9,7 @@
     "build": "tsc",
     "test": "jest ./src",
     "postbuild-tests": "jest --runInBand ./postbuild_tests",
+    "postbuild-tests-no-containers": "jest --runInBand ./postbuild_tests --no-containers",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish"

@@ -1,5 +1,6 @@
 import { By } from "selenium-webdriver";
 import { Key } from "selenium-webdriver";
+import { until } from "selenium-webdriver";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -199,7 +200,7 @@ const EasyEdit_SetFieldByKey = async (
   await driver
     .findElement(By.xpath(`//span[contains(text(), "${key}")]/following::span`))
     .click();
-  await driver.sleep(100); // Wait for edit box to render
+  await driver.sleep(50); // Wait for edit box to render
   // We can send one sendKeys command to the input box before loosing focus, so
   // need to construct the command to send the correct number of backspaces to clear
   // the field, then enter the new value, then Enter to confirm the change.
@@ -225,7 +226,7 @@ const EasyEdit_SetFieldByValue = async (
   await driver
     .findElement(By.xpath(`//*[contains(text(), "${oldvalue + "\n:"}")]`))
     .click();
-  await driver.sleep(100); // Wait for edit box to render
+  await driver.sleep(50); // Wait for edit box to render
   // We can send one sendKeys command to the input box before loosing focus, so
   // need to construct the command to send the correct number of backspaces to clear
   // the field, then enter the new value, then Enter to confirm the change.
@@ -275,7 +276,7 @@ const ClearGraph = async (
   await driver.findElement(By.id("btnGraphDropdown")).click();
   await driver.findElement(By.id("btnBuilderClearScene")).click();
   // Wait for Graph dropdown menu to close
-  while (true) {
+  while (true) {  // eslint-disable-line no-constant-condition
     try {
       await driver.findElement(By.xpath('//ul[@aria-labelledby="graphDropdown"]'));
       await driver.sleep(50);
@@ -331,9 +332,13 @@ export const MultiModuleWorkflow_Setup = async (
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
     await dragAndDrop(driver, module, canvas);
-    // Give time for the module to be created on the canvas,
-    // and for the config to load
-    await driver.sleep(100);
+    await driver.wait(
+      until.elementLocated(
+        By.xpath(
+          `//div[@data-id="n${k}"]`,
+        ),
+      ),
+    );
   }
 
   // Force connections to be connected in order
@@ -441,8 +446,13 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   );
   const canvas = await driver.findElement(By.className("react-flow__pane"));
   await dragAndDrop(driver, module, canvas);
-  // Give time for the config to load and for the module to be created on the canvas
-  await driver.sleep(100);
+  await driver.wait(
+    until.elementLocated(
+      By.xpath(
+        `//div[@data-id="n0"]`,
+      ),
+    ),
+  )
   await canvas.click(); // Click on the canvas to deselect the module
 
   // Open the module in the editor and Expand, replacing the module with its sub-modules
@@ -462,7 +472,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
       By.xpath(`//div[text()='${modulename}']`),
     );
     for (const element of elements) await element.click();
-    await driver.sleep(100); // Wait for module settings to expand
+    await driver.sleep(50); // Wait for module settings to expand
     await driver.findElement(By.id("btnBuilderExpand")).click();
   }
 
