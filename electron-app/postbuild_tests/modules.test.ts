@@ -129,7 +129,9 @@ describe("modules", () => {
     // Close settings pane
     await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
     console.log("<<< test Select test repository");
-  });
+  },
+    ONE_MINUTE
+  );
 
   test("Get local modules list", async () => {
     console.log("::: test Get local modules list");

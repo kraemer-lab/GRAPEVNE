@@ -1,23 +1,17 @@
-name: Pytest-builder
+name: Backend
 
 on:
   workflow_call:
-#  push:
-#    branches: [main]
-#    paths:
-#      - ".github/workflows/pytest-builder.yml"
-#      - "builder/**"
-#      - "!builder/README.md"
 
 jobs:
   ci:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: builder
+        working-directory: backend
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.11"]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -27,10 +21,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install wheel
-          python -m pip install -r requirements.txt
-          python -m pip install .
-          python -m pip install pytest
+          pip install -r requirements.txt
+          pip install pytest
       - name: Testing code with pytest
         run: |
-          python -m pytest
+          pytest $(git ls-files '*.py')

@@ -3,7 +3,6 @@ import store from './redux/store';
 
 import { StrictMode } from 'react';
 import { Provider } from 'react-redux';
-import { HashRouter } from 'react-router-dom';
 
 import { render } from '@testing-library/react';
 
@@ -15,11 +14,9 @@ global.ResizeObserver = require('resize-observer-polyfill');
 test('code quality', () => {
   render(
     <Provider store={store}>
-      <HashRouter>
-        <StrictMode>
-          <App />
-        </StrictMode>
-      </HashRouter>
-    </Provider>,
+      <StrictMode>
+        <App />
+      </StrictMode>
+    </Provider>
   );
 });
