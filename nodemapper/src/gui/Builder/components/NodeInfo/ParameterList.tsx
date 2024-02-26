@@ -3,13 +3,13 @@ import React from 'react';
 import { ModuleType } from 'NodeMap/scene/Module';
 import { builderNodeSelected, builderUpdateNode } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-import { Edge, Node, getNodeById, getNodeName } from './Flow';
+import { Edge, Node, getNodeById, getNodeName } from './../Flow';
 
 import {
   checkParameter_IsInModuleConfigLayer,
   checkParameter_IsModuleRoot,
   lookupKey,
-} from './HighlightedJSON';
+} from './HighlightJSON';
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -104,10 +104,6 @@ export default function ParameterList({
   id,
   keylist,
   keyitem,
-  top,
-  left,
-  right,
-  bottom,
   onclose,
   ...props
 }: ParameterListProps) {
@@ -148,7 +144,6 @@ export default function ParameterList({
   // Handle parameter selection
   const onParameterSelect = (node_from: Node, keylist_from, key_from: string) => {
     const param_from = [node_from.data.config.name, ...keylist_from, key_from];
-    const param_to = [...keylist.slice(1, keylist.length), keyitem];
 
     // Add pairing between 'key/keylist' param and selection, into node.id
     const newnode_to = JSON.parse(JSON.stringify(node_to));
@@ -219,7 +214,7 @@ export default function ParameterList({
       }
 
       // If the key is a module config, skip rendering of the key (but render children)
-      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist, key);
+      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist);
       if (isInModuleConfigLayer) {
         // Of the parameters in the module config layer, continue rendering only the
         // 'config' children, which contains the actual parameters

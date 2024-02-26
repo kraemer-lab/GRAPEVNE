@@ -5,7 +5,7 @@ import { TrayItemWidget } from './TrayItemWidget';
 import { TrayWidget } from './TrayWidget';
 
 import { builderGetRemoteModules } from 'redux/actions';
-import BuilderEngine from '../BuilderEngine';
+import BuilderEngine from './BuilderEngine';
 
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

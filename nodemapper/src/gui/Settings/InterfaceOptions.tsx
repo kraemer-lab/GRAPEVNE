@@ -5,6 +5,7 @@ import {
   builderSetAutoValidateConnections,
   builderSetDisplayModuleSettings,
   builderSetPackageModulesInWorkflow,
+  builderSetHideParamsInModuleInfo,
 } from 'redux/actions';
 
 import Checkbox from '@mui/material/Checkbox';
@@ -15,20 +16,29 @@ import Typography from '@mui/material/Typography';
 const InterfaceOptions = () => {
   const dispatch = useAppDispatch();
 
-  const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
+  const display_module_settings = useAppSelector(
+    (state) => state.builder.display_module_settings
+  );
+  const SetDisplayModuleSettings = (value: boolean) => {
+    dispatch(builderSetDisplayModuleSettings(value));
+    dispatch(builderSetHideParamsInModuleInfo(!value));
+  }
+  
+  const hide_params_in_module_info = useAppSelector(
+    (state) => state.builder.hide_params_in_module_info,
+  );
+  const SetHideParamsInModuleInfo = (value: boolean) =>
+    dispatch(builderSetHideParamsInModuleInfo(value));
+  
   const auto_validate_connections = useAppSelector(
     (state) => state.builder.auto_validate_connections,
   );
-  const package_modules_in_workflow = useAppSelector(
-    (state) => state.builder.package_modules_in_workflow,
-  );
-
-  const SetDisplayModuleSettings = (value: boolean) =>
-    dispatch(builderSetDisplayModuleSettings(value));
-
   const SetAutoValidateConnections = (value: boolean) =>
     dispatch(builderSetAutoValidateConnections(value));
 
+  const package_modules_in_workflow = useAppSelector(
+    (state) => state.builder.package_modules_in_workflow,
+  );
   const SetPackageModulesInWorkflow = (value: boolean) =>
     dispatch(builderSetPackageModulesInWorkflow(value));
 
@@ -44,7 +54,18 @@ const InterfaceOptions = () => {
               onChange={(e) => SetDisplayModuleSettings(e.target.checked)}
             />
           }
-          label="Display module settings"
+          label="Display full module configuration"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              id="hide_params_in_module_info"
+              disabled={display_module_settings}
+              checked={hide_params_in_module_info}
+              onChange={(e) => SetHideParamsInModuleInfo(e.target.checked)}
+            />
+          }
+          label="Hide 'params' in module configuration"
         />
         <FormControlLabel
           control={

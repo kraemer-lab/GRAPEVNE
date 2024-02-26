@@ -1,5 +1,5 @@
 import React from 'react';
-import BuilderEngine from '../BuilderEngine';
+import BuilderEngine from './BuilderEngine';
 
 import Button from '@mui/material/Button';
 import { useCallback } from 'react';

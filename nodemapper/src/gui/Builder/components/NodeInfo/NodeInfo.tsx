@@ -2,12 +2,12 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import HighlightedJSON from './HighlightedJSON';
-import ResizeHandle from './ResizeHandle';
-import styles from './styles.module.css';
+import ResizeHandle from './../ResizeHandle';
+import styles from './../styles.module.css';
 
 import { useEffect, useState } from 'react';
 import { Panel, PanelGroup } from 'react-resizable-panels';
-import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import { useAppSelector } from 'redux/store/hooks';
 
 import './HighlightedJSON.css';
 
@@ -43,7 +43,6 @@ const NodeInfo = () => {
   const [nodeparams, setNodeparams] = useState('');
   const [docstring, setDocstring] = useState('');
   const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (nodeinfo === '') {

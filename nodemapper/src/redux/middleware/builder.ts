@@ -1,4 +1,4 @@
-import BuilderEngine from 'gui/Builder/BuilderEngine';
+import BuilderEngine from 'gui/Builder/components/BuilderEngine';
 import * as globals from 'redux/globals';
 
 import {

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React, { useCallback, useRef, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-import BuilderEngine from '../BuilderEngine';
+import BuilderEngine from './BuilderEngine';
 
 import {
   builderAddNode,

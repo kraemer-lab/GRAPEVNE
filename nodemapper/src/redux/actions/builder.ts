@@ -67,3 +67,6 @@ export const builderUpdateWorkdir = createAction<string>('builder/update-workdir
 export const builderLoadScene = createAction('builder/load-scene');
 export const builderSaveScene = createAction('builder/save-scene');
 export const builderSetModulesLoading = createAction<boolean>('builder/set-modules-loading');
+export const builderSetHideParamsInModuleInfo = createAction<boolean>(
+  'builder/set-hide-params-in-module-info',
+);

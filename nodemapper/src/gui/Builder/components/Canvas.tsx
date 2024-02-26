@@ -5,7 +5,6 @@ import InfoPanel from './InfoPanel';
 import ResizeHandle from './ResizeHandle';
 
 import { Panel, PanelGroup } from 'react-resizable-panels';
-import { useAppSelector } from 'redux/store/hooks';
 import Flow from './Flow';
 
 /**
@@ -18,36 +17,32 @@ import Flow from './Flow';
  * 1. Canvas (contains the workflow graph)
  * 2. Panel group (tabbed panel group for e.g. log display)
  */
-const Canvas = () => {
-  const configPaneOpen = useAppSelector((state) => state.builder.config_pane_display);
-
-  return (
-    <PanelGroup direction="vertical">
-      <Panel defaultSize={70}>
-        <Flow />
-      </Panel>
-      <ResizeHandle orientation="horizontal" />
-      <Panel
-        defaultSize={30}
-        collapsible={true}
-        onResize={(size: number, _delta: number) => {
-          const term = TerminalController.Instance; // singleton instance
-          term.fitAddon.fit();
+const Canvas = () => (
+  <PanelGroup direction="vertical">
+    <Panel defaultSize={70}>
+      <Flow />
+    </Panel>
+    <ResizeHandle orientation="horizontal" />
+    <Panel
+      defaultSize={30}
+      collapsible={true}
+      onResize={() => {
+        const term = TerminalController.Instance; // singleton instance
+        term.fitAddon.fit();
+      }}
+    >
+      <Box
+        sx={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
         }}
       >
-        <Box
-          sx={{
-            height: '100%',
-            width: '100%',
-            display: 'flex',
-            flexDirection: 'row',
-          }}
-        >
-          <InfoPanel />
-        </Box>
-      </Panel>
-    </PanelGroup>
-  );
-};
+        <InfoPanel />
+      </Box>
+    </Panel>
+  </PanelGroup>
+);
 
 export default Canvas;

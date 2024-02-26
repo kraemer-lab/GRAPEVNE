@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Canvas from './components/Canvas';
-import NodeInfoRenderer from './components/NodeInfoRenderer';
+import NodeInfoRenderer from './components/NodeInfo/NodeInfoRenderer';
 import RepoBrowser from './components/RepoBrowser';
 
 import { Panel, PanelGroup } from 'react-resizable-panels';

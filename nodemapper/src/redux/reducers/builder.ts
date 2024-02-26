@@ -38,6 +38,7 @@ export interface IBuilderState {
   display_module_settings: boolean;
   auto_validate_connections: boolean;
   package_modules_in_workflow: boolean;
+  hide_params_in_module_info: boolean;
   dark_mode: boolean;
 }
 
@@ -79,6 +80,7 @@ const builderStateInit: IBuilderState = {
   display_module_settings: false,
   auto_validate_connections: false,
   package_modules_in_workflow: false,
+  hide_params_in_module_info: true,
   dark_mode: false,
 };
 
@@ -176,6 +178,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetDisplayModuleSettings, (state, action) => {
       state.display_module_settings = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetHideParamsInModuleInfo, (state, action) => {
+      state.hide_params_in_module_info = action.payload;
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetAutoValidateConnections, (state, action) => {

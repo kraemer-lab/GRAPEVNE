@@ -21,10 +21,6 @@ import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import { Edge, Node } from 'reactflow';
 
-interface IPayload {
-  id: string;
-}
-
 interface ExpandProps {
   nodeinfo: Record<string, unknown>;
 }
@@ -103,7 +99,7 @@ const PermitNodeExpand = (nodeinfo: Record<string, unknown>, nodes) => {
   return app.CanNodeExpand(nodeinfo.name as string, nodes);
 };
 
-const NodeInfoRenderer = (props) => {
+const NodeInfoRenderer = () => {
   const dispatch = useAppDispatch();
   const nodeinfoStr = useAppSelector((state) => state.builder.nodeinfo);
   const nodes = useAppSelector((state) => state.builder.nodes);
@@ -111,10 +107,6 @@ const NodeInfoRenderer = (props) => {
   if (!nodeinfoStr) return null;
   const nodeinfo = JSON.parse(nodeinfoStr);
   if (Object.keys(nodeinfo).length === 0) return null;
-
-  // Get node to lock/unlock it during text edits
-  const app = BuilderEngine.Instance;
-  const node = app.getNodeByName(nodeinfo.name as string, nodes);
 
   const SetNodeName = (name: string) => {
     if (name && name !== nodeinfo.name) dispatch(builderUpdateNodeInfoName(name));
