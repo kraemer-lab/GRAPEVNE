@@ -23,13 +23,13 @@ const InterfaceOptions = () => {
     dispatch(builderSetDisplayModuleSettings(value));
     dispatch(builderSetHideParamsInModuleInfo(!value));
   }
-  
+
   const hide_params_in_module_info = useAppSelector(
     (state) => state.builder.hide_params_in_module_info,
   );
   const SetHideParamsInModuleInfo = (value: boolean) =>
     dispatch(builderSetHideParamsInModuleInfo(value));
-  
+
   const auto_validate_connections = useAppSelector(
     (state) => state.builder.auto_validate_connections,
   );
