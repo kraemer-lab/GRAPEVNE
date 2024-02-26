@@ -21,6 +21,12 @@ const App = () => {
   const themeOptions: ThemeOptions = {
     palette: {
       mode: dark_mode ? 'dark' : 'light',
+      primary: {
+        main: '#0E7569',
+      },
+      secondary: {
+        main: '#ecf3f0',
+      },
     },
   };
   const theme = createTheme(themeOptions);

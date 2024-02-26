@@ -53,15 +53,19 @@ const nodeResizeControlStyle = {
   color: 'white',
 };
 
-const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'TB') => {
+const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => {
+  // Typical node size for spacing
   const nodeWidth = 172;
   const nodeHeight = 36;
 
   // Allow dagre to determine layout
-  const isHorizontal = direction === 'LR';
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
-  dagreGraph.setGraph({ rankdir: direction });
+  dagreGraph.setGraph({
+    rankdir: direction,
+    marginx: 20,
+    marginy: 20,
+  });
   nodes.forEach((node) => {
     dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
   });

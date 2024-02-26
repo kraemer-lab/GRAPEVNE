@@ -17,6 +17,7 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 
 import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 
 import './HighlightedJSON.css';
 
@@ -66,6 +67,14 @@ export const generateTheme = (theme) =>
 const TypoKey = (props) => <Typography variant="key" {...props} />;
 const TypoStruct = (props) => <Typography variant="struct" {...props} />;
 
+const EditBox = (props) => {
+  return (
+    <EasyEdit
+      {...props}
+    />
+  );
+}
+
 /*
  * HighlightedJSON code modified from:
  * https://codepen.io/benshope/pen/BxVpjo
@@ -76,11 +85,6 @@ const protectedNames = ['input_namespace', 'output_namespace', 'snakefile', 'doc
 interface IHighlightJSONProps {
   keylist: string[];
 }
-
-const addQuotesIfString = (value: string, isString: boolean) => {
-  if (isString) return `"${value}"`;
-  return value;
-};
 
 interface HighlightedJSONProps {
   nodeid: string;
@@ -382,14 +386,11 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                   height: '25px',
                 }}
               >
-                <EasyEdit
+                <EditBox
                   type={Types.TEXT}
                   style={{ cursor: 'pointer' }}
                   onHoverCssClass="string"
                   value={parameterValue}
-                  onSave={(value) => {
-                    return;
-                  }}
                   allowEdit={false}
                 />
               </span>
@@ -406,7 +407,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                 }}
               >
                 {valueType === 'boolean' ? (
-                  <EasyEdit
+                  <EditBox
                     type={Types.SELECT}
                     style={{ cursor: 'pointer' }}
                     onHoverCssClass="boolean"
@@ -423,7 +424,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                     saveOnBlur={true}
                   />
                 ) : valueType === 'select' ? (
-                  <EasyEdit
+                  <EditBox
                     type={Types.SELECT}
                     style={{ cursor: 'pointer' }}
                     onHoverCssClass="string"
@@ -435,7 +436,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
                     saveOnBlur={true}
                   />
                 ) : (
-                  <EasyEdit
+                  <EditBox
                     type={Types.TEXT}
                     style={{ cursor: 'pointer' }}
                     onHoverCssClass="string"
