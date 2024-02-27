@@ -198,7 +198,7 @@ export const EditBoxList = ({
   onSave,
   nodecount,
 }: IEditBoxList) => {
-  
+
   // Isolate current branch in the json tree (indexed by keylist)
   let jsonObj = json;
   for (let i = 0; i < keylist.length; i++) {
