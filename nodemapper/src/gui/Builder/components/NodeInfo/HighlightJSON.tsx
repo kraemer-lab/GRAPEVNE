@@ -1,12 +1,11 @@
 import React from 'react';
-import EasyEdit from 'react-easy-edit';
 
-import { faCheck, faLink, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Types } from 'react-easy-edit';
 import { builderUpdateNodeInfoKey } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { getNodeById, getNodeByName } from './../Flow';
+import { EditBoxText, EditBoxSelect, EditBoxList, EditBoxBoolean } from './EditBox';
 
 import { Typography } from '@mui/material';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
@@ -17,14 +16,6 @@ import Box from '@mui/material/Box';
 import './HighlightedJSON.css';
 
 const TypoKey = (props) => <Typography variant="key" {...props} />;
-
-const EditBox = (props) => {
-  return (
-    <EasyEdit
-      {...props}
-    />
-  );
-}
 
 const protectedNames = ['input_namespace', 'output_namespace', 'snakefile', 'docstring'];
 
@@ -147,7 +138,7 @@ interface IHighlightJSONProps {
 }
 
 // Recursive function to render the JSON tree
-const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSONProps) => {
+export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSONProps) => {
   const nodes = useAppSelector((state) => state.builder.nodes);
   const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
   const hide_params_in_module_info = useAppSelector(
@@ -166,6 +157,9 @@ const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSONProps) 
     const isSimpleValue = ['string', 'number', 'boolean'].includes(valueType) || !value;
     if (isSimpleValue && valueType === 'object') {
       valueType = 'null' as undefined;
+    }
+    if (Array.isArray(value)) {
+      valueType = 'list';
     }
     let isProtectedValue = false;
     if (isSimpleValue) {
@@ -305,10 +299,7 @@ const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSONProps) 
                 height: '25px',
               }}
             >
-              <EditBox
-                type={Types.TEXT}
-                style={{ cursor: 'pointer' }}
-                onHoverCssClass="string"
+              <EditBoxText
                 value={parameterValue}
                 allowEdit={false}
               />
@@ -326,41 +317,31 @@ const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSONProps) 
               }}
             >
               {valueType === 'boolean' ? (
-                <EditBox
-                  type={Types.SELECT}
-                  style={{ cursor: 'pointer' }}
-                  onHoverCssClass="boolean"
-                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                <EditBoxBoolean
                   value={value ? 'true' : 'false'}
-                  options={[
-                    { label: 'true', value: true },
-                    { label: 'false', value: false },
-                  ]}
                   onSave={(value) => {
                     setValue(value === 'true');
                   }}
-                  saveOnBlur={true}
                 />
               ) : valueType === 'select' ? (
-                <EditBox
-                  type={Types.SELECT}
-                  style={{ cursor: 'pointer' }}
-                  onHoverCssClass="string"
-                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                <EditBoxSelect
                   value={value}
                   options={valueOptions}
                   onSave={setValue}
                   saveOnBlur={true}
                 />
+              ) : valueType === 'list' ? (
+                <EditBoxList
+                  label={label}
+                  key={key}
+                  keylist={[...keylist, key]}
+                  json={json}
+                  setMenu={setMenu}
+                  nodeid={nodeid}
+                  nodecount={(nodecount++).toString()}
+                />
               ) : (
-                <EditBox
-                  type={Types.TEXT}
-                  style={{ cursor: 'pointer' }}
-                  onHoverCssClass="string"
-                  saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-                  cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
+                <EditBoxText
                   value={value}
                   onSave={setValue}
                   saveOnBlur={true}
