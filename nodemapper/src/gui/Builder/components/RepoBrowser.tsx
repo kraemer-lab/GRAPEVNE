@@ -43,7 +43,7 @@ const RepoBrowser = () => {
   const loading = useAppSelector((state) => state.builder.modules_loading);
 
   const [filterFreetext, setFilterFreetext] = React.useState('');
-  const [filterOrg, setFilterOrg] = React.useState('');
+  const [filterProject, setFilterProject] = React.useState('');
   const [filterRepo, setFilterRepo] = React.useState('');
 
   const [showSearchOptions, setShowSearchOptions] = React.useState(false);
@@ -60,12 +60,12 @@ const RepoBrowser = () => {
     modules_list = '[]';
   }
 
-  const updateTrayItems = (freetext: string, repo: string, org: string) =>
+  const updateTrayItems = (freetext: string, repo: string, prj: string) =>
     // We pass the filter values as parameters to ensure that the filters are applied
     // with the updated values, and not the state values which may not have refreshed
     JSON.parse(modules_list)
       .filter((m) => m['repo']['url'].startsWith(repo) || repo === '(all)')
-      .filter((m) => m['org'].startsWith(org) || org === '(all)')
+      .filter((m) => m['org'].startsWith(prj) || prj === '(all)')
       .filter((m) => m['name'].toLowerCase().includes(freetext.toLowerCase()) || freetext === '')
       .map((m) => (
         <TrayItemWidget
@@ -79,26 +79,24 @@ const RepoBrowser = () => {
   const [trayitems, setTrayitems] = React.useState(updateTrayItems('', '', ''));
   React.useEffect(() => {
     setFilterRepo('(all)');
-    setFilterOrg('(all)');
+    setFilterProject('(all)');
     setTrayitems(updateTrayItems('', '', ''));
   }, [modules]);
 
   const onChangeFilterFreetext = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFilterFreetext(event.target.value);
-    setTrayitems(updateTrayItems(event.target.value, filterRepo, filterOrg));
+    setTrayitems(updateTrayItems(event.target.value, filterRepo, filterProject));
   };
 
   const onChangeRepoList = (event: SelectChangeEvent) => {
     setFilterRepo(event.target.value);
-    setTrayitems(updateTrayItems(filterFreetext, event.target.value, filterOrg));
+    setTrayitems(updateTrayItems(filterFreetext, event.target.value, filterProject));
   };
 
-  const onChangeOrgList = (event: SelectChangeEvent) => {
-    setFilterOrg(event.target.value);
+  const onChangeProjectList = (event: SelectChangeEvent) => {
+    setFilterProject(event.target.value);
     setTrayitems(updateTrayItems(filterFreetext, filterRepo, event.target.value));
   };
-
-  const filtered_modules = JSON.parse(modules);
 
   const LookupRepoName = (repo: string) => {
     for (let i = 0; i < repositories.length; i++) {
@@ -109,47 +107,38 @@ const RepoBrowser = () => {
     return repo;
   };
 
-  const ConstructRepoLabel = (repo: string) => {
-    if (repo === '(all)') {
+  const RepoLabel = (repo: string) => {
+    const repo_label = LookupRepoName(repo);
+    if (repo_label === repo || repo === '(all)') {
       return <Typography>{repo}</Typography>;
     } else {
-      const repo_label = LookupRepoName(repo);
-      if (repo_label === repo) {
-        return <Typography>{repo}</Typography>;
-      } else {
-        return (
-          <Stack>
-            <Typography>{LookupRepoName(repo)}</Typography>
-            <Typography variant="caption">{repo}</Typography>
-          </Stack>
-        );
-      }
+      return (
+        <Stack>
+          <Typography>{repo_label}</Typography>
+          <Typography variant="caption">{repo}</Typography>
+        </Stack>
+      );
     }
   };
 
   // Extract unique repos from the module names for a filter list
+  let filtered_modules = JSON.parse(modules);
   const repo_list = filtered_modules
     .map((m) => m['repo']['url'])
     .filter((v, i, a) => a.indexOf(v) === i) // remove duplicates
     .sort(); // sort alphabetically
   repo_list.unshift('(all)'); // add "(all)" to the top of the list
-  const repo_list_options = repo_list.map((m) => (
-    <MenuItem key={m} value={m}>
-      {ConstructRepoLabel(m)}
-    </MenuItem>
-  ));
+  filtered_modules = filtered_modules.filter((m) => m['repo']['url'] === filterRepo || filterRepo === '(all)');
 
-  // Extract unique organisations from the module names for a filter list
-  const organisaton_list = filtered_modules
+  // Extract unique projects from the module names for a filter list
+  const project_list = filtered_modules
     .map((m) => m['org'])
     .filter((v, i, a) => a.indexOf(v) === i) // remove duplicates
     .sort(); // sort alphabetically
-  organisaton_list.unshift('(all)'); // add "(all)" to the top of the list
-  const organisaton_list_options = organisaton_list.map((m) => (
-    <MenuItem key={m} value={m}>
-      {m}
-    </MenuItem>
-  ));
+  project_list.unshift('(all)'); // add "(all)" to the top of the list
+  if (!project_list.includes(filterProject)) {
+    setFilterProject('(all)');
+  }
 
   // Load modules from repository
   const btnGetModuleList = () => {
@@ -193,7 +182,6 @@ const RepoBrowser = () => {
                 sx={{ height: '100%', minWidth: '5px' }}
                 fullWidth
               >
-                {/*showSearchOptions ? '-' : '+'*/}
                 <FontAwesomeIcon icon={faEllipsisVertical} />
               </Button>
             </Grid>
@@ -220,24 +208,32 @@ const RepoBrowser = () => {
                     size="small"
                     fullWidth
                   >
-                    {repo_list_options}
+                    {repo_list.map((m) => (
+                      <MenuItem key={m} value={m}>
+                        {RepoLabel(m)}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Box>
               <Box>
                 <FormControl variant="outlined" fullWidth>
-                  <InputLabel id="orglist-label">Project</InputLabel>
+                  <InputLabel id="prjlist-label">Project</InputLabel>
                   <Select
-                    name="orglist"
-                    id="orglist"
-                    value={filterOrg}
-                    onChange={onChangeOrgList}
+                    name="prjlist"
+                    id="prjlist"
+                    value={filterProject}
+                    onChange={onChangeProjectList}
                     label="Project"
-                    labelId="orglist-label"
+                    labelId="prjlist-label"
                     size="small"
                     fullWidth
                   >
-                    {organisaton_list_options}
+                    {project_list.map((m) => (
+                      <MenuItem key={m} value={m}>
+                        {m}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </FormControl>
               </Box>
