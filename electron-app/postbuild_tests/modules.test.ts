@@ -15,7 +15,6 @@ import { FlushConsoleLog } from "./utils";
 import { SetCheckBoxByID } from "./utils";
 import { WaitForReturnCode } from "./utils";
 import { RedirectConsoleLog } from "./utils";
-import { EasyEdit_SetFieldByKey } from "./utils";
 import { BuildAndRun_SingleModuleWorkflow } from "./utils";
 import { BuildAndRun_MultiModuleWorkflow } from "./utils";
 import { MultiModuleWorkflow_Setup } from "./utils";
@@ -377,7 +376,10 @@ describe("modules", () => {
       // Change the expected file name in the source module
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
       await driver.sleep(50); // Wait for module settings to expand
-      await EasyEdit_SetFieldByKey(driver, "filename", "mismatch");
+      await OverwriteInputField(
+        await driver.findElement(webdriver.By.id("nodeinfo-n0-config-params-filename")),
+        "mismatch"
+      );
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -575,7 +577,10 @@ describe("modules", () => {
 
       // Change the source filename (not yet linked to target module)
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
-      await EasyEdit_SetFieldByKey(driver, "filename", "newfile.csv");
+      await OverwriteInputField(
+        await driver.findElement(webdriver.By.id("nodeinfo-n0-config-params-filename")),
+        "newfile.csv"
+      );
 
       // Validation check (should fail)
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -595,9 +600,7 @@ describe("modules", () => {
 
       // Form parameter link between modules
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
-      const link_button = By.xpath(
-        `//span[contains(text(), "filename")]/following::span/following::span`,
-      );
+      const link_button = By.id("nodeinfo-n1-config-params-filename_link");
       await driver.wait(until.elementLocated(link_button), TEN_SECS);
       await driver.findElement(link_button).click();
       const link_target = By.xpath(

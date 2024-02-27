@@ -21,5 +21,5 @@ root.render(
     <StrictMode>
       <App />
     </StrictMode>
-  </Provider>
+  </Provider>,
 );

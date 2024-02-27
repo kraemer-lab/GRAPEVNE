@@ -1,19 +1,16 @@
 import React from 'react';
 
-import { faLink } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { builderUpdateNodeInfoKey } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { getNodeById, getNodeByName } from './../Flow';
-import { EditBoxText, EditBoxSelect, EditBoxList, EditBoxBoolean } from './EditBox';
+import { EditBoxBoolean, EditBoxList, EditBoxSelect, EditBoxText } from './EditBox';
 
 import { Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 
 import Box from '@mui/material/Box';
-
-import './HighlightedJSON.css';
 
 const TypoKey = (props) => <Typography variant="key" {...props} />;
 
@@ -79,22 +76,6 @@ const lookupKeyGlobal = (
     // Otherwise, return the simple value
     return value;
   }
-};
-
-const ConnectParameter = (props: { connectParameter }) => {
-  return (
-    <span
-      style={{
-        cursor: 'pointer',
-        fontSize: '0.8em',
-      }}
-      onClick={() => props.connectParameter()}
-    >
-      <TypoKey sx={{ marginLeft: '5px' }}>
-        <FontAwesomeIcon icon={faLink} />
-      </TypoKey>
-    </span>
-  );
 };
 
 export const checkParameter_IsModuleRoot = (value) => {
@@ -197,10 +178,8 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
         const link_node = link_from[0];
         link_from = link_from.slice(1, link_from.length);
         parameterValue = lookupKeyGlobal(json, link_node, link_from, '');
-        if (parameterValue === undefined)
-          parameterValue = '(linked value is undefined)';
-        if (parameterValue === '')
-          parameterValue = '(linked value is empty)';
+        if (parameterValue === undefined) parameterValue = '(linked value is undefined)';
+        if (parameterValue === '') parameterValue = '(linked value is empty)';
         isParameterConnected = true;
       }
     }
@@ -240,7 +219,12 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
 
     // If 'param' is a module config, skip rendering of the key (but render children)
     const isInModuleConfig = checkParameter_IsInModuleConfig(node, keylist);
-    if (key === 'params' && hide_params_in_module_info && isInModuleConfig && !display_module_settings) {
+    if (
+      key === 'params' &&
+      hide_params_in_module_info &&
+      isInModuleConfig &&
+      !display_module_settings
+    ) {
       return (
         <HighlightJSON
           key={(nodecount++).toString()}
@@ -275,47 +259,24 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
     };
 
     return (
-      <Box style={{ cursor: 'default' }} key={key} className="line">
-        {isProtectedValue ? (
-          <span>
-            <TypoKey className="key">{label}:</TypoKey>
-            <span
-              className="protected"
-              style={{
-                display: 'inline-block',
-                height: '25px',
-              }}
-            >
-              {value}
-            </span>
-          </span>
-        ) : isParameterConnected ? (
-          <span>
-            <TypoKey className="key">{label}:</TypoKey>
-            <span
-              className="linked"
-              style={{
-                display: 'inline-block',
-                height: '25px',
-              }}
-            >
-              <EditBoxText
-                value={parameterValue}
-                allowEdit={false}
-              />
-            </span>
-            <ConnectParameter connectParameter={connectParameter} />
-          </span>
-        ) : isSimpleValue ? (
-          <span>
-            <TypoKey className="key">{label}:</TypoKey>
-            <span
-              className={valueType}
-              style={{
-                display: 'inline-block',
-                height: '25px',
-              }}
-            >
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'default',
+          p: 0.7,
+          whiteSpace: 'nowrap',
+          overflowX: 'hidden',
+        }}
+        key={key}
+        className="line"
+      >
+        {isSimpleValue ? (
+          <Grid container spacing={0} p={0} sx={{ alignItems: 'center' }}>
+            <Grid item xs={4} sx={{ overflowX: 'hidden' }}>
+              <TypoKey className="key">{label}:</TypoKey>
+            </Grid>
+            <Grid item xs={8}>
               {valueType === 'boolean' ? (
                 <EditBoxBoolean
                   value={value ? 'true' : 'false'}
@@ -324,12 +285,7 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
                   }}
                 />
               ) : valueType === 'select' ? (
-                <EditBoxSelect
-                  value={value}
-                  options={valueOptions}
-                  onSave={setValue}
-                  saveOnBlur={true}
-                />
+                <EditBoxSelect value={value} options={valueOptions} onSave={setValue} />
               ) : valueType === 'list' ? (
                 <EditBoxList
                   label={label}
@@ -342,16 +298,24 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
                 />
               ) : (
                 <EditBoxText
-                  value={value}
+                  id={['nodeinfo', nodeid, ...keylist, key].join('-')}
+                  value={isParameterConnected ? parameterValue : value}
+                  valueType={valueType}
                   onSave={setValue}
-                  saveOnBlur={true}
+                  canConnectParameter={canConnectParameter}
+                  connectParameter={connectParameter}
+                  allowEdit={!isParameterConnected && !isProtectedValue}
                 />
               )}
-            </span>
-            {canConnectParameter && <ConnectParameter connectParameter={connectParameter} />}
-          </span>
+            </Grid>
+          </Grid>
         ) : (
-          <TreeItem nodeId={(nodecount++).toString()} key={key} label={label}>
+          <TreeItem
+            sx={{ width: '100%' }}
+            nodeId={(nodecount++).toString()}
+            key={key}
+            label={label}
+          >
             <HighlightJSON
               keylist={[...keylist, key]}
               json={json}

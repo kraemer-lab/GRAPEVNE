@@ -1,15 +1,13 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import React from 'react';
-import HighlightedJSON from './HighlightedJSON';
 import ResizeHandle from './../ResizeHandle';
 import styles from './../styles.module.css';
+import HighlightedJSON from './HighlightedJSON';
 
 import { useEffect, useState } from 'react';
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import { useAppSelector } from 'redux/store/hooks';
-
-import './HighlightedJSON.css';
 
 interface DocStringProps {
   docstring: string;

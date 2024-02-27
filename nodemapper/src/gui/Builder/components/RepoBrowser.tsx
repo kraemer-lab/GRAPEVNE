@@ -128,7 +128,9 @@ const RepoBrowser = () => {
     .filter((v, i, a) => a.indexOf(v) === i) // remove duplicates
     .sort(); // sort alphabetically
   repo_list.unshift('(all)'); // add "(all)" to the top of the list
-  filtered_modules = filtered_modules.filter((m) => m['repo']['url'] === filterRepo || filterRepo === '(all)');
+  filtered_modules = filtered_modules.filter(
+    (m) => m['repo']['url'] === filterRepo || filterRepo === '(all)',
+  );
 
   // Extract unique projects from the module names for a filter list
   const project_list = filtered_modules

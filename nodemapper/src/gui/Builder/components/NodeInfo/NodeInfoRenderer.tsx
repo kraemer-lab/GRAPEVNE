@@ -1,12 +1,8 @@
 import Box from '@mui/material/Box';
 import React from 'react';
-import EasyEdit from 'react-easy-edit';
 import BuilderEngine from '../BuilderEngine';
 import NodeInfo from './NodeInfo';
 
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Types } from 'react-easy-edit';
 import {
   builderCheckNodeDependencies,
   builderNodeDeselected,
@@ -19,6 +15,7 @@ import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { useTheme } from '@mui/material';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
 import { Edge, Node } from 'reactflow';
 
 interface ExpandProps {
@@ -133,25 +130,27 @@ const NodeInfoRenderer = () => {
           alignItems: 'center',
         }}
       >
-        <Box
+        <TextField
+          fullWidth
+          variant="standard"
+          size="small"
           sx={{
-            fontWeight: 'bold',
-            color: theme.palette.primary.main,
+            mt: 0.5,
+            ml: 0.75,
+            input: {
+              fontWeight: 'bold',
+              color: theme.palette.primary.main,
+            },
           }}
-        >
-          <EasyEdit
-            type={Types.TEXT}
-            onHoverCssClass="easyedit-hover"
-            value={nodeinfo.name}
-            saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-            cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-            onSave={(value) => {
-              SetNodeName(value);
-            }}
-            saveOnBlur={true}
-          />
-        </Box>
-        <Box>
+          InputProps={{
+            disableUnderline: true,
+          }}
+          value={nodeinfo.name}
+          onChange={(elem) => {
+            SetNodeName(elem.target.value);
+          }}
+        />
+        <Box display="flex" flexDirection="row">
           <ValidateButton nodename={nodeinfo.name} />
           {PermitNodeExpand(nodeinfo, nodes) && <ExpandButton nodeinfo={nodeinfo} />}
         </Box>

@@ -5,13 +5,11 @@ import { useState } from 'react';
 import { useAppSelector } from 'redux/store/hooks';
 import HighlightJSON from './HighlightJSON';
 
-import { ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import { Theme, ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 
 import Box from '@mui/material/Box';
-
-import './HighlightedJSON.css';
 
 declare module '@mui/material/Typography' {
   interface TypographyPropsVariantOverrides {
@@ -20,10 +18,10 @@ declare module '@mui/material/Typography' {
   }
 }
 
-export const generateTheme = (theme) =>
+export const generateTheme = (theme: Theme) =>
   createTheme({
     palette: {
-      mode: 'light',
+      mode: theme.palette.mode,
     },
     components: {
       MuiTreeItem: {
@@ -96,12 +94,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
     >
       <ThemeProvider theme={generateTheme(useTheme())}>
         <TreeView defaultExpanded={concertinaIfHierarchicalModule(json)}>
-          <HighlightJSON
-            keylist={[]}
-            json={json}
-            setMenu={setMenu}
-            nodeid={props.nodeid}
-          />
+          <HighlightJSON keylist={[]} json={json} setMenu={setMenu} nodeid={props.nodeid} />
         </TreeView>
       </ThemeProvider>
 

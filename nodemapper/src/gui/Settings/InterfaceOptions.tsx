@@ -4,8 +4,8 @@ import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import {
   builderSetAutoValidateConnections,
   builderSetDisplayModuleSettings,
-  builderSetPackageModulesInWorkflow,
   builderSetHideParamsInModuleInfo,
+  builderSetPackageModulesInWorkflow,
 } from 'redux/actions';
 
 import Checkbox from '@mui/material/Checkbox';
@@ -16,13 +16,11 @@ import Typography from '@mui/material/Typography';
 const InterfaceOptions = () => {
   const dispatch = useAppDispatch();
 
-  const display_module_settings = useAppSelector(
-    (state) => state.builder.display_module_settings
-  );
+  const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
   const SetDisplayModuleSettings = (value: boolean) => {
     dispatch(builderSetDisplayModuleSettings(value));
     dispatch(builderSetHideParamsInModuleInfo(!value));
-  }
+  };
 
   const hide_params_in_module_info = useAppSelector(
     (state) => state.builder.hide_params_in_module_info,

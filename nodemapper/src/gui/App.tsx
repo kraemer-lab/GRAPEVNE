@@ -1,8 +1,10 @@
 import React from 'react';
 
 import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
+import { ErrorBoundary } from 'react-error-boundary';
 import { builderReadStoreConfig } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import { errorHandler } from './ErrorHandling/Error';
 
 import Navigation from './Navigation';
 
@@ -33,7 +35,14 @@ const App = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Navigation />
+      <ErrorBoundary
+        fallbackRender={errorHandler}
+        onReset={(details) => {
+          console.log('reset', details);
+        }}
+      >
+        <Navigation />
+      </ErrorBoundary>
     </ThemeProvider>
   );
 };

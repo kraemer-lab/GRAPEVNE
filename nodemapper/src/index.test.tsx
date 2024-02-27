@@ -17,6 +17,6 @@ test('code quality', () => {
       <StrictMode>
         <App />
       </StrictMode>
-    </Provider>
+    </Provider>,
   );
 });
