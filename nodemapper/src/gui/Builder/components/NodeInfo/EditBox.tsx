@@ -1,20 +1,24 @@
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import React, { useEffect } from 'react';
-import { HighlightJSON } from './HighlightJSON';
 
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
 
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
+import AddIcon from '@mui/icons-material/AddBox';
+import RemoveIcon from '@mui/icons-material/IndeterminateCheckBox';
 
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const useStyles = makeStyles(() => ({
-  text: {
+  string: {
     color: '#0E7569',
   },
   number: {
@@ -27,16 +31,7 @@ const useStyles = makeStyles(() => ({
 
 const useStyle = (valueType: string) => {
   const classes = useStyles();
-  switch (valueType) {
-    case 'string':
-      return classes.text;
-    case 'number':
-      return classes.number;
-    case 'boolean':
-      return classes.boolean;
-    default:
-      return classes.text;
-  }
+  return classes[valueType];
 };
 
 interface IEditBoxText {
@@ -186,33 +181,86 @@ export const EditBoxBoolean = ({ value, onSave }: IEditBoxBoolean) => {
   );
 };
 
-interface IEditBoxArray {
+interface IEditBoxList {
   label: string;
-  key: string;
+  keyitem: string;
   keylist: string[];
   json;
-  setMenu: (value) => void;
-  nodeid: string;
+  onSave: (v) => void;
   nodecount: string;
 }
 
 export const EditBoxList = ({
   label,
-  key,
+  keyitem,
   keylist,
   json,
-  setMenu,
-  nodeid,
+  onSave,
   nodecount,
-}: IEditBoxArray) => {
+}: IEditBoxList) => {
+  
+  // Isolate current branch in the json tree (indexed by keylist)
+  let jsonObj = json;
+  for (let i = 0; i < keylist.length; i++) {
+    jsonObj = jsonObj[keylist[i]];
+  }
+  jsonObj = jsonObj[keyitem];
+
+  console.log('jsonObj:', jsonObj);
+
+  const listitems = Object.keys(jsonObj).map((key) => {
+    return (
+      <Box
+        key={key}
+        sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+      >
+        <IconButton
+          size="small"
+          onClick={() => {
+            jsonObj = jsonObj.filter((_, i) => i !== parseInt(key));
+            onSave(jsonObj);
+          }}
+        >
+          <RemoveIcon />
+        </IconButton>
+        <EditBoxText
+          key={key}
+          id={key}
+          value={jsonObj[key]}
+          onSave={(v) => {
+            jsonObj[key] = v;
+            onSave(jsonObj);
+          }}
+        />
+      </Box>
+    );
+  });
+
   return (
-    <TreeItem nodeId={nodecount} key={key} label={label}>
-      <HighlightJSON keylist={[...keylist, key]} json={json} setMenu={setMenu} nodeid={nodeid} />
+    <TreeItem
+      sx={{width: '100%'}}
+      nodeId={nodecount}
+      key={keyitem}
+      label={label}
+    >
+      <Stack>
+        {listitems}
+      </Stack>
+
+      <IconButton
+        size="small"
+        onClick={() => {
+          jsonObj.push('');
+          onSave(jsonObj);
+        }}
+      >
+        <AddIcon />
+      </IconButton>
     </TreeItem>
   );
 };
 
-const ConnectParameter = (props: { id; connectParameter }) => {
+const ConnectParameter = (props: { id, connectParameter }) => {
   return (
     <span
       id={props.id}

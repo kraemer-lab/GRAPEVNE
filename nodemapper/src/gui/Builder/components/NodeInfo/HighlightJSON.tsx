@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 const TypoKey = (props) => <Typography variant="key" {...props} />;
 
 const protectedNames = ['input_namespace', 'output_namespace', 'snakefile', 'docstring'];
+const simple_types = ['string', 'number', 'boolean'];
 
 export const lookupKey = (json, keylist: string[], key: string) => {
   // If key is the empty string, return the last key in the keylist
@@ -135,11 +136,12 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
   const fieldlist = Object.keys(jsonObj).map((key) => {
     let value = jsonObj[key];
     let valueType: string = typeof value;
-    const isSimpleValue = ['string', 'number', 'boolean'].includes(valueType) || !value;
+    const isSimpleValue = simple_types.includes(valueType) || !value;
     if (isSimpleValue && valueType === 'object') {
       valueType = 'null' as undefined;
     }
-    if (Array.isArray(value)) {
+    // If the value is an array of simple types, treat it as an (editable) list
+    if (Array.isArray(value) && value.map((v) => typeof v).every((v) => simple_types.includes(v))) {
       valueType = 'list';
     }
     let isProtectedValue = false;
@@ -264,7 +266,7 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
           display: 'flex',
           alignItems: 'center',
           cursor: 'default',
-          p: 0.7,
+          p: 0.2,
           whiteSpace: 'nowrap',
           overflowX: 'hidden',
         }}
@@ -286,16 +288,6 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
                 />
               ) : valueType === 'select' ? (
                 <EditBoxSelect value={value} options={valueOptions} onSave={setValue} />
-              ) : valueType === 'list' ? (
-                <EditBoxList
-                  label={label}
-                  key={key}
-                  keylist={[...keylist, key]}
-                  json={json}
-                  setMenu={setMenu}
-                  nodeid={nodeid}
-                  nodecount={(nodecount++).toString()}
-                />
               ) : (
                 <EditBoxText
                   id={['nodeinfo', nodeid, ...keylist, key].join('-')}
@@ -309,6 +301,15 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
               )}
             </Grid>
           </Grid>
+        ) : valueType === 'list' ? (
+          <EditBoxList
+            label={label}
+            keyitem={key}
+            keylist={keylist}
+            json={json}
+            onSave={setValue}
+            nodecount={(nodecount++).toString()}
+          />
         ) : (
           <TreeItem
             sx={{ width: '100%' }}

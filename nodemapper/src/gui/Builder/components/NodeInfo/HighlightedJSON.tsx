@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useAppSelector } from 'redux/store/hooks';
 import HighlightJSON from './HighlightJSON';
 
-import { Theme, ThemeProvider, createTheme, useTheme } from '@mui/material/styles';
+import { Theme, ThemeProvider, createTheme } from '@mui/material/styles';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 
@@ -18,13 +18,17 @@ declare module '@mui/material/Typography' {
   }
 }
 
-export const generateTheme = (theme: Theme) =>
+export const parametersTheme = (theme: Theme) =>
   createTheme({
+    ...theme,
     palette: {
+      ...theme.palette,
       mode: theme.palette.mode,
     },
     components: {
+      ...theme.components,
       MuiTreeItem: {
+        ...theme.components?.MuiTreeItem,
         styleOverrides: {
           content: {
             padding: '0px',
@@ -40,6 +44,7 @@ export const generateTheme = (theme: Theme) =>
         },
       },
       MuiTypography: {
+        ...theme.components?.MuiTypography,
         variants: [
           {
             props: { variant: 'key' },
@@ -50,6 +55,14 @@ export const generateTheme = (theme: Theme) =>
             },
           },
         ],
+      },
+      MuiIconButton: {
+        ...theme.components?.MuiIconButton,
+        styleOverrides: {
+          root: {
+            color: theme.palette.primary.main,
+          },
+        },
       },
     },
   });
@@ -92,7 +105,7 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
         padding: '2px',
       }}
     >
-      <ThemeProvider theme={generateTheme(useTheme())}>
+      <ThemeProvider theme={parametersTheme}>
         <TreeView defaultExpanded={concertinaIfHierarchicalModule(json)}>
           <HighlightJSON keylist={[]} json={json} setMenu={setMenu} nodeid={props.nodeid} />
         </TreeView>
