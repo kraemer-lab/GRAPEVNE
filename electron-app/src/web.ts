@@ -217,8 +217,14 @@ const GetLocalModules = (
           module_classification = GetModuleClassification(config);
         }
         modules.push({
-          name: "(" + org + ") " + FormatName(workflow),
+          name: FormatName(workflow),
           type: module_classification,
+          org: org,
+          repo: {
+            type: "local",
+            listing_type: "DirectoryListing",
+            url: root_folder,
+          },
           config: {
             snakefile: url_workflow,
             config: config,
@@ -347,8 +353,14 @@ const GetRemoteModulesGithubDirectoryListing = async (
         }
         // Module specification
         const module = {
-          name: "(" + org + ") " + FormatName(workflow),
+          name: FormatName(workflow),
           type: module_classification,
+          org: org,
+          repo: {
+            type: "github",
+            listing_type: "DirectoryListing",
+            url: repo,
+          },
           config: {
             snakefile: snakefile,
             config: config,
@@ -413,8 +425,14 @@ const GetRemoteModulesGithubBranchListing = async (
       module_classification = GetModuleClassification(config);
     }
     const module = {
-      name: "(" + module_org + ") " + FormatName(module_name),
+      name: FormatName(module_name),
       type: module_classification,
+      org: module_org,
+      repo: {
+        type: "github",
+        listing_type: "DirectoryListing",
+        url: repo,
+      },
       config: {
         snakefile: {
           function: "github",

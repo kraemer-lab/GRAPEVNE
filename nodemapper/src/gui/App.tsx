@@ -1,57 +1,49 @@
 import React from 'react';
-import BuilderSettings from './Builder/components/BuilderSettings';
-import MainPage from './MainPage';
 
-import { Route, Routes } from 'react-router-dom';
+import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
+import { ErrorBoundary } from 'react-error-boundary';
 import { builderReadStoreConfig } from 'redux/actions';
-import { useAppDispatch } from 'redux/store/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import { errorHandler } from './ErrorHandling/Error';
 
-import Sidenav from './Sidenav';
-
-const Builder = () => <MainPage />;
-const Monitor = () => <h1>Monitor</h1>;
-const Explore = () => <h1>Explore</h1>;
-const Statistics = () => <h1>Statistics</h1>;
+import Navigation from './Navigation';
 
 // Startup
 let started = false;
 const startup = () => {
-  // Mark startup as (at least) attempted
   started = true;
   const dispatch = useAppDispatch();
-  // Load persistent state
   dispatch(builderReadStoreConfig());
 };
 
-function App() {
+const App = () => {
   if (!started) startup();
+  const dark_mode = useAppSelector((state) => state.builder.dark_mode);
+
+  const themeOptions: ThemeOptions = {
+    palette: {
+      mode: dark_mode ? 'dark' : 'light',
+      primary: {
+        main: '#0E7569',
+      },
+      secondary: {
+        main: '#ecf3f0',
+      },
+    },
+  };
+  const theme = createTheme(themeOptions);
 
   return (
-    <div
-      className="App"
-      style={{
-        display: 'flex',
-        width: '100vw',
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-    >
-      <Sidenav />
-      <main
-        style={{
-          width: '100vw',
-          height: '100vh',
+    <ThemeProvider theme={theme}>
+      <ErrorBoundary
+        fallbackRender={errorHandler}
+        onReset={(details) => {
+          console.log('reset', details);
         }}
       >
-        <Routes>
-          <Route path="/" element={<Builder />} />
-          <Route path="/monitor" element={<h1>Monitor</h1>} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/statistics" element={<Statistics />} />
-          <Route path="/settings" element={<BuilderSettings />} />
-        </Routes>
-      </main>
-    </div>
+        <Navigation />
+      </ErrorBoundary>
+    </ThemeProvider>
   );
-}
+};
 export default App;

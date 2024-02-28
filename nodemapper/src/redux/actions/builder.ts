@@ -59,3 +59,14 @@ export const builderUpdateSettings =
   createAction<Record<string, unknown>>('builder/update-settings');
 export const builderReadStoreConfig = createAction('builder/read-store-config');
 export const builderWriteStoreConfig = createAction('builder/write-store-config');
+
+export const builderToggleDarkMode = createAction('builder/toggle-dark-mode');
+export const builderOpenResultsFolder = createAction('builder/open-results-folder');
+export const builderUpdateWorkdir = createAction<string>('builder/update-workdir');
+
+export const builderLoadScene = createAction('builder/load-scene');
+export const builderSaveScene = createAction('builder/save-scene');
+export const builderSetModulesLoading = createAction<boolean>('builder/set-modules-loading');
+export const builderSetHideParamsInModuleInfo = createAction<boolean>(
+  'builder/set-hide-params-in-module-info',
+);

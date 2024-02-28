@@ -7,10 +7,14 @@ import { getMasterRepoListURL } from 'redux/globals';
 import { IRepo } from 'redux/reducers/builder';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-const default_input_size = 35;
-const panel_background_color = '#2e3746';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 
-const RepoOptions: React.FC = () => {
+const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
   const repoSettings = useAppSelector((state) => state.builder.repositories as IRepo[]);
 
@@ -20,10 +24,9 @@ const RepoOptions: React.FC = () => {
   const [repoLocale, setRepoLocale] = useState('github');
   const [repoListingType, setRepoListingType] = useState('DirectoryListing');
 
-  const [repoListSelectedItems, setRepoListSelectedItems] = useState('');
+  const [repoListSelectedItems, setRepoListSelectedItems] = useState([]);
 
   const selectRepositoryTarget = (target) => {
-    console.log(target);
     let repo = {};
     switch (target) {
       case 'LocalFilesystem':
@@ -38,12 +41,6 @@ const RepoOptions: React.FC = () => {
           listing_type: 'DirectoryListing',
         };
         break;
-      case 'GithubBranch':
-        repo = {
-          type: 'github',
-          listing_type: 'BranchListing',
-        };
-        break;
       default:
         console.error('Unknown repository type selected: ', target);
     }
@@ -53,7 +50,6 @@ const RepoOptions: React.FC = () => {
   };
 
   const OnClickReloadMasterList = () => {
-    console.log('Reload master list');
     const getMasterRepoList = async () => {
       const url = getMasterRepoListURL();
       return await axios
@@ -89,8 +85,9 @@ const RepoOptions: React.FC = () => {
   };
 
   const OnClickRemoveItem = () => {
-    console.log('Remove item:', repoListSelectedItems);
-    const newRepoSettings = repoSettings.filter((repo) => repo.label !== repoListSelectedItems);
+    const newRepoSettings = repoSettings.filter(
+      (repo) => !repoListSelectedItems.includes(repo.label),
+    );
     dispatch(builderSetRepositoryTarget(newRepoSettings));
   };
 
@@ -105,149 +102,140 @@ const RepoOptions: React.FC = () => {
     else setRepoFormType('GithubDirectory');
     setRepoURL(selected_repo.repo);
     // Set the selected item
-    setRepoListSelectedItems(value);
+    setRepoListSelectedItems([value]);
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: panel_background_color,
-        padding: '5px',
-      }}
-    >
-      <p>
-        <b>Repository list</b>
-      </p>
-      <select
+    <Box>
+      <Typography variant="h6">Repository List</Typography>
+      <Select
+        multiple
+        native
         id="selectBuilderSettingsRepositoryList"
-        size={8}
-        multiple={false}
-        style={{ width: '100%' }}
+        sx={{
+          width: '100%',
+        }}
+        value={repoListSelectedItems}
         onChange={(e) => RepoListSelectItem(e.target.value)}
       >
         {repoSettings.map((repo) => (
           <option key={repo.label}>{repo.label}</option>
         ))}
-      </select>
-      <div
-        style={{
+      </Select>
+      <Box
+        sx={{
           display: 'flex',
           flexDirection: 'row',
           width: '100%',
         }}
       >
-        <div
-          style={{
-            width: '50%',
-          }}
-        >
-          Add repository
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '100%',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <button
+        <Box display="flex" flexDirection="row" width="100%" justifyContent="flex-end">
+          <Button
             id="buttonBuilderSettingsRepositoryLoadMasterList"
             onClick={() => OnClickReloadMasterList()}
-            style={{ marginRight: '5px' }}
+            sx={{ marginRight: '5px' }}
+            size="small"
+            variant="contained"
           >
             RELOAD MASTER LIST
-          </button>
-          <button
+          </Button>
+          <Button
             id="buttonBuilderSettingsRepositoryListAddItem"
             onClick={() => OnClickAddItem()}
-            style={{ marginRight: '5px' }}
+            sx={{ marginRight: '5px' }}
+            size="small"
+            variant="contained"
           >
             ADD
-          </button>
-          <button
+          </Button>
+          <Button
             id="buttonBuilderSettingsRepositoryListRemoveItem"
             onClick={() => OnClickRemoveItem()}
+            size="small"
+            variant="contained"
           >
             REMOVE
-          </button>
-        </div>
-      </div>
-      <div
-        style={{
+          </Button>
+        </Box>
+      </Box>
+      <Box
+        sx={{
           display: 'flex',
           gap: '10px',
           flexDirection: 'row',
         }}
       >
-        <div
-          style={{
-            width: '15%',
+        <Box
+          sx={{
+            width: labelWidth,
             textAlign: 'right',
+            alignSelf: 'center',
           }}
         >
-          Label:
-        </div>
-        <input
+          <Typography variant="body1">Label:</Typography>
+        </Box>
+        <TextField
           id="inputBuilderSettingsRepositoryLabel"
           type="text"
           value={repoLabel}
           onChange={(e) => setRepoLabel(e.target.value)}
-          size={default_input_size}
-          style={{ width: '100%' }}
+          size="small"
+          sx={{ width: '100%' }}
         />
-      </div>
-      <div
-        style={{
+      </Box>
+      <Box
+        sx={{
           display: 'flex',
           gap: '10px',
           flexDirection: 'row',
         }}
       >
-        <div
-          style={{
-            width: '15%',
+        <Box
+          sx={{
+            width: labelWidth,
             textAlign: 'right',
+            alignSelf: 'center',
           }}
         >
-          Type:
-        </div>
-        <select
+          <Typography variant="body1">Type:</Typography>
+        </Box>
+        <Select
           id="selectBuilderSettingsRepositoryType"
           value={repoFormType}
           onChange={(e) => selectRepositoryTarget(e.target.value)}
-          style={{ width: '100%' }}
+          sx={{ width: '100%' }}
+          size="small"
         >
-          <option value="GithubDirectory">Github (Directory Listing)</option>
-          <option value="LocalFilesystem">Local filesystem</option>
-          {/*<option value="GithubBranch">Github (Branch Listing)</option>*/}
-        </select>
-      </div>
-      <div
-        style={{
+          <MenuItem value="GithubDirectory">Github (Directory Listing)</MenuItem>
+          <MenuItem value="LocalFilesystem">Local filesystem</MenuItem>
+        </Select>
+      </Box>
+      <Box
+        sx={{
           display: 'flex',
           gap: '10px',
           flexDirection: 'row',
         }}
       >
-        <div
-          style={{
-            width: '15%',
+        <Box
+          sx={{
+            width: labelWidth,
             textAlign: 'right',
+            alignSelf: 'center',
           }}
         >
-          URL:
-        </div>
-        <input
+          <Typography variant="body1">URL:</Typography>
+        </Box>
+        <TextField
           id="inputBuilderSettingsRepositoryURL"
           type="text"
-          size={default_input_size}
           value={repoURL}
           onChange={(e) => setRepoURL(e.target.value)}
-          style={{ width: '100%' }}
+          sx={{ width: '100%' }}
+          size="small"
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

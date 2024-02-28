@@ -2,6 +2,16 @@
 
 set -eoux pipefail
 
+skip_containers=false
+while getopts "s" opt; do
+    case $opt in
+        s) skip_containers=true
+        ;;
+        \?) echo "Invalid option -$OPTARG" >&2
+        ;;
+    esac
+done
+
 RUNNER_OS=${RUNNER_OS:-$(uname)}
 
 # install mambaforge if not already installed
@@ -35,4 +45,9 @@ else
 fi
 
 # run tests (which also closes GRAPEVNE)
-yarn run postbuild-tests
+if $skip_containers; then
+    echo "Skipping container tests"
+    yarn run postbuild-tests-no-containers
+else
+    yarn run postbuild-tests
+fi

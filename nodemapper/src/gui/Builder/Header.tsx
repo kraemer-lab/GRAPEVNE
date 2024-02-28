@@ -1,118 +1,185 @@
 import React from 'react';
 
-import { useAppDispatch } from 'redux/store/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import {
   builderBuildAndRun,
   builderBuildAsModule,
   builderBuildAsWorkflow,
   builderCleanBuildFolder,
-  builderGetRemoteModules,
+  builderLoadScene,
   builderNodeDeselected,
+  builderOpenResultsFolder,
+  builderSaveScene,
   builderSetEdges,
   builderSetNodes,
 } from 'redux/actions';
 
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Stack from '@mui/material/Stack';
+
 const Header = () => {
   const dispatch = useAppDispatch();
 
-  /*
-  // Load nodemap from file
+  // Dropdown menu states
+  const [anchorEl_graph, setAnchorEl_graph] = React.useState<null | HTMLElement>(null);
+  const [anchorEl_buildandrun, setAnchorEl_buildandrun] = React.useState<null | HTMLElement>(null);
+  const open_graph = Boolean(anchorEl_graph);
+  const open_buildandrun = Boolean(anchorEl_buildandrun);
+
+  const btnGraphDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl_graph(event.currentTarget);
+  };
+
+  const btnGraphDropdownClose = () => {
+    setAnchorEl_graph(null);
+  };
+
+  const btnBuildAndRunDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl_buildandrun(event.currentTarget);
+  };
+
+  const btnBuildAndRunDropdownClose = () => {
+    setAnchorEl_buildandrun(null);
+  };
+
+  // Has a test build been run yet?
+  const hasTestRun = useAppSelector((state) => state.builder.workdir !== '');
+
+  // Load scene from file
   const btnLoadScene = () => {
-    BuilderEngine.Instance.LoadScene();
+    dispatch(builderLoadScene());
+    btnGraphDropdownClose();
   };
 
-  // Save nodemap to file
+  // Save scene to file
   const btnSaveScene = () => {
-    BuilderEngine.Instance.SaveScene();
+    dispatch(builderSaveScene());
+    btnGraphDropdownClose();
   };
-  */
 
-  // Load nodemap from file
+  // Clear scene / canvas
   const btnClearScene = () => {
-    //BuilderEngine.Instance.ClearScene();
     dispatch(builderNodeDeselected());
     dispatch(builderSetNodes([]));
     dispatch(builderSetEdges([]));
+    btnGraphDropdownClose();
   };
 
   // Run - build and run the workflow
   const btnRun = () => {
     dispatch(builderBuildAndRun());
+    btnBuildAndRunDropdownClose();
   };
 
   // Clean build folder
   const btnCleanBuildFolder = () => {
     dispatch(builderCleanBuildFolder());
+    btnBuildAndRunDropdownClose();
+    btnGraphDropdownClose();
   };
 
   // Build as module
   const btnBuildAsModule = () => {
     dispatch(builderBuildAsModule());
+    btnBuildAndRunDropdownClose();
   };
 
   // Build as workflow
   const btnBuildAsWorkflow = () => {
     dispatch(builderBuildAsWorkflow());
+    btnBuildAndRunDropdownClose();
   };
 
-  // Load modules from repository
-  const btnGetModuleList = () => {
-    dispatch(builderGetRemoteModules());
+  // Open results folder
+  const btnOpenResultsFolder = () => {
+    dispatch(builderOpenResultsFolder());
   };
 
   return (
-    <>
-      <link href="http://fonts.googleapis.com/css?family=Oswald" rel="stylesheet" type="text/css" />
-      <div
-        style={{
-          display: 'flex',
-          fontSize: 18,
-          marginLeft: 0,
-          marginBottom: 2,
-          alignItems: 'center',
+    <Stack direction="row" spacing={1} justifyContent="center">
+      <Button
+        id="btnGraphDropdown"
+        aria-controls={open ? 'graph-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={btnGraphDropdownClick}
+        endIcon={<KeyboardArrowDownIcon />}
+        variant="contained"
+      >
+        SCENE
+      </Button>
+
+      <Menu
+        id="graph-menu"
+        anchorEl={anchorEl_graph}
+        open={open_graph}
+        onClose={btnGraphDropdownClose}
+        MenuListProps={{
+          'aria-labelledby': 'graphDropdown',
         }}
       >
-        {/*
-          *** LOAD function needs to assign eventListeners on load
-        <button
-          id="btnBuilderLoadScene"
-          className="btn"
-          onClick={btnLoadScene}
-        >
+        <MenuItem id="btnBuilderLoadScene" onClick={btnLoadScene}>
           LOAD
-        </button>
-
-        <button
-          id="btnBuilderSaveScene"
-          className="btn"
-          onClick={btnSaveScene}
-        >
+        </MenuItem>
+        <MenuItem id="btnBuilderSaveScene" onClick={btnSaveScene}>
           SAVE
-        </button>
-        */}
-        <button id="btnBuilderGetModuleList" className="btn" onClick={btnGetModuleList}>
-          GET MODULE LIST
-        </button>
-        |
-        <button id="btnBuilderBuildAndTest" className="btn" onClick={btnRun}>
+        </MenuItem>
+        <MenuItem id="btnBuilderClearScene" onClick={btnClearScene}>
+          CLEAR
+        </MenuItem>
+      </Menu>
+
+      <Button
+        id="btnBuildAndRunDropdown"
+        aria-controls={open ? 'buildAndRunDropdown-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={btnBuildAndRunDropdownClick}
+        endIcon={<KeyboardArrowDownIcon />}
+        variant="contained"
+      >
+        BUILD & RUN
+      </Button>
+
+      <Menu
+        id="buildAndRunDropdown-menu"
+        anchorEl={anchorEl_buildandrun}
+        open={open_buildandrun}
+        onClose={btnBuildAndRunDropdownClose}
+        MenuListProps={{
+          'aria-labelledby': 'buildAndRunDropdown',
+        }}
+      >
+        <MenuItem id="btnBuilderBuildAndTest" onClick={btnRun}>
           TEST BUILD
-        </button>
-        <button id="btnBuilderCleanBuildFolder" className="btn" onClick={btnCleanBuildFolder}>
+        </MenuItem>
+        <MenuItem id="btnCleanBuildFolder" onClick={btnCleanBuildFolder}>
           DELETE TEST BUILD
-        </button>
-        <button id="btnBuilderBuildAsModule" className="btn" onClick={btnBuildAsModule}>
+        </MenuItem>
+        <Divider />
+        <MenuItem id="btnBuilderBuildAsModule" onClick={btnBuildAsModule}>
           BUILD AS MODULE
-        </button>
-        <button id="btnBuilderBuildAsWorkflow" className="btn" onClick={btnBuildAsWorkflow}>
+        </MenuItem>
+        <MenuItem id="btnBuilderBuildAsWorkflow" onClick={btnBuildAsWorkflow}>
           BUILD AS WORKFLOW
-        </button>
-        |
-        <button id="btnBuilderClearScene" className="btn" onClick={btnClearScene}>
-          CLEAR GRAPH
-        </button>
-      </div>
-    </>
+        </MenuItem>
+      </Menu>
+
+      <Button
+        id="btnBuilderOpenResultsFolder"
+        className="btn"
+        onClick={btnOpenResultsFolder}
+        variant="contained"
+        disabled={hasTestRun ? false : true}
+      >
+        OPEN RESULTS
+      </Button>
+    </Stack>
   );
 };
 

@@ -22,6 +22,8 @@ export interface IBuilderState {
   terminal_visibile: boolean;
   config_pane_display: string;
   logtext: string;
+  workdir: string;
+  modules_loading: boolean;
 
   // react-flow parameters
   nodes: Node[];
@@ -36,6 +38,8 @@ export interface IBuilderState {
   display_module_settings: boolean;
   auto_validate_connections: boolean;
   package_modules_in_workflow: boolean;
+  hide_params_in_module_info: boolean;
+  dark_mode: boolean;
 }
 
 // Defaults
@@ -52,6 +56,8 @@ const builderStateInit: IBuilderState = {
   config_pane_display: ConfigPaneDisplay.None,
   logtext: ' ',
   modules_list: '[]',
+  workdir: '',
+  modules_loading: false,
 
   // react-flow parameters
   nodes: default_nodes,
@@ -74,6 +80,8 @@ const builderStateInit: IBuilderState = {
   display_module_settings: false,
   auto_validate_connections: false,
   package_modules_in_workflow: false,
+  hide_params_in_module_info: true,
+  dark_mode: false,
 };
 
 // Nodemap
@@ -142,7 +150,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {
-      setStatusText(state, action.payload);
+      state.statustext = setStatusText(action.payload);
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateNodeInfo, (state, action) => {
@@ -170,6 +178,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetDisplayModuleSettings, (state, action) => {
       state.display_module_settings = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetHideParamsInModuleInfo, (state, action) => {
+      state.hide_params_in_module_info = action.payload;
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetAutoValidateConnections, (state, action) => {
@@ -206,13 +218,24 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
         state[key] = local_config[key];
       }
       console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderToggleDarkMode, (state, action) => {
+      state.dark_mode = !state.dark_mode;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderUpdateWorkdir, (state, action) => {
+      state.workdir = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetModulesLoading, (state, action) => {
+      state.modules_loading = action.payload;
+      console.info('[Reducer] ' + action.type);
     });
 });
 
-const setStatusText = (state: IBuilderState, text: string) => {
-  if (text === '' || text === null || text === undefined) text = 'Idle';
-  state.statustext = text;
-  return state;
+const setStatusText = (text: string) => {
+  if (text === '' || text === ' ' || text === null || text === undefined) text = 'Idle';
+  return text;
 };
 
 const addLogEvent = (state: IBuilderState, text: string) => {

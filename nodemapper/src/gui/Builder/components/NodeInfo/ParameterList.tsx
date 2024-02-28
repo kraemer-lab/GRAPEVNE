@@ -3,28 +3,26 @@ import React from 'react';
 import { ModuleType } from 'NodeMap/scene/Module';
 import { builderNodeSelected, builderUpdateNode } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-import { Edge, Node, getNodeById, getNodeName } from './Flow';
+import { Edge, Node, getNodeById, getNodeName } from './../Flow';
 
 import {
   checkParameter_IsInModuleConfigLayer,
   checkParameter_IsModuleRoot,
   lookupKey,
-  theme,
-} from './HighlightedJSON';
+} from './HighlightJSON';
 
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ThemeProvider, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
-
-import './ParameterList.css';
 
 const protectedNames = ['input_namespace', 'output_namespace'];
 
@@ -50,7 +48,6 @@ interface IModuleEntryProps {
 }
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
   ...theme.typography.body2,
   padding: theme.spacing(1),
   textAlign: 'left',
@@ -69,7 +66,7 @@ const detemineInputNodes = (
   showSelfNodes: boolean,
 ): InputNodesType => {
   const input_nodes: InputNodesType = {};
-  if (showAllNodes || showSelfNodes) {
+  if (showAllNodes) {
     nodes.forEach((n) => {
       input_nodes[n.id] = {
         label: getNodeName(n),
@@ -107,10 +104,6 @@ export default function ParameterList({
   id,
   keylist,
   keyitem,
-  top,
-  left,
-  right,
-  bottom,
   onclose,
   ...props
 }: ParameterListProps) {
@@ -151,7 +144,6 @@ export default function ParameterList({
   // Handle parameter selection
   const onParameterSelect = (node_from: Node, keylist_from, key_from: string) => {
     const param_from = [node_from.data.config.name, ...keylist_from, key_from];
-    const param_to = [...keylist.slice(1, keylist.length), keyitem];
 
     // Add pairing between 'key/keylist' param and selection, into node.id
     const newnode_to = JSON.parse(JSON.stringify(node_to));
@@ -222,7 +214,7 @@ export default function ParameterList({
       }
 
       // If the key is a module config, skip rendering of the key (but render children)
-      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist, key);
+      const isInModuleConfigLayer = checkParameter_IsInModuleConfigLayer(node, keylist);
       if (isInModuleConfigLayer) {
         // Of the parameters in the module config layer, continue rendering only the
         // 'config' children, which contains the actual parameters
@@ -311,7 +303,7 @@ export default function ParameterList({
 
   const ModuleEntry = ({ label, node }: IModuleEntryProps) => (
     <Item>
-      <div
+      <Box
         key={node.id}
         style={{
           display: 'flex',
@@ -319,26 +311,25 @@ export default function ParameterList({
           gap: '10px',
         }}
       >
-        <div
+        <Box
           style={{
             display: 'flex',
             flexDirection: 'column',
             gap: '0px',
-            backgroundColor: '#eee',
           }}
         >
           {showAllNodes || showSelfNodes ? (
-            <div>{'Node: ' + label}</div>
+            <Box>{'Node: ' + label}</Box>
           ) : (
-            <div>
+            <Box>
               {'Port: ' + label}
-              <div>
+              <Box>
                 <small>{node.data.config.name}</small>
-              </div>
-            </div>
+              </Box>
+            </Box>
           )}
-        </div>
-        <div
+        </Box>
+        <Box
           key={node.id + '_p'}
           style={{
             display: 'flex',
@@ -349,8 +340,8 @@ export default function ParameterList({
           <TreeView defaultExpanded={Array.from({ length: 999 }, (_, i) => i.toString())}>
             <NodeParameters node={node} keylist={[]} />
           </TreeView>
-        </div>
-      </div>
+        </Box>
+      </Box>
     </Item>
   );
 
@@ -362,52 +353,73 @@ export default function ParameterList({
   };
 
   return (
-    <div style={{ top, left, right, bottom, margin: '5px' }} className="parameter-list" {...props}>
-      <p style={{ margin: '0.5em' }}>
-        <big>
-          <b>{keylist_str}</b>
-        </big>{' '}
-        <i>{node_name}</i>
-        <span style={{ float: 'right' }}>
-          {isConnected && (
-            <span>
-              <Button
-                id="btnParameterListRemove"
-                variant="outlined"
-                size="small"
-                onClick={disconnectParameter}
-              >
-                Disconnect
-              </Button>{' '}
-            </span>
-          )}
-          <label htmlFor="checkParameterListShowSelfParams">Show own parameters</label>
-          <Checkbox
-            id="checkParameterListShowSelfParams"
-            onChange={() => setShowSelfNodes(!showSelfNodes)}
-            checked={showSelfNodes}
-          />
-          <label htmlFor="checkParameterListShowAllNodes">Show all nodes</label>
-          <Checkbox
-            id="checkParameterListShowAllNodes"
-            onChange={() => setShowAllNodes(!showAllNodes)}
-            checked={showAllNodes}
-          />
-          <Button
-            id="btnParameterListClose"
-            variant="outlined"
-            style={{ width: '25px', height: '25px', minWidth: '0' }}
-            onClick={onclose}
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </Button>
-        </span>
-      </p>
-      <div style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
-        <ThemeProvider theme={theme}>
+    <Modal open={true}>
+      <Box
+        {...props}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'absolute',
+          top: '10%',
+          left: '50%',
+          transform: 'translate(-50%, -5%)',
+          width: '90%',
+          height: '90%',
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+        }}
+      >
+        <Box>
+          <big>
+            <b>{keylist_str}</b>
+          </big>{' '}
+          <i>{node_name}</i>
+          <span style={{ float: 'right' }}>
+            {isConnected && (
+              <span>
+                <Button
+                  id="btnParameterListRemove"
+                  variant="outlined"
+                  size="small"
+                  onClick={disconnectParameter}
+                >
+                  Disconnect
+                </Button>{' '}
+              </span>
+            )}
+            <label htmlFor="checkParameterListShowSelfParams">Show own parameters</label>
+            <Checkbox
+              id="checkParameterListShowSelfParams"
+              onChange={() => setShowSelfNodes(!showSelfNodes)}
+              checked={showSelfNodes}
+            />
+            <label htmlFor="checkParameterListShowAllNodes">Show all nodes</label>
+            <Checkbox
+              id="checkParameterListShowAllNodes"
+              onChange={() => setShowAllNodes(!showAllNodes)}
+              checked={showAllNodes}
+            />
+            <Button
+              id="btnParameterListClose"
+              variant="outlined"
+              style={{ width: '25px', height: '25px', minWidth: '0' }}
+              onClick={onclose}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </Button>
+          </span>
+        </Box>
+        <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
           <Box sx={{ width: '100%', height: '100%', overflowY: 'auto' }}>
             <Grid
               container
+              sx={{
+                width: '100%',
+                height: '100%',
+                overflowX: 'hidden',
+                overflowY: 'auto',
+              }}
               spacing={{
                 xs: 4,
                 md: 2,
@@ -428,8 +440,8 @@ export default function ParameterList({
               ))}
             </Grid>
           </Box>
-        </ThemeProvider>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Modal>
   );
 }

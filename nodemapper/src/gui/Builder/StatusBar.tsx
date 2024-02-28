@@ -1,3 +1,5 @@
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
 import { useAppSelector } from 'redux/store/hooks';
 
@@ -8,15 +10,14 @@ const StatusBar: React.FC = () => {
     setStatus(statustext);
   }, [statustext]);
   return (
-    <div
+    <Box
       className="status-bar"
       style={{
-        fontSize: 14,
         marginLeft: '10px',
       }}
     >
-      {status ? status : <br />}
-    </div>
+      <Typography variant="body2">{status ? status : <br />}</Typography>
+    </Box>
   );
 };
 

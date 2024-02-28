@@ -797,7 +797,7 @@ class Model:
         elif isinstance(node.input_namespace, dict):
             raise ValueError("Input dictionary namespaces not supported yet")
         elif node.input_namespace is None:
-            # Module is a Source and (no incoming connections)
+            # Module is a Source (no incoming connections)
             pass
         else:
             raise ValueError("Namespace type not recognised")

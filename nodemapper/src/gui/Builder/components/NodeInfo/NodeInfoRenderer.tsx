@@ -1,11 +1,8 @@
+import Box from '@mui/material/Box';
 import React from 'react';
-import EasyEdit from 'react-easy-edit';
 import BuilderEngine from '../BuilderEngine';
 import NodeInfo from './NodeInfo';
 
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Types } from 'react-easy-edit';
 import {
   builderCheckNodeDependencies,
   builderNodeDeselected,
@@ -15,11 +12,11 @@ import {
 } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+import { useTheme } from '@mui/material';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
 import { Edge, Node } from 'reactflow';
-
-interface IPayload {
-  id: string;
-}
 
 interface ExpandProps {
   nodeinfo: Record<string, unknown>;
@@ -37,9 +34,15 @@ const ValidateButton = (props: ValidateButtonProps) => {
   };
 
   return (
-    <button id="btnBuilderValidate" className="btn" onClick={btnValidate}>
+    <Button
+      id="btnBuilderValidate"
+      className="btn"
+      onClick={btnValidate}
+      variant="contained"
+      size="small"
+    >
       Validate
-    </button>
+    </Button>
   );
 };
 
@@ -73,9 +76,15 @@ const ExpandButton = (props: ExpandProps) => {
 
   if (showExpand) {
     return (
-      <button id="btnBuilderExpand" className="btn" onClick={btnExpand}>
+      <Button
+        id="btnBuilderExpand"
+        className="btn"
+        onClick={btnExpand}
+        variant="contained"
+        size="small"
+      >
         Expand
-      </button>
+      </Button>
     );
   } else {
     return null;
@@ -87,70 +96,75 @@ const PermitNodeExpand = (nodeinfo: Record<string, unknown>, nodes) => {
   return app.CanNodeExpand(nodeinfo.name as string, nodes);
 };
 
-const NodeInfoRenderer = (props) => {
+const NodeInfoRenderer = () => {
   const dispatch = useAppDispatch();
   const nodeinfoStr = useAppSelector((state) => state.builder.nodeinfo);
   const nodes = useAppSelector((state) => state.builder.nodes);
-
-  const SetNodeName = (name: string) => {
-    if (name) dispatch(builderUpdateNodeInfoName(name));
-  };
 
   if (!nodeinfoStr) return null;
   const nodeinfo = JSON.parse(nodeinfoStr);
   if (Object.keys(nodeinfo).length === 0) return null;
 
-  // Get node to lock/unlock it during text edits
-  const app = BuilderEngine.Instance;
-  const node = app.getNodeByName(nodeinfo.name as string, nodes);
+  const SetNodeName = (name: string) => {
+    if (name && name !== nodeinfo.name) dispatch(builderUpdateNodeInfoName(name));
+  };
+
+  // Get theme
+  const theme = useTheme();
 
   return (
-    <div
+    <Box
       key={'nodeinfo-' + nodeinfo.id} // ensures render defaults are reset when node is changed
-      style={{
+      sx={{
         display: 'flex',
         width: '100%',
         height: '100%',
         flexFlow: 'column',
       }}
     >
-      <div
-        style={{
-          borderStyle: 'solid',
-          borderWidth: '1px 0px 0px 0px',
+      <Box
+        sx={{
           flex: '0 0 auto',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
-        <div>
-          <EasyEdit
-            type={Types.TEXT}
-            onHoverCssClass="easyedit-hover"
-            value={nodeinfo.name}
-            saveButtonLabel={<FontAwesomeIcon icon={faCheck} />}
-            cancelButtonLabel={<FontAwesomeIcon icon={faTimes} />}
-            onSave={(value) => {
-              SetNodeName(value);
-            }}
-            saveOnBlur={true}
-          />
-        </div>
-        <div>
+        <TextField
+          fullWidth
+          variant="standard"
+          size="small"
+          sx={{
+            mt: 0.5,
+            ml: 0.75,
+            input: {
+              fontWeight: 'bold',
+              color: theme.palette.primary.main,
+            },
+          }}
+          InputProps={{
+            disableUnderline: true,
+          }}
+          value={nodeinfo.name}
+          onChange={(elem) => {
+            SetNodeName(elem.target.value);
+          }}
+        />
+        <Box display="flex" flexDirection="row">
           <ValidateButton nodename={nodeinfo.name} />
           {PermitNodeExpand(nodeinfo, nodes) && <ExpandButton nodeinfo={nodeinfo} />}
-        </div>
-      </div>
-      <div
-        style={{
+        </Box>
+      </Box>
+      <Divider />
+      <Box
+        sx={{
           flex: '1 1 auto',
           overflowY: 'auto',
         }}
       >
         <NodeInfo />
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 };
 

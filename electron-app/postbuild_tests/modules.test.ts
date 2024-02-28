@@ -8,13 +8,13 @@ import * as webdriver from "selenium-webdriver";
 
 import { runif } from "./utils";
 import { is_windows } from "./utils";
+import { ClearGraph } from "./utils";
 import { dragAndDrop } from "./utils";
 import { is_installed } from "./utils";
 import { FlushConsoleLog } from "./utils";
 import { SetCheckBoxByID } from "./utils";
 import { WaitForReturnCode } from "./utils";
 import { RedirectConsoleLog } from "./utils";
-import { EasyEdit_SetFieldByKey } from "./utils";
 import { BuildAndRun_SingleModuleWorkflow } from "./utils";
 import { BuildAndRun_MultiModuleWorkflow } from "./utils";
 import { MultiModuleWorkflow_Setup } from "./utils";
@@ -22,10 +22,20 @@ import { MultiModuleWorkflow_CleanAndDetermineTargets } from "./utils";
 import { MultiModuleWorkflow_BuildAndCheck } from "./utils";
 import { MultiModuleWorkflow_TidyUp } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
+import { OverwriteInputField } from "./utils";
 
 const ONE_SEC = 1000;
 const TEN_SECS = 10 * ONE_SEC;
 const ONE_MINUTE = 60 * ONE_SEC;
+
+let run_container_tests = true;
+process.argv.slice(2).forEach((arg) => {
+  console.log(`::: ${arg}`);
+  if (arg === "--no-containers") {
+    console.log("Skipping container tests");
+    run_container_tests = false;
+  }
+});
 
 /*
  * Note: These tests chain together, so they must be run in order.
@@ -72,7 +82,7 @@ describe("modules", () => {
   test("Select test repository", async () => {
     console.log("::: test Select test repository");
     // Open settings pane
-    await driver.findElement(By.id("btnSidenavSettings")).click();
+    await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
     // Clear repository list
     const repo_list = new Select(
@@ -89,24 +99,21 @@ describe("modules", () => {
     expect(options.length).toEqual(0);
 
     // Set new (local) repository type
-    const repo_type = new Select(
-      await driver.findElement(By.id("selectBuilderSettingsRepositoryType")),
-    );
-    await repo_type.selectByVisibleText("Local filesystem");
+    const repo_type = await driver.findElement(By.id("selectBuilderSettingsRepositoryType"));
+    await repo_type.click();
+    await repo_type.findElement(By.xpath('//li[@data-value="LocalFilesystem"]')).click();
 
     // Set new (local) repository label
     const repo_label = await driver.findElement(
       webdriver.By.id("inputBuilderSettingsRepositoryLabel"),
     );
-    await repo_label.clear();
-    await repo_label.sendKeys("test-repo");
+    await OverwriteInputField(repo_label, "test-repo");
 
     // Set new (local) repository path
     const repo_path = await driver.findElement(
       webdriver.By.id("inputBuilderSettingsRepositoryURL"),
     );
-    await repo_path.clear();
-    await repo_path.sendKeys(path.join(__dirname, "test-repo"));
+    await OverwriteInputField(repo_path, path.join(__dirname, "test-repo"));
 
     // Add repository to repository list
     await driver
@@ -119,9 +126,11 @@ describe("modules", () => {
     await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
 
     // Close settings pane
-    await driver.findElement(By.id("btnSidenavBuilder")).click();
+    await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
     console.log("<<< test Select test repository");
-  });
+  },
+    ONE_MINUTE
+  );
 
   test("Get local modules list", async () => {
     console.log("::: test Get local modules list");
@@ -131,7 +140,7 @@ describe("modules", () => {
     expect(msg.returncode).toEqual(0);
     // Wait for module list to be populated
     await driver.wait(
-      until.elementLocated(By.id("modulelist-_single_modules__payload_shell")),
+      until.elementLocated(By.id("modulelist-payload_shell")),
       TEN_SECS,
     );
     console.log("<<< test Get local modules list");
@@ -145,15 +154,21 @@ describe("modules", () => {
       );
 
       // Drag-and-drop the same hierarchical modules into the scene three times
-      await driver.findElement(By.id("btnBuilderClearScene")).click();
+      await ClearGraph(driver);
       const module = await driver.findElement(
-        By.id("modulelist-_multi_modules__copy_run3"),
+        By.id("modulelist-copy_run3"),
       );
       const canvas = await driver.findElement(By.className("react-flow__pane"));
       for (const n of ["n0", "n1", "n2"]) {
         console.log(`Dragging module to canvas: ${n}`);
         await driver.actions().dragAndDrop(module, canvas).perform();
-        await driver.sleep(100);
+        await driver.wait(
+          until.elementLocated(
+            By.xpath(
+              `//div[@data-id="${n}"]`,
+            ),
+          ),
+        );
       }
       await driver.findElement(By.id("buttonReactflowArrange")).click();
 
@@ -311,22 +326,33 @@ describe("modules", () => {
       console.log("::: test Module validation (dependency checks)");
 
       // Drag-and-drop a source and copy module into the scene
-      await driver.findElement(By.id("btnBuilderClearScene")).click();
+      await ClearGraph(driver);
       const canvas = await driver.findElement(By.className("react-flow__pane"));
       await dragAndDrop(
         driver,
-        driver.findElement(By.id(`modulelist-_single_modules__payload_run`)),
+        driver.findElement(By.id(`modulelist-payload_run`)),
         canvas,
       );
-      await driver.sleep(100);
+      await driver.wait(
+        until.elementLocated(
+          By.xpath(
+            `//div[@data-id="n0"]`,
+          ),
+        ),
+      );
       await dragAndDrop(
         driver,
-        driver.findElement(By.id(`modulelist-_single_modules__copy_run`)),
+        driver.findElement(By.id(`modulelist-copy_run`)),
         canvas,
       );
-      await driver.sleep(100);
+      await driver.wait(
+        until.elementLocated(
+          By.xpath(
+            `//div[@data-id="n1"]`,
+          ),
+        ),
+      );
       await driver.findElement(By.id("buttonReactflowArrange")).click();
-      await driver.sleep(100);
 
       // Connect the modules together
       await driver
@@ -349,8 +375,11 @@ describe("modules", () => {
 
       // Change the expected file name in the source module
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
-      await driver.sleep(100); // Wait for module settings to expand
-      await EasyEdit_SetFieldByKey(driver, "filename", "mismatch");
+      await driver.sleep(50); // Wait for module settings to expand
+      await OverwriteInputField(
+        await driver.findElement(webdriver.By.id("nodeinfo-n0-config-params-filename")),
+        "mismatch"
+      );
 
       // Select target module and click 'Validate'
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -370,15 +399,19 @@ describe("modules", () => {
     console.log("::: test Construct single module workflow in GRAPEVNE");
 
     // Drag-and-drop module from modules-list into scene
-    await driver.findElement(By.id("btnBuilderClearScene")).click();
+    await ClearGraph(driver);
     const module = await driver.findElement(
-      By.id("modulelist-_single_modules__payload_shell"),
+      By.id("modulelist-payload_shell"),
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
     await dragAndDrop(driver, module, canvas);
-    // Give time for the module to be created on the canvas,
-    // and for the config to load
-    await driver.sleep(100);
+    await driver.wait(
+      until.elementLocated(
+        By.xpath(
+          `//div[@data-id="n0"]`,
+        ),
+      ),
+    );
 
     // Wait for module to be added to the scene and for the config to load
     console.log("<<< test Construct single module workflow in GRAPEVNE");
@@ -386,29 +419,27 @@ describe("modules", () => {
 
   runif(!is_windows).each([
     [
-      "(single_modules) payload shell",
-      [path.join("results", "single_modules_payload_shell", "data.csv")],
+      "payload shell",
+      [path.join("results", "payload_shell", "data.csv")],
     ],
     [
-      "(single_modules) payload run",
-      [path.join("results", "single_modules_payload_run", "data.csv")],
+      "payload run",
+      [path.join("results", "payload_run", "data.csv")],
     ],
   ])(
     "Build and Test the workflow: module '%s'",
     async (modulename, outfiles) => {
       // Open settings pane
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
         webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
-      await args.clear();
-      await args.sendKeys("--cores 1");
+      await OverwriteInputField(args, "--cores 1");
 
       // Close settings pane
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
-      console.log("<<< test Set snakemake arguments list to use conda");
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
 
       // Build and run workflow
       await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
@@ -421,8 +452,8 @@ describe("modules", () => {
     [
       [
         // Modules to add to scene
-        "(single_modules) payload shell", // data-nodeid="n0"
-        "(single_modules) copy run", // data-nodeid="n1"
+        "payload shell", // data-nodeid="n0"
+        "copy run", // data-nodeid="n1"
       ],
       [
         // Connections to make between modules
@@ -430,18 +461,18 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("results", "single_modules_copy_run", "data.csv"),
+        path.join("results", "copy_run", "data.csv"),
       ],
     ],
     // Test: 2 (connect five modules, including 4 duplicates)
     [
       [
         // Modules to add to scene
-        "(single_modules) payload shell", // data-nodeid="n0"
-        "(single_modules) copy run", // data-nodeid="n1"
-        "(single_modules) copy run", // data-nodeid="n2"
-        "(single_modules) copy run", // data-nodeid="n3"
-        "(single_modules) copy run", // data-nodeid="n4"
+        "payload shell", // data-nodeid="n0"
+        "copy run", // data-nodeid="n1"
+        "copy run", // data-nodeid="n2"
+        "copy run", // data-nodeid="n3"
+        "copy run", // data-nodeid="n4"
       ],
       [
         // Connections to make between modules
@@ -452,15 +483,15 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("results", "single_modules_copy_run_3", "data.csv"),
+        path.join("results", "copy_run_3", "data.csv"),
       ],
     ],
     // Test: 3 (connect source to triple input module)
     [
       [
         // Modules to add to scene
-        "(single_modules) payload shell", // data-nodeid="n0"
-        "(single_modules) copy run multiport", // data-nodeid="n1"
+        "payload shell", // data-nodeid="n0"
+        "copy run multiport", // data-nodeid="n1"
       ],
       [
         // Connections to make between modules
@@ -468,24 +499,23 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("results", "single_modules_copy_run_multiport", "data.csv"),
+        path.join("results", "copy_run_multiport", "data.csv"),
       ],
     ],
   ])(
     "Build and Test the workflow: module '%s'",
     async (modulenames, connections, outfiles) => {
       // Open settings pane
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
         webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
-      await args.clear();
-      await args.sendKeys("--cores 1");
+      await OverwriteInputField(args, "--cores 1");
 
       // Close settings pane
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
       console.log("<<< test Set snakemake arguments list to use conda");
 
       // Build and run workflow
@@ -503,8 +533,8 @@ describe("modules", () => {
     [
       [
         // Modules to add to scene
-        "(single_modules) payload run", // data-nodeid="n0"
-        "(single_modules) copy run", // data-nodeid="n1"
+        "payload run", // data-nodeid="n0"
+        "copy run", // data-nodeid="n1"
       ],
       [
         // Connections to make between modules
@@ -512,7 +542,7 @@ describe("modules", () => {
       ],
       [
         // Expected output files
-        path.join("results", "single_modules_copy_run", "data.csv"),
+        path.join("results", "copy_run", "data.csv"),
       ],
     ],
   ])(
@@ -536,6 +566,7 @@ describe("modules", () => {
         "runner/check-node-dependencies",
       );
       expect(msg.returncode).toEqual(0); // 0 = success
+      await driver.findElement(By.className("react-flow__pane")).click();
 
       // Build and run the workflow (should pass)
       await MultiModuleWorkflow_BuildAndCheck({
@@ -546,7 +577,10 @@ describe("modules", () => {
 
       // Change the source filename (not yet linked to target module)
       await driver.findElement(By.xpath(`//div[@data-id="n0"]`)).click();
-      await EasyEdit_SetFieldByKey(driver, "filename", "newfile.csv");
+      await OverwriteInputField(
+        await driver.findElement(webdriver.By.id("nodeinfo-n0-config-params-filename")),
+        "newfile.csv"
+      );
 
       // Validation check (should fail)
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -562,12 +596,11 @@ describe("modules", () => {
         should_fail: true,
       });
       await MultiModuleWorkflow_TidyUp(driver, target_files);
+      await driver.findElement(By.className("react-flow__pane")).click();
 
       // Form parameter link between modules
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
-      const link_button = By.xpath(
-        `//span[contains(text(), "filename")]/following::span/following::span`,
-      );
+      const link_button = By.id("nodeinfo-n1-config-params-filename_link");
       await driver.wait(until.elementLocated(link_button), TEN_SECS);
       await driver.findElement(link_button).click();
       const link_target = By.xpath(
@@ -576,6 +609,7 @@ describe("modules", () => {
       await driver.wait(until.elementLocated(link_target), TEN_SECS);
       await driver.findElement(link_target).click();
       await driver.findElement(By.id("btnParameterListClose")).click();
+      await driver.findElement(By.className("react-flow__pane")).click();
 
       // Validation check (should pass)
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -587,7 +621,7 @@ describe("modules", () => {
       // Build and run the (linked) workflow (should pass)
       outfiles[0] = path.join(
         "results",
-        "single_modules_copy_run",
+        "copy_run",
         "newfile.csv",
       );
       target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
@@ -601,6 +635,7 @@ describe("modules", () => {
         target_files: target_files,
       });
       await MultiModuleWorkflow_TidyUp(driver, target_files);
+      await driver.findElement(By.className("react-flow__pane")).click();
 
       // Delete the parameter link between modules
       await driver.findElement(By.xpath(`//div[@data-id="n1"]`)).click();
@@ -628,26 +663,24 @@ describe("modules", () => {
     async () => {
       console.log("::: test Set snakemake arguments list to use conda");
       // Open settings panel
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
       // Set snakemake command line arguments
       const args = await driver.findElement(
         webdriver.By.id("inputBuilderSettingsSnakemakeArgs"),
       );
-      await args.clear();
-      await args.sendKeys("--cores 1 --use-conda");
+      await OverwriteInputField(args, "--cores 1 --use-conda");
 
       // Set conda environment path --- passthrough from test environment
       if (process.env.CONDA_PATH != undefined) {
         const args = await driver.findElement(
           webdriver.By.id("inputBuilderSettingsEnvironmentVars"),
         );
-        await args.clear();
-        await args.sendKeys(`PATH=${process.env.CONDA_PATH}`);
+        await OverwriteInputField(args, `PATH=${process.env.CONDA_PATH}`);
       }
 
       // Close settings pane
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
       console.log("<<< test Set snakemake arguments list to use conda");
     },
   );
@@ -667,8 +700,8 @@ describe("modules", () => {
   // Conda tests
   runif(is_installed(["mamba", "conda"], "any")).each([
     [
-      "(single_modules) conda",
-      [path.join("results", "single_modules_conda", "data.csv")],
+      "conda",
+      [path.join("results", "conda", "data.csv")],
     ],
   ])(
     "Build and Test the conda workflow: module '%s'",
@@ -679,10 +712,10 @@ describe("modules", () => {
   ); // long timeout
 
   // Container tests
-  runif(is_installed(["docker"])).each([
+  runif(run_container_tests && is_installed(["docker"])).each([
     [
       // NOTE: This test relies on the remote module jsbrittain/snakeshack (Utilty) touch
-      "(single_modules) container_touch",
+      "container_touch",
       [
         // target files
         path.join("results", "utility_touch", "data.csv"),
@@ -692,7 +725,7 @@ describe("modules", () => {
       ],
     ],
   ])(
-    "Build, extract zip, run in Docker: module '%s'",
+    "Build, extract zip, run in Docker container: module '%s'",
     async (modulename, target_files, payload_files) => {
       await Build_RunWithDocker_SingleModuleWorkflow({
         driver: driver,
@@ -706,12 +739,12 @@ describe("modules", () => {
   ); // long timeout
 
   // Package workflow (container test)
-  runif(is_installed(["docker"])).each([
+  runif(run_container_tests && is_installed(["docker"])).each([
     [
-      "(single_modules) payload run",
+      "payload run",
       [
         // target files
-        path.join("results", "single_modules_payload_run", "data.csv"),
+        path.join("results", "payload_run", "data.csv"),
       ],
       [
         // packaged payload files
@@ -733,9 +766,9 @@ describe("modules", () => {
     "Package workflow (container): module '%s'",
     async (modulename, target_files, payload_files) => {
       // Set workflow packaging option
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
       await SetCheckBoxByID(driver, "package_modules_in_workflow", true);
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
 
       // Build and run workflow
       await Build_RunWithDocker_SingleModuleWorkflow({
@@ -747,9 +780,9 @@ describe("modules", () => {
       });
 
       // Unset workflow packaging option
-      await driver.findElement(By.id("btnSidenavSettings")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
       await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
-      await driver.findElement(By.id("btnSidenavBuilder")).click();
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
     },
     10 * ONE_MINUTE,
   ); // long timeout

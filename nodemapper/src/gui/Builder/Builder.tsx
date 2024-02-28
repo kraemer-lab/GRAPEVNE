@@ -1,28 +1,33 @@
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import Paper from '@mui/material/Paper';
 import React from 'react';
 import Header from './Header';
-import NodeManager from './NodeManager';
+import MainBody from './MainBody';
 import StatusBar from './StatusBar';
 
 const Builder = () => {
   return (
-    <>
-      <div
-        style={{
-          display: 'flex',
-          height: '100%',
-          width: '100%',
-          flexFlow: 'column',
-        }}
-      >
-        <div style={{ flex: '0 1 auto' }}>
-          <Header />
-        </div>
-        <div style={{ flex: '1 1 auto', overflowY: 'auto' }}>
-          <NodeManager />
-        </div>
+    <Box
+      sx={{
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+        flexFlow: 'column',
+      }}
+    >
+      <Paper sx={{ flex: '0 1 auto', p: 1 }} square={true}>
+        <Header />
+      </Paper>
+      <Divider />
+      <Paper sx={{ flex: '1 1 auto', overflowY: 'auto' }} square={true}>
+        <MainBody />
+      </Paper>
+      <Divider />
+      <Paper square={true}>
         <StatusBar />
-      </div>
-    </>
+      </Paper>
+    </Box>
   );
 };
 

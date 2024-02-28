@@ -1,9 +1,11 @@
 import fs from "fs";
 import web from "./web";
+import Store from "electron-store";
+
+import { shell } from "electron";
 import { IpcMainInvokeEvent } from "electron";
 import { RunWorkflow } from "./pyrunner";
 import { ProcessQuery } from "./pyrunner";
-import Store from "electron-store";
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
@@ -138,7 +140,7 @@ export async function builder_BuildAndRun(
       }, {});
 
     // Run the workflow
-    let query_run = {};
+    let query_run: Query;
     switch (backend) {
       case "builtin":
         query_run = {
@@ -188,6 +190,11 @@ export async function builder_CleanBuildFolder(
   status_callback("Build folder cleaned.");
   data["returncode"] = 0;
   return data;
+}
+
+export async function builder_OpenResultsFolder(event: Event, workdir: string) {
+  shell.showItemInFolder(workdir);
+  return { query: "builder/open-results-folder", body: "OK", returncode: 0 };
 }
 
 ///////////////////////////////////////////////////////////////////////////////

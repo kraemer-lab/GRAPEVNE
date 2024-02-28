@@ -15,17 +15,13 @@ on:
       - "docs/**"
 
 jobs:
-  es-lint-nodemapper:
-    uses: ./.github/workflows/eslint-nodemapper.yml
-  jest-nodemapper:
-    uses: ./.github/workflows/jest-nodemapper.yml
-  es-lint-electron-app:
-    uses: ./.github/workflows/eslint-electron-app.yml
-  jest-electron-app:
-    uses: ./.github/workflows/jest-electron-app.yml
-  pytest-backend:
-    uses: ./.github/workflows/pytest-backend.yml
-  pytest-builder:
-    uses: ./.github/workflows/pytest-builder.yml
-  pytest-runner:
-    uses: ./.github/workflows/pytest-runner.yml
+  nodemapper:
+    uses: ./.github/workflows/nodemapper.yml
+  electron-app:
+    uses: ./.github/workflows/electron-app.yml
+  backend:
+    uses: ./.github/workflows/backend.yml
+  builder:
+    uses: ./.github/workflows/builder.yml
+  runner:
+    uses: ./.github/workflows/runner.yml

@@ -1,14 +1,17 @@
-import BuilderEngine from 'gui/Builder/BuilderEngine';
+import BuilderEngine from 'gui/Builder/components/BuilderEngine';
 import * as globals from 'redux/globals';
 
 import {
   builderLogEvent,
   builderNodeSelected,
+  builderSetEdges,
+  builderSetModulesLoading,
   builderSetNodes,
   builderUpdateModulesList,
   builderUpdateNodeInfo,
   builderUpdateSettings,
   builderUpdateStatusText,
+  builderUpdateWorkdir,
 } from 'redux/actions';
 
 import { Node } from 'NodeMap/scene/Flow';
@@ -33,33 +36,33 @@ export const builderMiddleware = ({ getState, dispatch }) => {
       }
       switch (action.type) {
         case 'builder/build-as-module':
-          BuildAs(
-            'builder/build-as-module',
-            builderAPI.BuildAsModule,
-            dispatch,
-            getState().builder.snakemake_args,
-            getState().builder.snakemake_backend,
-            getState().builder.conda_backend,
-            getState().builder.environment_variables,
-            false, // package_modules (workflow only)
-            getState().builder.nodes,
-            getState().builder.edges,
-          );
+          BuildAs({
+            query_name: 'builder/build-as-module',
+            builder_api_fcn: builderAPI.BuildAsModule,
+            dispatchString: dispatch,
+            snakemake_args: getState().builder.snakemake_args,
+            snakemake_backend: getState().builder.snakemake_backend,
+            conda_backend: getState().builder.conda_backend,
+            environment_variables: getState().builder.environment_variables,
+            package_modules: false,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
           break;
 
         case 'builder/build-as-workflow':
-          BuildAs(
-            'builder/build-as-workflow',
-            builderAPI.BuildAsWorkflow,
-            dispatch,
-            getState().builder.snakemake_args,
-            getState().builder.snakemake_backend,
-            getState().builder.conda_backend,
-            getState().builder.environment_variables,
-            getState().builder.package_modules_in_workflow,
-            getState().builder.nodes,
-            getState().builder.edges,
-          );
+          BuildAs({
+            query_name: 'builder/build-as-workflow',
+            builder_api_fcn: builderAPI.BuildAsWorkflow,
+            dispatchString: dispatch,
+            snakemake_args: getState().builder.snakemake_args,
+            snakemake_backend: getState().builder.snakemake_backend,
+            conda_backend: getState().builder.conda_backend,
+            environment_variables: getState().builder.environment_variables,
+            package_modules: getState().builder.package_modules_in_workflow,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
           break;
 
         case 'builder/build-and-run':
@@ -79,12 +82,6 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/add-link':
-          /*AddLink(
-            action,
-            getState().builder.auto_validate_connections,
-            getState().builder.snakemake_backend,
-            dispatch
-          );*/
           break;
 
         case 'builder/check-node-dependencies':
@@ -147,6 +144,18 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           WriteStoreConfig(getState().builder);
           break;
 
+        case 'builder/open-results-folder':
+          OpenResultsFolder(getState().builder.workdir);
+          break;
+
+        case 'builder/load-scene':
+          LoadScene(dispatch);
+          break;
+
+        case 'builder/save-scene':
+          SaveScene(dispatch, getState().builder.nodes, getState().builder.edges);
+          break;
+
         default:
           break;
       }
@@ -178,18 +187,31 @@ interface IPayloadBool {
 }
 type TPayloadBool = (action: IPayloadBool) => void;
 
-const BuildAs = async (
-  query_name: string,
-  builder_api_fcn: (query: Query) => Promise<Query>,
-  dispatchString: TPayloadString,
-  snakemake_args: string,
-  snakemake_backend: string,
-  conda_backend: string,
-  environment_variables: string,
-  package_modules: boolean,
-  nodes: Node[],
-  edges: Edge[],
-) => {
+interface IBuildAs {
+  query_name: string;
+  builder_api_fcn: (query: Query) => Promise<Query>;
+  dispatchString: TPayloadString;
+  snakemake_args: string;
+  snakemake_backend: string;
+  conda_backend: string;
+  environment_variables: string;
+  package_modules: boolean;
+  nodes: Node[];
+  edges: Edge[];
+}
+
+const BuildAs = async ({
+  query_name,
+  builder_api_fcn,
+  dispatchString,
+  snakemake_args,
+  snakemake_backend,
+  conda_backend,
+  environment_variables,
+  package_modules,
+  nodes,
+  edges,
+}: IBuildAs) => {
   dispatchString(builderUpdateStatusText('Building workflow...'));
   const app = BuilderEngine.Instance;
   const query: Query = {
@@ -220,7 +242,7 @@ const BuildAs = async (
     // post-build tests
     console.log({ query: query['query'], returncode: 0 });
     // Update status
-    dispatchString(builderUpdateStatusText(' ')); // Idle
+    dispatchString(builderUpdateStatusText('')); // Idle
   };
   switch (backend as string) {
     case 'rest':
@@ -265,7 +287,8 @@ const BuildAndRun = async (
       dispatchString(builderUpdateStatusText('Workflow run FAILED.'));
       return;
     }
-    dispatchString(builderUpdateStatusText(' ')); // Idle
+    dispatchString(builderUpdateWorkdir(content['body']['workdir'] as string));
+    dispatchString(builderUpdateStatusText('')); // Idle
   };
   switch (backend as string) {
     case 'rest':
@@ -441,9 +464,10 @@ const UpdateNodeInfoName = (action: IPayloadString, dispatch, nodeinfo, nodes: N
   }
 };
 
-const GetRemoteModules = async (dispatchString: TPayloadString, repo: string) => {
+const GetRemoteModules = async (dispatch, repo: string) => {
   // Get list of remote modules
-  dispatchString(builderUpdateStatusText('Loading modules...'));
+  dispatch(builderUpdateStatusText('Loading modules...'));
+  dispatch(builderSetModulesLoading(true));
   console.log('Repository settings: ', repo);
   const app = BuilderEngine.Instance;
   const query: Query = {
@@ -459,17 +483,19 @@ const GetRemoteModules = async (dispatchString: TPayloadString, repo: string) =>
     console.log(content);
     if (content['returncode'] !== 0) {
       // Report error
-      dispatchString(builderUpdateStatusText(content['body'] as string));
+      dispatch(builderSetModulesLoading(false));
+      dispatch(builderUpdateStatusText(content['body'] as string));
     } else {
-      dispatchString(builderUpdateStatusText('Modules loaded.'));
-      dispatchString(builderUpdateModulesList(content['body'] as string));
+      dispatch(builderUpdateModulesList(content['body'] as string));
+      dispatch(builderSetModulesLoading(false));
+      dispatch(builderUpdateStatusText('Modules loaded.'));
     }
   };
   let response: Record<string, undefined>;
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery(query, dispatchString, callback);
+      SubmitQuery(query, dispatch, callback);
       break;
     case 'electron':
       callback(await builderAPI.GetRemoteModules(query));
@@ -495,6 +521,7 @@ const WriteStoreConfig = async (state) => {
     display_module_settings: state.display_module_settings,
     auto_validate_connections: state.auto_validate_connections,
     package_modules_in_workflow: state.package_modules_in_workflow,
+    dark_mode: state.dark_mode,
   });
 };
 
@@ -508,6 +535,11 @@ const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
     return;
   }
   dispatch(builderUpdateSettings(local_config));
+};
+
+// Open the current working directory with the native file explorer
+const OpenResultsFolder = async (workdir: string) => {
+  builderAPI.OpenResultsFolder(workdir);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -631,4 +663,44 @@ const SubmitQuery = (query: Query, dispatch, callback) => {
 const UpdateStatusText = (dispatch: TPayloadString, text: string) => {
   // Send a copy of the status text to the logger
   dispatch(builderLogEvent(text));
+};
+
+const LoadScene = (dispatch) => {
+  const element = document.createElement('input');
+  element.setAttribute('type', 'file');
+  element.setAttribute('accept', '.json');
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  element.onchange = (e) => {
+    const file = (e.target as HTMLInputElement).files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const scene = JSON.parse(e.target.result as string);
+      dispatch(builderSetNodes(scene.nodes));
+      dispatch(builderSetEdges(scene.edges));
+      dispatch(builderUpdateStatusText('Scene loaded.'));
+    };
+    reader.readAsText(file);
+  };
+  document.body.removeChild(element);
+};
+
+const SaveScene = (dispatch, nodes: Node[], edges: Edge[]) => {
+  const scene = {
+    nodes: nodes,
+    edges: edges,
+  };
+  const filename = 'scene.json';
+  const element = document.createElement('a');
+  element.setAttribute(
+    'href',
+    'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(scene, null, 2)),
+  );
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+  dispatch(builderUpdateStatusText('Scene saved.'));
 };

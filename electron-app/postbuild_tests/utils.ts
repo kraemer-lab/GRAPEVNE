@@ -1,5 +1,6 @@
 import { By } from "selenium-webdriver";
 import { Key } from "selenium-webdriver";
+import { until } from "selenium-webdriver";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -113,10 +114,9 @@ const WaitForReturnCode = async (
           console.log("return msg received: ", msg);
           console.log("<<< WaitForReturnCode");
           return msg;
-        } else console.log("Skipping msg: ", msg, msg_set);
+        }
       }
     }
-    console.log("Skipping msg: ", msg, msg_set);
   }
 };
 
@@ -189,53 +189,16 @@ const dragAndDrop_script = async (
   );
 };
 
-const EasyEdit_SetFieldByKey = async (
-  driver: webdriver.ThenableWebDriver,
-  key: string,
+const OverwriteInputField = async (
+  element: webdriver.WebElement,
   newvalue: string,
 ) => {
-  // EasyEdit boxes are awkward to interact with as they regenerate using a wrapper
-  // around the input box in Edit mode, and a simplified wrapper around a label when
-  // not. Start by clicking on the element to enable Edit mode.
-  await driver
-    .findElement(By.xpath(`//span[contains(text(), "${key}")]/following::span`))
-    .click();
-  await driver.sleep(100); // Wait for edit box to render
-  // We can send one sendKeys command to the input box before loosing focus, so
-  // need to construct the command to send the correct number of backspaces to clear
-  // the field, then enter the new value, then Enter to confirm the change.
-  const oldvalue = await driver
-    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
-    .getAttribute("value");
+  // Overwrite the input field with a new value (useful when 'clear' is unresponsive)
+  const oldvalue = await element.getAttribute("value");
   let s = "";
   for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
   s += newvalue + Key.ENTER;
-  await driver
-    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
-    .sendKeys(s);
-};
-
-const EasyEdit_SetFieldByValue = async (
-  driver: webdriver.ThenableWebDriver,
-  oldvalue: string,
-  newvalue: string,
-) => {
-  // EasyEdit boxes are awkward to interact with as they regenerate using a wrapper
-  // around the input box in Edit mode, and a simplified wrapper around a label when
-  // not. Start by clicking on the element to enable Edit mode.
-  await driver
-    .findElement(By.xpath(`//*[contains(text(), "${oldvalue + "\n:"}")]`))
-    .click();
-  await driver.sleep(100); // Wait for edit box to render
-  // We can send one sendKeys command to the input box before loosing focus, so
-  // need to construct the command to send the correct number of backspaces to clear
-  // the field, then enter the new value, then Enter to confirm the change.
-  let s = "";
-  for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
-  s += newvalue + Key.ENTER;
-  await driver
-    .findElement(By.xpath(`//div[@class="easy-edit-component-wrapper"]//input`))
-    .sendKeys(s);
+  await element.sendKeys(s);
 };
 
 const SetCheckBox = async (
@@ -255,6 +218,25 @@ const SetCheckBoxByID = async (
   // Set checkbox to checked or unchecked
   const checkbox = await driver.findElement(By.id(id));
   await SetCheckBox(checkbox, checked);
+};
+
+const ClearGraph = async (
+  driver: webdriver.ThenableWebDriver,
+) => {
+  // Clear graph
+  await driver.findElement(By.id("btnGraphDropdown")).click();
+  await driver.findElement(By.id("btnBuilderClearScene")).click();
+  // Wait for Graph dropdown menu to close
+  while (true) {  // eslint-disable-line no-constant-condition
+    try {
+      await driver.findElement(By.xpath('//ul[@aria-labelledby="graphDropdown"]'));
+      await driver.sleep(50);
+    }
+    catch (NoSuchElementError) {
+      // Element has closed
+      break;
+    }
+  }
 };
 
 const BuildAndRun_SingleModuleWorkflow = async (
@@ -293,7 +275,7 @@ export const MultiModuleWorkflow_Setup = async (
 ) => {
   console.log("::: test Build and Test the workflow (setup)");
   // Drag-and-drop module from modules-list into scene
-  await driver.findElement(By.id("btnBuilderClearScene")).click();
+  await ClearGraph(driver);
   // Force modules to be loaded in order
   for (let k = 0; k < modulenames.length; k++) {
     const module = await driver.findElement(
@@ -301,9 +283,13 @@ export const MultiModuleWorkflow_Setup = async (
     );
     const canvas = await driver.findElement(By.className("react-flow__pane"));
     await dragAndDrop(driver, module, canvas);
-    // Give time for the module to be created on the canvas,
-    // and for the config to load
-    await driver.sleep(100);
+    await driver.wait(
+      until.elementLocated(
+        By.xpath(
+          `//div[@data-id="n${k}"]`,
+        ),
+      ),
+    );
   }
 
   // Force connections to be connected in order
@@ -329,7 +315,8 @@ export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
 ) => {
   console.log("::: test Build and Test the workflow (CleanAndDeterminTargets)");
   // Clean build folder (initial); assert target output does not exist
-  await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
+  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
+  await driver.findElement(By.id("btnCleanBuildFolder")).click();
   const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   const target_files = outfiles.map((outfile) => {
@@ -357,6 +344,7 @@ export const MultiModuleWorkflow_BuildAndCheck = async ({
   console.log("::: test Build and Test the workflow (build-and-check)");
 
   // Build and test; assert output files exist
+  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
   await driver.findElement(By.id("btnBuilderBuildAndTest")).click();
   const msg = await WaitForReturnCode(driver, "builder/build-and-run");
   expect(msg.returncode).toEqual(0);
@@ -373,7 +361,8 @@ export const MultiModuleWorkflow_TidyUp = async (
   console.log("::: test Build and Test the workflow (tidy-up)");
 
   // Clean build folder (tidy-up); assert target output does not exist
-  await driver.findElement(By.id("btnBuilderCleanBuildFolder")).click();
+  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
+  await driver.findElement(By.id("btnCleanBuildFolder")).click();
   const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
@@ -402,14 +391,20 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
   // Drag-and-drop module from modules-list into scene
   console.log("Drag-and-drop module from modules-list into scene");
-  await driver.findElement(By.id("btnBuilderClearScene")).click();
+  await ClearGraph(driver);
   const module = await driver.findElement(
     By.id("modulelist-" + wranglename(modulename)),
   );
   const canvas = await driver.findElement(By.className("react-flow__pane"));
   await dragAndDrop(driver, module, canvas);
-  // Give time for the config to load and for the module to be created on the canvas
-  await driver.sleep(100);
+  await driver.wait(
+    until.elementLocated(
+      By.xpath(
+        `//div[@data-id="n0"]`,
+      ),
+    ),
+  )
+  await canvas.click(); // Click on the canvas to deselect the module
 
   // Open the module in the editor and Expand, replacing the module with its sub-modules
   //
@@ -428,7 +423,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
       By.xpath(`//div[text()='${modulename}']`),
     );
     for (const element of elements) await element.click();
-    await driver.sleep(100); // Wait for module settings to expand
+    await driver.sleep(50); // Wait for module settings to expand
     await driver.findElement(By.id("btnBuilderExpand")).click();
   }
 
@@ -440,6 +435,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
   // Build, outputs zip-file
   console.log("Build, outputs zip-file");
+  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
   await driver.findElement(By.id("btnBuilderBuildAsWorkflow")).click();
   const msg = await WaitForReturnCode(driver, "builder/build-as-workflow");
   expect(msg.returncode).toEqual(0);
@@ -530,6 +526,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
 export {
   runif,
+  ClearGraph,
   is_installed,
   is_windows,
   is_not_windows,
@@ -538,8 +535,7 @@ export {
   FlushConsoleLog,
   WaitForReturnCode,
   SetCheckBoxByID,
-  EasyEdit_SetFieldByKey,
-  EasyEdit_SetFieldByValue,
+  OverwriteInputField,
   BuildAndRun_SingleModuleWorkflow,
   BuildAndRun_MultiModuleWorkflow,
   Build_RunWithDocker_SingleModuleWorkflow,

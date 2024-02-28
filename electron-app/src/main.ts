@@ -128,6 +128,7 @@ app.whenReady().then(() => {
       sendLogData(data + "\r\n"),
     ),
   );
+  ipcMain.handle("builder/open-results-folder", handles.builder_OpenResultsFolder);
 
   // Runner
   ipcMain.handle("runner/build", handles.runner_Build);
@@ -142,6 +143,10 @@ app.whenReady().then(() => {
     "runner/check-node-dependencies",
     handles.runner_CheckNodeDependencies,
   );
+});
+
+app.on("will-quit", () => {
+  // Clean up
 });
 
 app.on("window-all-closed", () => {
