@@ -465,3 +465,11 @@ def test_PackageModule_Remote():
     assert (workflow_path / "config" / "config.yaml").exists()
     # Clean up
     shutil.rmtree(pathlib.Path(build_path))
+
+
+def test_WrangleIfBuiltin():
+    m = Model()
+    assert m.WrangleIfBuiltin("module") == "module"  # no clash
+    assert m.WrangleIfBuiltin("input") == "input_"  # clashes with python keyword
+    assert m.WrangleIfBuiltin("output") == "output"  # no clash
+    assert m.WrangleIfBuiltin("filter") == "filter_"  # clashes with python keyword

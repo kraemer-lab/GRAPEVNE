@@ -129,6 +129,9 @@ const Header = () => {
         <MenuItem id="btnBuilderSaveScene" onClick={btnSaveScene}>
           SAVE
         </MenuItem>
+        <MenuItem>
+          EXPORT
+        </MenuItem>
         <MenuItem id="btnBuilderClearScene" onClick={btnClearScene}>
           CLEAR
         </MenuItem>

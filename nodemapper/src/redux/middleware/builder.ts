@@ -66,40 +66,73 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/build-and-run':
-          BuildAndRun(
-            dispatch,
-            getState().builder.snakemake_args,
-            getState().builder.snakemake_backend,
-            getState().builder.conda_backend,
-            getState().builder.environment_variables,
-            getState().builder.nodes,
-            getState().builder.edges,
-          );
+          BuildAndRun({
+            dispatchString: dispatch,
+            snakemake_args: getState().builder.snakemake_args,
+            snakemake_backend: getState().builder.snakemake_backend,
+            conda_backend: getState().builder.conda_backend,
+            environment_variables: getState().builder.environment_variables,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
+          break;
+
+        case 'builder/build-and-run-to-module':
+          BuildAndRunToModule({
+            nodename: action.payload,
+            dispatchString: dispatch,
+            snakemake_args: getState().builder.snakemake_args,
+            snakemake_backend: getState().builder.snakemake_backend,
+            conda_backend: getState().builder.conda_backend,
+            environment_variables: getState().builder.environment_variables,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
+          break;
+        
+        case 'builder/build-and-force-run-to-module':
+          BuildAndForceRunToModule({
+            nodename: action.payload,
+            dispatchString: dispatch,
+            snakemake_args: getState().builder.snakemake_args,
+            snakemake_backend: getState().builder.snakemake_backend,
+            conda_backend: getState().builder.conda_backend,
+            environment_variables: getState().builder.environment_variables,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
           break;
 
         case 'builder/clean-build-folder':
-          CleanBuildFolder(dispatch);
-          break;
-
-        case 'builder/add-link':
+          CleanBuildFolder({
+            dispatchString: dispatch,
+          });
           break;
 
         case 'builder/check-node-dependencies':
-          CheckNodeDependencies(
-            action.payload,
-            getState().builder.nodes,
-            getState().builder.edges,
-            dispatch,
-            getState().builder.snakemake_backend,
-          );
+          CheckNodeDependencies({
+            nodename: action.payload,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+            dispatchString: dispatch,
+            dispatchNodeList: dispatch,
+            snakemake_backend: getState().builder.snakemake_backend,
+          });
           break;
 
         case 'builder/node-selected':
-          NodeSelected(action.payload, dispatch);
+          NodeSelected({
+            node: action.payload,
+            dispatchString: dispatch,
+          });
           break;
 
         case 'builder/node-selected-by-id':
-          NodeSelectedByID(action.payload, getState().builder.nodes, dispatch);
+          NodeSelectedByID({
+            id: action.payload,
+            nodes: getState().builder.nodes,
+            dispatchString: dispatch,
+          });
           break;
 
         case 'builder/node-deselected':
@@ -107,25 +140,29 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/update-node-info-key':
-          UpdateNodeInfoKey(
-            action,
-            dispatch,
-            JSON.parse(getState().builder.nodeinfo),
-            getState().builder.nodes,
-          );
+          UpdateNodeInfoKey({
+            action: action,
+            dispatch: dispatch,
+            nodeinfo: JSON.parse(getState().builder.nodeinfo),
+            nodes: getState().builder.nodes,
+          });
           break;
 
         case 'builder/update-node-info-name':
-          UpdateNodeInfoName(
-            action,
-            dispatch,
-            JSON.parse(getState().builder.nodeinfo),
-            getState().builder.nodes,
-          );
+          UpdateNodeInfoName({
+            action: action,
+            dispatch: dispatch,
+            nodeinfo: JSON.parse(getState().builder.nodeinfo),
+            nodes: getState().builder.nodes,
+          });
           break;
 
         case 'builder/get-remote-modules':
-          GetRemoteModules(dispatch, getState().builder.repositories);
+          GetRemoteModules({
+            dispatchString: dispatch,
+            dispatchBool: dispatch,
+            repo: getState().builder.repositories,
+          });
           break;
 
         case 'builder/update-modules-list':
@@ -133,7 +170,10 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/update-status-text':
-          UpdateStatusText(dispatch, action.payload);
+          UpdateStatusText({
+            dispatch: dispatch,
+            text: action.payload,
+          });
           break;
 
         case 'builder/read-store-config':
@@ -153,7 +193,11 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/save-scene':
-          SaveScene(dispatch, getState().builder.nodes, getState().builder.edges);
+          SaveScene({
+            dispatch: dispatch,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
           break;
 
         default:
@@ -186,6 +230,18 @@ interface IPayloadBool {
   type: string;
 }
 type TPayloadBool = (action: IPayloadBool) => void;
+
+interface IPayloadNodeList {
+  payload: Node[];
+  type: string;
+}
+type TPayloadNodeList = (action: IPayloadNodeList) => void;
+
+interface IPayloadEdgeList {
+  payload: Edge[];
+  type: string;
+}
+type TPayloadEdgeList = (action: IPayloadEdgeList) => void;
 
 interface IBuildAs {
   query_name: string;
@@ -247,7 +303,7 @@ const BuildAs = async ({
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQueryExpectZip(query, callback);
+      SubmitQueryExpectZip({ query, callback });
       break;
     case 'electron':
       callback(await builder_api_fcn(query));
@@ -257,7 +313,7 @@ const BuildAs = async ({
   }
 };
 
-const BuildAndRun = async (
+interface IBuildAndRun {
   dispatchString: TPayloadString,
   snakemake_args: string,
   snakemake_backend: string,
@@ -265,7 +321,17 @@ const BuildAndRun = async (
   environment_variables: string,
   nodes: Node[],
   edges: Edge[],
-) => {
+}
+
+const BuildAndRun = async ({
+  dispatchString,
+  snakemake_args,
+  snakemake_backend,
+  conda_backend,
+  environment_variables,
+  nodes,
+  edges,
+}: IBuildAndRun) => {
   dispatchString(builderUpdateStatusText('Building workflow and launching a test run...'));
   const app = BuilderEngine.Instance;
   const query: Query = {
@@ -293,7 +359,7 @@ const BuildAndRun = async (
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery(query, dispatchString, callback);
+      SubmitQuery({query, dispatch: dispatchString, callback});
       break;
     case 'electron':
       callback(await builderAPI.BuildAndRun(query));
@@ -303,14 +369,95 @@ const BuildAndRun = async (
   }
 };
 
-const CleanBuildFolder = async (dispatchString: TPayloadString) => {
+interface IBuildAndRunToModule extends IBuildAndRun {
+  nodename: string,
+}
+
+const BuildAndRunToModule = async ({
+  nodename,
+  dispatchString,
+  snakemake_args,
+  snakemake_backend,
+  conda_backend,
+  environment_variables,
+  nodes,
+  edges,
+}: IBuildAndRunToModule) => {
+  dispatchString(builderUpdateStatusText('Building workflow and launching a test run...'));
   const app = BuilderEngine.Instance;
+  const query: Query = {
+    query: 'builder/build-and-run',
+    data: {
+      format: 'Snakefile',
+      content: app.GetModuleListJSON(nodes, edges),
+      targets: [nodename],
+      args: snakemake_args,
+      backend: snakemake_backend,
+      conda_backend: conda_backend,
+      environment_variables: environment_variables,
+    },
+  };
+  const callback = (content: Query) => {
+    console.log(content);
+    if (content['returncode'] !== 0) {
+      // Report error
+      dispatchString(builderUpdateStatusText('Workflow run FAILED.'));
+      return;
+    }
+    dispatchString(builderUpdateWorkdir(content['body']['workdir'] as string));
+    dispatchString(builderUpdateStatusText('')); // Idle
+  };
+  switch (backend as string) {
+    case 'rest':
+      query['data']['content'] = JSON.stringify(query['data']['content']);
+      SubmitQuery({query, dispatch: dispatchString, callback});
+      break;
+    case 'electron':
+      callback(await builderAPI.BuildAndRun(query));
+      break;
+    default:
+      console.error('Unknown backend: ', backend);
+  }
+};
+
+const BuildAndForceRunToModule = async ({
+  nodename,
+  dispatchString,
+  snakemake_args,
+  snakemake_backend,
+  conda_backend,
+  environment_variables,
+  nodes,
+  edges,
+}: IBuildAndRunToModule) => {
+  if (snakemake_args.indexOf('--force') === -1) {
+    snakemake_args = snakemake_args.concat(' --force');
+  }
+  BuildAndRunToModule({
+    nodename,
+    dispatchString,
+    snakemake_args,
+    snakemake_backend,
+    conda_backend,
+    environment_variables,
+    nodes,
+    edges,
+  });
+}
+
+interface ICleanBuildFolder {
+  dispatchString: TPayloadString,
+}
+
+const CleanBuildFolder = async ({
+  dispatchString
+}: ICleanBuildFolder) => {
   const query: Query = {
     query: 'builder/clean-build-folder',
     data: {
       format: 'Snakefile',
       content: {
-        path: '', // Path currently set in builder package
+        path: '', // Path set in builder package
       },
     },
   };
@@ -320,7 +467,7 @@ const CleanBuildFolder = async (dispatchString: TPayloadString) => {
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery(query, dispatchString, callback);
+      SubmitQuery({query, dispatch: dispatchString, callback});
       break;
     case 'electron':
       callback(await builderAPI.CleanBuildFolder(query));
@@ -330,13 +477,23 @@ const CleanBuildFolder = async (dispatchString: TPayloadString) => {
   }
 };
 
-const CheckNodeDependencies = async (
+interface ICheckNodeDependencies {
   nodename: string,
   nodes: Node[],
   edges: Edge[],
-  dispatch,
+  dispatchString: TPayloadString,
+  dispatchNodeList: TPayloadNodeList,
   snakemake_backend: string,
-) => {
+}
+
+const CheckNodeDependencies = async ({
+  nodename,
+  nodes,
+  edges,
+  dispatchString,
+  dispatchNodeList,
+  snakemake_backend,
+}: ICheckNodeDependencies) => {
   // Identify all incoming connections to the Target node and build
   //  a JSON Builder object, given it's immediate dependencies
   const app = BuilderEngine.Instance;
@@ -358,14 +515,14 @@ const CheckNodeDependencies = async (
   // Set node grey to indicate checking
   const node_type = app.getNodeType(node);
   const all_nodes = app.setNodeColor(node, 'rgb(192,192,192)', nodes);
-  dispatch(builderSetNodes(all_nodes));
+  dispatchNodeList(builderSetNodes(all_nodes));
 
   const callback = (data: Query) => {
-    dispatch(builderUpdateStatusText(''));
+    dispatchString(builderUpdateStatusText(''));
     switch (data['body']['status']) {
       case 'ok':
         data['returncode'] = 0;
-        dispatch(
+        dispatchNodeList(
           builderSetNodes(
             app.setNodeColor(node, BuilderEngine.GetModuleTypeColor(node_type), nodes),
           ),
@@ -373,7 +530,7 @@ const CheckNodeDependencies = async (
         break;
       case 'missing':
         data['returncode'] = 1;
-        dispatch(builderSetNodes(app.setNodeColor(node, 'red', nodes)));
+        dispatchNodeList(builderSetNodes(app.setNodeColor(node, 'red', nodes)));
         break;
       default:
         data['returncode'] = -1;
@@ -383,7 +540,7 @@ const CheckNodeDependencies = async (
   };
   switch (backend as string) {
     case 'rest':
-      postRequestCheckNodeDependencies(query, dispatch, callback);
+      postRequestCheckNodeDependencies({query, dispatch: dispatchString, callback});
       break;
     case 'electron':
       callback(await runnerAPI.CheckNodeDependencies(query));
@@ -393,7 +550,12 @@ const CheckNodeDependencies = async (
   }
 };
 
-const NodeSelected = (node: Node, dispatch) => {
+interface INodeSelected {
+  node: Node,
+  dispatchString: TPayloadString,
+}
+
+const NodeSelected = ({ node, dispatchString }: INodeSelected) => {
   const payload = {
     id: node.id,
     name: node.data.config.name,
@@ -401,12 +563,22 @@ const NodeSelected = (node: Node, dispatch) => {
     nodeparams: JSON.stringify(node.data.config.config, null, 2),
   };
   // Open module parameters pane
-  dispatch(builderUpdateNodeInfo(JSON.stringify(payload)));
+  dispatchString(builderUpdateNodeInfo(JSON.stringify(payload)));
 };
 
-const NodeSelectedByID = (id: string, nodes: Node[], dispatch) => {
+interface INodeSelectedByID {
+  id: string,
+  nodes: Node[],
+  dispatchString: TPayloadString,
+}
+
+const NodeSelectedByID = ({
+  id,
+  nodes,
+  dispatchString,
+}: INodeSelectedByID) => {
   const node = getNodeById(id, nodes) as Node;
-  NodeSelected(node, dispatch);
+  NodeSelected({node, dispatchString});
 };
 
 interface INodeDeselectedDispatch {
@@ -418,7 +590,19 @@ const NodeDeselected = (dispatch: TNodeDeselectedDispatch) => {
   dispatch(builderUpdateNodeInfo(''));
 };
 
-const UpdateNodeInfoKey = (action: IPayloadRecord, dispatch, nodeinfo, nodes: Node[]): void => {
+interface IUpdateNodeInfoKey {
+  action: IPayloadRecord;
+  dispatch;
+  nodeinfo;
+  nodes: Node[];
+}
+
+const UpdateNodeInfoKey = ({
+  action,
+  dispatch,
+  nodeinfo,
+  nodes,
+}: IUpdateNodeInfoKey): void => {
   // Update field for node
   console.log('Middleware: UpdateNodeInfoKey');
   const node = getNodeById(nodeinfo.id, nodes) as Node;
@@ -446,7 +630,19 @@ const UpdateNodeInfoKey = (action: IPayloadRecord, dispatch, nodeinfo, nodes: No
   }
 };
 
-const UpdateNodeInfoName = (action: IPayloadString, dispatch, nodeinfo, nodes: Node[]): void => {
+interface IUpdateNodeInfoName {
+  action: IPayloadString,
+  dispatch,
+  nodeinfo,
+  nodes: Node[],
+}
+
+const UpdateNodeInfoName = ({
+  action,
+  dispatch,
+  nodeinfo,
+  nodes,
+}: IUpdateNodeInfoName): void => {
   // Update field for node
   console.log('Middleware: UpdateNodeInfoName');
   const builder = BuilderEngine.Instance;
@@ -464,12 +660,17 @@ const UpdateNodeInfoName = (action: IPayloadString, dispatch, nodeinfo, nodes: N
   }
 };
 
-const GetRemoteModules = async (dispatch, repo: string) => {
+interface IGetRemoteModules {
+  dispatchString: TPayloadString,
+  dispatchBool: TPayloadBool,
+  repo: string,
+}
+
+const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemoteModules) => {
   // Get list of remote modules
-  dispatch(builderUpdateStatusText('Loading modules...'));
-  dispatch(builderSetModulesLoading(true));
+  dispatchString(builderUpdateStatusText('Loading modules...'));
+  dispatchBool(builderSetModulesLoading(true));
   console.log('Repository settings: ', repo);
-  const app = BuilderEngine.Instance;
   const query: Query = {
     query: 'builder/get-remote-modules',
     data: {
@@ -483,19 +684,18 @@ const GetRemoteModules = async (dispatch, repo: string) => {
     console.log(content);
     if (content['returncode'] !== 0) {
       // Report error
-      dispatch(builderSetModulesLoading(false));
-      dispatch(builderUpdateStatusText(content['body'] as string));
+      dispatchBool(builderSetModulesLoading(false));
+      dispatchString(builderUpdateStatusText(content['body'] as string));
     } else {
-      dispatch(builderUpdateModulesList(content['body'] as string));
-      dispatch(builderSetModulesLoading(false));
-      dispatch(builderUpdateStatusText('Modules loaded.'));
+      dispatchString(builderUpdateModulesList(content['body'] as string));
+      dispatchBool(builderSetModulesLoading(false));
+      dispatchString(builderUpdateStatusText('Modules loaded.'));
     }
   };
-  let response: Record<string, undefined>;
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery(query, dispatch, callback);
+      SubmitQuery({query, dispatch: dispatchString, callback});
       break;
     case 'electron':
       callback(await builderAPI.GetRemoteModules(query));
@@ -537,8 +737,12 @@ const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
   dispatch(builderUpdateSettings(local_config));
 };
 
+interface IOpenResultsFolder {
+  workdir: string,
+}
+
 // Open the current working directory with the native file explorer
-const OpenResultsFolder = async (workdir: string) => {
+const OpenResultsFolder = ({ workdir }: IOpenResultsFolder) => {
   builderAPI.OpenResultsFolder(workdir);
 };
 
@@ -546,7 +750,12 @@ const OpenResultsFolder = async (workdir: string) => {
 // POST request handlers
 ///////////////////////////////////////////////////////////////////////////////
 
-const SubmitQueryExpectZip = (query: Query, callback: (content: unknown) => void) => {
+interface ISubmitQueryExpectZip {
+  query: Query,
+  callback: (content: unknown) => void,
+}
+
+const SubmitQueryExpectZip = async ({ query, callback }: ISubmitQueryExpectZip) => {
   // POST request handler
   const postZIPRequest = async () => {
     const postRequestOptions = {
@@ -592,11 +801,17 @@ const SubmitQueryExpectZip = (query: Query, callback: (content: unknown) => void
   postZIPRequest();
 };
 
-const postRequestCheckNodeDependencies = async (
+interface IPostRequestCheckNodeDependencies {
   query: Query,
   dispatch: TPayloadString,
   callback: (data: Query) => void,
-) => {
+}
+
+const postRequestCheckNodeDependencies = ({
+  query,
+  dispatch,
+  callback,
+}: IPostRequestCheckNodeDependencies) => {
   const postRequestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json;charset=UTF-8' },
@@ -622,7 +837,13 @@ const postRequestCheckNodeDependencies = async (
     });
 };
 
-const SubmitQuery = (query: Query, dispatch, callback) => {
+interface ISubmitQuery {
+  query: Query;
+  dispatch: TPayloadString;
+  callback: (content: unknown) => void;
+}
+
+const SubmitQuery = async ({ query, dispatch, callback }: ISubmitQuery) => {
   // POST request handler
   const postRequest = async () => {
     const postRequestOptions = {
@@ -660,12 +881,23 @@ const SubmitQuery = (query: Query, dispatch, callback) => {
   if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
 };
 
-const UpdateStatusText = (dispatch: TPayloadString, text: string) => {
+interface IUpdateStatusText {
+  dispatch: TPayloadString,
+  text: string,
+}
+
+const UpdateStatusText = ({ dispatch, text }: IUpdateStatusText) => {
   // Send a copy of the status text to the logger
   dispatch(builderLogEvent(text));
 };
 
-const LoadScene = (dispatch) => {
+interface ILoadScene {
+  dispatchString: TPayloadString,
+  dispatchNodeList: TPayloadNodeList,
+  dispatchEdgeList: TPayloadEdgeList,
+}
+
+const LoadScene = ({ dispatchString, dispatchNodeList, dispatchEdgeList }: ILoadScene) => {
   const element = document.createElement('input');
   element.setAttribute('type', 'file');
   element.setAttribute('accept', '.json');
@@ -677,16 +909,22 @@ const LoadScene = (dispatch) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const scene = JSON.parse(e.target.result as string);
-      dispatch(builderSetNodes(scene.nodes));
-      dispatch(builderSetEdges(scene.edges));
-      dispatch(builderUpdateStatusText('Scene loaded.'));
+      dispatchNodeList(builderSetNodes(scene.nodes));
+      dispatchEdgeList(builderSetEdges(scene.edges));
+      dispatchString(builderUpdateStatusText('Scene loaded.'));
     };
     reader.readAsText(file);
   };
   document.body.removeChild(element);
 };
 
-const SaveScene = (dispatch, nodes: Node[], edges: Edge[]) => {
+interface ISaveScene {
+  dispatch: TPayloadString,
+  nodes: Node[],
+  edges: Edge[],
+}
+
+const SaveScene = ({ dispatch, nodes, edges }: ISaveScene) => {
   const scene = {
     nodes: nodes,
     edges: edges,

@@ -1,7 +1,13 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { builderBuildAndRunToModule } from 'redux/actions';
+import { builderBuildAndForceRunToModule } from 'redux/actions';
+
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import BuilderEngine from './BuilderEngine';
 
-import Button from '@mui/material/Button';
 import { useCallback } from 'react';
 import { useReactFlow } from 'reactflow';
 import { useAppSelector } from 'redux/store/hooks';
@@ -15,8 +21,9 @@ interface ContextMenuProps {
   bottom: number;
 }
 
-export default function ContextMenu({ id, top, left, right, bottom, ...props }: ContextMenuProps) {
+const ContextMenu = ({ id, top, left, right, bottom, ...props }: ContextMenuProps) => {
   const { getNode, setNodes, addNodes, setEdges } = useReactFlow();
+  const dispatch = useDispatch();
   const nodes = useAppSelector((state) => state.builder.nodes);
   const node_name = getNodeById(id, nodes).data.config.name;
 
@@ -38,13 +45,25 @@ export default function ContextMenu({ id, top, left, right, bottom, ...props }: 
     setEdges((edges) => edges.filter((edge) => edge.source !== id));
   }, [id, setNodes, setEdges]);
 
+  const runToModule = () => {
+    dispatch(builderBuildAndRunToModule(node_name));
+  }
+  
+  const forceRunToModule = () => {
+    dispatch(builderBuildAndForceRunToModule(node_name));
+  }
+
   return (
-    <div style={{ top, left, right, bottom }} className="context-menu" {...props}>
-      <p style={{ margin: '0.5em' }}>
-        <small>{node_name}</small>
-      </p>
+    <Box style={{ top, left, right, bottom }} className="context-menu" {...props}>
+      <Box style={{ margin: '0.5em' }}>
+        <Typography>{node_name}</Typography>
+      </Box>
+      <Button onClick={runToModule}>run to module</Button>
+      <Button onClick={forceRunToModule}>run to module (force)</Button>
       <Button onClick={duplicateNode}>duplicate</Button>
       <Button onClick={deleteNode}>delete</Button>
-    </div>
+    </Box>
   );
 }
+
+export default ContextMenu;

@@ -7,6 +7,7 @@ import pathlib
 import re
 import shutil
 import tempfile
+import builtins
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -244,10 +245,11 @@ class Model:
         if len(module_output_namespaces) == 1:
             c["output_namespace"] = module_output_namespaces[0]
         else:
-            raise ValueError(
+            logging.warn(
                 "Multiple output namespaces not currently supported. " "Requested: ",
                 module_output_namespaces,
             )
+            c["output_namespace"] = module_output_namespaces[0]
         # Add configurations for each module
         for node in self.nodes:
             cnode = node.config.copy()
@@ -532,7 +534,7 @@ class Model:
 
     def WrangleRuleName(self, name: str) -> str:
         """Wrangles a valid rulename (separate from the human readable name)"""
-        return (
+        return self.WrangleIfBuiltin(
             name.replace(" ", "_")
             .replace("/", "_")
             .replace(".", "_")
@@ -540,6 +542,17 @@ class Model:
             .replace(")", "")
             .lower()
         )
+
+    def WrangleIfBuiltin(self, name: str) -> str:
+        """Prevent name from clashing with Python builtin functions
+
+        Function name clashes can lead to obscure errors, so wrangle the rulename away
+        from any such clashes.
+        """
+        if name in dir(builtins):
+            return self.WrangleIfBuiltin(name + "_")
+        else:
+            return name
 
     def AddModule(self, name: str, module: dict) -> Module:
         """Adds a module to the workflow"""

@@ -25,6 +25,8 @@ export const builderBuildAsModule = createAction('builder/build-as-module');
 export const builderBuildAsWorkflow = createAction('builder/build-as-workflow');
 export const builderOpenTerminal = createAction('builder/open-terminal');
 export const builderBuildAndRun = createAction('builder/build-and-run');
+export const builderBuildAndRunToModule = createAction<string>('builder/build-and-run-to-module');
+export const builderBuildAndForceRunToModule = createAction<string>('builder/build-and-force-run-to-module');
 export const builderCleanBuildFolder = createAction('builder/clean-build-folder');
 export const builderGetRemoteModules = createAction('builder/get-remote-modules');
 
