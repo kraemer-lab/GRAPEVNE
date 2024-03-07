@@ -1,4 +1,5 @@
 import argparse
+import builtins
 import copy
 import json
 import logging
@@ -7,7 +8,6 @@ import pathlib
 import re
 import shutil
 import tempfile
-import builtins
 from typing import List
 from typing import Optional
 from typing import Tuple

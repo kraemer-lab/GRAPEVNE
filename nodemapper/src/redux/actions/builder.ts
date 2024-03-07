@@ -7,6 +7,8 @@ export const builderAddNode = createAction<Node>('builder/add-node');
 export const builderAddNodes = createAction<Node[]>('builder/add-nodes');
 export const builderUpdateNode = createAction<Node>('builder/update-node');
 export const builderSetEdges = createAction<Edge[]>('builder/set-edges');
+export const builderExportAsPNG = createAction('builder/export-as-png');
+export const builderExportAsSVG = createAction('builder/export-as-svg');
 
 export const builderLoadNodemap = createAction('builder/load-nodemap');
 export const builderSaveNodemap = createAction('builder/save-nodemap');
@@ -26,7 +28,9 @@ export const builderBuildAsWorkflow = createAction('builder/build-as-workflow');
 export const builderOpenTerminal = createAction('builder/open-terminal');
 export const builderBuildAndRun = createAction('builder/build-and-run');
 export const builderBuildAndRunToModule = createAction<string>('builder/build-and-run-to-module');
-export const builderBuildAndForceRunToModule = createAction<string>('builder/build-and-force-run-to-module');
+export const builderBuildAndForceRunToModule = createAction<string>(
+  'builder/build-and-force-run-to-module',
+);
 export const builderCleanBuildFolder = createAction('builder/clean-build-folder');
 export const builderGetRemoteModules = createAction('builder/get-remote-modules');
 

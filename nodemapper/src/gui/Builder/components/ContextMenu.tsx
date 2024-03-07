@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { builderBuildAndRunToModule } from 'redux/actions';
-import { builderBuildAndForceRunToModule } from 'redux/actions';
+import { builderBuildAndForceRunToModule, builderBuildAndRunToModule } from 'redux/actions';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -47,11 +46,11 @@ const ContextMenu = ({ id, top, left, right, bottom, ...props }: ContextMenuProp
 
   const runToModule = () => {
     dispatch(builderBuildAndRunToModule(node_name));
-  }
-  
+  };
+
   const forceRunToModule = () => {
     dispatch(builderBuildAndForceRunToModule(node_name));
-  }
+  };
 
   return (
     <Box style={{ top, left, right, bottom }} className="context-menu" {...props}>
@@ -64,6 +63,6 @@ const ContextMenu = ({ id, top, left, right, bottom, ...props }: ContextMenuProp
       <Button onClick={deleteNode}>delete</Button>
     </Box>
   );
-}
+};
 
 export default ContextMenu;

@@ -15,7 +15,13 @@ import {
 } from 'redux/actions';
 
 import { Node } from 'NodeMap/scene/Flow';
-import { getNodeById, setNodeName, setNodeWorkflow } from 'gui/Builder/components/Flow';
+import {
+  ExportAsPNG,
+  ExportAsSVG,
+  getNodeById,
+  setNodeName,
+  setNodeWorkflow,
+} from 'gui/Builder/components/Flow';
 import { Edge } from 'reactflow';
 
 type Query = Record<string, unknown>;
@@ -89,7 +95,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             edges: getState().builder.edges,
           });
           break;
-        
+
         case 'builder/build-and-force-run-to-module':
           BuildAndForceRunToModule({
             nodename: action.payload,
@@ -198,6 +204,14 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
           });
+          break;
+
+        case 'builder/export-as-png':
+          ExportAsPNG(getState().builder.nodes);
+          break;
+
+        case 'builder/export-as-svg':
+          ExportAsSVG(getState().builder.nodes);
           break;
 
         default:
@@ -314,13 +328,13 @@ const BuildAs = async ({
 };
 
 interface IBuildAndRun {
-  dispatchString: TPayloadString,
-  snakemake_args: string,
-  snakemake_backend: string,
-  conda_backend: string,
-  environment_variables: string,
-  nodes: Node[],
-  edges: Edge[],
+  dispatchString: TPayloadString;
+  snakemake_args: string;
+  snakemake_backend: string;
+  conda_backend: string;
+  environment_variables: string;
+  nodes: Node[];
+  edges: Edge[];
 }
 
 const BuildAndRun = async ({
@@ -359,7 +373,7 @@ const BuildAndRun = async ({
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery({query, dispatch: dispatchString, callback});
+      SubmitQuery({ query, dispatch: dispatchString, callback });
       break;
     case 'electron':
       callback(await builderAPI.BuildAndRun(query));
@@ -370,7 +384,7 @@ const BuildAndRun = async ({
 };
 
 interface IBuildAndRunToModule extends IBuildAndRun {
-  nodename: string,
+  nodename: string;
 }
 
 const BuildAndRunToModule = async ({
@@ -410,7 +424,7 @@ const BuildAndRunToModule = async ({
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery({query, dispatch: dispatchString, callback});
+      SubmitQuery({ query, dispatch: dispatchString, callback });
       break;
     case 'electron':
       callback(await builderAPI.BuildAndRun(query));
@@ -443,15 +457,13 @@ const BuildAndForceRunToModule = async ({
     nodes,
     edges,
   });
-}
+};
 
 interface ICleanBuildFolder {
-  dispatchString: TPayloadString,
+  dispatchString: TPayloadString;
 }
 
-const CleanBuildFolder = async ({
-  dispatchString
-}: ICleanBuildFolder) => {
+const CleanBuildFolder = async ({ dispatchString }: ICleanBuildFolder) => {
   const query: Query = {
     query: 'builder/clean-build-folder',
     data: {
@@ -467,7 +479,7 @@ const CleanBuildFolder = async ({
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery({query, dispatch: dispatchString, callback});
+      SubmitQuery({ query, dispatch: dispatchString, callback });
       break;
     case 'electron':
       callback(await builderAPI.CleanBuildFolder(query));
@@ -478,12 +490,12 @@ const CleanBuildFolder = async ({
 };
 
 interface ICheckNodeDependencies {
-  nodename: string,
-  nodes: Node[],
-  edges: Edge[],
-  dispatchString: TPayloadString,
-  dispatchNodeList: TPayloadNodeList,
-  snakemake_backend: string,
+  nodename: string;
+  nodes: Node[];
+  edges: Edge[];
+  dispatchString: TPayloadString;
+  dispatchNodeList: TPayloadNodeList;
+  snakemake_backend: string;
 }
 
 const CheckNodeDependencies = async ({
@@ -540,7 +552,7 @@ const CheckNodeDependencies = async ({
   };
   switch (backend as string) {
     case 'rest':
-      postRequestCheckNodeDependencies({query, dispatch: dispatchString, callback});
+      postRequestCheckNodeDependencies({ query, dispatch: dispatchString, callback });
       break;
     case 'electron':
       callback(await runnerAPI.CheckNodeDependencies(query));
@@ -551,8 +563,8 @@ const CheckNodeDependencies = async ({
 };
 
 interface INodeSelected {
-  node: Node,
-  dispatchString: TPayloadString,
+  node: Node;
+  dispatchString: TPayloadString;
 }
 
 const NodeSelected = ({ node, dispatchString }: INodeSelected) => {
@@ -567,18 +579,14 @@ const NodeSelected = ({ node, dispatchString }: INodeSelected) => {
 };
 
 interface INodeSelectedByID {
-  id: string,
-  nodes: Node[],
-  dispatchString: TPayloadString,
+  id: string;
+  nodes: Node[];
+  dispatchString: TPayloadString;
 }
 
-const NodeSelectedByID = ({
-  id,
-  nodes,
-  dispatchString,
-}: INodeSelectedByID) => {
+const NodeSelectedByID = ({ id, nodes, dispatchString }: INodeSelectedByID) => {
   const node = getNodeById(id, nodes) as Node;
-  NodeSelected({node, dispatchString});
+  NodeSelected({ node, dispatchString });
 };
 
 interface INodeDeselectedDispatch {
@@ -597,12 +605,7 @@ interface IUpdateNodeInfoKey {
   nodes: Node[];
 }
 
-const UpdateNodeInfoKey = ({
-  action,
-  dispatch,
-  nodeinfo,
-  nodes,
-}: IUpdateNodeInfoKey): void => {
+const UpdateNodeInfoKey = ({ action, dispatch, nodeinfo, nodes }: IUpdateNodeInfoKey): void => {
   // Update field for node
   console.log('Middleware: UpdateNodeInfoKey');
   const node = getNodeById(nodeinfo.id, nodes) as Node;
@@ -631,18 +634,13 @@ const UpdateNodeInfoKey = ({
 };
 
 interface IUpdateNodeInfoName {
-  action: IPayloadString,
-  dispatch,
-  nodeinfo,
-  nodes: Node[],
+  action: IPayloadString;
+  dispatch;
+  nodeinfo;
+  nodes: Node[];
 }
 
-const UpdateNodeInfoName = ({
-  action,
-  dispatch,
-  nodeinfo,
-  nodes,
-}: IUpdateNodeInfoName): void => {
+const UpdateNodeInfoName = ({ action, dispatch, nodeinfo, nodes }: IUpdateNodeInfoName): void => {
   // Update field for node
   console.log('Middleware: UpdateNodeInfoName');
   const builder = BuilderEngine.Instance;
@@ -661,9 +659,9 @@ const UpdateNodeInfoName = ({
 };
 
 interface IGetRemoteModules {
-  dispatchString: TPayloadString,
-  dispatchBool: TPayloadBool,
-  repo: string,
+  dispatchString: TPayloadString;
+  dispatchBool: TPayloadBool;
+  repo: string;
 }
 
 const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemoteModules) => {
@@ -695,7 +693,7 @@ const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemo
   switch (backend as string) {
     case 'rest':
       query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery({query, dispatch: dispatchString, callback});
+      SubmitQuery({ query, dispatch: dispatchString, callback });
       break;
     case 'electron':
       callback(await builderAPI.GetRemoteModules(query));
@@ -738,7 +736,7 @@ const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
 };
 
 interface IOpenResultsFolder {
-  workdir: string,
+  workdir: string;
 }
 
 // Open the current working directory with the native file explorer
@@ -751,8 +749,8 @@ const OpenResultsFolder = ({ workdir }: IOpenResultsFolder) => {
 ///////////////////////////////////////////////////////////////////////////////
 
 interface ISubmitQueryExpectZip {
-  query: Query,
-  callback: (content: unknown) => void,
+  query: Query;
+  callback: (content: unknown) => void;
 }
 
 const SubmitQueryExpectZip = async ({ query, callback }: ISubmitQueryExpectZip) => {
@@ -802,9 +800,9 @@ const SubmitQueryExpectZip = async ({ query, callback }: ISubmitQueryExpectZip) 
 };
 
 interface IPostRequestCheckNodeDependencies {
-  query: Query,
-  dispatch: TPayloadString,
-  callback: (data: Query) => void,
+  query: Query;
+  dispatch: TPayloadString;
+  callback: (data: Query) => void;
 }
 
 const postRequestCheckNodeDependencies = ({
@@ -882,8 +880,8 @@ const SubmitQuery = async ({ query, dispatch, callback }: ISubmitQuery) => {
 };
 
 interface IUpdateStatusText {
-  dispatch: TPayloadString,
-  text: string,
+  dispatch: TPayloadString;
+  text: string;
 }
 
 const UpdateStatusText = ({ dispatch, text }: IUpdateStatusText) => {
@@ -892,9 +890,9 @@ const UpdateStatusText = ({ dispatch, text }: IUpdateStatusText) => {
 };
 
 interface ILoadScene {
-  dispatchString: TPayloadString,
-  dispatchNodeList: TPayloadNodeList,
-  dispatchEdgeList: TPayloadEdgeList,
+  dispatchString: TPayloadString;
+  dispatchNodeList: TPayloadNodeList;
+  dispatchEdgeList: TPayloadEdgeList;
 }
 
 const LoadScene = ({ dispatchString, dispatchNodeList, dispatchEdgeList }: ILoadScene) => {
@@ -919,9 +917,9 @@ const LoadScene = ({ dispatchString, dispatchNodeList, dispatchEdgeList }: ILoad
 };
 
 interface ISaveScene {
-  dispatch: TPayloadString,
-  nodes: Node[],
-  edges: Edge[],
+  dispatch: TPayloadString;
+  nodes: Node[];
+  edges: Edge[];
 }
 
 const SaveScene = ({ dispatch, nodes, edges }: ISaveScene) => {
