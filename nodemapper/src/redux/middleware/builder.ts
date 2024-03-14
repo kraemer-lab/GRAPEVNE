@@ -210,7 +210,11 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/load-scene':
-          LoadScene(dispatch);
+          LoadScene({
+            dispatchString: dispatch,
+            dispatchNodeList: dispatch,
+            dispatchEdgeList: dispatch,
+          });
           break;
 
         case 'builder/save-scene':
