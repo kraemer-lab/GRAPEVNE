@@ -65,7 +65,22 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             snakemake_backend: getState().builder.snakemake_backend,
             conda_backend: getState().builder.conda_backend,
             environment_variables: getState().builder.environment_variables,
-            package_modules: getState().builder.package_modules_in_workflow,
+            package_modules: false,
+            nodes: getState().builder.nodes,
+            edges: getState().builder.edges,
+          });
+          break;
+        
+        case 'builder/package-workflow':
+          BuildAs({
+            query_name: 'builder/build-as-workflow',
+            builder_api_fcn: builderAPI.BuildAsWorkflow,
+            dispatchString: dispatch,
+            snakemake_args: getState().builder.snakemake_args,
+            snakemake_backend: getState().builder.snakemake_backend,
+            conda_backend: getState().builder.conda_backend,
+            environment_variables: getState().builder.environment_variables,
+            package_modules: true,
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
           });

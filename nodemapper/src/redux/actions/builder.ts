@@ -19,12 +19,10 @@ export const builderSetAutoValidateConnections = createAction<boolean>(
 export const builderToggleAutoValidateConnections = createAction(
   'builder/toggle-auto-validate-connections',
 );
-export const builderSetPackageModulesInWorkflow = createAction<boolean>(
-  'builder/set-package-modules-in-workflow',
-);
 
 export const builderBuildAsModule = createAction('builder/build-as-module');
 export const builderBuildAsWorkflow = createAction('builder/build-as-workflow');
+export const builderPackageWorkflow = createAction('builder/package-workflow');
 export const builderOpenTerminal = createAction('builder/open-terminal');
 export const builderBuildAndRun = createAction('builder/build-and-run');
 export const builderBuildAndRunToModule = createAction<string>('builder/build-and-run-to-module');

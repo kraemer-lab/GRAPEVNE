@@ -413,6 +413,9 @@ def test_PackageModule_Local():
     assert (workflow_path / "workflow" / "Snakefile").exists()
     assert (workflow_path / "workflow" / "envs" / "conda.yaml").exists()
     assert (workflow_path / "config" / "config.yaml").exists()
+    assert not (workflow_path / ".snakemake" / "do_not_copy_me").exists()
+    assert not (workflow_path / ".snakemake" / "no_folder").exists()
+    assert not (workflow_path / ".snakemake" / "no_folder" / "do_not_copy_me2").exists()
     # Clean up
     shutil.rmtree(pathlib.Path(build_path))
 

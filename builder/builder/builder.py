@@ -334,7 +334,9 @@ class Model:
                 pathlib.Path(src, folder),
                 pathlib.Path(dest, folder),
                 dirs_exist_ok=True,
-                ignore=shutil.ignore_patterns(*ignore_anywhere),
+                ignore=lambda directory, contents: contents
+                if any(map(directory.endswith, ignore_anywhere))
+                else set(),
             )
         # Redirect snakefile location in config
         node.snakefile = str(

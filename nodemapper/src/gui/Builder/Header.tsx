@@ -6,6 +6,7 @@ import {
   builderBuildAndRun,
   builderBuildAsModule,
   builderBuildAsWorkflow,
+  builderPackageWorkflow,
   builderCleanBuildFolder,
   builderExportAsPNG,
   builderExportAsSVG,
@@ -123,6 +124,12 @@ const Header = () => {
     btnBuildAndRunDropdownClose();
   };
 
+  // Package workflow
+  const btnPackageWorkflow = () => {
+    dispatch(builderPackageWorkflow());
+    btnBuildAndRunDropdownClose();
+  };
+
   // Open results folder
   const btnOpenResultsFolder = () => {
     dispatch(builderOpenResultsFolder());
@@ -226,10 +233,13 @@ const Header = () => {
         </MenuItem>
         <Divider />
         <MenuItem id="btnBuilderBuildAsModule" onClick={btnBuildAsModule}>
-          BUILD AS MODULE
+          BUILD MODULE
         </MenuItem>
         <MenuItem id="btnBuilderBuildAsWorkflow" onClick={btnBuildAsWorkflow}>
-          BUILD AS WORKFLOW
+          BUILD WORKFLOW
+        </MenuItem>
+        <MenuItem id="btnBuilderPackageWorkflow" onClick={btnPackageWorkflow}>
+          PACKAGE WORKFLOW
         </MenuItem>
       </Menu>
 
