@@ -439,7 +439,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   console.log("Build, outputs zip-file");
   await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
   if (packaged) {
-    await driver.findElement(By.id("btnPackageWorkflow")).click();
+    await driver.findElement(By.id("btnBuilderPackageWorkflow")).click();
   } else {
     await driver.findElement(By.id("btnBuilderBuildAsWorkflow")).click();
   }
