@@ -70,7 +70,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             edges: getState().builder.edges,
           });
           break;
-        
+
         case 'builder/package-workflow':
           BuildAs({
             query_name: 'builder/build-as-workflow',
