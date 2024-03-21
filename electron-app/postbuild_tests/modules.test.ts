@@ -123,7 +123,6 @@ describe("modules", () => {
     // Ensure that interface options are set as expected
     await SetCheckBoxByID(driver, "display_module_settings", false);
     await SetCheckBoxByID(driver, "auto_validate_connections", false);
-    await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
 
     // Close settings pane
     await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
@@ -733,6 +732,7 @@ describe("modules", () => {
         target_outfiles: target_files,
         payload_outfiles: payload_files,
         expand_module: true,
+        packaged: false,
       });
     },
     20 * ONE_MINUTE,
@@ -765,24 +765,15 @@ describe("modules", () => {
   ])(
     "Package workflow (container): module '%s'",
     async (modulename, target_files, payload_files) => {
-      // Set workflow packaging option
-      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
-      await SetCheckBoxByID(driver, "package_modules_in_workflow", true);
-      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
-
-      // Build and run workflow
+      // Build and run workflow (packaged)
       await Build_RunWithDocker_SingleModuleWorkflow({
         driver: driver,
         modulename: modulename,
         target_outfiles: target_files,
         payload_outfiles: payload_files,
         expand_module: false,
+        packaged: true,
       });
-
-      // Unset workflow packaging option
-      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
-      await SetCheckBoxByID(driver, "package_modules_in_workflow", false);
-      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
     },
     10 * ONE_MINUTE,
   ); // long timeout

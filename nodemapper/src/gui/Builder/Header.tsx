@@ -6,7 +6,10 @@ import {
   builderBuildAndRun,
   builderBuildAsModule,
   builderBuildAsWorkflow,
+  builderPackageWorkflow,
   builderCleanBuildFolder,
+  builderExportAsPNG,
+  builderExportAsSVG,
   builderLoadScene,
   builderNodeDeselected,
   builderOpenResultsFolder,
@@ -15,7 +18,9 @@ import {
   builderSetNodes,
 } from 'redux/actions';
 
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import Menu from '@mui/material/Menu';
@@ -28,15 +33,19 @@ const Header = () => {
   // Dropdown menu states
   const [anchorEl_graph, setAnchorEl_graph] = React.useState<null | HTMLElement>(null);
   const [anchorEl_buildandrun, setAnchorEl_buildandrun] = React.useState<null | HTMLElement>(null);
+  const [anchorEl_export, setAnchorEl_export] = React.useState<null | HTMLElement>(null);
   const open_graph = Boolean(anchorEl_graph);
   const open_buildandrun = Boolean(anchorEl_buildandrun);
+  const open_export = Boolean(anchorEl_export);
 
   const btnGraphDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl_graph(event.currentTarget);
+    setAnchorEl_export(null);
   };
 
   const btnGraphDropdownClose = () => {
     setAnchorEl_graph(null);
+    setAnchorEl_export(null);
   };
 
   const btnBuildAndRunDropdownClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,6 +68,26 @@ const Header = () => {
   // Save scene to file
   const btnSaveScene = () => {
     dispatch(builderSaveScene());
+    btnGraphDropdownClose();
+  };
+
+  const btnExportClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl_export(event.currentTarget);
+  };
+
+  const btnExportClose = () => {
+    setAnchorEl_export(null);
+  };
+
+  const btnBuilderExportAsPNG = () => {
+    dispatch(builderExportAsPNG());
+    btnExportClose();
+    btnGraphDropdownClose();
+  };
+
+  const btnBuilderExportAsSVG = () => {
+    dispatch(builderExportAsSVG());
+    btnExportClose();
     btnGraphDropdownClose();
   };
 
@@ -95,6 +124,12 @@ const Header = () => {
     btnBuildAndRunDropdownClose();
   };
 
+  // Package workflow
+  const btnPackageWorkflow = () => {
+    dispatch(builderPackageWorkflow());
+    btnBuildAndRunDropdownClose();
+  };
+
   // Open results folder
   const btnOpenResultsFolder = () => {
     dispatch(builderOpenResultsFolder());
@@ -114,6 +149,7 @@ const Header = () => {
         SCENE
       </Button>
 
+      {/* Scene menu */}
       <Menu
         id="graph-menu"
         anchorEl={anchorEl_graph}
@@ -123,17 +159,51 @@ const Header = () => {
           'aria-labelledby': 'graphDropdown',
         }}
       >
-        <MenuItem id="btnBuilderLoadScene" onClick={btnLoadScene}>
-          LOAD
+        <Box sx={{ width: 150 }}>
+          <MenuItem id="btnBuilderLoadScene" onClick={btnLoadScene}>
+            LOAD
+          </MenuItem>
+          <MenuItem id="btnBuilderSaveScene" onClick={btnSaveScene}>
+            SAVE
+          </MenuItem>
+          <MenuItem id="btnBuilderExport" onClick={btnExportClick}>
+            EXPORT
+            <Box style={{ flexGrow: 1 }} />
+            <ArrowRightIcon />
+          </MenuItem>
+          <MenuItem id="btnBuilderClearScene" onClick={btnClearScene}>
+            CLEAR
+          </MenuItem>
+        </Box>
+      </Menu>
+
+      {/* Scene - Export sub-menu */}
+      <Menu
+        open={open_export}
+        anchorEl={anchorEl_export}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        onClose={() => {
+          setAnchorEl_export(null);
+        }}
+        disableAutoFocusItem
+        autoFocus={false}
+      >
+        <MenuItem id="btnBuilderExportAsPNG" onClick={btnBuilderExportAsPNG}>
+          PNG
         </MenuItem>
-        <MenuItem id="btnBuilderSaveScene" onClick={btnSaveScene}>
-          SAVE
-        </MenuItem>
-        <MenuItem id="btnBuilderClearScene" onClick={btnClearScene}>
-          CLEAR
+        <MenuItem id="btnBuilderExportAsSVG" onClick={btnBuilderExportAsSVG}>
+          SVG
         </MenuItem>
       </Menu>
 
+      {/* Build & Run menu */}
       <Button
         id="btnBuildAndRunDropdown"
         aria-controls={open ? 'buildAndRunDropdown-menu' : undefined}
@@ -163,13 +233,17 @@ const Header = () => {
         </MenuItem>
         <Divider />
         <MenuItem id="btnBuilderBuildAsModule" onClick={btnBuildAsModule}>
-          BUILD AS MODULE
+          BUILD MODULE
         </MenuItem>
         <MenuItem id="btnBuilderBuildAsWorkflow" onClick={btnBuildAsWorkflow}>
-          BUILD AS WORKFLOW
+          BUILD WORKFLOW
+        </MenuItem>
+        <MenuItem id="btnBuilderPackageWorkflow" onClick={btnPackageWorkflow}>
+          PACKAGE WORKFLOW
         </MenuItem>
       </Menu>
 
+      {/* Open results folder */}
       <Button
         id="btnBuilderOpenResultsFolder"
         className="btn"

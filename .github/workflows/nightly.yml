@@ -28,7 +28,7 @@ jobs:
         # macos-12 provides Intel builds, macos-14 provides M1 builds
         os: [ubuntu-latest, windows-latest, macos-12, macos-14]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -36,7 +36,7 @@ jobs:
         with:
           chromedriver-version: "118.0.5993.89"
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: install MacOS (M1) build dependencies

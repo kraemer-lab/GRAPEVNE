@@ -377,7 +377,8 @@ interface IBuild_RunWithDocker_SingleModuleWorkflow {
   modulename: string;
   target_outfiles: string[];
   payload_outfiles: string[];
-  expand_module?: boolean;
+  expand_module: boolean;
+  packaged: boolean;
 }
 
 const Build_RunWithDocker_SingleModuleWorkflow = async ({
@@ -386,6 +387,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   target_outfiles,
   payload_outfiles,
   expand_module,
+  packaged,
 }: IBuild_RunWithDocker_SingleModuleWorkflow) => {
   console.log("::: test Build, then launch in Docker");
 
@@ -436,7 +438,11 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   // Build, outputs zip-file
   console.log("Build, outputs zip-file");
   await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
-  await driver.findElement(By.id("btnBuilderBuildAsWorkflow")).click();
+  if (packaged) {
+    await driver.findElement(By.id("btnBuilderPackageWorkflow")).click();
+  } else {
+    await driver.findElement(By.id("btnBuilderBuildAsWorkflow")).click();
+  }
   const msg = await WaitForReturnCode(driver, "builder/build-as-workflow");
   expect(msg.returncode).toEqual(0);
 

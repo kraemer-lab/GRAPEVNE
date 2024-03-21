@@ -5,7 +5,6 @@ import {
   builderSetAutoValidateConnections,
   builderSetDisplayModuleSettings,
   builderSetHideParamsInModuleInfo,
-  builderSetPackageModulesInWorkflow,
 } from 'redux/actions';
 
 import Checkbox from '@mui/material/Checkbox';
@@ -33,12 +32,6 @@ const InterfaceOptions = () => {
   );
   const SetAutoValidateConnections = (value: boolean) =>
     dispatch(builderSetAutoValidateConnections(value));
-
-  const package_modules_in_workflow = useAppSelector(
-    (state) => state.builder.package_modules_in_workflow,
-  );
-  const SetPackageModulesInWorkflow = (value: boolean) =>
-    dispatch(builderSetPackageModulesInWorkflow(value));
 
   return (
     <>
@@ -74,16 +67,6 @@ const InterfaceOptions = () => {
             />
           }
           label="Auto-validate connections"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
-              id="package_modules_in_workflow"
-              checked={package_modules_in_workflow}
-              onChange={(e) => SetPackageModulesInWorkflow(e.target.checked)}
-            />
-          }
-          label="Package all modules in workflow"
         />
       </FormGroup>
     </>

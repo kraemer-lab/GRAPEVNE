@@ -2,17 +2,17 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import React, { useEffect } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
+import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
 
+import AddIcon from '@mui/icons-material/AddBox';
+import RemoveIcon from '@mui/icons-material/IndeterminateCheckBox';
+import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import AddIcon from '@mui/icons-material/AddBox';
-import RemoveIcon from '@mui/icons-material/IndeterminateCheckBox';
 
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -190,15 +190,7 @@ interface IEditBoxList {
   nodecount: string;
 }
 
-export const EditBoxList = ({
-  label,
-  keyitem,
-  keylist,
-  json,
-  onSave,
-  nodecount,
-}: IEditBoxList) => {
-
+export const EditBoxList = ({ label, keyitem, keylist, json, onSave, nodecount }: IEditBoxList) => {
   // Isolate current branch in the json tree (indexed by keylist)
   let jsonObj = json;
   for (let i = 0; i < keylist.length; i++) {
@@ -210,10 +202,7 @@ export const EditBoxList = ({
 
   const listitems = Object.keys(jsonObj).map((key) => {
     return (
-      <Box
-        key={key}
-        sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
-      >
+      <Box key={key} sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <IconButton
           size="small"
           onClick={() => {
@@ -237,15 +226,8 @@ export const EditBoxList = ({
   });
 
   return (
-    <TreeItem
-      sx={{width: '100%'}}
-      nodeId={nodecount}
-      key={keyitem}
-      label={label}
-    >
-      <Stack>
-        {listitems}
-      </Stack>
+    <TreeItem sx={{ width: '100%' }} nodeId={nodecount} key={keyitem} label={label}>
+      <Stack>{listitems}</Stack>
 
       <IconButton
         size="small"
@@ -260,7 +242,7 @@ export const EditBoxList = ({
   );
 };
 
-const ConnectParameter = (props: { id, connectParameter }) => {
+const ConnectParameter = (props: { id; connectParameter }) => {
   return (
     <span
       id={props.id}
