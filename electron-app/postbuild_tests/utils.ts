@@ -496,7 +496,12 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
     return path.join(buildfolder, outfile);
   });
   console.log("payload_files: ", payload_files);
-  payload_files.forEach((payload_file) => {
+  await payload_files.forEach(async (payload_file) => {
+    // Wait for target_file to be created
+    // NB: unzip should be synchronous but CI often fails here
+    while (!fs.existsSync(payload_file)) {
+      await driver.sleep(500); // test will timeout if this fails repeatedly
+    }
     expect(fs.existsSync(payload_file)).toBeTruthy();
   });
 
