@@ -35,11 +35,16 @@ export type RunnerAPI = {
   CheckNodeDependencies: (query: Query) => Promise<Query>;
 };
 
+export type NewModuleAPI = {
+  Build: (query: Query) => Promise<Query>;
+};
+
 declare global {
   interface Window {
     terminalAPI: TerminalAPI;
     displayAPI: DisplayAPI;
     builderAPI: BuilderAPI;
     runnerAPI: RunnerAPI;
+    newmoduleAPI: NewModuleAPI;
   }
 }

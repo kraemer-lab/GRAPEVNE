@@ -236,3 +236,14 @@ export async function runner_Launch(event: Event, query: Query) {
 export async function runner_CheckNodeDependencies(event: Event, query: Query) {
   return await ProcessQuery(event, query);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// New Module query handlers
+///////////////////////////////////////////////////////////////////////////////
+
+export async function newmodule_Build(event: Event, query: Query) {
+  console.log("Received NewModule Build request");
+  console.log(event);
+  console.log(query);
+  return {"return": "build return"};
+}

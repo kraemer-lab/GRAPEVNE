@@ -1,6 +1,7 @@
-import BuildIcon from '@mui/icons-material/Build';
+import AddBox from '@mui/icons-material/AddBox';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import BuildIcon from '@mui/icons-material/Schema';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,9 +13,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { CSSObject, Theme, styled, useTheme } from '@mui/material/styles';
+import { CSSObject, Theme, styled } from '@mui/material/styles';
 import * as React from 'react';
 import Builder from './Builder/Builder';
+import NewModule from './NewModule/NewModule';
 import Settings from './Settings/Settings';
 
 const drawerWidth = 200;
@@ -106,9 +108,8 @@ const NavItem = ({
 };
 
 export default function Navigation() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [selected, setSelected] = React.useState('Builder');
+  const [selected, setSelected] = React.useState('Canvas');
 
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -119,10 +120,12 @@ export default function Navigation() {
 
   const ContentPicker = () => {
     switch (selected) {
-      case 'Builder':
+      case 'Canvas':
         return <Builder />;
       case 'Settings':
         return <Settings />;
+      case 'New Module':
+        return <NewModule />;
       default:
         console.error('Unknown menu item selected:', selected);
         return <Builder />;
@@ -130,7 +133,7 @@ export default function Navigation() {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexGrow: 1, height: '100vh' }}>
+    <Box sx={{ display: 'flex', flexGrow: 1, height: '100%' }}>
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
@@ -142,8 +145,18 @@ export default function Navigation() {
         <List>
           <NavItem
             id="btnSidenavBuilder"
-            text="Builder"
+            text="Canvas"
             Icon={BuildIcon}
+            open={open}
+            onClick={handleListItemClick}
+          />
+        </List>
+        <Divider />
+        <List>
+          <NavItem
+            id="btnSidenaNewModule"
+            text="New Module"
+            Icon={AddBox}
             open={open}
             onClick={handleListItemClick}
           />
@@ -164,7 +177,6 @@ export default function Navigation() {
         component="main"
         sx={{
           flexGrow: 1,
-          height: '100%',
           backgroundColor: (theme) =>
             theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
         }}

@@ -478,54 +478,55 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   // Windows platform at this time.
   if (is_windows) {
     console.log("Windows platform detected: skipping container launch test...");
-  } else {
-    // Assert that the target output file does not exist
-    console.log("Assert that the target output file does not exist");
-    const target_files = target_outfiles.map((outfile) => {
-      return path.join(buildfolder, outfile);
-    });
-    console.log("target_files: ", target_files);
-    target_files.forEach((target_file) => {
-      expect(fs.existsSync(target_file)).toBeFalsy();
-    });
-
-    console.log("Assert that the packaged payload files do exist");
-    const payload_files = payload_outfiles.map((outfile) => {
-      return path.join(buildfolder, outfile);
-    });
-    console.log("payload_files: ", payload_files);
-    payload_files.forEach((payload_file) => {
-      expect(fs.existsSync(payload_file)).toBeTruthy();
-    });
-
-    // Build docker image
-    console.log("Build docker image");
-    let { stdout, stderr } = await execPromise(
-      path.join(buildfolder, "build_container.sh"),
-    );
-    if (stdout) console.log(stdout);
-    if (stderr) console.log(stderr);
-
-    // Launch docker and wait for process to finish
-    console.log("Launch docker and wait for process to finish");
-    ({ stdout, stderr } = await execPromise(
-      path.join(buildfolder, "launch_container.sh"),
-    ));
-    if (stdout) console.log(stdout);
-    if (stderr) console.log(stderr);
-    console.log("Check that target file has been created");
-    target_files.forEach((target_file) => {
-      expect(fs.existsSync(target_file)).toBeTruthy();
-    });
-
-    // Clean build folder (tidy-up); assert target output does not exist
-    fs.rmSync(buildfile);
-    fs.rmSync(buildfolder, { recursive: true });
-    expect(fs.existsSync(buildfile)).toBeFalsy();
-    target_files.forEach((target_file) => {
-      expect(fs.existsSync(target_file)).toBeFalsy();
-    });
+    return;
   }
+
+  // Assert that the target output file does not exist
+  console.log("Assert that the target output file does not exist");
+  const target_files = target_outfiles.map((outfile) => {
+    return path.join(buildfolder, outfile);
+  });
+  console.log("target_files: ", target_files);
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeFalsy();
+  });
+
+  console.log("Assert that the packaged payload files do exist");
+  const payload_files = payload_outfiles.map((outfile) => {
+    return path.join(buildfolder, outfile);
+  });
+  console.log("payload_files: ", payload_files);
+  payload_files.forEach((payload_file) => {
+    expect(fs.existsSync(payload_file)).toBeTruthy();
+  });
+
+  // Build docker image
+  console.log("Build docker image");
+  let { stdout, stderr } = await execPromise(
+    path.join(buildfolder, "build_container.sh"),
+  );
+  if (stdout) console.log(stdout);
+  if (stderr) console.log(stderr);
+
+  // Launch docker and wait for process to finish
+  console.log("Launch docker and wait for process to finish");
+  ({ stdout, stderr } = await execPromise(
+    path.join(buildfolder, "launch_container.sh"),
+  ));
+  if (stdout) console.log(stdout);
+  if (stderr) console.log(stderr);
+  console.log("Check that target file has been created");
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeTruthy();
+  });
+
+  // Clean build folder (tidy-up); assert target output does not exist
+  fs.rmSync(buildfile);
+  fs.rmSync(buildfolder, { recursive: true });
+  expect(fs.existsSync(buildfile)).toBeFalsy();
+  target_files.forEach((target_file) => {
+    expect(fs.existsSync(target_file)).toBeFalsy();
+  });
 
   console.log("<<< test Build, then launch in Docker");
 };

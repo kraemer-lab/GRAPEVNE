@@ -56,6 +56,10 @@ contextBridge.exposeInMainWorld("runnerAPI", {
     ipcRenderer.invoke("runner/check-node-dependencies", query),
 });
 
+contextBridge.exposeInMainWorld("newmoduleAPI", {
+  Build: (query: Query) => ipcRenderer.invoke("newmodule/build", query),
+});
+
 declare global {
   interface Window {
     terminalAPI: TerminalAPI;

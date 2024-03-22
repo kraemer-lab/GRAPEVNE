@@ -18,7 +18,8 @@ const createWindow = () => {
     },
   });
   if (app.isPackaged) {
-    win.loadFile("index.html"); //prod
+    //win.loadFile("index.html"); //prod
+    win.loadURL("http://localhost:5001"); //dev
   } else {
     win.loadURL("http://localhost:5001"); //dev
   }
@@ -143,6 +144,9 @@ app.whenReady().then(() => {
     "runner/check-node-dependencies",
     handles.runner_CheckNodeDependencies,
   );
+
+  // NewModule
+  ipcMain.handle("newmodule/build", handles.newmodule_Build);
 });
 
 app.on("will-quit", () => {
