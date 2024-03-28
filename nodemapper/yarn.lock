@@ -4397,13 +4397,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"attr-accept@npm:^2.0.0":
-  version: 2.2.2
-  resolution: "attr-accept@npm:2.2.2"
-  checksum: f77c073ac9616a783f2df814a56f65f1c870193e8da6097139e30b3be84ecc19fb835b93e81315d1da4f19e80721f14e8c8075014205e00abd37b856fe030b80
-  languageName: node
-  linkType: hard
-
 "available-typed-arrays@npm:^1.0.5, available-typed-arrays@npm:^1.0.6":
   version: 1.0.6
   resolution: "available-typed-arrays@npm:1.0.6"
@@ -4984,7 +4977,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.0.2, clsx@npm:^1.0.4":
+"clsx@npm:^1.0.4":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 34dead8bee24f5e96f6e7937d711978380647e936a22e76380290e35486afd8634966ce300fc4b74a32f3762c7d4c0303f442c3e259f4ce02374eb0c82834f27
@@ -6756,15 +6749,6 @@ __metadata:
   dependencies:
     flat-cache: "npm:^3.0.4"
   checksum: 58473e8a82794d01b38e5e435f6feaf648e3f36fdb3a56e98f417f4efae71ad1c0d4ebd8a9a7c50c3ad085820a93fc7494ad721e0e4ebc1da3573f4e1c3c7cdd
-  languageName: node
-  linkType: hard
-
-"file-selector@npm:^0.1.12":
-  version: 0.1.19
-  resolution: "file-selector@npm:0.1.19"
-  dependencies:
-    tslib: "npm:^2.0.1"
-  checksum: 6ed76fd91b77f05c0f3d089aa67d198e4c6096b5752796f1875cd9302664acaccfa35bf2fb6f4c6bcf5527775d9ef80f6d2dc6197d6a5eee91ef26c2160853c1
   languageName: node
   linkType: hard
 
@@ -9487,23 +9471,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"material-ui-dropzone@npm:^3.5.0":
-  version: 3.5.0
-  resolution: "material-ui-dropzone@npm:3.5.0"
-  dependencies:
-    "@babel/runtime": "npm:^7.4.4"
-    clsx: "npm:^1.0.2"
-    react-dropzone: "npm:^10.2.1"
-  peerDependencies:
-    "@material-ui/core": ^4.0.0
-    "@material-ui/icons": ^4.0.0
-    prop-types: ^15.7.2
-    react: ">= 16.8"
-    react-dom: ">= 16.8"
-  checksum: 07b462cf824f581a79bd5dfd977ff5f42f33b78adcecf2c37c53c2f660670d02d1fb9d115995c9e20beef4105647c7cb1230f2697a015fa1c4096cce92a82545
-  languageName: node
-  linkType: hard
-
 "media-typer@npm:0.3.0":
   version: 0.3.0
   resolution: "media-typer@npm:0.3.0"
@@ -10036,7 +10003,6 @@ __metadata:
     jest: "npm:^29.7.0"
     jest-environment-jsdom: "npm:^29.7.0"
     madge: "npm:^6.1.0"
-    material-ui-dropzone: "npm:^3.5.0"
     node-gyp: "npm:^9.4.1"
     prettier: "npm:^3.2.5"
     prettier-plugin-organize-imports: "npm:^3.2.4"
@@ -11032,19 +10998,6 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
   checksum: 66dfc5f93e13d0674e78ef41f92ed21dfb80f9c4ac4ac25a4b51046d41d4d2186abc915b897f69d3d0ebbffe6184e7c5876f2af26bfa956f179225d921be713a
-  languageName: node
-  linkType: hard
-
-"react-dropzone@npm:^10.2.1":
-  version: 10.2.2
-  resolution: "react-dropzone@npm:10.2.2"
-  dependencies:
-    attr-accept: "npm:^2.0.0"
-    file-selector: "npm:^0.1.12"
-    prop-types: "npm:^15.7.2"
-  peerDependencies:
-    react: ">= 16.8"
-  checksum: 64d94db7c0ba6d21a69ded4cb383df8228f0e99ba4377da975c20432595ed53cb1ece47a1412a0378e1da8048066dae21b688dccd22adb9c46a18419a57a362d
   languageName: node
   linkType: hard
 
@@ -12781,7 +12734,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.3.0":
+"tslib@npm:^2.0.3, tslib@npm:^2.3.0":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: e03a8a4271152c8b26604ed45535954c0a45296e32445b4b87f8a5abdb2421f40b59b4ca437c4346af0f28179780d604094eb64546bee2019d903d01c6c19bdb

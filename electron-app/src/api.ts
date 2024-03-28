@@ -37,6 +37,7 @@ export type RunnerAPI = {
 
 export type NewModuleAPI = {
   Build: (query: Query) => Promise<Query>;
+  CondaSearch: (query: Query) => Promise<Query>;
 };
 
 declare global {

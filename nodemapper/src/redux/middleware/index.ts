@@ -1,14 +1,14 @@
 import { applyMiddleware } from 'redux';
 import { builderMiddleware } from './builder.js';
 import { displayMiddleware } from './display.js';
-import { runnerMiddleware } from './runner.js';
 import { newmoduleMiddleware } from './newmodule.js';
+import { runnerMiddleware } from './runner.js';
 
 const middleware = applyMiddleware(
   runnerMiddleware,
   builderMiddleware,
   displayMiddleware,
-  newmoduleMiddleware
+  newmoduleMiddleware,
 );
 
 export default middleware;

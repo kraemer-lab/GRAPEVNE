@@ -31,7 +31,7 @@ const ModulePorts = () => {
   };
 
   const handleDelete = (port: string) => {
-    setPorts((ports) => ports.filter((p) => p !== port));
+    setPorts(moduleConfig.ports.filter((p) => p !== port));
   };
 
   return (
@@ -40,7 +40,7 @@ const ModulePorts = () => {
         Ports
       </Typography>
       <Typography variant="body2" gutterBottom>
-        Input port names (can be none)
+        Input port names
       </Typography>
       <Stack direction="column" spacing={1}>
         <TextField
@@ -53,6 +53,13 @@ const ModulePorts = () => {
           sx={{ width: '100%' }}
         />
         <Grid container spacing={1}>
+          {moduleConfig.ports.length === 0 && (
+            <Grid item>
+              <Typography variant="body2" gutterBottom>
+                No ports
+              </Typography>
+            </Grid>
+          )}
           {moduleConfig.ports.map((port) => (
             <Grid item key={port}>
               <Chip

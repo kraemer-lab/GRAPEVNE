@@ -1,4 +1,4 @@
-import * as globals from 'redux/globals';
+import { newmoduleEnvCondaSearchUpdatePackageList } from 'redux/actions';
 
 type Query = Record<string, unknown>;
 const newmoduleAPI = window.newmoduleAPI;
@@ -26,6 +26,10 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
           console.log('Open module folder');
           break;
 
+        case 'newmodule/env-conda-search':
+          EnvCondaSearch(action.payload, dispatch);
+          break;
+
         default:
           break;
       }
@@ -38,17 +42,22 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
 // -------------------------------------------------------------------------------------
 
 const Build = async (moduleConfig) => {
-  console.log(moduleConfig);
-  
   const callback = (content: Query) => {
     console.log(content);
-  }
-  
+  };
   // Pass config to backend for construction //
   callback(await newmoduleAPI.Build(moduleConfig));
-
 };
 
 const Validate = (moduleConfig) => {
   console.log(moduleConfig);
+};
+
+const EnvCondaSearch = async (config, dispatch) => {
+  const callback = (content: Query) => {
+    const data = content['data'] as string[][];
+    dispatch(newmoduleEnvCondaSearchUpdatePackageList(data));
+  };
+  // Pass conda search config to backend for execution with conda
+  callback(await newmoduleAPI.CondaSearch(config));
 };

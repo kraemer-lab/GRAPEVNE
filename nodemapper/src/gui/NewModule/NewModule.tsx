@@ -6,6 +6,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 
+import { useAppDispatch } from 'redux/store/hooks';
 import ModuleCommands from './components/Commands';
 import ModuleConfig from './components/Config';
 import ModuleDocString from './components/DocString';
@@ -15,13 +16,8 @@ import ModuleNameAndRepo from './components/NameAndRepo';
 import ModuleOutputs from './components/OutputFiles';
 import ModulePayloadResources from './components/PayloadResources';
 import ModulePayloadScripts from './components/PayloadScripts';
-import { useAppDispatch } from 'redux/store/hooks';
 
-import {
-  newmoduleBuild,
-  newmoduleValidate,
-  newmoduleOpenModuleFolder,
-} from 'redux/actions';
+import { newmoduleBuild, newmoduleOpenModuleFolder, newmoduleValidate } from 'redux/actions';
 
 const Section = (props: any) => {
   return (
@@ -69,26 +65,17 @@ const ModuleBuild = () => {
       <Box sx={{ mt: 2 }}>
         <Grid container spacing={1} alignItems="center" justifyContent="center">
           <Grid item>
-            <Button
-              variant="contained"
-              onClick={handleBuildClick}
-            >
+            <Button variant="contained" onClick={handleBuildClick}>
               Build
             </Button>
           </Grid>
           <Grid item>
-            <Button
-              variant="contained"
-              onClick={handleValidateClick}
-            >
+            <Button variant="contained" onClick={handleValidateClick}>
               Validate
             </Button>
           </Grid>
           <Grid item>
-            <Button
-              variant="contained"
-              onClick={handleOpenModuleFolder}
-            >
+            <Button variant="contained" onClick={handleOpenModuleFolder}>
               Open module folder
             </Button>
           </Grid>

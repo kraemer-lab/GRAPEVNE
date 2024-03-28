@@ -3,6 +3,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import React from 'react';
+import { newmoduleUpdateConfig } from 'redux/actions';
+import { INewModuleStateConfigInputFilesRow } from 'redux/reducers/newmodule';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 const ModuleInputs = () => {
   const columns: GridColDef[] = [
@@ -30,12 +33,20 @@ const ModuleInputs = () => {
     },
   ];
 
-  const [rows, setRows] = React.useState([]);
+  const moduleConfig = useAppSelector((state) => state.newmodule.config);
+  const rows = moduleConfig.input_files;
+  const dispatch = useAppDispatch();
 
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
 
+  const setRows = (newRows: INewModuleStateConfigInputFilesRow[]) => {
+    const newmoduleConfig = { ...moduleConfig };
+    newmoduleConfig.input_files = newRows;
+    dispatch(newmoduleUpdateConfig(newmoduleConfig));
+  };
+
   const addRow = (label: string, port: string, filename: string) => {
-    setRows((prevRows) => [...prevRows, createRow(label, port, filename)]);
+    setRows([...rows, createRow(label, port, filename)]);
   };
 
   const createRow = (label: string, port: string, filename: string) => {
@@ -45,7 +56,7 @@ const ModuleInputs = () => {
       port: port,
       label: label,
       filename: filename,
-    };
+    } as INewModuleStateConfigInputFilesRow;
   };
 
   const handleAdd = () => {
@@ -73,6 +84,11 @@ const ModuleInputs = () => {
         rows={rows}
         columns={columns}
         hideFooter={true}
+        processRowUpdate={(newRow, oldRow) => {
+          // Update the row in the state
+          setRows(rows.map((r) => (r.id === oldRow.id ? newRow : r)));
+          return newRow;
+        }}
         onRowSelectionModelChange={(newRowSelectionModel) => {
           setRowSelectionModel(newRowSelectionModel);
         }}

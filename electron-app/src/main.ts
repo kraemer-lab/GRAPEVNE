@@ -18,8 +18,8 @@ const createWindow = () => {
     },
   });
   if (app.isPackaged) {
-    //win.loadFile("index.html"); //prod
-    win.loadURL("http://localhost:5001"); //dev
+    win.loadFile("index.html"); //prod
+    //win.loadURL("http://localhost:5001"); //dev
   } else {
     win.loadURL("http://localhost:5001"); //dev
   }
@@ -147,6 +147,7 @@ app.whenReady().then(() => {
 
   // NewModule
   ipcMain.handle("newmodule/build", handles.newmodule_Build);
+  ipcMain.handle("newmodule/env-conda-search", handles.newmodule_CondaSearch);
 });
 
 app.on("will-quit", () => {

@@ -2,10 +2,12 @@ import fs from "fs";
 import web from "./web";
 import Store from "electron-store";
 
+
 import { shell } from "electron";
 import { IpcMainInvokeEvent } from "electron";
 import { RunWorkflow } from "./pyrunner";
 import { ProcessQuery } from "./pyrunner";
+import { Build, CondaSearch, INewModuleStateConfig } from "./newmodule";
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
@@ -241,9 +243,13 @@ export async function runner_CheckNodeDependencies(event: Event, query: Query) {
 // New Module query handlers
 ///////////////////////////////////////////////////////////////////////////////
 
-export async function newmodule_Build(event: Event, query: Query) {
+export async function newmodule_Build(event: Event, config: INewModuleStateConfig) {
   console.log("Received NewModule Build request");
-  console.log(event);
-  console.log(query);
-  return {"return": "build return"};
+  console.log("Config: " + JSON.stringify(config, null, 2));
+  return Build(event, config);
+}
+
+export async function newmodule_CondaSearch(event: Event, query: Query) {
+  console.log("Received CondaSearch request");
+  return CondaSearch(event, query);
 }

@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { builderMiddleware } from 'redux/middleware/builder';
 import { displayMiddleware } from 'redux/middleware/display';
-import { runnerMiddleware } from 'redux/middleware/runner';
 import { newmoduleMiddleware } from 'redux/middleware/newmodule';
+import { runnerMiddleware } from 'redux/middleware/runner';
 import rootReducer from 'redux/reducers';
 
 const store = configureStore({
@@ -12,7 +12,7 @@ const store = configureStore({
       .concat(runnerMiddleware)
       .concat(builderMiddleware)
       .concat(displayMiddleware)
-      .concat(newmoduleMiddleware)
+      .concat(newmoduleMiddleware),
   //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 });
 

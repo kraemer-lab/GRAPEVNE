@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 import builderReducer from './builder';
-import newmodule from './newmodule';
 import displayReducer from './display';
+import newmodule from './newmodule';
 import runnerReducer from './runner';
 
 const rootReducer = combineReducers({

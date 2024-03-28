@@ -58,6 +58,7 @@ contextBridge.exposeInMainWorld("runnerAPI", {
 
 contextBridge.exposeInMainWorld("newmoduleAPI", {
   Build: (query: Query) => ipcRenderer.invoke("newmodule/build", query),
+  CondaSearch: (query: Query) => ipcRenderer.invoke("newmodule/env-conda-search", query),
 });
 
 declare global {

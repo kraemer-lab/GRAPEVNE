@@ -3,6 +3,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import React from 'react';
+import { newmoduleUpdateConfig } from 'redux/actions';
+import { INewModuleStateConfigOutputFilesRow } from 'redux/reducers/newmodule';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 const ModuleOutputs = () => {
   const columns: GridColDef[] = [
@@ -22,12 +25,20 @@ const ModuleOutputs = () => {
     },
   ];
 
-  const [rows, setRows] = React.useState([]);
+  const moduleConfig = useAppSelector((state) => state.newmodule.config);
+  const rows = moduleConfig.output_files;
+  const dispatch = useAppDispatch();
 
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
 
+  const setRows = (newRows: INewModuleStateConfigOutputFilesRow[]) => {
+    const newmoduleConfig = { ...moduleConfig };
+    newmoduleConfig.output_files = newRows;
+    dispatch(newmoduleUpdateConfig(newmoduleConfig));
+  };
+
   const addRow = (label: string, filename: string) => {
-    setRows((prevRows) => [...prevRows, createRow(label, filename)]);
+    setRows([...rows, createRow(label, filename)]);
   };
 
   const createRow = (label: string, filename: string) => {
@@ -63,6 +74,11 @@ const ModuleOutputs = () => {
         rows={rows}
         columns={columns}
         hideFooter={true}
+        processRowUpdate={(newRow, oldRow) => {
+          // Update the row in the state
+          setRows(rows.map((r) => (r.id === oldRow.id ? newRow : r)));
+          return newRow;
+        }}
         onRowSelectionModelChange={(newRowSelectionModel) => {
           setRowSelectionModel(newRowSelectionModel);
         }}
