@@ -23,6 +23,10 @@ jobs:
     if: needs.check.outputs.last_sha != github.sha
     permissions: write-all
     runs-on: ${{ matrix.os }}
+    env:
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
     strategy:
       matrix:
         # macos-12 provides Intel builds, macos-14 provides M1 builds

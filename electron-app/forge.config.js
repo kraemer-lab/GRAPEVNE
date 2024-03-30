@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const process = require("process");
 
 module.exports = {
   packagerConfig: {
@@ -12,6 +13,13 @@ module.exports = {
       /^\/Mambaforge-Windows-x86_64.exe/,
       /^\/postbuild_tests/,
     ],
+    osxSign: {},
+    osxNotarize: {
+      tool: 'notarytool',
+      appleId: process.env.APPLE_ID,
+      appleIdPassword: process.env.APPLE_APP_PASSWORD,
+      teamId: process.env.APPLE_TEAM_ID,
+    },
   },
   rebuildConfig: {},
   makers: [
