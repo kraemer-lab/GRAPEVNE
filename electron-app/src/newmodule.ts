@@ -12,8 +12,8 @@ export * from './types';
 
 import { IpcMainInvokeEvent } from "electron";
 
-type Event = IpcMainInvokeEvent;
-type Query = Record<string, unknown>;
+export type Event = IpcMainInvokeEvent;
+export type Query = Record<string, unknown>;
 
 export async function Build(event: Event, config: INewModuleStateConfig) {
 
@@ -26,7 +26,7 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
   } else {
     // Create module directly in repository
     if (!fs.existsSync(config.repo)) {
-      throw new Error("Repository does not exist");
+      throw new Error("Repository does not exist: " + config.repo);
     }
     if (!fs.existsSync(path.join(config.repo, "workflows"))) {
       throw new Error("Repository does not contain workflows folder");
@@ -103,7 +103,7 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
   if (config.docstring)
     snakefile += `"""${config.docstring}\n"""\n`;
   snakefile += `configfile: "config/config.yaml"\n\n`;
-  snakefile += `indir = config["input_namespace"]\n\n`;
+  snakefile += `indir = config["input_namespace"]\n`;
   snakefile += `outdir = config["output_namespace"]\n\n`;
   if (config.scripts.length > 0) {
     snakefile += `def script(name=""):\n`;
@@ -131,12 +131,6 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
       snakefile += `${input.label} = `;
     snakefile += `f"results/{indir["${input.port}"]}/${input.filename}",\n`;
   }
-  for(const output of config.output_files as INewModuleStateConfigOutputFilesRow[]) {
-    snakefile += `        `;
-    if (output.label)
-      snakefile += `${output.label} = `;
-    snakefile += `f"results/{outdir}/${output.filename}",\n`;
-  }
   for (const script of config.scripts) {
     snakefile += `        `;
     if (script.label)
@@ -150,6 +144,12 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
     snakefile += `resource("${resource.filename}"),\n`;
   }
   snakefile += `    output:\n`;
+  for(const output of config.output_files as INewModuleStateConfigOutputFilesRow[]) {
+    snakefile += `        `;
+    if (output.label)
+      snakefile += `${output.label} = `;
+    snakefile += `f"results/{outdir}/${output.filename}",\n`;
+  }
   snakefile += `    ${config.command_directive}:\n`;
   snakefile += `        """\n`;
   snakefile += `        ${config.command}\n`;
