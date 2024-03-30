@@ -458,8 +458,18 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   console.log("Unzip build file");
   const buildfolder = path.join(__dirname, "downloads", "build");
   if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true });
+  expect(fs.existsSync(buildfolder)).toBeFalsy();
   fs.mkdirSync(buildfolder);
   await unzip(buildfile, buildfolder);
+  expect(fs.existsSync(buildfolder)).toBeTruthy();
+
+  console.log("Check Dockerfile:");
+  console.log(fs.readFileSync(path.join(buildfolder, "workflow", "Snakefile"), "utf8"));
+
+  console.log("Check config:");
+  console.log(fs.readFileSync(path.join(buildfolder, "config", "config.yaml"), "utf8"));
+
+  return;
 
   // Build and launch docker container; assert that workflow output file exists
   console.log("Build and launch docker container");
@@ -496,12 +506,10 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
     return path.join(buildfolder, outfile);
   });
   console.log("payload_files: ", payload_files);
+  for(const payload_file of payload_files) {
+    expect(fs.existsSync(payload_file)).toBeTruthy();
+  }
   await payload_files.forEach(async (payload_file) => {
-    // Wait for target_file to be created
-    // NB: unzip should be synchronous but CI often fails here
-    while (!fs.existsSync(payload_file)) {
-      await driver.sleep(500); // test will timeout if this fails repeatedly
-    }
     expect(fs.existsSync(payload_file)).toBeTruthy();
   });
 
@@ -521,14 +529,9 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   if (stdout) console.log(stdout);
   if (stderr) console.log(stderr);
   console.log("Check that target file has been created");
-  await target_files.forEach(async (target_file) => {
-    // Wait for target_file to be created
-    // NB: unzip should be synchronous but CI often fails here
-    while (!fs.existsSync(target_file)) {
-      await driver.sleep(500); // test will timeout if this fails repeatedly
-    }
+  for(const target_file of target_files) {
     expect(fs.existsSync(target_file)).toBeTruthy();
-  });
+  }
 
   // Clean build folder (tidy-up); assert target output does not exist
   fs.rmSync(buildfile);

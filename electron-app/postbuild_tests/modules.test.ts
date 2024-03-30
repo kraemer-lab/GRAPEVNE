@@ -684,18 +684,6 @@ describe("modules", () => {
     },
   );
 
-  // Basic workflow tests (those that do not require conda)
-  test.skip.each([
-    // placeholder (empty and skipped at present)
-    ["PLACEHOLDER", [""]],
-  ])(
-    "Build and Test the workflow: module '%s'",
-    async (modulename, outfiles) => {
-      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
-    },
-    10 * ONE_MINUTE,
-  ); // long timeout
-
   // Conda tests
   runif(is_installed(["mamba", "conda"], "any")).each([
     [
@@ -766,6 +754,7 @@ describe("modules", () => {
     "Package workflow (container): module '%s'",
     async (modulename, target_files, payload_files) => {
       // Build and run workflow (packaged)
+      console.log("::: Package workflow (container)");
       await Build_RunWithDocker_SingleModuleWorkflow({
         driver: driver,
         modulename: modulename,
