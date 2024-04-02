@@ -85,6 +85,7 @@ jobs:
             security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
             
             # Repackage with code-signing and notarization (enabled when MACOS_CERTIFICATE_NAME is set)
+            export DEBUG=*
             yarn package
             
             # Verify signing process
