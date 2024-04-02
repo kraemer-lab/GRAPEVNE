@@ -7,10 +7,6 @@ jobs:
   eslint:
     name: Run eslint scanning
     runs-on: ubuntu-latest
-    env:
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
     defaults:
       run:
         working-directory: electron-app
