@@ -14,10 +14,6 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    env:
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
     strategy:
       matrix:
