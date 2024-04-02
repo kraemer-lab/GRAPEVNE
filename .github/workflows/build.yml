@@ -16,6 +16,10 @@ jobs:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      MACOS_CERTIFICATE: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE }}
+      MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_PWD }}
+      MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_NAME }}
+      MACOS_CI_KEYCHAIN_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_PWD }}
 
     strategy:
       matrix:
@@ -30,17 +34,33 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: install MacOS (M1) build dependencies
+      - name: install MacOS (aarch64) build dependencies
         shell: bash
         run: |
           if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "ARM64" ]; then
             brew install pango
           fi
+      - name: Codesign app bundle (MacOS)
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            # Turn our base64-encoded certificate back to a regular .p12 file
+            echo $MACOS_DEV_ID_APP_CERTIFICATE | base64 --decode > certificate.p12
+        
+            # We need to create a new keychain, otherwise using the certificate will prompt
+            # with a UI dialog asking for the certificate password, which we can't
+            # use in a headless CI environment
+            
+            security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain 
+            security default-keychain -s build.keychain
+            security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+            security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+          fi
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-      - name: install dependencies
+      - name: Build GRAPEVNE
         working-directory: ./electron-app
         run: |
           ./build.sh
