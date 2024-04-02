@@ -9,11 +9,16 @@ module.exports = {
       /^\/\.git$/,
       /^\/\.github$/,
       /^.*\.sh$/,
+      /^\/venv/,
+      /^\/src/,
+      /^\/coverage/,
       /^\/Mambaforge.sh/,
       /^\/Mambaforge-Windows-x86_64.exe/,
       /^\/postbuild_tests/,
     ],
-    osxSign: {},
+    osxSign: {
+      identity: process.env.MACOS_DEV_ID_APP_CERTIFICATE_NAME,
+    },
     osxNotarize: {
       tool: 'notarytool',
       appleId: process.env.APPLE_ID,
@@ -24,7 +29,7 @@ module.exports = {
   rebuildConfig: {},
   makers: [
     // zip distributable of binary
-    {
+    /*{
       name: "@electron-forge/maker-zip",
     },
 
@@ -41,6 +46,10 @@ module.exports = {
       name: "@electron-forge/maker-rpm",
       config: {},
     },*/
+    {
+      name: "@electron-forge/maker-dmg",
+      config: {},
+    },
   ],
   publishers: [
     {
@@ -66,5 +75,20 @@ module.exports = {
       var dst = buildPath;
       fs.cpSync(src, dst, { recursive: true });
     },
+    /* node-pty python links out-of-module
+     * Believed to be a node-gyp issue; this is a workaround which removes the offending
+     * files (used for building node-gyp) from the final (electron) build
+     * https://stackoverflow.com/questions/73216989/electron-forge-throws-python3-8-links-out-of-the-package-error-when-makin
+     */
+    packageAfterPrune: async (_config, buildPath) => {
+      const gypPath = path.join(
+        buildPath,
+        'node_modules',
+        'node-pty',
+        'build',
+        'node_gyp_bins'
+      );
+      fs.rmSync(gypPath, {recursive: true, force: true});
+    }
   },
 };
