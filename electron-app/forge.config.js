@@ -2,6 +2,24 @@ const path = require("path");
 const fs = require("fs");
 const process = require("process");
 
+const codesignConfig = () => {
+  if (process.platform === "darwin" && process.env.MACOS_CERTIFICATE_NAME) {
+    return {
+      osxSign: {
+        identity: process.env.MACOS_CERTIFICATE_NAME,
+      },
+      osxNotarize: {
+        tool: 'notarytool',
+        appleId: process.env.APPLE_ID,
+        appleIdPassword: process.env.APPLE_APP_PASSWORD,
+        teamId: process.env.APPLE_TEAM_ID,
+      }
+    }
+  } else {
+    return {};
+  }
+};
+
 module.exports = {
   packagerConfig: {
     ignore: [
@@ -16,15 +34,7 @@ module.exports = {
       /^\/Mambaforge-Windows-x86_64.exe/,
       /^\/postbuild_tests/,
     ],
-    osxSign: {
-      identity: process.env.MACOS_CERTIFICATE_NAME,
-    },
-    osxNotarize: {
-      tool: 'notarytool',
-      appleId: process.env.APPLE_ID,
-      appleIdPassword: process.env.APPLE_APP_PASSWORD,
-      teamId: process.env.APPLE_TEAM_ID,
-    },
+    ...codesignConfig(),
   },
   rebuildConfig: {},
   makers: [
