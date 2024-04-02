@@ -17,7 +17,7 @@ corepack enable
 ./build_deps.sh
 
 # compile GRAPEVNE
-echo DEBUG=*
+export DEBUG=*
 #rm -rf node_modules  # deep clean
 yarn install
 yarn

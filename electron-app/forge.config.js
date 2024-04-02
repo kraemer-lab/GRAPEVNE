@@ -17,7 +17,7 @@ module.exports = {
       /^\/postbuild_tests/,
     ],
     osxSign: {
-      identity: process.env.MACOS_DEV_ID_APP_CERTIFICATE_NAME,
+      identity: process.env.MACOS_CERTIFICATE_NAME,
     },
     osxNotarize: {
       tool: 'notarytool',
