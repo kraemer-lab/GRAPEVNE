@@ -64,3 +64,14 @@ jobs:
         working-directory: ./electron-app
         run: |
           ./build.sh
+      - name: Verify code signatures
+        working-directory: ./electron-app
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            pushd out/GRAPEVNE-darwin-*
+            codesign --verbose --verify GRAPEVNE.app
+            codesign -vvv GRAPEVNE.app
+            xcrun stapler validate GRAPEVNE.app
+            spctl --assess --verbose GRAPEVNE.app
+            popd
+          fi
