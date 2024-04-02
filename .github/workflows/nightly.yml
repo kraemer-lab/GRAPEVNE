@@ -23,14 +23,6 @@ jobs:
     if: needs.check.outputs.last_sha != github.sha
     permissions: write-all
     runs-on: ${{ matrix.os }}
-    env:
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-      MACOS_CERTIFICATE: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE }}
-      MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_PWD }}
-      MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_NAME }}
-      MACOS_CI_KEYCHAIN_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_PWD }}
     strategy:
       matrix:
         # macos-12 provides Intel builds, macos-14 provides M1 builds
@@ -72,6 +64,14 @@ jobs:
       - name: Build distributables
         working-directory: ./electron-app
         shell: bash
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_PWD }}
+          MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_NAME }}
+          MACOS_CI_KEYCHAIN_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_PWD }}
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
             # Convert base64-encoded certificate from secrets into a regular .p12 file
