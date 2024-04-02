@@ -27,6 +27,10 @@ jobs:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
       APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      MACOS_CERTIFICATE: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE }}
+      MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_PWD }}
+      MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_NAME }}
+      MACOS_CI_KEYCHAIN_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_PWD }}
     strategy:
       matrix:
         # macos-12 provides Intel builds, macos-14 provides M1 builds
@@ -69,6 +73,30 @@ jobs:
         working-directory: ./electron-app
         shell: bash
         run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            # Convert base64-encoded certificate from secrets into a regular .p12 file
+            echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+        
+            # Create a keychain to hold the certificate
+            security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain 
+            security default-keychain -s build.keychain
+            security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+            security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+            
+            # Repackage with code-signing and notarization (enabled when MACOS_CERTIFICATE_NAME is set)
+            yarn package
+            
+            # Verify signing process
+            pushd out/GRAPEVNE-darwin-*
+            codesign --verbose --verify GRAPEVNE.app
+            codesign -vvv GRAPEVNE.app
+            xcrun stapler validate GRAPEVNE.app
+            spctl --assess --verbose GRAPEVNE.app
+            popd
+          fi
+
+          # Package for distribution
           yarn make
       - name: Nightly build to release
         uses: svenstaro/upload-release-action@v2
