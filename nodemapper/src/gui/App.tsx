@@ -30,6 +30,19 @@ const App = () => {
         main: '#ecf3f0',
       },
     },
+    // Prevent MUI-backdrop from obstructing screen
+    // https://github.com/mui/material-ui/issues/32286
+    components: {
+      MuiBackdrop: {
+        styleOverrides: {
+          root: {
+            '&[style*="opacity: 0"]': {
+              pointerEvents: 'none',
+            },
+          },
+        },
+      },
+    },
   };
   const theme = createTheme(themeOptions);
 
