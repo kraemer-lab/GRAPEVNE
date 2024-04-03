@@ -76,18 +76,18 @@ jobs:
           if [ "$RUNNER_OS" == "macOS" ]; then
             # Convert base64-encoded certificate from secrets into a regular .p12 file
             echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-        
+
             # Create a keychain to hold the certificate
-            security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain 
+            security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
             security default-keychain -s build.keychain
             security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
             security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
             security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
-            
+
             # Repackage with code-signing and notarization (enabled when MACOS_CERTIFICATE_NAME is set)
             export DEBUG=*
             yarn package
-            
+
             # Verify signing process
             pushd out/GRAPEVNE-darwin-*
             codesign --verbose --verify GRAPEVNE.app
