@@ -69,7 +69,15 @@ describe("modules", () => {
 
   beforeEach(async () => {
     console.log("::: beforeEach");
+    // Flush message logs prior to next test
     await FlushConsoleLog(driver);
+    // Reset GUI as best possible before next test
+    for(let k=0; k<5; k++) {
+      await driver.switchTo().activeElement().sendKeys(webdriver.Key.ESCAPE);
+      await driver.sleep(50);
+    }
+    // Always start on the Builder screen
+    await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
     console.log("<<< beforeEach");
   });
 

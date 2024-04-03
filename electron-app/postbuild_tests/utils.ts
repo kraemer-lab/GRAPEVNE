@@ -220,24 +220,96 @@ const SetCheckBoxByID = async (
   await SetCheckBox(checkbox, checked);
 };
 
+interface IDropDownButton {
+  driver: webdriver.ThenableWebDriver;
+  dropdownId: string;
+  id: string;
+}
+
+const IsElementVisible = async (driver: webdriver.ThenableWebDriver, id: string) => {
+  try {
+    await driver.findElement(By.id(id));
+    return true;
+  } catch (NoSuchElementError) {
+    return false;
+  }
+}
+
+const DropDownButton = async ({
+  driver,
+  dropdownId,
+  id,
+}: IDropDownButton) => {
+  // Click on dropdown until menu opens
+  while (!await IsElementVisible(driver, id)) {
+    await driver.findElement(By.id(dropdownId)).click();
+    await driver.sleep(250);
+  }
+  // Wait for Graph dropdown menu to close
+  while (await IsElementVisible(driver, id)) {
+    try {
+      await driver.findElement(By.id(id)).click();
+    } catch (NoSuchElementError) {
+      break;
+    }
+    await driver.sleep(250);
+  }
+}
+
 const ClearGraph = async (
   driver: webdriver.ThenableWebDriver,
 ) => {
   // Clear graph
-  await driver.findElement(By.id("btnGraphDropdown")).click();
-  await driver.findElement(By.id("btnBuilderClearScene")).click();
-  // Wait for Graph dropdown menu to close
-  while (true) {  // eslint-disable-line no-constant-condition
-    try {
-      await driver.findElement(By.xpath('//ul[@aria-labelledby="graphDropdown"]'));
-      await driver.sleep(50);
-    }
-    catch (NoSuchElementError) {
-      // Element has closed
-      break;
-    }
-  }
+  await DropDownButton({
+    driver: driver,
+    dropdownId: "btnGraphDropdown",
+    id: "btnBuilderClearScene",
+  });
 };
+
+const CleanBuildFolder = async (
+  driver: webdriver.ThenableWebDriver,
+) => {
+  // Clean build folder
+  await DropDownButton({
+    driver: driver,
+    dropdownId: "btnBuildAndRunDropdown",
+    id: "btnCleanBuildFolder",
+  });
+}
+
+const BuildAndTest = async (
+  driver: webdriver.ThenableWebDriver,
+) => {
+  // Build and test
+  await DropDownButton({
+    driver: driver,
+    dropdownId: "btnBuildAndRunDropdown",
+    id: "btnBuilderBuildAndTest",
+  });
+}
+
+const PackageWorkflow = async (
+  driver: webdriver.ThenableWebDriver,
+) => {
+  // Package workflow
+  await DropDownButton({
+    driver: driver,
+    dropdownId: "btnBuildAndRunDropdown",
+    id: "btnBuilderPackageWorkflow",
+  });
+}
+
+const BuildAsWorkflow = async (
+  driver: webdriver.ThenableWebDriver,
+) => {
+  // Build as workflow
+  await DropDownButton({
+    driver: driver,
+    dropdownId: "btnBuildAndRunDropdown",
+    id: "btnBuilderBuildAsWorkflow",
+  });
+}
 
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
@@ -315,8 +387,7 @@ export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
 ) => {
   console.log("::: test Build and Test the workflow (CleanAndDeterminTargets)");
   // Clean build folder (initial); assert target output does not exist
-  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
-  await driver.findElement(By.id("btnCleanBuildFolder")).click();
+  await CleanBuildFolder(driver);
   const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   const target_files = outfiles.map((outfile) => {
@@ -344,8 +415,7 @@ export const MultiModuleWorkflow_BuildAndCheck = async ({
   console.log("::: test Build and Test the workflow (build-and-check)");
 
   // Build and test; assert output files exist
-  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
-  await driver.findElement(By.id("btnBuilderBuildAndTest")).click();
+  await BuildAndTest(driver);
   const msg = await WaitForReturnCode(driver, "builder/build-and-run");
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
@@ -361,8 +431,7 @@ export const MultiModuleWorkflow_TidyUp = async (
   console.log("::: test Build and Test the workflow (tidy-up)");
 
   // Clean build folder (tidy-up); assert target output does not exist
-  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
-  await driver.findElement(By.id("btnCleanBuildFolder")).click();
+  await CleanBuildFolder(driver);
   const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
@@ -437,11 +506,10 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
   // Build, outputs zip-file
   console.log("Build, outputs zip-file");
-  await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
   if (packaged) {
-    await driver.findElement(By.id("btnBuilderPackageWorkflow")).click();
+    await PackageWorkflow(driver);
   } else {
-    await driver.findElement(By.id("btnBuilderBuildAsWorkflow")).click();
+    await BuildAsWorkflow(driver);
   }
   const msg = await WaitForReturnCode(driver, "builder/build-as-workflow");
   expect(msg.returncode).toEqual(0);
