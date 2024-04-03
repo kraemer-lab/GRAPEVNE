@@ -65,49 +65,6 @@ const DeleteResults = async (dispatch, folderinfo: string): Promise<void> => {
 // Utility functions
 ///////////////////////////////////////////////////////////////////////////////
 
-const RebuildNodeMap = (content: Query, dispatch): void => {
-  throw new Error('Not implemented');
-
-  // Rebuild map from returned (segmented) representation
-  /*const nodeMapEngine = RunnerEngine.Instance;
-  nodeMapEngine.ConstructMapFromBlocks(JSON.parse(content["body"] as string));
-  dispatch(runnerStoreMap(content["body"] as string));
-  nodeMapEngine.AddSelectionListeners(
-    (x) => {
-      // Node selected
-      dispatch(runnerNodeSelected(x));
-    },
-    (x) => {
-      // Node deselected
-      dispatch(runnerNodeDeselected(x));
-    },
-    () => {
-      // Node deleted
-      dispatch(runnerNodeDeselected({}));
-    },
-    (x) => {
-      // Link added
-      return;
-    }
-  );
-  // Submit query to automatically lint file
-  dispatch(runnerLintSnakefile());*/
-};
-
-const QueryAndLoadTextFile = (onLoad: (result, filename: string) => void): void => {
-  // eslint-disable-line @typescript-eslint/ban-types
-  // Opens a file dialog, then executes readerEvent
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.onchange = (e) => {
-    const file = (e.target as HTMLInputElement).files[0];
-    const reader = new FileReader();
-    reader.readAsText(file, 'UTF-8');
-    reader.onload = (readerEvent) => onLoad(readerEvent.target.result, file.name);
-  };
-  input.click();
-};
-
 const SubmitQuery = (query: Query, dispatch, callback: (content: Query) => void): void => {
   // POST request handler
   const postRequest = async () => {

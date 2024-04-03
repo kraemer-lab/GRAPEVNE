@@ -206,7 +206,9 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/open-results-folder':
-          OpenResultsFolder(getState().builder.workdir);
+          OpenResultsFolder({
+            workdir: getState().builder.workdir,
+          });
           break;
 
         case 'builder/load-scene':
@@ -380,10 +382,15 @@ const BuildAndRun = async ({
     },
   };
   const callback = (content: Query) => {
-    console.log(content);
+    ReportResponse(content);
     if (content['returncode'] !== 0) {
       // Report error
       dispatchString(builderUpdateStatusText('Workflow run FAILED.'));
+      return;
+    }
+    if (content['body']['workdir'] === undefined) {
+      console.error('Missing workdir in response: ', content);
+      dispatchString(builderUpdateStatusText('Workflow response malformed.'));
       return;
     }
     dispatchString(builderUpdateWorkdir(content['body']['workdir'] as string));
@@ -431,7 +438,7 @@ const BuildAndRunToModule = async ({
     },
   };
   const callback = (content: Query) => {
-    console.log(content);
+    ReportResponse(content);
     if (content['returncode'] !== 0) {
       // Report error
       dispatchString(builderUpdateStatusText('Workflow run FAILED.'));
@@ -698,7 +705,7 @@ const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemo
     },
   };
   const callback = (content: Query) => {
-    console.log(content);
+    ReportResponse(content);
     if (content['returncode'] !== 0) {
       // Report error
       dispatchBool(builderSetModulesLoading(false));
@@ -766,6 +773,12 @@ const OpenResultsFolder = ({ workdir }: IOpenResultsFolder) => {
 ///////////////////////////////////////////////////////////////////////////////
 // POST request handlers
 ///////////////////////////////////////////////////////////////////////////////
+
+const ReportResponse = (content: Query) => {
+  // Responses are output to the console for debugging
+  // These are used in end-to-end tests to interrogate the state of actions
+  console.log(content);
+};
 
 interface ISubmitQueryExpectZip {
   query: Query;

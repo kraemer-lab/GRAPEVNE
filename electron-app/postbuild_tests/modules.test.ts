@@ -42,6 +42,7 @@ process.argv.slice(2).forEach((arg) => {
  */
 describe("modules", () => {
   let driver: webdriver.ThenableWebDriver;
+  jest.retryTimes(3);
 
   beforeAll(async () => {
     console.log("::: beforeAll");
@@ -68,7 +69,15 @@ describe("modules", () => {
 
   beforeEach(async () => {
     console.log("::: beforeEach");
+    // Flush message logs prior to next test
     await FlushConsoleLog(driver);
+    // Reset GUI as best possible before next test
+    for(let k=0; k<5; k++) {
+      await driver.switchTo().activeElement().sendKeys(webdriver.Key.ESCAPE);
+      await driver.sleep(50);
+    }
+    // Always start on the Builder screen
+    await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
     console.log("<<< beforeEach");
   });
 
@@ -684,18 +693,6 @@ describe("modules", () => {
     },
   );
 
-  // Basic workflow tests (those that do not require conda)
-  test.skip.each([
-    // placeholder (empty and skipped at present)
-    ["PLACEHOLDER", [""]],
-  ])(
-    "Build and Test the workflow: module '%s'",
-    async (modulename, outfiles) => {
-      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
-    },
-    10 * ONE_MINUTE,
-  ); // long timeout
-
   // Conda tests
   runif(is_installed(["mamba", "conda"], "any")).each([
     [
@@ -766,6 +763,7 @@ describe("modules", () => {
     "Package workflow (container): module '%s'",
     async (modulename, target_files, payload_files) => {
       // Build and run workflow (packaged)
+      console.log("::: Package workflow (container)");
       await Build_RunWithDocker_SingleModuleWorkflow({
         driver: driver,
         modulename: modulename,

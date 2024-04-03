@@ -1,15 +1,6 @@
 import { Edge } from 'reactflow';
 import { Node } from './Flow';
 
-import * as globals from 'redux/globals';
-
-type Query = Record<string, unknown>;
-const API_ENDPOINT = globals.getApiEndpoint();
-
-interface IPayload {
-  id: string;
-}
-
 export default class NodeMapEngine {
   public QueryAndLoadTextFile(onLoad: (result) => void) {
     // Opens a file dialog, then executes readerEvent
@@ -296,7 +287,6 @@ export default class NodeMapEngine {
     for (const item in modules) {
       if (modules[item] === null || modules[item] === undefined) continue;
       if (modules[item]['config'] === undefined) continue;
-      const params = modules[item]['config'] as Record<string, unknown>;
       const config: Record<string, unknown> = {};
       for (const key in modules[item] as Record<string, unknown>) {
         if (key === 'name') continue;
