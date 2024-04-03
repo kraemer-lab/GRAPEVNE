@@ -12,7 +12,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { CSSObject, Theme, styled, useTheme } from '@mui/material/styles';
+import { CSSObject, Theme, styled } from '@mui/material/styles';
 import * as React from 'react';
 import Builder from './Builder/Builder';
 import Settings from './Settings/Settings';
@@ -106,7 +106,6 @@ const NavItem = ({
 };
 
 export default function Navigation() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState('Builder');
 

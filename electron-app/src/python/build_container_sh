@@ -11,7 +11,8 @@ TARGET_RULES="$(snakemake --list)"
 # Construct image
 docker build \
     --platform linux/amd64 \
-    --no-cache \
+    --no-cache=true \
+    --pull \
     --build-arg HOST_UID=$(id -u) \
     --build-arg TARGET_RULES="${TARGET_RULES}" \
     -t "${NAME}" \

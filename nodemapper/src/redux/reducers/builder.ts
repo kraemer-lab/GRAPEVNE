@@ -4,8 +4,6 @@ import { createReducer } from '@reduxjs/toolkit';
 import { Edge, Node } from 'NodeMap/scene/Flow';
 import { ConfigPaneDisplay } from 'redux/types';
 
-const displayAPI = window.displayAPI;
-
 export interface IRepo {
   type: string;
   label: string;
