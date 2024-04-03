@@ -457,13 +457,13 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   // Unzip build file
   console.log("Unzip build file");
   const buildfolder = path.join(__dirname, "downloads", "build");
-  if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true });
+  if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true, force: true });
   expect(fs.existsSync(buildfolder)).toBeFalsy();
   fs.mkdirSync(buildfolder);
   await unzip(buildfile, buildfolder);
   expect(fs.existsSync(buildfolder)).toBeTruthy();
 
-  console.log("Check Dockerfile:");
+  console.log("Check Snakefile:");
   console.log(fs.readFileSync(path.join(buildfolder, "workflow", "Snakefile"), "utf8"));
 
   console.log("Check config:");
@@ -491,8 +491,8 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
     return;
   }
 
-  // Assert that the target output file does not exist
-  console.log("Assert that the target output file does not exist");
+  // Assert that the target output files do not exist
+  console.log("Assert that target output files do not exist");
   const target_files = target_outfiles.map((outfile) => {
     return path.join(buildfolder, outfile);
   });
@@ -535,7 +535,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
   // Clean build folder (tidy-up); assert target output does not exist
   fs.rmSync(buildfile);
-  fs.rmSync(buildfolder, { recursive: true });
+  fs.rmSync(buildfolder, { recursive: true, force: true });
   expect(fs.existsSync(buildfile)).toBeFalsy();
   target_files.forEach((target_file) => {
     expect(fs.existsSync(target_file)).toBeFalsy();
