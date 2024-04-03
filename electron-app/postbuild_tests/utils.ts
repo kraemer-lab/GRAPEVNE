@@ -469,8 +469,6 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   console.log("Check config:");
   console.log(fs.readFileSync(path.join(buildfolder, "config", "config.yaml"), "utf8"));
 
-  return;
-
   // Build and launch docker container; assert that workflow output file exists
   console.log("Build and launch docker container");
   const dockerfile = path.join(buildfolder, "Dockerfile");
