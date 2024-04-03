@@ -1,6 +1,6 @@
-const path = require("path");
-const fs = require("fs");
-const process = require("process");
+import * as path from "path";
+import * as fs from "fs";
+import * as process from "process";
 
 const codesignConfig = () => {
   if (process.platform === "darwin" && process.env.MACOS_CERTIFICATE_NAME) {
@@ -75,22 +75,21 @@ module.exports = {
   ],
   hooks: {
     packageAfterCopy: async (
-      config,
-      buildPath,
-      electronVersion,
-      platform,
-      arch,
+      config: any,
+      buildPath: string,
     ) => {
-      var src = path.join(__dirname, "../nodemapper/dist/");
-      var dst = buildPath;
-      fs.cpSync(src, dst, { recursive: true });
+      fs.cpSync(
+        path.join(__dirname, "../nodemapper/dist/"),
+        buildPath,
+        { recursive: true }
+      );
     },
     /* node-pty python links out-of-module
      * Believed to be a node-gyp issue; this is a workaround which removes the offending
      * files (used for building node-gyp) from the final (electron) build
      * https://stackoverflow.com/questions/73216989/electron-forge-throws-python3-8-links-out-of-the-package-error-when-makin
      */
-    packageAfterPrune: async (_config, buildPath) => {
+    packageAfterPrune: async (_config: any, buildPath: string) => {
       const gypPath = path.join(
         buildPath,
         'node_modules',
