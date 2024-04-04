@@ -66,8 +66,8 @@ module.exports = {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "jsbrittain",
-          name: "GRAPEVNE",
+          owner: process.env.REPO_OWNER,
+          name: process.env.REPO_NAME,
         },
         draft: true,
       },
