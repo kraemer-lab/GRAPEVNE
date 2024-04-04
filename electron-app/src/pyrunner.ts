@@ -122,7 +122,6 @@ export async function RunWorkflow(
     };
 
     // Spawn child process (pyrunner) to launch python code (incl. snakemake)
-    //if (conda_backend === "builtin") {
     let proc;
     const use_shell = true;
     if (use_shell) {

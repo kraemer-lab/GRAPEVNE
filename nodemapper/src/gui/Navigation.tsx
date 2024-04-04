@@ -154,7 +154,7 @@ export default function Navigation() {
         <Divider />
         <List>
           <NavItem
-            id="btnSidenaNewModule"
+            id="btnSidenavNewModule"
             text="New Module"
             Icon={AddBox}
             open={open}

@@ -18,6 +18,11 @@ export interface INewModuleStateConfigFile {
   isfolder: boolean;
 }
 
+export interface INewModuleBuildSettings{
+  overwrite_existing_module_folder: boolean;
+  as_zip: boolean;
+}
+
 export interface INewModuleStateConfig {
   name: string;
   foldername: string;
@@ -47,4 +52,5 @@ export interface INewModuleStateEnv {
 export interface INewModuleState {
   config: INewModuleStateConfig;
   env: INewModuleStateEnv;
+  build: INewModuleBuildSettings;
 }

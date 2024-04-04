@@ -193,7 +193,12 @@ const OverwriteInputField = async (
   element: webdriver.WebElement,
   newvalue: string,
 ) => {
-  // Overwrite the input field with a new value (useful when 'clear' is unresponsive)
+  // First, try clearing the input (not always successful)
+  await element.clear();
+  // Next, try selecting all text and deleting it
+  await element.sendKeys(Key.chord(Key.CONTROL, "a"));
+  await element.sendKeys(Key.BACK_SPACE);
+  // Finally, delete any remaining text in the input field and replace with the new value
   const oldvalue = await element.getAttribute("value");
   let s = "";
   for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
@@ -219,6 +224,61 @@ const SetCheckBoxByID = async (
   const checkbox = await driver.findElement(By.id(id));
   await SetCheckBox(checkbox, checked);
 };
+    
+interface IInputFilelistAddItem {
+  driver: webdriver.ThenableWebDriver;
+  label: string;
+  port: string;
+  filename: string;
+}
+
+export const InputFilelistAddItem = async ({driver, label, port, filename}: IInputFilelistAddItem) => {
+  // Click on the Add button
+  await driver.findElement(By.id("btnInputFilesAdd")).click();
+  // Set label (first enable editing by double-clicking on the item, then overwrite the value)
+  const label_clickable = driver.findElement(By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Label>"]`));
+  await driver.actions().doubleClick(label_clickable).perform();
+  await OverwriteInputField(
+    driver.findElement(By.xpath(`//input[@value="<Label>"]`)),
+    label,
+  );
+  // Set port from list
+  const port_clickable = await driver.findElement(By.xpath(`(//div[contains(@class, "MuiDataGrid-cell") and @data-field="port"])[last()]`));
+  await driver.actions().doubleClick(port_clickable).perform();
+  await driver.findElement(By.xpath(`//li[@data-value="${port}"]`)).click();
+  // Set filename
+  const filename_clickable = driver.findElement(By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Filename>"]`));
+  await driver.actions().doubleClick(filename_clickable).perform();
+  await OverwriteInputField(
+    driver.findElement(By.xpath(`//input[@value="<Filename>"]`)),
+    filename,
+  );
+}
+
+interface IOutputFilelistAddItem {
+  driver: webdriver.ThenableWebDriver;
+  label: string;
+  filename: string;
+}
+
+export const OutputFilelistAddItem = async ({driver, label, filename}: IOutputFilelistAddItem) => {
+  // Click on the Add button
+  await driver.findElement(By.id("btnOutputFilesAdd")).click();
+  // Set label (first enable editing by double-clicking on the item, then overwrite the value)
+  const label_clickable = driver.findElement(By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Label>"]`));
+  await driver.actions().doubleClick(label_clickable).perform();
+  await OverwriteInputField(
+    driver.findElement(By.xpath(`//input[@value="<Label>"]`)),
+    label,
+  );
+  // Set filename
+  const filename_clickable = driver.findElement(By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Filename>"]`));
+  await driver.actions().doubleClick(filename_clickable).perform();
+  await OverwriteInputField(
+    driver.findElement(By.xpath(`//input[@value="<Filename>"]`)),
+    filename,
+  );
+}
 
 const ClearGraph = async (
   driver: webdriver.ThenableWebDriver,

@@ -1,4 +1,0 @@
-input_namespace: in
-output_namespace: out
-params:
-  test_param: test_value

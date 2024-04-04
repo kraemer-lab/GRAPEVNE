@@ -25,8 +25,8 @@ def resource(name=""):
 
 rule all:
     input:
-        in1_label = f"results/{indir["test_port1"]}/in1_filename",
-        in2_label = f"results/{indir["test_port2"]}/in2_filename",
+        in1_label = f"results/{indir['test_port1']}/in1_filename",
+        in2_label = f"results/{indir['test_port2']}/in2_filename",
         script_label = script("test_script_file"),
         resource_label = resource("test_resource_file"),
     output:

@@ -93,15 +93,24 @@ const ModuleRepo = () => {
   };
 
   const RepoLabel = (repo: string) => {
-    let repo_label = '';
-    let repo_location = '';
     if (repo === 'Zip file') {
-      repo_label = 'Zip file';
-      repo_location = 'Output the module as a zip file';
+      return 'Zip file';
     } else {
-      repo_label = LookupRepoName(repo);
-      repo_location = repo;
+      return LookupRepoName(repo);
     }
+  }
+
+  const RepoLocation = (repo: string) => {
+    if (repo === 'Zip file') {
+      return 'Output the module as a zip file';
+    } else {
+      return repo;
+    }
+  }
+
+  const RepoListEntry = (repo: string) => {
+    const repo_label = LookupRepoName(repo);
+    const repo_location = RepoLocation(repo);
     return (
       <Stack>
         <Typography>{repo_label}</Typography>
@@ -138,7 +147,7 @@ const ModuleRepo = () => {
           >
             {repo_list.map((m) => (
               <MenuItem key={m} value={m}>
-                {RepoLabel(m)}
+                {RepoListEntry(m)}
               </MenuItem>
             ))}
           </Select>

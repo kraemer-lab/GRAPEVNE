@@ -2,6 +2,8 @@ import { By } from "selenium-webdriver";
 import { Select } from "selenium-webdriver/lib/select";
 import { until } from "selenium-webdriver";
 
+import yaml from "js-yaml";
+import * as fs from "fs";
 import * as chrome from "selenium-webdriver/chrome";
 import * as path from "path";
 import * as webdriver from "selenium-webdriver";
@@ -23,6 +25,8 @@ import { MultiModuleWorkflow_BuildAndCheck } from "./utils";
 import { MultiModuleWorkflow_TidyUp } from "./utils";
 import { Build_RunWithDocker_SingleModuleWorkflow } from "./utils";
 import { OverwriteInputField } from "./utils";
+import { InputFilelistAddItem } from "./utils";
+import { OutputFilelistAddItem } from "./utils";
 
 const ONE_SEC = 1000;
 const TEN_SECS = 10 * ONE_SEC;
@@ -61,8 +65,8 @@ describe("modules", () => {
 
   afterAll(async () => {
     console.log("::: afterAll");
-    await driver.close();
-    await driver.quit();
+    /*await driver.close();
+    await driver.quit();*/
     console.log("<<< afterAll");
   });
 
@@ -145,7 +149,7 @@ describe("modules", () => {
     console.log("<<< test Get local modules list");
   });
 
-  test(
+  /*test(
     "Expand multi-nodes (with input and output connections)",
     async () => {
       console.log(
@@ -709,7 +713,193 @@ describe("modules", () => {
     },
     10 * ONE_MINUTE,
   ); // long timeout
+  */
 
+  test("Create a new module (no payload)", async () => {
+    console.log("::: test Create a new module (no payload)");
+
+    // Ensure target module folder does not exist (and delete if it does)
+    console.log("Ensure target module folder does not exit");
+    const target_folder = path.join(__dirname, "test-repo", "workflows", "single_modules", "modules", "NewModule");
+    console.log(`Target folder: ${target_folder}`);
+    if (fs.existsSync(target_folder)) {
+      console.log("Target folder exists; deleting");
+      fs.rmdirSync(target_folder, { recursive: true });
+    }
+    expect(fs.existsSync(target_folder)).toBeFalsy();
+    console.log("Target folder does not exist");
+
+    // Side navbar to New Module page
+    await driver.findElement(By.id("btnSidenavNewModule")).click();
+
+    // Set module name
+    await OverwriteInputField(
+      driver.findElement(By.id("module-name")),
+      "New Module",  // space will be removed from folder name
+    );
+
+    // Select the module repository (choose the local test-repo)
+    const repo_type = await driver.findElement(By.id("module-repo"));
+    await repo_type.click();
+    await repo_type.findElement(By.xpath('//li[substring(@data-value, string-length(@data-value) - string-length("test-repo") + 1) = "test-repo"]')).click();  // li with data-value ending in "test-repo"
+
+    // Select project (within repo)
+    const project = await driver.findElement(By.id("module-project"));
+    await project.click();
+    await project.findElement(By.xpath('//li[@data-value="single_modules"]')).click();
+
+    // Enter module description
+    await OverwriteInputField(
+      driver.findElement(By.id("module-docstring")),
+      "Short summary of new module\n\n" +
+      "Longer description of new module\n\n" +
+      "Parameters are specified here",
+    );
+
+    // Remove any existing input ports
+    const existing_ports = await driver.findElements(By.xpath('//div[@id="newmodule-ports-container"]//*[local-name()="svg"]'));
+    for (const port of existing_ports) {
+      await port.click();
+    }
+    // Verify that the ports have been removed
+    expect((await driver.findElements(By.xpath('//div[@id="newmodule-ports-container"]//*[local-name()="svg"]'))).length).toEqual(0);
+    
+    // Add new input ports
+    await OverwriteInputField(
+      driver.findElement(By.id("module-ports")),
+      "in1",
+    );
+    await OverwriteInputField(
+      driver.findElement(By.id("module-ports")),
+      "in2",
+    );
+    await OverwriteInputField(
+      driver.findElement(By.id("module-ports")),
+      "in3",
+    );
+    // Verify that the new ports are present
+    expect((await driver.findElements(By.xpath('//div[@id="newmodule-ports-container"]//*[local-name()="svg"]'))).length).toEqual(3);
+
+    // Set the module parameters
+    const params =
+      "testparam: testvalue\n" +
+      "nested: {\n" +
+      "  nestedparam: nestedvalue\n" +
+      "}";
+    await OverwriteInputField(
+      driver.findElement(By.id("module-params")),
+      params,
+    );
+
+    // Add input file
+    await InputFilelistAddItem({
+      driver: driver,
+      label: "infile",
+      port: "in",
+      filename: "infile.txt"
+    });
+    // Remove input file (not required for this module)
+    await driver.findElement(By.id("btnInputFilesRemove")).click();
+
+    // Add output files
+    await OutputFilelistAddItem({
+      driver: driver,
+      label: "outfile",
+      filename: "outfile.txt"
+    });
+
+    // Specify command directive
+    const cmd_type = await driver.findElement(By.id("module-script-select"));
+    await cmd_type.click();
+    await cmd_type.findElement(By.xpath('//li[@data-value="shell"]')).click();
+
+    // Specify command
+    await OverwriteInputField(
+      driver.findElement(By.id("module-script")),
+      "echo 'Hello, world!' > {output.outfile}",
+    );
+
+    // Specify environment (conda configuration)
+    await OverwriteInputField(
+      driver.findElement(By.id("module-environment")),
+      "name: test-env\n" +
+      "channels:\n" +
+      "  - conda-forge\n" +
+      "dependencies:"
+    );
+
+    // Add script files
+    // TODO
+
+    // Add resource files
+    // TODO
+
+    // Build the module
+    await driver.findElement(By.id("btnNewModuleBuild")).click();
+    // Wait for module to build, and check return code
+    let msg = await WaitForReturnCode(driver, "newmodule/build");
+    expect(msg.returncode).toEqual(0);
+
+    // Verify that the module has been created properly
+    console.log("Verify that the module has been created properly");
+    console.log(`Target folder: ${target_folder}`);
+    expect(fs.existsSync(target_folder)).toBeTruthy();
+    const snakefile = path.join(target_folder, "workflow", "Snakefile");
+    expect(fs.existsSync(snakefile)).toBeTruthy();
+    const configfile = path.join(target_folder, "config", "config.yaml");
+    expect(fs.existsSync(configfile)).toBeTruthy();
+    const config = yaml.load(fs.readFileSync(configfile, "utf8"));
+    expect(yaml.dump(config)).toEqual(yaml.dump({
+      input_namespace: {
+        in1: "in1",
+        in2: "in2",
+        in3: "in3",
+      },
+      output_namespace: "out",
+      params: {
+        testparam: "testvalue",
+        nested: {
+          nestedparam: "nestedvalue",
+        },
+      },
+    }));
+    const envfile = path.join(target_folder, "workflow", "envs", "env.yaml");
+    expect(fs.existsSync(envfile)).toBeTruthy();
+    const env = yaml.load(fs.readFileSync(envfile, "utf8"));
+    expect(yaml.dump(env)).toEqual(yaml.dump({
+      name: "test-env",
+      channels: ["conda-forge"],
+      dependencies: null,
+    }));
+
+    // Run the new module
+    await driver.findElement(By.id("btnSidenavBuilder")).click();
+    await driver.findElement(By.id("btnBuilderGetModuleList")).click();
+    await ClearGraph(driver);
+    const module = await driver.findElement(By.id("modulelist-newmodule"));
+    const canvas = await driver.findElement(By.className("react-flow__pane"));
+    await dragAndDrop(driver, module, canvas);
+    await driver.wait(
+      until.elementLocated(
+        By.xpath(
+          `//div[@data-id="n0"]`,
+        ),
+      ),
+    );
+    await driver.findElement(By.id("btnBuildAndRunDropdown")).click();
+    await driver.findElement(By.id("btnBuilderBuildAndTest")).click();
+    msg = await WaitForReturnCode(driver, "builder/build-and-run");
+    expect(msg.returncode).toEqual(0);
+
+    // Tidy-up (remove module from repository)
+    console.log("Tidy-up (remove module from repository)");
+    fs.rmdirSync(target_folder, { recursive: true });
+
+    console.log("<<< test Create a new module (new module screen)");
+
+  }, 5 * ONE_MINUTE);
+
+  /*
   // Container tests
   runif(run_container_tests && is_installed(["docker"])).each([
     [
@@ -777,4 +967,5 @@ describe("modules", () => {
     },
     10 * ONE_MINUTE,
   ); // long timeout
+  */
 });

@@ -41,6 +41,12 @@ const newmoduleStateInit: INewModuleState = {
     condasearch: {},
     packagelist: [],
   },
+
+  // Build settings
+  build: {
+    overwrite_existing_module_folder: false,
+    as_zip: false,
+  },
 };
 
 const newmoduleReducer = createReducer(newmoduleStateInit, (builder) => {

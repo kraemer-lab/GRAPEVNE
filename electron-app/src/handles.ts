@@ -7,7 +7,7 @@ import { shell } from "electron";
 import { IpcMainInvokeEvent } from "electron";
 import { RunWorkflow } from "./pyrunner";
 import { ProcessQuery } from "./pyrunner";
-import { Build, CondaSearch, INewModuleStateConfig } from "./newmodule";
+import { Build, CondaSearch, INewModuleState } from "./newmodule";
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
@@ -204,52 +204,104 @@ export async function builder_OpenResultsFolder(event: Event, workdir: string) {
 ///////////////////////////////////////////////////////////////////////////////
 
 export async function runner_Build(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/build", err as Query);
+  }
 }
 
 export async function runner_DeleteResults(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/deleteresults", err as Query);
+  }
 }
 
 export async function runner_Lint(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/lint", err as Query);
+  }
 }
 
 export async function runner_LoadWorkflow(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/loadworkflow", err as Query);
+  }
 }
 
 export async function runner_Tokenize(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/tokenize", err as Query);
+  }
 }
 
 export async function runner_TokenizeLoad(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/tokenize_load", err as Query);
+  }
 }
 
 export async function runner_JobStatus(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/jobstatus", err as Query);
+  }
 }
 
 export async function runner_Launch(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/launch", err as Query);
+  }
 }
 
 export async function runner_CheckNodeDependencies(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+  try {
+    return await ProcessQuery(event, query);
+  } catch (err) {
+    return ErrorReturn("runner/check-node-dependencies", err as Query);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // New Module query handlers
 ///////////////////////////////////////////////////////////////////////////////
 
-export async function newmodule_Build(event: Event, config: INewModuleStateConfig) {
+export async function newmodule_Build(event: Event, moduleState: INewModuleState) {
   console.log("Received NewModule Build request");
+  const config = moduleState.config;
   console.log("Config: " + JSON.stringify(config, null, 2));
-  return Build(event, config);
+  try {
+    const response = await Build({config: config, build_settings: moduleState.build});
+    return {
+      query: "newmodule/build",
+      body: {
+        folder: response.folder,
+      },
+      returncode: response.returncode,
+    };
+  } catch (err) {
+    return ErrorReturn("newmodule/build", err as Query);
+  }
 }
 
 export async function newmodule_CondaSearch(event: Event, query: Query) {
   console.log("Received CondaSearch request");
-  return CondaSearch(event, query);
+  try {
+    return await CondaSearch(event, query);
+  } catch (err) {
+    return ErrorReturn("newmodule/conda-search", err as Query);
+  }
 }

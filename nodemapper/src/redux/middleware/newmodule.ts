@@ -15,7 +15,7 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'newmodule/build':
-          Build(getState().newmodule.config);
+          Build(getState().newmodule);
           break;
 
         case 'newmodule/validate':
@@ -41,12 +41,12 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
 
 // -------------------------------------------------------------------------------------
 
-const Build = async (moduleConfig) => {
+const Build = async (moduleState) => {
   const callback = (content: Query) => {
     console.log(content);
   };
   // Pass config to backend for construction //
-  callback(await newmoduleAPI.Build(moduleConfig));
+  callback(await newmoduleAPI.Build(moduleState));
 };
 
 const Validate = (moduleConfig) => {

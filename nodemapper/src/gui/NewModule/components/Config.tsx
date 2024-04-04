@@ -25,6 +25,8 @@ const ModulePorts = () => {
     if (value.endsWith('\n') || value.endsWith(' ')) {
       if (value.trim().endsWith(',') || value.trim().endsWith(';'))
         value = value.trim().slice(0, -1);
+      if (!value)
+        return;
       setPorts([...moduleConfig.ports, value.trim()]);
       setEditValue('');
     }
@@ -52,7 +54,7 @@ const ModulePorts = () => {
           onChange={(e) => onEditChange(e.target.value)}
           sx={{ width: '100%' }}
         />
-        <Grid container spacing={1}>
+        <Grid id="newmodule-ports-container" container spacing={1}>
           {moduleConfig.ports.length === 0 && (
             <Grid item>
               <Typography variant="body2" gutterBottom>

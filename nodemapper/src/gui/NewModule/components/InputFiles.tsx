@@ -95,8 +95,8 @@ const ModuleInputs = () => {
         rowSelectionModel={rowSelectionModel}
       ></DataGrid>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', rowGap: 1 }}>
-        <Button onClick={handleAdd}>Add</Button>
-        <Button onClick={handleRemove}>Remove</Button>
+        <Button id="btnInputFilesAdd" onClick={handleAdd}>Add</Button>
+        <Button id="btnInputFilesRemove" onClick={handleRemove}>Remove</Button>
       </Box>
     </Box>
   );

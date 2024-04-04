@@ -3,17 +3,15 @@ import * as fs from "fs";
 import {
   Build,
 } from "./newmodule";
-import { Event } from "./newmodule";
 import {
   INewModuleStateConfig,
   INewModuleStateConfigInputFilesRow,
   INewModuleStateConfigOutputFilesRow,
   INewModuleStateConfigFile,
-} from "./newmodule_types";
+} from "./types";
 
 test("Build", async () => {
   // Create a new module
-  const event = {} as Event;
   const test_folder = path.join("src", "tests");
   const test_files_folder = path.join(test_folder, "test_files");
   // Check that tests folder exists (contains test files)
@@ -75,10 +73,15 @@ test("Build", async () => {
     command_directive: "test_directive",
     command: "test_command",
   };
+  // New module build settings
+  const moduleBuildSettings = {
+    overwrite_existing_module_folder: true,
+    as_zip: false,
+  };
   // Create the new module
-  await Build(event, moduleConfig);
+  await Build({config: moduleConfig, build_settings: moduleBuildSettings});
   // Check that the module was created
-  const module_type = moduleConfig.ports.length > 0 ? "module" : "source";
+  const module_type = moduleConfig.ports.length > 0 ? "modules" : "sources";
   const module_folder = path.join(workflows_folder, moduleConfig.project, module_type, moduleConfig.foldername);
   expect(fs.existsSync(module_folder)).toBe(true);
   // Check that the module files were created and populated correctly
@@ -89,7 +92,9 @@ test("Build", async () => {
   }
   checkFile(
     path.join(module_folder, "config", "config.yaml"),
-    `input_namespace: in
+    `input_namespace:
+  test_port1: test_port1
+  test_port2: test_port2
 output_namespace: out
 params:
   test_param: test_value

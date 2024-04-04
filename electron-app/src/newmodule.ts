@@ -5,6 +5,7 @@ import * as path from "path";
 import * as child from "child_process";
 import {
   INewModuleStateConfig,
+  INewModuleBuildSettings,
   INewModuleStateConfigInputFilesRow,
   INewModuleStateConfigOutputFilesRow,
 } from './types';
@@ -15,10 +16,23 @@ import { IpcMainInvokeEvent } from "electron";
 export type Event = IpcMainInvokeEvent;
 export type Query = Record<string, unknown>;
 
-export async function Build(event: Event, config: INewModuleStateConfig) {
+interface IBuild {
+  config: INewModuleStateConfig,
+  build_settings: INewModuleBuildSettings,
+}
+
+export const Build = async ({config, build_settings}: IBuild): Promise<Query> => {
+
+  // If zip file is requested, we need to create a temporary folder and use it as the repository
+  if (build_settings.as_zip) {
+    const tempdir = fs.mkdtempSync("newmodule");
+    config.repo = tempdir;
+    // Setup repo
+    fs.mkdirSync(path.join(tempdir, "workflows"));
+  }
 
   // Determine module type and repo folder
-  const module_type = config.ports.length == 0 ? "source" : "module";
+  const module_type = config.ports.length == 0 ? "sources" : "modules";
   let root_folder = "";
   if (!config.repo || config.repo === "Zip file") {
     // Create zip archive
@@ -35,11 +49,12 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
       throw new Error("Project name is required");
     }
     if (!fs.existsSync(path.join(config.repo, "workflows", config.project))) {
-      console.log("Project does not exist --- creating project folder");
+      console.debug("Project does not exist --- creating");
       fs.mkdirSync(path.join(config.repo, "workflows", config.project));
     }
     root_folder = path.join(config.repo, "workflows", config.project, module_type);
     if (!fs.existsSync(root_folder)) {  // creates 'module' or 'source' folder as required
+      console.debug("Modules / Sources folder does not exist --- creating");
       fs.mkdirSync(root_folder);
     }
   }
@@ -49,8 +64,12 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
 
   // Create folder structure
   if (fs.existsSync(module_folder)) {
-    console.warn("Module folder already exists, deleting...");
-    fs.rmdirSync(module_folder, { recursive: true });
+    if (build_settings.overwrite_existing_module_folder) {
+      console.warn("Module folder already exists, deleting...");
+      fs.rmdirSync(module_folder, { recursive: true });
+    } else {
+      throw new Error("Module folder already exists");
+    }
   }
   fs.mkdirSync(module_folder);
   fs.mkdirSync(path.join(module_folder, "config"));
@@ -80,8 +99,17 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
   }
 
   // Write config file
+  let input_dict: Query | null;
+  if (config.ports.length == 0) {
+    input_dict = null;
+  } else {
+    input_dict = {};
+    for (const port of config.ports) {
+      input_dict[port] = port;
+    }
+  }
   const configfile = {
-    input_namespace: "in",
+    input_namespace: input_dict,
     output_namespace: "out",
     params: yaml.load(config.params as string),
   };
@@ -129,7 +157,7 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
     snakefile += `        `;
     if (input.label)
       snakefile += `${input.label} = `;
-    snakefile += `f"results/{indir["${input.port}"]}/${input.filename}",\n`;
+    snakefile += `f"results/{indir['${input.port}']}/${input.filename}",\n`;
   }
   for (const script of config.scripts) {
     snakefile += `        `;
@@ -156,13 +184,17 @@ export async function Build(event: Event, config: INewModuleStateConfig) {
   snakefile += `        """\n`;
   fs.writeFileSync(path.join(module_folder, "workflow", "Snakefile"), snakefile);
 
-  return {"return": "build return"};
+  return {
+    "folder": module_folder,
+    "returncode": 0
+  };
 }
 
-export async function CondaSearch(event: Event, query: Query) {
+export const CondaSearch = async (event: Event, query: Query): Promise<Query> => {
   const process_mamba_search_output = (output: string) => {
     // Find header line of package list
     const start = output.indexOf("# Name");
+    if (start < 0) return [];  // Header not present, no packages found (or error)
     const lines = output
       .substring(start)  // Remove leading lines
       .split("\n")  // Split into lines
