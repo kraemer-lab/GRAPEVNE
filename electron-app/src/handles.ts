@@ -1,13 +1,10 @@
-import fs from "fs";
-import web from "./web";
-import Store from "electron-store";
+import Store from 'electron-store';
+import fs from 'fs';
+import web from './web';
 
-
-import { shell } from "electron";
-import { IpcMainInvokeEvent } from "electron";
-import { RunWorkflow } from "./pyrunner";
-import { ProcessQuery } from "./pyrunner";
-import { Build, CondaSearch, INewModuleState } from "./newmodule";
+import { IpcMainInvokeEvent, shell } from 'electron';
+import { Build, CondaSearch, INewModuleState } from './newmodule';
+import { ProcessQuery, RunWorkflow } from './pyrunner';
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
@@ -18,20 +15,17 @@ type Query = Record<string, unknown>;
 
 const ErrorReturn = (query: string, err: Query) => {
   console.error(query, err);
-  let body = "";
-  if (err === undefined) body = "undefined error";
+  let body = '';
+  if (err === undefined) body = 'undefined error';
   else if (err.response !== undefined)
-    body =
-      (err.response as Query).status +
-      ": " +
-      (err.response as Query).statusText;
-  else if (err.message !== undefined) body = ": " + err.message;
-  else body = ": " + err;
+    body = (err.response as Query).status + ': ' + (err.response as Query).statusText;
+  else if (err.message !== undefined) body = ': ' + err.message;
+  else body = ': ' + err;
 
   // Request error
   return {
     query: query,
-    body: "ERROR " + body,
+    body: 'ERROR ' + body,
     returncode: 1,
   };
 };
@@ -46,18 +40,14 @@ export async function display_FolderInfo(event: Event, query: Query) {
 
 export async function display_StoreReadConfig(event: Event, store: Store) {
   // Set up electron-store (persistent local configuration)
-  const config = store.get("config");
+  const config = store.get('config');
   return config;
 }
 
-export async function display_StoreWriteConfig(
-  event: Event,
-  store: Store,
-  data: Query,
-) {
+export async function display_StoreWriteConfig(event: Event, store: Store, data: Query) {
   // Set up electron-store (persistent local configuration)
-  store.set("config", data);
-  return store.get("config");
+  store.set('config', data);
+  return store.get('config');
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -66,11 +56,9 @@ export async function display_StoreWriteConfig(
 
 export async function builder_GetRemoteModules(event: Event, query: Query) {
   try {
-    const modules = await web.GetModulesList(
-      ((query["data"] as Query)["content"] as Query)["url"],
-    );
+    const modules = await web.GetModulesList(((query['data'] as Query)['content'] as Query)['url']);
     return {
-      query: "builder/get-remote-modules",
+      query: 'builder/get-remote-modules',
       body: modules,
       returncode: 0,
     };
@@ -79,13 +67,10 @@ export async function builder_GetRemoteModules(event: Event, query: Query) {
   }
 }
 
-export async function builder_GetRemoteModuleConfig(
-  event: Event,
-  query: Query,
-) {
+export async function builder_GetRemoteModuleConfig(event: Event, query: Query) {
   const config = await web.GetModuleConfig(
-    ((query["data"] as Query)["content"] as Query)["repo"],
-    ((query["data"] as Query)["content"] as Query)["snakefile"],
+    ((query['data'] as Query)['content'] as Query)['repo'],
+    ((query['data'] as Query)['content'] as Query)['snakefile'],
   );
   return config;
 }
@@ -94,8 +79,8 @@ export async function builder_BuildAsModule(event: Event, query: Query) {
   // This implementation relies on Python saving the zip file to disk, then
   // reading it back in.
   const data = await ProcessQuery(event, query);
-  return fs.readFileSync((data["body"] as Query)["zipfile"] as string, {
-    encoding: "base64",
+  return fs.readFileSync((data['body'] as Query)['zipfile'] as string, {
+    encoding: 'base64',
   });
 }
 
@@ -103,8 +88,8 @@ export async function builder_BuildAsWorkflow(event: Event, query: Query) {
   // This implementation relies on Python saving the zip file to disk, then
   // reading it back in.
   const data = await ProcessQuery(event, query);
-  return fs.readFileSync((data["body"] as Query)["zipfile"] as string, {
-    encoding: "base64",
+  return fs.readFileSync((data['body'] as Query)['zipfile'] as string, {
+    encoding: 'base64',
   });
 }
 
@@ -115,26 +100,24 @@ export async function builder_BuildAndRun(
   stdout_callback: (cmd: string) => void,
   stderr_callback: (cmd: string) => void,
 ) {
-  stdout_callback("Building workflow...");
+  stdout_callback('Building workflow...');
   const data = await ProcessQuery(event, query);
 
   // Execute the build in the working directory through the pty
-  if ((data["body"] as Query)["command"] !== "") {
-    stdout_callback("Running workflow...");
-    cmd_callback("cd " + (data["body"] as Query)["workdir"]);
+  if ((data['body'] as Query)['command'] !== '') {
+    stdout_callback('Running workflow...');
+    cmd_callback('cd ' + (data['body'] as Query)['workdir']);
 
     // Query parameters
-    const backend = (query["data"] as Query)["backend"] as string;
-    const conda_backend = (query["data"] as Query)["conda_backend"] as string;
-    const environment_variables = (query["data"] as Query)[
-      "environment_variables"
-    ] as string;
+    const backend = (query['data'] as Query)['backend'] as string;
+    const conda_backend = (query['data'] as Query)['conda_backend'] as string;
+    const environment_variables = (query['data'] as Query)['environment_variables'] as string;
 
     // Convert environment variables string to a dictionary
     const envs = environment_variables
-      .split(";")
+      .split(';')
       .reduce((acc: Record<string, string>, line: string) => {
-        const [key, value] = line.split("=");
+        const [key, value] = line.split('=');
         if (key && value) {
           acc[key] = value;
         }
@@ -144,41 +127,34 @@ export async function builder_BuildAndRun(
     // Run the workflow
     let query_run: Query;
     switch (backend) {
-      case "builtin":
+      case 'builtin':
         query_run = {
-          query: "runner/snakemake-run",
+          query: 'runner/snakemake-run',
           data: {
-            format: "Snakefile",
+            format: 'Snakefile',
             content: {
-              workdir: (data["body"] as Query)["workdir"],
-              command: (data["body"] as Query)["command"],
+              workdir: (data['body'] as Query)['workdir'],
+              command: (data['body'] as Query)['command'],
             },
           },
         };
-        console.log("Run query: " + JSON.stringify(query_run));
-        await RunWorkflow(
-          event,
-          query_run,
-          conda_backend,
-          envs,
-          stdout_callback,
-          stderr_callback,
-        );
-        stdout_callback("Workflow complete.");
+        console.log('Run query: ' + JSON.stringify(query_run));
+        await RunWorkflow(event, query_run, conda_backend, envs, stdout_callback, stderr_callback);
+        stdout_callback('Workflow complete.');
         break;
 
-      case "system":
-        cmd_callback((data["body"] as Query)["command"] as string);
+      case 'system':
+        cmd_callback((data['body'] as Query)['command'] as string);
         break;
 
       default:
-        console.log("Unknown Snakemake backend requested: " + backend);
+        console.log('Unknown Snakemake backend requested: ' + backend);
     }
   } else {
-    stdout_callback("No workflow command to run.");
+    stdout_callback('No workflow command to run.');
   }
 
-  data["returncode"] = 0;
+  data['returncode'] = 0;
   return data;
 }
 
@@ -187,16 +163,16 @@ export async function builder_CleanBuildFolder(
   query: Query,
   status_callback: (status: string) => void,
 ) {
-  status_callback("Cleaning build folder...");
+  status_callback('Cleaning build folder...');
   const data = await ProcessQuery(event, query);
-  status_callback("Build folder cleaned.");
-  data["returncode"] = 0;
+  status_callback('Build folder cleaned.');
+  data['returncode'] = 0;
   return data;
 }
 
 export async function builder_OpenResultsFolder(event: Event, workdir: string) {
   shell.showItemInFolder(workdir);
-  return { query: "builder/open-results-folder", body: "OK", returncode: 0 };
+  return { query: 'builder/open-results-folder', body: 'OK', returncode: 0 };
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -207,7 +183,7 @@ export async function runner_Build(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/build", err as Query);
+    return ErrorReturn('runner/build', err as Query);
   }
 }
 
@@ -215,7 +191,7 @@ export async function runner_DeleteResults(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/deleteresults", err as Query);
+    return ErrorReturn('runner/deleteresults', err as Query);
   }
 }
 
@@ -223,7 +199,7 @@ export async function runner_Lint(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/lint", err as Query);
+    return ErrorReturn('runner/lint', err as Query);
   }
 }
 
@@ -231,7 +207,7 @@ export async function runner_LoadWorkflow(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/loadworkflow", err as Query);
+    return ErrorReturn('runner/loadworkflow', err as Query);
   }
 }
 
@@ -239,7 +215,7 @@ export async function runner_Tokenize(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/tokenize", err as Query);
+    return ErrorReturn('runner/tokenize', err as Query);
   }
 }
 
@@ -247,7 +223,7 @@ export async function runner_TokenizeLoad(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/tokenize_load", err as Query);
+    return ErrorReturn('runner/tokenize_load', err as Query);
   }
 }
 
@@ -255,7 +231,7 @@ export async function runner_JobStatus(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/jobstatus", err as Query);
+    return ErrorReturn('runner/jobstatus', err as Query);
   }
 }
 
@@ -263,7 +239,7 @@ export async function runner_Launch(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/launch", err as Query);
+    return ErrorReturn('runner/launch', err as Query);
   }
 }
 
@@ -271,7 +247,7 @@ export async function runner_CheckNodeDependencies(event: Event, query: Query) {
   try {
     return await ProcessQuery(event, query);
   } catch (err) {
-    return ErrorReturn("runner/check-node-dependencies", err as Query);
+    return ErrorReturn('runner/check-node-dependencies', err as Query);
   }
 }
 
@@ -280,28 +256,31 @@ export async function runner_CheckNodeDependencies(event: Event, query: Query) {
 ///////////////////////////////////////////////////////////////////////////////
 
 export async function newmodule_Build(event: Event, moduleState: INewModuleState) {
-  console.log("Received NewModule Build request");
+  console.log('Received NewModule Build request');
   const config = moduleState.config;
-  console.log("Config: " + JSON.stringify(config, null, 2));
+  console.log('Config: ' + JSON.stringify(config, null, 2));
   try {
-    const response = await Build({config: config, build_settings: moduleState.build});
+    const response = await Build({
+      config: config,
+      build_settings: moduleState.build,
+    });
     return {
-      query: "newmodule/build",
+      query: 'newmodule/build',
       body: {
         folder: response.folder,
       },
       returncode: response.returncode,
     };
   } catch (err) {
-    return ErrorReturn("newmodule/build", err as Query);
+    return ErrorReturn('newmodule/build', err as Query);
   }
 }
 
 export async function newmodule_CondaSearch(event: Event, query: Query) {
-  console.log("Received CondaSearch request");
+  console.log('Received CondaSearch request');
   try {
     return await CondaSearch(event, query);
   } catch (err) {
-    return ErrorReturn("newmodule/conda-search", err as Query);
+    return ErrorReturn('newmodule/conda-search', err as Query);
   }
 }

@@ -37,7 +37,7 @@ const PayloadDropzone = () => {
     element.onchange = (e) => {
       const fileInput = (e.target as HTMLInputElement).files;
       const files: ElectronFile[] = [];
-      for(let i = 0; i < fileInput.length; i++) {
+      for (let i = 0; i < fileInput.length; i++) {
         files.push(fileInput[i] as ElectronFile);
       }
       // Add file to config state

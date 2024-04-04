@@ -16,5 +16,5 @@ rule all:
     output:
     shell:
         """
-        
+
         """

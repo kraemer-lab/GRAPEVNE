@@ -5,8 +5,8 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 
-import { useAppDispatch } from 'redux/store/hooks';
 import { newmoduleBuild, newmoduleOpenModuleFolder, newmoduleValidate } from 'redux/actions';
+import { useAppDispatch } from 'redux/store/hooks';
 
 const ModuleBuild = () => {
   const dispatch = useAppDispatch();
@@ -40,12 +40,22 @@ const ModuleBuild = () => {
             </Button>
           </Grid>
           <Grid item>
-            <Button id="btnNewModuleValidate" variant="contained" onClick={handleValidateClick} disabled>
+            <Button
+              id="btnNewModuleValidate"
+              variant="contained"
+              onClick={handleValidateClick}
+              disabled
+            >
               Validate
             </Button>
           </Grid>
           <Grid item>
-            <Button id="btnNewModuleOpenModuleFolder" variant="contained" onClick={handleOpenModuleFolder} disabled>
+            <Button
+              id="btnNewModuleOpenModuleFolder"
+              variant="contained"
+              onClick={handleOpenModuleFolder}
+              disabled
+            >
               Open module folder
             </Button>
           </Grid>

@@ -98,7 +98,7 @@ const ModuleRepo = () => {
     } else {
       return LookupRepoName(repo);
     }
-  }
+  };
 
   const RepoLocation = (repo: string) => {
     if (repo === 'Zip file') {
@@ -106,7 +106,7 @@ const ModuleRepo = () => {
     } else {
       return repo;
     }
-  }
+  };
 
   const RepoListEntry = (repo: string) => {
     const repo_label = LookupRepoName(repo);

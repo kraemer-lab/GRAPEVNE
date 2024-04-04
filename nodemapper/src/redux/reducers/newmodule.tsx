@@ -1,12 +1,8 @@
+import { INewModuleState, INewModuleStateConfig } from 'types';
 import * as actions from '../actions';
-import {
-  INewModuleStateConfig,
-  INewModuleState,
-} from 'types';
 export * from 'types';
 
 import { createReducer } from '@reduxjs/toolkit';
-
 
 const default_docstring = `Provide a short (one-line) description of the module.
 

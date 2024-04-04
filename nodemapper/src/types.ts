@@ -18,7 +18,7 @@ export interface INewModuleStateConfigFile {
   isfolder: boolean;
 }
 
-export interface INewModuleBuildSettings{
+export interface INewModuleBuildSettings {
   overwrite_existing_module_folder: boolean;
   as_zip: boolean;
 }

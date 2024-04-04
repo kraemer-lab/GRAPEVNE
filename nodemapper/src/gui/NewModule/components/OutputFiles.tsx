@@ -85,8 +85,12 @@ const ModuleOutputs = () => {
         rowSelectionModel={rowSelectionModel}
       />
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', rowGap: 1 }}>
-        <Button id="btnOutputFilesAdd" onClick={handleAdd}>Add</Button>
-        <Button id="btnOutputFilesRemove" onClick={handleRemove}>Remove</Button>
+        <Button id="btnOutputFilesAdd" onClick={handleAdd}>
+          Add
+        </Button>
+        <Button id="btnOutputFilesRemove" onClick={handleRemove}>
+          Remove
+        </Button>
       </Box>
     </Box>
   );

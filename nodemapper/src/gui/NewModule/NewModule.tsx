@@ -7,11 +7,11 @@ import ModuleConfig from './components/Config';
 import ModuleDocString from './components/DocString';
 import ModuleEnvironment from './components/Environment';
 import ModuleInputs from './components/InputFiles';
+import ModuleBuild from './components/ModuleBuild';
 import ModuleNameAndRepo from './components/NameAndRepo';
 import ModuleOutputs from './components/OutputFiles';
 import ModulePayloadResources from './components/PayloadResources';
 import ModulePayloadScripts from './components/PayloadScripts';
-import ModuleBuild from './components/ModuleBuild';
 
 const Section = (props: any) => {
   return (
@@ -31,7 +31,6 @@ const Section = (props: any) => {
     </Grid>
   );
 };
-
 
 const NewModule = () => {
   return (

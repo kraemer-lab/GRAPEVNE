@@ -10,9 +10,18 @@
     "test": "jest ./src",
     "postbuild-tests": "jest --runInBand ./postbuild_tests",
     "postbuild-tests-no-containers": "jest --runInBand ./postbuild_tests --no-containers",
+    "format": "prettier --write 'src/**/*.{ts,tsx,js}' 'postbuild_tests/*.{ts,tsx,js}'",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "plugins": [
+      "prettier-plugin-organize-imports"
+    ]
   },
   "author": "kraemer-lab",
   "license": "ISC",
@@ -40,6 +49,8 @@
     "fork-ts-checker-webpack-plugin": "^8.0.0",
     "jest": "^29.6.4",
     "jest-environment-jsdom": "^29.5.0",
+    "prettier": "^3.2.5",
+    "prettier-plugin-organize-imports": "^3.2.4",
     "selenium-webdriver": "^4.12.0",
     "shelljs": "^0.8.5",
     "ts-jest": "^29.1.0",

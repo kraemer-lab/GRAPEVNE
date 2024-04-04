@@ -1,60 +1,60 @@
-import fs from "fs";
-import yaml from "js-yaml";
+import fs from 'fs';
+import yaml from 'js-yaml';
 
-import * as path from "path";
-import * as child from "child_process";
+import * as child from 'child_process';
+import * as path from 'path';
 import {
-  INewModuleStateConfig,
   INewModuleBuildSettings,
+  INewModuleStateConfig,
   INewModuleStateConfigInputFilesRow,
   INewModuleStateConfigOutputFilesRow,
 } from './types';
 export * from './types';
 
-import { IpcMainInvokeEvent } from "electron";
+import { IpcMainInvokeEvent } from 'electron';
 
 export type Event = IpcMainInvokeEvent;
 export type Query = Record<string, unknown>;
 
 interface IBuild {
-  config: INewModuleStateConfig,
-  build_settings: INewModuleBuildSettings,
+  config: INewModuleStateConfig;
+  build_settings: INewModuleBuildSettings;
 }
 
-export const Build = async ({config, build_settings}: IBuild): Promise<Query> => {
-
+export const Build = async ({ config, build_settings }: IBuild): Promise<Query> => {
   // If zip file is requested, we need to create a temporary folder and use it as the repository
   if (build_settings.as_zip) {
-    const tempdir = fs.mkdtempSync("newmodule");
+    const tempdir = fs.mkdtempSync('newmodule');
     config.repo = tempdir;
     // Setup repo
-    fs.mkdirSync(path.join(tempdir, "workflows"));
+    fs.mkdirSync(path.join(tempdir, 'workflows'));
   }
 
   // Determine module type and repo folder
-  const module_type = config.ports.length == 0 ? "sources" : "modules";
-  let root_folder = "";
-  if (!config.repo || config.repo === "Zip file") {
+  const module_type = config.ports.length == 0 ? 'sources' : 'modules';
+  let root_folder = '';
+  if (!config.repo || config.repo === 'Zip file') {
     // Create zip archive
-    throw new Error("Zip file not supported yet");
+    throw new Error('Zip file not supported yet');
   } else {
     // Create module directly in repository
     if (!fs.existsSync(config.repo)) {
-      throw new Error("Repository does not exist: " + config.repo);
+      throw new Error('Repository does not exist: ' + config.repo);
     }
-    if (!fs.existsSync(path.join(config.repo, "workflows"))) {
-      throw new Error("Repository does not contain workflows folder");
+    if (!fs.existsSync(path.join(config.repo, 'workflows'))) {
+      throw new Error('Repository does not contain workflows folder');
     }
-    if (config.project === "") {
-      throw new Error("Project name is required");
+    if (config.project === '') {
+      throw new Error('Project name is required');
     }
-    if (!fs.existsSync(path.join(config.repo, "workflows", config.project))) {
-      console.debug("Project does not exist --- creating");
-      fs.mkdirSync(path.join(config.repo, "workflows", config.project));
+    if (!fs.existsSync(path.join(config.repo, 'workflows', config.project))) {
+      console.debug('Project does not exist --- creating');
+      fs.mkdirSync(path.join(config.repo, 'workflows', config.project));
     }
-    root_folder = path.join(config.repo, "workflows", config.project, module_type);
-    if (!fs.existsSync(root_folder)) {  // creates 'module' or 'source' folder as required
-      console.debug("Modules / Sources folder does not exist --- creating");
+    root_folder = path.join(config.repo, 'workflows', config.project, module_type);
+    if (!fs.existsSync(root_folder)) {
+      // creates 'module' or 'source' folder as required
+      console.debug('Modules / Sources folder does not exist --- creating');
       fs.mkdirSync(root_folder);
     }
   }
@@ -65,35 +65,35 @@ export const Build = async ({config, build_settings}: IBuild): Promise<Query> =>
   // Create folder structure
   if (fs.existsSync(module_folder)) {
     if (build_settings.overwrite_existing_module_folder) {
-      console.warn("Module folder already exists, deleting...");
+      console.warn('Module folder already exists, deleting...');
       fs.rmdirSync(module_folder, { recursive: true });
     } else {
-      throw new Error("Module folder already exists");
+      throw new Error('Module folder already exists');
     }
   }
   fs.mkdirSync(module_folder);
-  fs.mkdirSync(path.join(module_folder, "config"));
-  fs.mkdirSync(path.join(module_folder, "workflow"));
+  fs.mkdirSync(path.join(module_folder, 'config'));
+  fs.mkdirSync(path.join(module_folder, 'workflow'));
   if (config.env) {
-    fs.mkdirSync(path.join(module_folder, "workflow", "envs"));
+    fs.mkdirSync(path.join(module_folder, 'workflow', 'envs'));
   }
 
   // Copy script files
   if (config.scripts.length > 0) {
-    fs.mkdirSync(path.join(module_folder, "workflow", "scripts"));
-    for(const script of config.scripts) {
+    fs.mkdirSync(path.join(module_folder, 'workflow', 'scripts'));
+    for (const script of config.scripts) {
       const filename = path.basename(script.filename);
-      fs.copyFileSync(script.filename, path.join(module_folder, "workflow", "scripts", filename));
+      fs.copyFileSync(script.filename, path.join(module_folder, 'workflow', 'scripts', filename));
       script.filename = filename;
     }
   }
 
   // Copy resource files
   if (config.resources.length > 0) {
-    fs.mkdirSync(path.join(module_folder, "resources"));
-    for(const resource of config.resources) {
+    fs.mkdirSync(path.join(module_folder, 'resources'));
+    for (const resource of config.resources) {
       const filename = path.basename(resource.filename);
-      fs.copyFileSync(resource.filename, path.join(module_folder, "resources", filename));
+      fs.copyFileSync(resource.filename, path.join(module_folder, 'resources', filename));
       resource.filename = filename;
     }
   }
@@ -110,26 +110,22 @@ export const Build = async ({config, build_settings}: IBuild): Promise<Query> =>
   }
   const configfile = {
     input_namespace: input_dict,
-    output_namespace: "out",
+    output_namespace: 'out',
     params: yaml.load(config.params as string),
   };
-  fs.writeFileSync(
-    path.join(module_folder, "config", "config.yaml"),
-    yaml.dump(configfile),
-  );
+  fs.writeFileSync(path.join(module_folder, 'config', 'config.yaml'), yaml.dump(configfile));
 
   // Write Environment file
-  if (config.env !== "") {
+  if (config.env !== '') {
     fs.writeFileSync(
-      path.join(module_folder, "workflow", "envs", "env.yaml"),
+      path.join(module_folder, 'workflow', 'envs', 'env.yaml'),
       config.env as string,
     );
   }
 
   // Write Snakefile
-  let snakefile = "";
-  if (config.docstring)
-    snakefile += `"""${config.docstring}\n"""\n`;
+  let snakefile = '';
+  if (config.docstring) snakefile += `"""${config.docstring}\n"""\n`;
   snakefile += `configfile: "config/config.yaml"\n\n`;
   snakefile += `indir = config["input_namespace"]\n`;
   snakefile += `outdir = config["output_namespace"]\n\n`;
@@ -153,61 +149,57 @@ export const Build = async ({config, build_settings}: IBuild): Promise<Query> =>
   }
   snakefile += `rule all:\n`;
   snakefile += `    input:\n`;
-  for(const input of config.input_files as INewModuleStateConfigInputFilesRow[]) {
+  for (const input of config.input_files as INewModuleStateConfigInputFilesRow[]) {
     snakefile += `        `;
-    if (input.label)
-      snakefile += `${input.label} = `;
+    if (input.label) snakefile += `${input.label} = `;
     snakefile += `f"results/{indir['${input.port}']}/${input.filename}",\n`;
   }
   for (const script of config.scripts) {
     snakefile += `        `;
-    if (script.label)
-      snakefile += `${script.label} = `;
+    if (script.label) snakefile += `${script.label} = `;
     snakefile += `script("${script.filename}"),\n`;
   }
   for (const resource of config.resources) {
     snakefile += `        `;
-    if (resource.label)
-      snakefile += `${resource.label} = `;
+    if (resource.label) snakefile += `${resource.label} = `;
     snakefile += `resource("${resource.filename}"),\n`;
   }
   snakefile += `    output:\n`;
-  for(const output of config.output_files as INewModuleStateConfigOutputFilesRow[]) {
+  for (const output of config.output_files as INewModuleStateConfigOutputFilesRow[]) {
     snakefile += `        `;
-    if (output.label)
-      snakefile += `${output.label} = `;
+    if (output.label) snakefile += `${output.label} = `;
     snakefile += `f"results/{outdir}/${output.filename}",\n`;
   }
   snakefile += `    ${config.command_directive}:\n`;
   snakefile += `        """\n`;
   snakefile += `        ${config.command}\n`;
   snakefile += `        """\n`;
-  fs.writeFileSync(path.join(module_folder, "workflow", "Snakefile"), snakefile);
+  fs.writeFileSync(path.join(module_folder, 'workflow', 'Snakefile'), snakefile);
 
   return {
-    "folder": module_folder,
-    "returncode": 0
+    folder: module_folder,
+    returncode: 0,
   };
-}
+};
 
 export const CondaSearch = async (event: Event, query: Query): Promise<Query> => {
   const process_mamba_search_output = (output: string) => {
     // Find header line of package list
-    const start = output.indexOf("# Name");
-    if (start < 0) return [];  // Header not present, no packages found (or error)
+    const start = output.indexOf('# Name');
+    if (start < 0) return []; // Header not present, no packages found (or error)
     const lines = output
-      .substring(start)  // Remove leading lines
-      .split("\n")  // Split into lines
-      .slice(1);  // Remove header line
+      .substring(start) // Remove leading lines
+      .split('\n') // Split into lines
+      .slice(1); // Remove header line
     if (!lines) return [];
     const columns = lines
       .map(
         (line: string) =>
           line
-            .split(" ")  // Split by spaces (can be multiple between columns)
-            .filter((n: string) => n)  // Remove empty columns
+            .split(' ') // Split by spaces (can be multiple between columns)
+            .filter((n: string) => n), // Remove empty columns
       )
-      .filter((n) => n.length > 0);  // Remove empty lines
+      .filter((n) => n.length > 0); // Remove empty lines
     columns.forEach((line, index) => line.unshift(index.toString()));
     return columns.map((r) => ({
       id: r[0],
@@ -219,21 +211,21 @@ export const CondaSearch = async (event: Event, query: Query): Promise<Query> =>
   };
 
   return new Promise((resolve, reject) => {
-    const args = ["search", query["searchterm"] as string];
-    let stdout = ""; // collate return data
-    let stderr = ""; // collate error data
+    const args = ['search', query['searchterm'] as string];
+    let stdout = ''; // collate return data
+    let stderr = ''; // collate error data
 
     // Launch child process; note that this does NOT use the system shell
-    const proc = child.spawn("mamba", args);
+    const proc = child.spawn('mamba', args);
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
-    proc.on("close", () => {
+    proc.on('close', () => {
       console.log(`close: ${stdout} ${stderr}`);
-      if (stdout === "")
+      if (stdout === '')
         // Empty return, most likely a failure in python
         resolve({
-          query: "error",
+          query: 'error',
           returncode: 1,
           data: {
             code: 1,
@@ -242,18 +234,19 @@ export const CondaSearch = async (event: Event, query: Query): Promise<Query> =>
           },
         });
       // Normal return route
-      else resolve({
-        "returncode": 0,
-        "data": process_mamba_search_output(stdout),
-      });
+      else
+        resolve({
+          returncode: 0,
+          data: process_mamba_search_output(stdout),
+        });
     });
 
     // the backend will only fail under exceptional circumstances;
     // most python related errors are relayed as stderr messages
-    proc.on("error", (code: number) => {
+    proc.on('error', (code: number) => {
       console.log(`error: ${code}`);
       reject({
-        query: "error",
+        query: 'error',
         returncode: 1,
         data: {
           code: code,
@@ -264,15 +257,15 @@ export const CondaSearch = async (event: Event, query: Query): Promise<Query> =>
     });
 
     // collate stdout data
-    proc.stdout.on("data", function (data: string) {
+    proc.stdout.on('data', function (data: string) {
       console.log(`stdout: ${data}`);
       stdout += data;
     });
 
     // collate stderr data
-    proc.stderr.on("data", function (data: string) {
+    proc.stderr.on('data', function (data: string) {
       console.log(`stderr: ${data}`);
       stderr += data;
     });
   });
-}
+};

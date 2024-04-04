@@ -25,8 +25,7 @@ const ModulePorts = () => {
     if (value.endsWith('\n') || value.endsWith(' ')) {
       if (value.trim().endsWith(',') || value.trim().endsWith(';'))
         value = value.trim().slice(0, -1);
-      if (!value)
-        return;
+      if (!value) return;
       setPorts([...moduleConfig.ports, value.trim()]);
       setEditValue('');
     }
