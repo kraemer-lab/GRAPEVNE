@@ -19,6 +19,7 @@ jobs:
       matrix:
         # macos-12 provides Intel builds, macos-14 provides M1 builds
         os: [ubuntu-latest, windows-latest, macos-12, macos-14]
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v4
