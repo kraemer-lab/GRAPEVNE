@@ -1,7 +1,9 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
+import os from 'os';
 
 import * as child from 'child_process';
+import JSZip from 'jszip';
 import * as path from 'path';
 import {
   INewModuleBuildSettings,
@@ -24,10 +26,13 @@ interface IBuild {
 export const Build = async ({ config, build_settings }: IBuild): Promise<Query> => {
   // If zip file is requested, we need to create a temporary folder and use it as the repository
   if (build_settings.as_zip) {
-    const tempdir = fs.mkdtempSync('newmodule');
+    const tempdir = fs.mkdtempSync(path.join(os.tmpdir(), 'module-'));
+    if (fs.existsSync(tempdir)) {
+      fs.rmdirSync(tempdir, { recursive: true });
+    }
     config.repo = tempdir;
     // Setup repo
-    fs.mkdirSync(path.join(tempdir, 'workflows'));
+    fs.mkdirSync(path.join(tempdir, 'workflows'), { recursive: true });
   }
 
   // Determine module type and repo folder
@@ -174,10 +179,22 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   snakefile += `        """\n`;
   snakefile += `        ${config.command}\n`;
   snakefile += `        """\n`;
+
+  // Replace script. and resource. wildcards (which are actually named .input's)
+  snakefile = snakefile.replace('{script.', '{input.').replace('{resource.', '{input.');
+
+  // Write Snakefile
   fs.writeFileSync(path.join(module_folder, 'workflow', 'Snakefile'), snakefile);
+
+  let zipfile = null;
+  if (build_settings.as_zip) {
+    const zipfilename = path.join(root_folder, config.foldername + '.zip');
+    zipfile = await zipFolder(module_folder, zipfilename);
+  }
 
   return {
     folder: module_folder,
+    zip: zipfile,
     returncode: 0,
   };
 };
@@ -268,4 +285,34 @@ export const CondaSearch = async (event: Event, query: Query): Promise<Query> =>
       stderr += data;
     });
   });
+};
+
+/*
+ * Code to zip a folder
+ * https://visheshism.medium.com/node-js-archiving-essentials-zip-and-unzip-demystified-76d5471e59c1
+ */
+const zipFolder = async (folderPath: string, zipFilePath: string) => {
+  const zip = new JSZip();
+
+  const addFilesToZip = (zipFile: JSZip, folderPath: string, currentPath = '') => {
+    const files = fs.readdirSync(path.join(folderPath, currentPath));
+
+    for (const file of files) {
+      const filePath = path.join(currentPath, file);
+      const fullFilePath = path.join(folderPath, filePath);
+      const stats = fs.statSync(fullFilePath);
+
+      if (stats.isDirectory()) {
+        addFilesToZip(zipFile, folderPath, filePath);
+      } else {
+        const fileContent = fs.readFileSync(fullFilePath);
+        zipFile.file(filePath, fileContent);
+      }
+    }
+  };
+
+  addFilesToZip(zip, folderPath);
+  return zip.generateAsync({ type: 'nodebuffer' });
+
+  console.log(`Zip file created at: ${zipFilePath}`);
 };

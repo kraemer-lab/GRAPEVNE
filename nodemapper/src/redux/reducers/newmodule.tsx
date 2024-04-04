@@ -49,6 +49,10 @@ const newmoduleReducer = createReducer(newmoduleStateInit, (builder) => {
   builder
     .addCase(actions.newmoduleUpdateConfig, (state, action) => {
       state.config = action.payload as INewModuleStateConfig;
+      if (state.config.repo === 'Zip file')
+        state.build.as_zip = true;
+      else
+        state.build.as_zip = false;
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.newmoduleEnvCondaSearchUpdatePackageList, (state, action) => {

@@ -1,9 +1,12 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import Store from 'electron-store';
 import * as pty from 'node-pty';
 import * as os from 'node:os';
 import path from 'path';
 import * as handles from './handles';
+
+type Event = IpcMainInvokeEvent;
+type Query = Record<string, unknown>;
 
 // Set up electron-store (persistent local configuration)
 const store = new Store();
@@ -91,44 +94,66 @@ app.whenReady().then(() => {
   // Setup IPC handles
   ////////////////////
 
+  const status_callback = (data: string) => sendLogData(data + '\r\n');
+  const stdout_callback = (data: string) => sendLogData(data + '\r\n');
+  const stderr_callback = (data: string) => sendLogData(data + '\r\n');
+
   // Display
-  ipcMain.handle('display/folderinfo', handles.display_FolderInfo);
-  ipcMain.handle('display/store-read-config', (event) =>
+  ipcMain.handle('display/folderinfo', (event: Event, data: Query) =>
+    handles.display_FolderInfo(event, data, stderr_callback),
+  );
+  ipcMain.handle('display/store-read-config', (event: Event) =>
     handles.display_StoreReadConfig(event, store),
   );
-  ipcMain.handle('display/store-write-config', (event, data) =>
+  ipcMain.handle('display/store-write-config', (event: Event, data: Query) =>
     handles.display_StoreWriteConfig(event, store, data),
   );
 
   // Builder
   ipcMain.handle('builder/get-remote-modules', handles.builder_GetRemoteModules);
   ipcMain.handle('builder/get-remote-module-config', handles.builder_GetRemoteModuleConfig);
-  ipcMain.handle('builder/build-as-module', handles.builder_BuildAsModule);
-  ipcMain.handle('builder/build-as-workflow', handles.builder_BuildAsWorkflow);
-  ipcMain.handle('builder/build-and-run', (event, data) =>
-    handles.builder_BuildAndRun(
-      event,
-      data,
-      terminal_sendLine,
-      (data: string) => sendLogData(data + '\r\n'), // stdout_callback
-      (data: string) => sendLogData(data + '\r\n'), // stderr_callback
-    ),
+  ipcMain.handle('builder/build-as-module', (event: Event, data: Query) =>
+    handles.builder_BuildAsModule(event, data, stderr_callback),
   );
-  ipcMain.handle('builder/clean-build-folder', (event, data) =>
-    handles.builder_CleanBuildFolder(event, data, (data: string) => sendLogData(data + '\r\n')),
+  ipcMain.handle('builder/build-as-workflow', (event: Event, data: Query) =>
+    handles.builder_BuildAsWorkflow(event, data, stderr_callback),
+  );
+  ipcMain.handle('builder/build-and-run', (event: Event, data: Query) =>
+    handles.builder_BuildAndRun(event, data, terminal_sendLine, stdout_callback, stderr_callback),
+  );
+  ipcMain.handle('builder/clean-build-folder', (event: Event, data: Query) =>
+    handles.builder_CleanBuildFolder(event, data, status_callback),
   );
   ipcMain.handle('builder/open-results-folder', handles.builder_OpenResultsFolder);
 
   // Runner
-  ipcMain.handle('runner/build', handles.runner_Build);
-  ipcMain.handle('runner/deleteresults', handles.runner_DeleteResults);
-  ipcMain.handle('runner/lint', handles.runner_Lint);
-  ipcMain.handle('runner/loadworkflow', handles.runner_LoadWorkflow);
-  ipcMain.handle('runner/tokenize', handles.runner_Tokenize);
-  ipcMain.handle('runner/tokenize_load', handles.runner_TokenizeLoad);
-  ipcMain.handle('runner/jobstatus', handles.runner_JobStatus);
-  ipcMain.handle('runner/launch', handles.runner_Launch);
-  ipcMain.handle('runner/check-node-dependencies', handles.runner_CheckNodeDependencies);
+  ipcMain.handle('runner/build', (event: Event, data: Query) =>
+    handles.runner_Build(event, data, stderr_callback),
+  );
+  ipcMain.handle('runner/deleteresults', (event: Event, data: Query) =>
+    handles.runner_DeleteResults(event, data, stderr_callback),
+  );
+  ipcMain.handle('runner/lint', (event: Event, data: Query) =>
+    handles.runner_Lint(event, data, stderr_callback),
+  );
+  ipcMain.handle('runner/loadworkflow', (event: Event, data: Query) =>
+    handles.runner_LoadWorkflow(event, data, stderr_callback),
+  );
+  ipcMain.handle('runner/tokenize', (event: Event, data: Query) =>
+    handles.runner_Tokenize(event, data, stderr_callback),
+  );
+  ipcMain.handle('runner/tokenize_load', (event: Event, data: Query) =>
+    handles.runner_TokenizeLoad(event, data, stderr_callback),
+  );
+  ipcMain.handle('runner/jobstatus', (event: Event, data: Query) =>
+    handles.runner_JobStatus(event, data, stderr_callback),
+  );
+  ipcMain.handle('runner/launch', (event: Event, data: Query) =>
+    handles.runner_Launch(event, data, stderr_callback),
+  );
+  ipcMain.handle('runner/check-node-dependencies', (event: Event, data: Query) =>
+    handles.runner_CheckNodeDependencies(event, data, stderr_callback),
+  );
 
   // NewModule
   ipcMain.handle('newmodule/build', handles.newmodule_Build);

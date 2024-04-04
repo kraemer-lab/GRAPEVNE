@@ -109,7 +109,7 @@ const ModuleRepo = () => {
   };
 
   const RepoListEntry = (repo: string) => {
-    const repo_label = LookupRepoName(repo);
+    const repo_label = RepoLabel(repo);
     const repo_location = RepoLocation(repo);
     return (
       <Stack>
@@ -153,7 +153,9 @@ const ModuleRepo = () => {
           </Select>
         </FormControl>
       </Box>
-      <Box>
+      <Box
+        hidden={moduleConfig.repo === 'Zip file'}
+      >
         <FormControl fullWidth>
           <InputLabel id="module-project-label">Project</InputLabel>
           <Select

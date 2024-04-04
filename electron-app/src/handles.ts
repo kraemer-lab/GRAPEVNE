@@ -25,17 +25,42 @@ const ErrorReturn = (query: string, err: Query) => {
   // Request error
   return {
     query: query,
-    body: 'ERROR ' + body,
+    body: {
+      msg: 'ERROR ' + body,
+    },
     returncode: 1,
   };
+};
+
+const SafeProcessQuery = async (
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) => {
+  try {
+    const data = await ProcessQuery(event, query);
+    if (data['returncode'] !== 0) {
+      stderr_callback('Error processing query.');
+      stderr_callback((data['data'] as Query)['stderr'] as string);
+      return ErrorReturn(query.query as string, data);
+    }
+  } catch (err) {
+    stderr_callback('Error processing query.');
+    stderr_callback(err as string);
+    return ErrorReturn(query.query as string, err as Query);
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // Display query handlers
 ///////////////////////////////////////////////////////////////////////////////
 
-export async function display_FolderInfo(event: Event, query: Query) {
-  return await ProcessQuery(event, query);
+export async function display_FolderInfo(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
 export async function display_StoreReadConfig(event: Event, store: Store) {
@@ -75,19 +100,37 @@ export async function builder_GetRemoteModuleConfig(event: Event, query: Query) 
   return config;
 }
 
-export async function builder_BuildAsModule(event: Event, query: Query) {
+export async function builder_BuildAsModule(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
   // This implementation relies on Python saving the zip file to disk, then
   // reading it back in.
   const data = await ProcessQuery(event, query);
+  if (data['returncode'] !== 0) {
+    stderr_callback('Error building module.');
+    stderr_callback((data['data'] as Query)['stderr'] as string);
+    return ErrorReturn(query.query as string, data);
+  }
   return fs.readFileSync((data['body'] as Query)['zipfile'] as string, {
     encoding: 'base64',
   });
 }
 
-export async function builder_BuildAsWorkflow(event: Event, query: Query) {
+export async function builder_BuildAsWorkflow(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
   // This implementation relies on Python saving the zip file to disk, then
   // reading it back in.
   const data = await ProcessQuery(event, query);
+  if (data['returncode'] !== 0) {
+    stderr_callback('Error building workflow.');
+    stderr_callback((data['data'] as Query)['stderr'] as string);
+    return ErrorReturn(query.query as string, data);
+  }
   return fs.readFileSync((data['body'] as Query)['zipfile'] as string, {
     encoding: 'base64',
   });
@@ -102,6 +145,11 @@ export async function builder_BuildAndRun(
 ) {
   stdout_callback('Building workflow...');
   const data = await ProcessQuery(event, query);
+  if (data['returncode'] !== 0) {
+    stderr_callback('Error building workflow.');
+    stderr_callback((data['data'] as Query)['stderr'] as string);
+    return ErrorReturn(query.query as string, data);
+  }
 
   // Execute the build in the working directory through the pty
   if ((data['body'] as Query)['command'] !== '') {
@@ -179,76 +227,81 @@ export async function builder_OpenResultsFolder(event: Event, workdir: string) {
 // Runner query handlers
 ///////////////////////////////////////////////////////////////////////////////
 
-export async function runner_Build(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/build', err as Query);
+export async function runner_Build(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  const data = await ProcessQuery(event, query);
+  if (data['returncode'] !== 0) {
+    stderr_callback('Error building workflow.');
+    stderr_callback((data['data'] as Query)['stderr'] as string);
+    return ErrorReturn(query.query as string, data);
   }
 }
 
-export async function runner_DeleteResults(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/deleteresults', err as Query);
-  }
+export async function runner_DeleteResults(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function runner_Lint(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/lint', err as Query);
-  }
+export async function runner_Lint(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function runner_LoadWorkflow(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/loadworkflow', err as Query);
-  }
+export async function runner_LoadWorkflow(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function runner_Tokenize(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/tokenize', err as Query);
-  }
+export async function runner_Tokenize(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function runner_TokenizeLoad(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/tokenize_load', err as Query);
-  }
+export async function runner_TokenizeLoad(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function runner_JobStatus(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/jobstatus', err as Query);
-  }
+export async function runner_JobStatus(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function runner_Launch(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/launch', err as Query);
-  }
+export async function runner_Launch(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function runner_CheckNodeDependencies(event: Event, query: Query) {
-  try {
-    return await ProcessQuery(event, query);
-  } catch (err) {
-    return ErrorReturn('runner/check-node-dependencies', err as Query);
-  }
+export async function runner_CheckNodeDependencies(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -268,6 +321,7 @@ export async function newmodule_Build(event: Event, moduleState: INewModuleState
       query: 'newmodule/build',
       body: {
         folder: response.folder,
+        zip: response.zip,
       },
       returncode: response.returncode,
     };

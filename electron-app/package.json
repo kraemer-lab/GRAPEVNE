@@ -63,6 +63,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.1.0",
     "js-yaml": "^4.1.0",
+    "jszip": "^3.10.1",
     "node-pty": "^1.0.0",
     "python-shell": "^5.0.0",
     "ts-loader": "^9.4.3",

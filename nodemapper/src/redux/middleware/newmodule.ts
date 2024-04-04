@@ -41,12 +41,43 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
 
 // -------------------------------------------------------------------------------------
 
+const ReportStatus = (status) => {
+  console.log(status);
+}
+
 const Build = async (moduleState) => {
-  const callback = (content: Query) => {
-    console.log(content);
+  const callback = (response) => {
+    if (response['body']['zip'] !== null) {
+      // Download zip file
+      const blob = new Blob([response['body']['zip']], { type: 'application/zip' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = moduleState.config.foldername + '.zip';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
   };
-  // Pass config to backend for construction //
-  callback(await newmoduleAPI.Build(moduleState));
+
+  // Pass config to backend for construction
+  let response = await newmoduleAPI.Build(moduleState);
+  if (response['returncode'] === 0) {
+    // Update module state with new module
+    callback(response);
+  } else if (response['returncode'] === 1) {
+    // Error
+    const msg = response['body']['msg'];
+    if (msg.startsWith('ERROR') && msg.includes('Module folder already exists')) {
+      if (window.confirm("Module folder already exists. Overwrite?")) {
+        // Overwrite - resubmit build request with overwrite flag
+        const newModuleState = JSON.parse(JSON.stringify(moduleState));  // deep copy
+        newModuleState.build.overwrite_existing_module_folder = true;
+        response = await newmoduleAPI.Build(newModuleState);
+        callback(response);
+      }
+    }
+  }
+  ReportStatus(response);
 };
 
 const Validate = (moduleConfig) => {

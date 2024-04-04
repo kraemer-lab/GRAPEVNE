@@ -2126,6 +2126,7 @@ __metadata:
     jest: "npm:^29.6.4"
     jest-environment-jsdom: "npm:^29.5.0"
     js-yaml: "npm:^4.1.0"
+    jszip: "npm:^3.10.1"
     node-pty: "npm:^1.0.0"
     prettier: "npm:^3.2.5"
     prettier-plugin-organize-imports: "npm:^3.2.4"
