@@ -8,6 +8,10 @@ import { INewModuleStateConfigInputFilesRow } from 'redux/reducers/newmodule';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 const ModuleInputs = () => {
+  const moduleConfig = useAppSelector((state) => state.newmodule.config);
+  const rows = moduleConfig.input_files;
+  const dispatch = useAppDispatch();
+  
   const columns: GridColDef[] = [
     {
       field: 'label',
@@ -20,7 +24,7 @@ const ModuleInputs = () => {
       field: 'port',
       headerName: 'Port',
       type: 'singleSelect',
-      valueOptions: ['in', 'out', 'db'],
+      valueOptions: moduleConfig.ports,
       editable: true,
       width: 100,
     },
@@ -32,10 +36,6 @@ const ModuleInputs = () => {
       width: 500,
     },
   ];
-
-  const moduleConfig = useAppSelector((state) => state.newmodule.config);
-  const rows = moduleConfig.input_files;
-  const dispatch = useAppDispatch();
 
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
 
