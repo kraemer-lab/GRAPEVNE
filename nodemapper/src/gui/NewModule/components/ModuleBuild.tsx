@@ -1,14 +1,47 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
+import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 
-import { newmoduleBuild, newmoduleOpenModuleFolder, newmoduleValidate } from 'redux/actions';
-import { useAppDispatch } from 'redux/store/hooks';
+import {
+  newmoduleBuild,
+  newmoduleClear,
+  newmoduleOpenModuleFolder,
+  newmoduleValidate,
+} from 'redux/actions';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+
+const ModalBuildingStatus = ({ open }: { open: boolean }) => {
+  return (
+    <Modal open={open} onClose={() => {}}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          width: '100%',
+        }}
+      >
+        <Box sx={{ alignItems: 'center', textAlign: 'center', background: 'white', p: 4 }}>
+          <CircularProgress />
+          <Box sx={{ height: 20 }} />
+          <Typography variant="subtitle1" gutterBottom>
+            Building module...
+          </Typography>
+        </Box>
+      </Box>
+    </Modal>
+  );
+};
 
 const ModuleBuild = () => {
+  const moduleState = useAppSelector((state) => state.newmodule);
+  const building = useAppSelector((state) => state.newmodule.result.building);
   const dispatch = useAppDispatch();
 
   const handleBuildClick = () => {
@@ -17,6 +50,10 @@ const ModuleBuild = () => {
 
   const handleValidateClick = () => {
     dispatch(newmoduleValidate());
+  };
+
+  const handleClearClick = () => {
+    dispatch(newmoduleClear());
   };
 
   const handleOpenModuleFolder = () => {
@@ -39,27 +76,33 @@ const ModuleBuild = () => {
               Build
             </Button>
           </Grid>
-          <Grid item>
+          {/*<Grid item>
             <Button
               id="btnNewModuleValidate"
               variant="contained"
               onClick={handleValidateClick}
-              disabled
+              disabled={!moduleState.result.folder}
             >
               Validate
             </Button>
-          </Grid>
+          </Grid>*/}
           <Grid item>
             <Button
               id="btnNewModuleOpenModuleFolder"
               variant="contained"
               onClick={handleOpenModuleFolder}
-              disabled
+              disabled={!moduleState.result.folder}
             >
               Open module folder
             </Button>
           </Grid>
+          <Grid item>
+            <Button id="btnNewModuleClear" variant="contained" onClick={handleClearClick}>
+              Clear
+            </Button>
+          </Grid>
         </Grid>
+        <ModalBuildingStatus open={building} />
       </Box>
     </Box>
   );

@@ -5,6 +5,7 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React from 'react';
+import { newmoduleUpdateConfig } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 const ModulePorts = () => {
@@ -17,7 +18,7 @@ const ModulePorts = () => {
   const setPorts = (ports) => {
     const newmoduleConfig = { ...moduleConfig };
     newmoduleConfig.ports = ports;
-    dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
+    dispatch(newmoduleUpdateConfig(newmoduleConfig));
   };
 
   const onEditChange = (value: string) => {

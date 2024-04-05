@@ -46,6 +46,7 @@ contextBridge.exposeInMainWorld('runnerAPI', {
 contextBridge.exposeInMainWorld('newmoduleAPI', {
   Build: (query: Query) => ipcRenderer.invoke('newmodule/build', query),
   CondaSearch: (query: Query) => ipcRenderer.invoke('newmodule/env-conda-search', query),
+  OpenModuleFolder: (folder: string) => ipcRenderer.invoke('newmodule/open-module-folder', folder),
 });
 
 declare global {

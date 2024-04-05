@@ -11,7 +11,7 @@ const ModuleInputs = () => {
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
   const rows = moduleConfig.input_files;
   const dispatch = useAppDispatch();
-  
+
   const columns: GridColDef[] = [
     {
       field: 'label',

@@ -1,4 +1,4 @@
-import { newmoduleEnvCondaSearchUpdatePackageList } from 'redux/actions';
+import { newmoduleEnvCondaSearchUpdatePackageList, newmoduleUpdateResult } from 'redux/actions';
 
 type Query = Record<string, unknown>;
 const newmoduleAPI = window.newmoduleAPI;
@@ -15,7 +15,7 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'newmodule/build':
-          Build(getState().newmodule);
+          Build(getState().newmodule, dispatch);
           break;
 
         case 'newmodule/validate':
@@ -23,7 +23,7 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'newmodule/open-module-folder':
-          console.log('Open module folder');
+          OpenModuleFolder(getState().newmodule.result.folder);
           break;
 
         case 'newmodule/env-conda-search':
@@ -43,9 +43,9 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
 
 const ReportStatus = (status) => {
   console.log(status);
-}
+};
 
-const Build = async (moduleState) => {
+const Build = async (moduleState, dispatch) => {
   const callback = (response) => {
     if (response['body']['zip'] !== null) {
       // Download zip file
@@ -56,10 +56,16 @@ const Build = async (moduleState) => {
       a.download = moduleState.config.foldername + '.zip';
       a.click();
       window.URL.revokeObjectURL(url);
+    } else if (response['body']['folder']) {
+      // Update module state with new module
+      const newmoduleResult = { ...moduleState.result };
+      newmoduleResult.folder = response['body']['folder'];
+      dispatch(newmoduleUpdateResult(newmoduleResult));
     }
   };
 
   // Pass config to backend for construction
+  dispatch(newmoduleUpdateResult({ building: true }));
   let response = await newmoduleAPI.Build(moduleState);
   if (response['returncode'] === 0) {
     // Update module state with new module
@@ -68,20 +74,25 @@ const Build = async (moduleState) => {
     // Error
     const msg = response['body']['msg'];
     if (msg.startsWith('ERROR') && msg.includes('Module folder already exists')) {
-      if (window.confirm("Module folder already exists. Overwrite?")) {
+      if (window.confirm('Module folder already exists. Overwrite?')) {
         // Overwrite - resubmit build request with overwrite flag
-        const newModuleState = JSON.parse(JSON.stringify(moduleState));  // deep copy
+        const newModuleState = JSON.parse(JSON.stringify(moduleState)); // deep copy
         newModuleState.build.overwrite_existing_module_folder = true;
         response = await newmoduleAPI.Build(newModuleState);
         callback(response);
       }
     }
   }
+  dispatch(newmoduleUpdateResult({ building: false }));
   ReportStatus(response);
 };
 
 const Validate = (moduleConfig) => {
   console.log(moduleConfig);
+};
+
+const OpenModuleFolder = (folder: string) => {
+  newmoduleAPI.OpenModuleFolder(folder);
 };
 
 const EnvCondaSearch = async (config, dispatch) => {

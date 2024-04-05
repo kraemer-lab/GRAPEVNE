@@ -1,9 +1,9 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
 import os from 'os';
+import JSZip from 'jszip';
 
 import * as child from 'child_process';
-import JSZip from 'jszip';
 import * as path from 'path';
 import {
   INewModuleBuildSettings,
@@ -201,34 +201,44 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
 
 export const CondaSearch = async (event: Event, query: Query): Promise<Query> => {
   const process_mamba_search_output = (output: string) => {
-    // Find header line of package list
-    const start = output.indexOf('# Name');
-    if (start < 0) return []; // Header not present, no packages found (or error)
-    const lines = output
-      .substring(start) // Remove leading lines
-      .split('\n') // Split into lines
-      .slice(1); // Remove header line
-    if (!lines) return [];
-    const columns = lines
-      .map(
-        (line: string) =>
-          line
-            .split(' ') // Split by spaces (can be multiple between columns)
-            .filter((n: string) => n), // Remove empty columns
-      )
-      .filter((n) => n.length > 0); // Remove empty lines
-    columns.forEach((line, index) => line.unshift(index.toString()));
-    return columns.map((r) => ({
-      id: r[0],
-      name: r[1],
-      version: r[2],
-      build: r[3],
-      channel: r[4],
-    }));
+    const json = JSON.parse(output);
+
+    type Item = {
+      id: number;
+      name: string;
+      version: string;
+      build: string;
+      channel: string;
+    };
+
+    const entries: Item[] = [];
+    let index = 0;
+    for(const key in json) {
+      entries.push(
+        ...(json[key] as Item[]).map((item: Item) => {
+        return {
+          id: index++,
+          name: item['name'],
+          version: item['version'],
+          build: item['build'],
+          channel: new URL(item['channel']).pathname.split('/').filter((s) => s!='')[0]
+        }
+      }));
+    }
+
+    return entries;
   };
 
   return new Promise((resolve, reject) => {
-    const args = ['search', query['searchterm'] as string];
+    let channel_args: string[] = [];
+    if (query['channels']) {
+      const channels = query['channels'] as string[];
+      if (channels.length > 0) {
+        channel_args = channels.map((c: string) => '--channel ' + c).join(' ').split(' ');
+        channel_args.unshift('--override-channels');
+      }
+    }
+    const args = ['search', query['searchterm'] as string, '--json', ...channel_args];
     let stdout = ''; // collate return data
     let stderr = ''; // collate error data
 

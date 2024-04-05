@@ -47,10 +47,18 @@ export interface INewModuleStateEnvCondaSearch {
 export interface INewModuleStateEnv {
   condasearch: INewModuleStateEnvCondaSearch;
   packagelist: string[][];
+  channels: string[];
+  searching: boolean;
+}
+
+export interface INewModuleResult {
+  folder: string;
+  building: boolean;
 }
 
 export interface INewModuleState {
   config: INewModuleStateConfig;
   env: INewModuleStateEnv;
   build: INewModuleBuildSettings;
+  result: INewModuleResult;
 }

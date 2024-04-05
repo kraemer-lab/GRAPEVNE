@@ -158,6 +158,7 @@ app.whenReady().then(() => {
   // NewModule
   ipcMain.handle('newmodule/build', handles.newmodule_Build);
   ipcMain.handle('newmodule/env-conda-search', handles.newmodule_CondaSearch);
+  ipcMain.handle('newmodule/open-module-folder', handles.newmodule_OpenModuleFolder);
 });
 
 app.on('will-quit', () => {

@@ -338,3 +338,8 @@ export async function newmodule_CondaSearch(event: Event, query: Query) {
     return ErrorReturn('newmodule/conda-search', err as Query);
   }
 }
+
+export async function newmodule_OpenModuleFolder(event: Event, folder: string) {
+  shell.showItemInFolder(folder);
+  return { query: 'newmodule/open-module-folder', body: 'OK', returncode: 0 };
+}

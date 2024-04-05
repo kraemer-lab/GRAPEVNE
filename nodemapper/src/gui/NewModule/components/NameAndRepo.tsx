@@ -153,9 +153,7 @@ const ModuleRepo = () => {
           </Select>
         </FormControl>
       </Box>
-      <Box
-        hidden={moduleConfig.repo === 'Zip file'}
-      >
+      <Box hidden={moduleConfig.repo === 'Zip file'}>
         <FormControl fullWidth>
           <InputLabel id="module-project-label">Project</InputLabel>
           <Select
