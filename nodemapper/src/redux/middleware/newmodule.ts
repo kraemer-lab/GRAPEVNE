@@ -97,6 +97,11 @@ const OpenModuleFolder = (folder: string) => {
 
 const EnvCondaSearch = async (config, dispatch) => {
   const callback = (content: Query) => {
+    if (!Array.isArray(content['data'])) {
+      console.debug('No data returned from conda search');
+      dispatch(newmoduleEnvCondaSearchUpdatePackageList([]));
+      return;
+    }
     const data = content['data'] as string[][];
     dispatch(newmoduleEnvCondaSearchUpdatePackageList(data));
   };

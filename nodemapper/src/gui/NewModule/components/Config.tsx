@@ -17,7 +17,8 @@ const ModulePorts = () => {
 
   const setPorts = (ports) => {
     const newmoduleConfig = { ...moduleConfig };
-    newmoduleConfig.ports = ports;
+    // Remove duplicates
+    newmoduleConfig.ports = ports.filter((value, index, array) => array.indexOf(value) === index);
     dispatch(newmoduleUpdateConfig(newmoduleConfig));
   };
 

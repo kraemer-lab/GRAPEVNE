@@ -200,9 +200,7 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
 };
 
 export const CondaSearch = async (event: Event, query: Query): Promise<Query> => {
-  const process_mamba_search_output = (output: string) => {
-    const json = JSON.parse(output);
-
+  const process_mamba_search_output = (json: Query) => {
     type Item = {
       id: number;
       name: string;
@@ -210,6 +208,10 @@ export const CondaSearch = async (event: Event, query: Query): Promise<Query> =>
       build: string;
       channel: string;
     };
+
+    if (json['error']) {
+      return [];
+    }
 
     const entries: Item[] = [];
     let index = 0;
@@ -256,16 +258,54 @@ export const CondaSearch = async (event: Event, query: Query): Promise<Query> =>
           returncode: 1,
           data: {
             code: 1,
+            msg: 'Error calling mamba search',
             stdout: stdout,
             stderr: stderr,
           },
         });
       // Normal return route
-      else
+      else {
+        let json;
+        try {
+          json = JSON.parse(stdout);
+        } catch (e) {
+          let msg;
+          if (e instanceof ReferenceError) {
+            // JSON.parse failed
+            msg = 'Error parsing mamba search output: ' + e;
+          } else {
+            msg = 'Unexpected error in mamba search: ' + e;
+          }
+          console.log(`error: ${e}`);
+          reject({
+            query: 'error',
+            returncode: 1,
+            data: {
+              code: 1,
+              msg: msg,
+              stdout: stdout,
+              stderr: stderr,
+            },
+          });
+        }
+        if (json['error']) {
+          console.log(`error: ${json['error']}`);
+          reject({
+            query: 'error',
+            returncode: 1,
+            data: {
+              code: 1,
+              msg: json['error'],
+              stdout: stdout,
+              stderr: stderr,
+            },
+          });
+        }
         resolve({
           returncode: 0,
-          data: process_mamba_search_output(stdout),
+          data: process_mamba_search_output(json as Query),
         });
+      }
     });
 
     // the backend will only fail under exceptional circumstances;
