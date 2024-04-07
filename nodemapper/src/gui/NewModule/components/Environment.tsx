@@ -2,9 +2,9 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React from 'react';
-import CondaSearch from './EnvCondaSearch';
 import { newmoduleUpdateConfig } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import CondaSearch from './EnvCondaSearch';
 
 const ModuleEnvironment = () => {
   const moduleConfig = useAppSelector((state) => state.newmodule.config);

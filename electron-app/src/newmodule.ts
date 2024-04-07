@@ -1,7 +1,7 @@
 import fs from 'fs';
 import yaml from 'js-yaml';
-import os from 'os';
 import JSZip from 'jszip';
+import os from 'os';
 
 import * as child from 'child_process';
 import * as path from 'path';
@@ -215,17 +215,18 @@ export const CondaSearch = async (event: Event, query: Query): Promise<Query> =>
 
     const entries: Item[] = [];
     let index = 0;
-    for(const key in json) {
+    for (const key in json) {
       entries.push(
         ...(json[key] as Item[]).map((item: Item) => {
-        return {
-          id: index++,
-          name: item['name'],
-          version: item['version'],
-          build: item['build'],
-          channel: new URL(item['channel']).pathname.split('/').filter((s) => s!='')[0]
-        }
-      }));
+          return {
+            id: index++,
+            name: item['name'],
+            version: item['version'],
+            build: item['build'],
+            channel: new URL(item['channel']).pathname.split('/').filter((s) => s != '')[0],
+          };
+        }),
+      );
     }
 
     return entries;
@@ -236,7 +237,10 @@ export const CondaSearch = async (event: Event, query: Query): Promise<Query> =>
     if (query['channels']) {
       const channels = query['channels'] as string[];
       if (channels.length > 0) {
-        channel_args = channels.map((c: string) => '--channel ' + c).join(' ').split(' ');
+        channel_args = channels
+          .map((c: string) => '--channel ' + c)
+          .join(' ')
+          .split(' ');
         channel_args.unshift('--override-channels');
       }
     }

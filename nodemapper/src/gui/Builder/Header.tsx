@@ -23,11 +23,13 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import LinearProgress from '@mui/material/LinearProgress';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 
 const Header = () => {
+  const build_in_progress = useAppSelector((state) => state.builder.build_in_progress);
   const dispatch = useAppDispatch();
 
   // Dropdown menu states
@@ -204,17 +206,21 @@ const Header = () => {
       </Menu>
 
       {/* Build & Run menu */}
-      <Button
-        id="btnBuildAndRunDropdown"
-        aria-controls={open ? 'buildAndRunDropdown-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        onClick={btnBuildAndRunDropdownClick}
-        endIcon={<KeyboardArrowDownIcon />}
-        variant="contained"
-      >
-        BUILD & RUN
-      </Button>
+      <Box>
+        <Button
+          id="btnBuildAndRunDropdown"
+          aria-controls={open ? 'buildAndRunDropdown-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+          onClick={btnBuildAndRunDropdownClick}
+          endIcon={<KeyboardArrowDownIcon />}
+          variant="contained"
+          disabled={build_in_progress}
+        >
+          BUILD & RUN
+        </Button>
+        {build_in_progress && <LinearProgress />}
+      </Box>
 
       <Menu
         id="buildAndRunDropdown-menu"

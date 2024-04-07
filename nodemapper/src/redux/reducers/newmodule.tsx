@@ -1,4 +1,9 @@
-import { INewModuleResult, INewModuleState, INewModuleStateConfig, INewModuleStateEnv } from 'types';
+import {
+  INewModuleResult,
+  INewModuleState,
+  INewModuleStateConfig,
+  INewModuleStateEnv,
+} from 'types';
 import * as actions from '../actions';
 export * from 'types';
 

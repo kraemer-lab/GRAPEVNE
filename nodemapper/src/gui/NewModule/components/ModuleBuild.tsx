@@ -7,12 +7,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 
-import {
-  newmoduleBuild,
-  newmoduleClear,
-  newmoduleOpenModuleFolder,
-  newmoduleValidate,
-} from 'redux/actions';
+import { newmoduleBuild, newmoduleClear, newmoduleOpenModuleFolder } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 const ModalBuildingStatus = ({ open }: { open: boolean }) => {
@@ -46,10 +41,6 @@ const ModuleBuild = () => {
 
   const handleBuildClick = () => {
     dispatch(newmoduleBuild());
-  };
-
-  const handleValidateClick = () => {
-    dispatch(newmoduleValidate());
   };
 
   const handleClearClick = () => {

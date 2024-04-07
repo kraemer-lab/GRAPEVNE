@@ -1,28 +1,28 @@
-import React from 'react';
+import SearchIcon from '@mui/icons-material/Search';
+import TuneIcon from '@mui/icons-material/Tune';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Chip from '@mui/material/Chip';
+import Grid from '@mui/material/Grid';
+import IconButton from '@mui/material/IconButton';
+import LinearProgress from '@mui/material/LinearProgress';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import React from 'react';
 import {
   newmoduleEnvCondaSearch,
   newmoduleEnvCondaSearchUpdatePackageList,
   newmoduleUpdateEnvCondaSearchChannels,
 } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
-import TuneIcon from '@mui/icons-material/Tune';
-import Paper from '@mui/material/Paper';
-import LinearProgress from '@mui/material/LinearProgress';
-import Button from '@mui/material/Button';
-import Grid from '@mui/material/Grid';
-import Chip from '@mui/material/Chip';
 
 interface IIconSettings {
   handleShowSettings: () => void;
 }
 
-const IconSettings = ({handleShowSettings}: IIconSettings) => {
+const IconSettings = ({ handleShowSettings }: IIconSettings) => {
   return (
     <IconButton onClick={handleShowSettings}>
       <TuneIcon />
@@ -34,7 +34,7 @@ interface IIconSearch {
   handleSearchClick: () => void;
 }
 
-const IconSearch = ({handleSearchClick}: IIconSearch) => {
+const IconSearch = ({ handleSearchClick }: IIconSearch) => {
   return (
     <IconButton onClick={handleSearchClick}>
       <SearchIcon />
@@ -69,7 +69,7 @@ interface ISettings {
   handleShowSettings: () => void;
 }
 
-const Settings = ({handleShowSettings}: ISettings) => {
+const Settings = ({ handleShowSettings }: ISettings) => {
   const dispatch = useAppDispatch();
   const channels = useAppSelector((state) => state.newmodule.env.channels);
   const [editValue, setEditValue] = React.useState('');
@@ -78,10 +78,10 @@ const Settings = ({handleShowSettings}: ISettings) => {
     dispatch(
       newmoduleUpdateEnvCondaSearchChannels(
         // Remove duplicates
-        newChannels.filter((value, index, array) => array.indexOf(value) === index)
-      )
+        newChannels.filter((value, index, array) => array.indexOf(value) === index),
+      ),
     );
-  }
+  };
 
   const onEditChange = (value: string) => {
     setEditValue(value);
@@ -139,21 +139,18 @@ const Settings = ({handleShowSettings}: ISettings) => {
           </Grid>
         ))}
       </Grid>
-      <Button
-        variant="contained"
-        onClick={handleShowSettings}
-      >
+      <Button variant="contained" onClick={handleShowSettings}>
         CLOSE
       </Button>
     </Paper>
   );
-}
+};
 
 interface ISearchDialog {
   handleShowSettings: () => void;
 }
 
-const SearchDialog = ({handleShowSettings}: ISearchDialog) => {
+const SearchDialog = ({ handleShowSettings }: ISearchDialog) => {
   const dispatch = useAppDispatch();
 
   const searching = useAppSelector((state) => state.newmodule.env.searching);
@@ -208,14 +205,14 @@ const SearchDialog = ({handleShowSettings}: ISearchDialog) => {
       <CondaPackages />
     </>
   );
-}
+};
 
 const CondaSearch = () => {
   const [showSettings, setShowSettings] = React.useState(false);
-  
+
   const handleShowSettings = () => {
     setShowSettings(!showSettings);
-  }
+  };
 
   return (
     <Box
@@ -225,11 +222,11 @@ const CondaSearch = () => {
         width: '100%',
       }}
     >
-      {(showSettings) ?
+      {showSettings ? (
         <Settings handleShowSettings={handleShowSettings} />
-      :
+      ) : (
         <SearchDialog handleShowSettings={handleShowSettings} />
-      }
+      )}
     </Box>
   );
 };

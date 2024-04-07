@@ -4,8 +4,6 @@ import { createReducer } from '@reduxjs/toolkit';
 import { Edge, Node } from 'NodeMap/scene/Flow';
 import { ConfigPaneDisplay } from 'redux/types';
 
-const displayAPI = window.displayAPI;
-
 export interface IRepo {
   type: string;
   label: string;
@@ -24,6 +22,7 @@ export interface IBuilderState {
   logtext: string;
   workdir: string;
   modules_loading: boolean;
+  build_in_progress: boolean;
 
   // react-flow parameters
   nodes: Node[];
@@ -57,6 +56,7 @@ const builderStateInit: IBuilderState = {
   modules_list: '[]',
   workdir: '',
   modules_loading: false,
+  build_in_progress: false,
 
   // react-flow parameters
   nodes: default_nodes,
@@ -223,6 +223,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetModulesLoading, (state, action) => {
       state.modules_loading = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderBuildInProgress, (state, action) => {
+      state.build_in_progress = action.payload;
       console.info('[Reducer] ' + action.type);
     });
 });
