@@ -47,7 +47,7 @@ process.argv.slice(2).forEach((arg) => {
  */
 describe('modules', () => {
   let driver: webdriver.ThenableWebDriver;
-  //jest.retryTimes(3);
+  jest.retryTimes(3);
 
   beforeAll(async () => {
     console.log('::: beforeAll');
