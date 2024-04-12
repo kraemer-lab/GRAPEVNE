@@ -1,0 +1,20 @@
+"""Provide a short (one-line) description of the module.
+
+Then provide a longer description which can cover several lines or paragraphs, including links to any websites that may be relevant.
+
+Params:
+  param1 (str): Provide a description of any parameters that may be used by the module.
+"""
+configfile: "config/config.yaml"
+
+indir = config["input_namespace"]
+
+outdir = config["output_namespace"]
+
+rule all:
+    input:
+    output:
+    shell:
+        """
+
+        """

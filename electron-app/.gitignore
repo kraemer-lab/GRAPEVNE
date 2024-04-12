@@ -6,3 +6,4 @@ coverage
 workflow.json
 build.zip
 build
+src/tests/test-repo

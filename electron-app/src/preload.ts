@@ -1,59 +1,52 @@
-import { ipcRenderer } from "electron";
-import { contextBridge } from "electron";
-import { TerminalAPI } from "./api";
-import { DisplayAPI } from "./api";
-import { BuilderAPI } from "./api";
-import { RunnerAPI } from "./api";
+import { contextBridge, ipcRenderer } from 'electron';
+import { BuilderAPI, DisplayAPI, RunnerAPI, TerminalAPI } from './api';
 
 type Event = Electron.IpcRendererEvent;
 type Query = Record<string, unknown>;
 
-contextBridge.exposeInMainWorld("terminalAPI", {
-  sendData: (data: string) => ipcRenderer.send("terminal/send-data", data),
+contextBridge.exposeInMainWorld('terminalAPI', {
+  sendData: (data: string) => ipcRenderer.send('terminal/send-data', data),
   receiveData: (callback: (event: Event, data: Query) => void) =>
-    ipcRenderer.on("terminal/receive-data", callback),
+    ipcRenderer.on('terminal/receive-data', callback),
 });
 
-contextBridge.exposeInMainWorld("displayAPI", {
-  FolderInfo: (query: Query) => ipcRenderer.invoke("display/folderinfo", query),
-  StoreReadConfig: () => ipcRenderer.invoke("display/store-read-config"),
-  StoreWriteConfig: (query: Query) =>
-    ipcRenderer.invoke("display/store-write-config", query),
+contextBridge.exposeInMainWorld('displayAPI', {
+  FolderInfo: (query: Query) => ipcRenderer.invoke('display/folderinfo', query),
+  StoreReadConfig: () => ipcRenderer.invoke('display/store-read-config'),
+  StoreWriteConfig: (query: Query) => ipcRenderer.invoke('display/store-write-config', query),
 });
 
-contextBridge.exposeInMainWorld("builderAPI", {
-  BuildAsModule: (query: Query) =>
-    ipcRenderer.invoke("builder/build-as-module", query),
-  BuildAsWorkflow: (query: Query) =>
-    ipcRenderer.invoke("builder/build-as-workflow", query),
-  BuildAndRun: (query: Query) =>
-    ipcRenderer.invoke("builder/build-and-run", query),
-  CleanBuildFolder: (query: Query) =>
-    ipcRenderer.invoke("builder/clean-build-folder", query),
-  GetRemoteModules: (query: Query) =>
-    ipcRenderer.invoke("builder/get-remote-modules", query),
+contextBridge.exposeInMainWorld('builderAPI', {
+  BuildAsModule: (query: Query) => ipcRenderer.invoke('builder/build-as-module', query),
+  BuildAsWorkflow: (query: Query) => ipcRenderer.invoke('builder/build-as-workflow', query),
+  BuildAndRun: (query: Query) => ipcRenderer.invoke('builder/build-and-run', query),
+  CleanBuildFolder: (query: Query) => ipcRenderer.invoke('builder/clean-build-folder', query),
+  GetRemoteModules: (query: Query) => ipcRenderer.invoke('builder/get-remote-modules', query),
   GetRemoteModuleConfig: (query: Query) =>
-    ipcRenderer.invoke("builder/get-remote-module-config", query),
+    ipcRenderer.invoke('builder/get-remote-module-config', query),
   OpenResultsFolder: (workdir: string) =>
-    ipcRenderer.invoke("builder/open-results-folder", workdir),
+    ipcRenderer.invoke('builder/open-results-folder', workdir),
   logEvent: (callback: (event: Event, data: string) => void) =>
-    ipcRenderer.on("builder/log-event", callback),
+    ipcRenderer.on('builder/log-event', callback),
 });
 
-contextBridge.exposeInMainWorld("runnerAPI", {
-  Build: (query: Query) => ipcRenderer.invoke("runner/build", query),
-  DeleteResults: (query: Query) =>
-    ipcRenderer.invoke("runner/deleteresults", query),
-  Lint: (query: Query) => ipcRenderer.invoke("runner/lint", query),
-  LoadWorkflow: (query: Query) =>
-    ipcRenderer.invoke("runner/loadworkflow", query),
-  Tokenize: (query: Query) => ipcRenderer.invoke("runner/tokenize", query),
-  TokenizeLoad: (query: Query) =>
-    ipcRenderer.invoke("runner/tokenize_load", query),
-  JobStatus: (query: Query) => ipcRenderer.invoke("runner/jobstatus", query),
-  Launch: (query: Query) => ipcRenderer.invoke("runner/launch", query),
+contextBridge.exposeInMainWorld('runnerAPI', {
+  Build: (query: Query) => ipcRenderer.invoke('runner/build', query),
+  DeleteResults: (query: Query) => ipcRenderer.invoke('runner/deleteresults', query),
+  Lint: (query: Query) => ipcRenderer.invoke('runner/lint', query),
+  LoadWorkflow: (query: Query) => ipcRenderer.invoke('runner/loadworkflow', query),
+  Tokenize: (query: Query) => ipcRenderer.invoke('runner/tokenize', query),
+  TokenizeLoad: (query: Query) => ipcRenderer.invoke('runner/tokenize_load', query),
+  JobStatus: (query: Query) => ipcRenderer.invoke('runner/jobstatus', query),
+  Launch: (query: Query) => ipcRenderer.invoke('runner/launch', query),
   CheckNodeDependencies: (query: Query) =>
-    ipcRenderer.invoke("runner/check-node-dependencies", query),
+    ipcRenderer.invoke('runner/check-node-dependencies', query),
+});
+
+contextBridge.exposeInMainWorld('newmoduleAPI', {
+  Build: (query: Query) => ipcRenderer.invoke('newmodule/build', query),
+  CondaSearch: (query: Query) => ipcRenderer.invoke('newmodule/env-conda-search', query),
+  OpenModuleFolder: (folder: string) => ipcRenderer.invoke('newmodule/open-module-folder', folder),
 });
 
 declare global {

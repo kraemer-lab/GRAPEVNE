@@ -16,6 +16,7 @@ export const builderSaveNodemap = createAction('builder/save-nodemap');
 export const builderSetAutoValidateConnections = createAction<boolean>(
   'builder/set-auto-validate-connections',
 );
+export const builderBuildInProgress = createAction<boolean>('builder/build-in-progress');
 export const builderToggleAutoValidateConnections = createAction(
   'builder/toggle-auto-validate-connections',
 );

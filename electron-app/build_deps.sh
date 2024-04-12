@@ -35,6 +35,7 @@ python -m PyInstaller src/python/pyrunner.py \
 
 # Ensure nodemapper has the most up-to-date electron api file
 cp src/api.ts ../nodemapper/src
+cp src/types.ts ../nodemapper/src
 
 # Build nodemapper (front-end)
 pushd ../nodemapper

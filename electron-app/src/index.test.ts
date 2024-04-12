@@ -1,3 +1,3 @@
-test("test", () => {
-  expect("placeholder").toStrictEqual("placeholder");
+test('test', () => {
+  expect('placeholder').toStrictEqual('placeholder');
 });

@@ -2,6 +2,7 @@ import BuilderEngine from 'gui/Builder/components/BuilderEngine';
 import * as globals from 'redux/globals';
 
 import {
+  builderBuildInProgress,
   builderLogEvent,
   builderNodeSelected,
   builderSetEdges,
@@ -45,6 +46,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           BuildAs({
             query_name: 'builder/build-as-module',
             builder_api_fcn: builderAPI.BuildAsModule,
+            dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: getState().builder.snakemake_args,
             snakemake_backend: getState().builder.snakemake_backend,
@@ -60,6 +62,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           BuildAs({
             query_name: 'builder/build-as-workflow',
             builder_api_fcn: builderAPI.BuildAsWorkflow,
+            dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: getState().builder.snakemake_args,
             snakemake_backend: getState().builder.snakemake_backend,
@@ -75,6 +78,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           BuildAs({
             query_name: 'builder/build-as-workflow',
             builder_api_fcn: builderAPI.BuildAsWorkflow,
+            dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: getState().builder.snakemake_args,
             snakemake_backend: getState().builder.snakemake_backend,
@@ -88,6 +92,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 
         case 'builder/build-and-run':
           BuildAndRun({
+            dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: getState().builder.snakemake_args,
             snakemake_backend: getState().builder.snakemake_backend,
@@ -101,6 +106,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case 'builder/build-and-run-to-module':
           BuildAndRunToModule({
             nodename: action.payload,
+            dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: getState().builder.snakemake_args,
             snakemake_backend: getState().builder.snakemake_backend,
@@ -114,6 +120,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case 'builder/build-and-force-run-to-module':
           BuildAndForceRunToModule({
             nodename: action.payload,
+            dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: getState().builder.snakemake_args,
             snakemake_backend: getState().builder.snakemake_backend,
@@ -126,6 +133,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 
         case 'builder/clean-build-folder':
           CleanBuildFolder({
+            dispatchBool: dispatch,
             dispatchString: dispatch,
           });
           break;
@@ -281,6 +289,7 @@ type TPayloadEdgeList = (action: IPayloadEdgeList) => void;
 interface IBuildAs {
   query_name: string;
   builder_api_fcn: (query: Query) => Promise<Query>;
+  dispatchBool: TPayloadBool;
   dispatchString: TPayloadString;
   snakemake_args: string;
   snakemake_backend: string;
@@ -294,6 +303,7 @@ interface IBuildAs {
 const BuildAs = async ({
   query_name,
   builder_api_fcn,
+  dispatchBool,
   dispatchString,
   snakemake_args,
   snakemake_backend,
@@ -304,6 +314,7 @@ const BuildAs = async ({
   edges,
 }: IBuildAs) => {
   dispatchString(builderUpdateStatusText('Building workflow...'));
+  dispatchBool(builderBuildInProgress(true));
   const app = BuilderEngine.Instance;
   const query: Query = {
     query: query_name,
@@ -333,6 +344,7 @@ const BuildAs = async ({
     // post-build tests
     console.log({ query: query['query'], returncode: 0 });
     // Update status
+    dispatchBool(builderBuildInProgress(false));
     dispatchString(builderUpdateStatusText('')); // Idle
   };
   switch (backend as string) {
@@ -349,6 +361,7 @@ const BuildAs = async ({
 };
 
 interface IBuildAndRun {
+  dispatchBool: TPayloadBool;
   dispatchString: TPayloadString;
   snakemake_args: string;
   snakemake_backend: string;
@@ -359,6 +372,7 @@ interface IBuildAndRun {
 }
 
 const BuildAndRun = async ({
+  dispatchBool,
   dispatchString,
   snakemake_args,
   snakemake_backend,
@@ -368,6 +382,7 @@ const BuildAndRun = async ({
   edges,
 }: IBuildAndRun) => {
   dispatchString(builderUpdateStatusText('Building workflow and launching a test run...'));
+  dispatchBool(builderBuildInProgress(true));
   const app = BuilderEngine.Instance;
   const query: Query = {
     query: 'builder/build-and-run',
@@ -386,6 +401,7 @@ const BuildAndRun = async ({
     if (content['returncode'] !== 0) {
       // Report error
       dispatchString(builderUpdateStatusText('Workflow run FAILED.'));
+      dispatchBool(builderBuildInProgress(false));
       return;
     }
     if (content['body']['workdir'] === undefined) {
@@ -395,6 +411,7 @@ const BuildAndRun = async ({
     }
     dispatchString(builderUpdateWorkdir(content['body']['workdir'] as string));
     dispatchString(builderUpdateStatusText('')); // Idle
+    dispatchBool(builderBuildInProgress(false));
   };
   switch (backend as string) {
     case 'rest':
@@ -415,6 +432,7 @@ interface IBuildAndRunToModule extends IBuildAndRun {
 
 const BuildAndRunToModule = async ({
   nodename,
+  dispatchBool,
   dispatchString,
   snakemake_args,
   snakemake_backend,
@@ -424,6 +442,7 @@ const BuildAndRunToModule = async ({
   edges,
 }: IBuildAndRunToModule) => {
   dispatchString(builderUpdateStatusText('Building workflow and launching a test run...'));
+  dispatchBool(builderBuildInProgress(true));
   const app = BuilderEngine.Instance;
   const query: Query = {
     query: 'builder/build-and-run',
@@ -442,9 +461,11 @@ const BuildAndRunToModule = async ({
     if (content['returncode'] !== 0) {
       // Report error
       dispatchString(builderUpdateStatusText('Workflow run FAILED.'));
+      dispatchBool(builderBuildInProgress(false));
       return;
     }
     dispatchString(builderUpdateWorkdir(content['body']['workdir'] as string));
+    dispatchBool(builderBuildInProgress(false));
     dispatchString(builderUpdateStatusText('')); // Idle
   };
   switch (backend as string) {
@@ -462,6 +483,7 @@ const BuildAndRunToModule = async ({
 
 const BuildAndForceRunToModule = async ({
   nodename,
+  dispatchBool,
   dispatchString,
   snakemake_args,
   snakemake_backend,
@@ -475,6 +497,7 @@ const BuildAndForceRunToModule = async ({
   }
   BuildAndRunToModule({
     nodename,
+    dispatchBool,
     dispatchString,
     snakemake_args,
     snakemake_backend,
@@ -486,10 +509,12 @@ const BuildAndForceRunToModule = async ({
 };
 
 interface ICleanBuildFolder {
+  dispatchBool: TPayloadBool;
   dispatchString: TPayloadString;
 }
 
-const CleanBuildFolder = async ({ dispatchString }: ICleanBuildFolder) => {
+const CleanBuildFolder = async ({ dispatchBool, dispatchString }: ICleanBuildFolder) => {
+  dispatchBool(builderBuildInProgress(true));
   const query: Query = {
     query: 'builder/clean-build-folder',
     data: {
@@ -501,6 +526,8 @@ const CleanBuildFolder = async ({ dispatchString }: ICleanBuildFolder) => {
   };
   const callback = (result) => {
     console.log(result);
+    dispatchString(builderUpdateWorkdir(''));
+    dispatchBool(builderBuildInProgress(false));
   };
   switch (backend as string) {
     case 'rest':

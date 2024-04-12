@@ -1,21 +1,19 @@
-import { By } from "selenium-webdriver";
-import { Key } from "selenium-webdriver";
-import { until } from "selenium-webdriver";
+import { By, Key, until } from 'selenium-webdriver';
 
-import * as fs from "fs";
-import * as path from "path";
-import * as webdriver from "selenium-webdriver";
-import * as os from "node:os";
-import decompress = require("decompress");
+import * as fs from 'fs';
+import * as os from 'node:os';
+import * as path from 'path';
+import * as webdriver from 'selenium-webdriver';
+import decompress = require('decompress');
 
-import * as shell from "shelljs";
-import { exec } from "child_process";
-import * as util from "util";
+import { exec } from 'child_process';
+import * as shell from 'shelljs';
+import * as util from 'util';
 const execPromise = util.promisify(exec);
 
 // Test runner conditionals
 const runif = (condition: boolean) => (condition ? it : it.skip);
-const is_installed = (programs: string[], condition = "all") => {
+const is_installed = (programs: string[], condition = 'all') => {
   /* Check if a list of programs is present
    * User may specify when any or all of the programs are installed
    *
@@ -24,13 +22,12 @@ const is_installed = (programs: string[], condition = "all") => {
    */
   let returncode = true;
   for (const program of programs) {
-    const program_check =
-      shell.exec(`${program} --version`, { silent: true }).code == 0;
+    const program_check = shell.exec(`${program} --version`, { silent: true }).code == 0;
     switch (condition) {
-      case "any":
+      case 'any':
         returncode ||= program_check;
         break;
-      case "all":
+      case 'all':
         returncode &&= program_check;
         break;
       default:
@@ -40,7 +37,7 @@ const is_installed = (programs: string[], condition = "all") => {
   }
   return returncode;
 };
-const is_windows = process.platform === "win32";
+const is_windows = process.platform === 'win32';
 const is_not_windows = !is_windows;
 
 type Query = Record<string, unknown>;
@@ -51,12 +48,12 @@ const unzip = async (buildfile: string, buildfolder: string) => {
 
 const wranglename = (name: string) => {
   // Wrangle name to remove spaces and special characters
-  return name.replace(/ /g, "_").replace(/\(/g, "_").replace(/\)/g, "_");
+  return name.replace(/ /g, '_').replace(/\(/g, '_').replace(/\)/g, '_');
 };
 
 const RedirectConsoleLog = async (driver: webdriver.ThenableWebDriver) => {
   // Capture console.log messages for backend return values
-  console.log("::: RedirectConsoleLog");
+  console.log('::: RedirectConsoleLog');
   await driver.executeScript(`
     _msg_queue = [];  // empty msg queue
     (function() {
@@ -72,16 +69,16 @@ const RedirectConsoleLog = async (driver: webdriver.ThenableWebDriver) => {
       }
     })()
   `);
-  console.log("<<< RedirectConsoleLog");
+  console.log('<<< RedirectConsoleLog');
 };
 
 const FlushConsoleLog = async (driver: webdriver.ThenableWebDriver) => {
   // Flush console.log messages for backend return values
-  console.log("::: FlushConsoleLog");
+  console.log('::: FlushConsoleLog');
   await driver.executeScript(`
     _msg_queue = [];  // empty msg queue
   `);
-  console.log("<<< FlushConsoleLog");
+  console.log('<<< FlushConsoleLog');
 };
 
 // Wait for return code
@@ -89,30 +86,28 @@ const WaitForReturnCode = async (
   driver: webdriver.ThenableWebDriver,
   query: string,
 ): Promise<Query> => {
-  console.log("::: WaitForReturnCode");
+  console.log('::: WaitForReturnCode');
 
   /* Warning: This routine can fail if the message object is a Proxy */
 
   // Monitor console.log until a returncode is received
   let msg = undefined;
   let msg_set = undefined;
-  console.log("Waiting for return msg...");
+  console.log('Waiting for return msg...');
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    msg_set = (await driver.executeScript(
-      "return _msg_queue.shift()",
-    )) as unknown[];
+    msg_set = (await driver.executeScript('return _msg_queue.shift()')) as unknown[];
     if (msg_set === undefined || msg_set === null) continue;
     msg = msg_set.shift();
-    if (typeof msg === "object" && msg != null) {
+    if (typeof msg === 'object' && msg != null) {
       if (
-        Object.prototype.hasOwnProperty.call(msg, "query") &&
-        Object.prototype.hasOwnProperty.call(msg, "returncode")
+        Object.prototype.hasOwnProperty.call(msg, 'query') &&
+        Object.prototype.hasOwnProperty.call(msg, 'returncode')
       ) {
         msg = msg as Query;
         if (msg.query === query && msg.returncode != undefined) {
-          console.log("return msg received: ", msg);
-          console.log("<<< WaitForReturnCode");
+          console.log('return msg received: ', msg);
+          console.log('<<< WaitForReturnCode');
           return msg;
         }
       }
@@ -125,7 +120,7 @@ const dragAndDrop = async (
   elementFrom: webdriver.WebElement,
   elementTo: webdriver.WebElement,
 ) => {
-  if (os.platform() === "win32") {
+  if (os.platform() === 'win32') {
     // Windows implementation - see function for details
     return await dragAndDrop_script(driver, elementFrom, elementTo);
   } else {
@@ -189,22 +184,21 @@ const dragAndDrop_script = async (
   );
 };
 
-const OverwriteInputField = async (
-  element: webdriver.WebElement,
-  newvalue: string,
-) => {
-  // Overwrite the input field with a new value (useful when 'clear' is unresponsive)
-  const oldvalue = await element.getAttribute("value");
-  let s = "";
+const OverwriteInputField = async (element: webdriver.WebElement, newvalue: string) => {
+  // First, try clearing the input (not always successful)
+  await element.clear();
+  // Next, try selecting all text and deleting it
+  await element.sendKeys(Key.chord(Key.CONTROL, 'a'));
+  await element.sendKeys(Key.BACK_SPACE);
+  // Finally, delete any remaining text in the input field and replace with the new value
+  const oldvalue = await element.getAttribute('value');
+  let s = '';
   for (let k = 0; k < oldvalue.length; k++) s += Key.BACK_SPACE;
   s += newvalue + Key.ENTER;
   await element.sendKeys(s);
 };
 
-const SetCheckBox = async (
-  checkbox: webdriver.WebElement,
-  checked: boolean,
-) => {
+const SetCheckBox = async (checkbox: webdriver.WebElement, checked: boolean) => {
   // Set checkbox to checked or unchecked
   const is_checked = await checkbox.isSelected();
   if (is_checked != checked) await checkbox.click();
@@ -220,6 +214,105 @@ const SetCheckBoxByID = async (
   await SetCheckBox(checkbox, checked);
 };
 
+interface IInputFilelistAddItem {
+  driver: webdriver.ThenableWebDriver;
+  label: string;
+  port: string;
+  filename: string;
+}
+
+export const InputFilelistAddItem = async ({
+  driver,
+  label,
+  port,
+  filename,
+}: IInputFilelistAddItem) => {
+  // Click on the Add button
+  await driver.findElement(By.id('btnInputFilesAdd')).click();
+  // Set label (first enable editing by double-clicking on the item, then overwrite the value)
+  const label_clickable = driver.findElement(
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Label>"]`),
+  );
+  await driver.actions().doubleClick(label_clickable).perform();
+  await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="<Label>"]`)), label);
+  // Set port from list
+  const port_clickable = await driver.findElement(
+    By.xpath(`(//div[contains(@class, "MuiDataGrid-cell") and @data-field="port"])[last()]`),
+  );
+  await driver.actions().doubleClick(port_clickable).perform();
+  await driver.findElement(By.xpath(`//li[@data-value="${port}"]`)).click();
+  // Set filename
+  const filename_clickable = driver.findElement(
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Filename>"]`),
+  );
+  // Double-click on the filename to enable editing (retry on fail)
+  const filename_input = `//input[@value="<Filename>"]`;
+  for(let k = 0; k < 3; k++) {
+    try {
+      await driver.actions().doubleClick(filename_clickable).perform();
+      await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);
+    } catch (NoSuchElementError) {
+      // Retry on fail
+      continue;
+    }
+  }
+  await OverwriteInputField(driver.findElement(By.xpath(filename_input)), filename);
+};
+
+interface IOutputFilelistAddItem {
+  driver: webdriver.ThenableWebDriver;
+  label: string;
+  filename: string;
+}
+
+export const OutputFilelistAddItem = async ({
+  driver,
+  label,
+  filename,
+}: IOutputFilelistAddItem) => {
+  // Click on the Add button
+  await driver.findElement(By.id('btnOutputFilesAdd')).click();
+  // Set label (first enable editing by double-clicking on the item, then overwrite the value)
+  const label_clickable = driver.findElement(
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Label>"]`),
+  );
+  await driver.actions().doubleClick(label_clickable).perform();
+  await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="<Label>"]`)), label);
+  // Set filename
+  const filename_clickable = driver.findElement(
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Filename>"]`),
+  );
+  // Double-click on the filename to enable editing (retry on fail)
+  const filename_input = `//input[@value="<Filename>"]`;
+  for(let k = 0; k < 3; k++) {
+    try {
+      await driver.actions().doubleClick(filename_clickable).perform();
+      await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);
+    } catch (NoSuchElementError) {
+      // Retry on fail
+      continue;
+    }
+  }
+  await OverwriteInputField(driver.findElement(By.xpath(filename_input)), filename);
+};
+
+const ClearGraph = async (driver: webdriver.ThenableWebDriver) => {
+  // Clear graph
+  await driver.findElement(By.id('btnGraphDropdown')).click();
+  await driver.findElement(By.id('btnBuilderClearScene')).click();
+  // Wait for Graph dropdown menu to close
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    try {
+      await driver.findElement(By.xpath('//ul[@aria-labelledby="graphDropdown"]'));
+      await driver.sleep(50);
+    } catch (NoSuchElementError) {
+      // Element has closed
+      break;
+    }
+  }
+};
+
 interface IDropDownButton {
   driver: webdriver.ThenableWebDriver;
   dropdownId: string;
@@ -233,15 +326,11 @@ const IsElementVisible = async (driver: webdriver.ThenableWebDriver, id: string)
   } catch (NoSuchElementError) {
     return false;
   }
-}
+};
 
-const DropDownButton = async ({
-  driver,
-  dropdownId,
-  id,
-}: IDropDownButton) => {
+const DropDownButton = async ({ driver, dropdownId, id }: IDropDownButton) => {
   // Click on dropdown until menu opens
-  while (!await IsElementVisible(driver, id)) {
+  while (!(await IsElementVisible(driver, id))) {
     await driver.findElement(By.id(dropdownId)).click();
     await driver.sleep(250);
   }
@@ -254,62 +343,43 @@ const DropDownButton = async ({
     }
     await driver.sleep(250);
   }
-}
-
-const ClearGraph = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
-  // Clear graph
-  await DropDownButton({
-    driver: driver,
-    dropdownId: "btnGraphDropdown",
-    id: "btnBuilderClearScene",
-  });
 };
 
-const CleanBuildFolder = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
+const CleanBuildFolder = async (driver: webdriver.ThenableWebDriver) => {
   // Clean build folder
   await DropDownButton({
     driver: driver,
-    dropdownId: "btnBuildAndRunDropdown",
-    id: "btnCleanBuildFolder",
+    dropdownId: 'btnBuildAndRunDropdown',
+    id: 'btnCleanBuildFolder',
   });
-}
+};
 
-const BuildAndTest = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
+const BuildAndTest = async (driver: webdriver.ThenableWebDriver) => {
   // Build and test
   await DropDownButton({
     driver: driver,
-    dropdownId: "btnBuildAndRunDropdown",
-    id: "btnBuilderBuildAndTest",
+    dropdownId: 'btnBuildAndRunDropdown',
+    id: 'btnBuilderBuildAndTest',
   });
-}
+};
 
-const PackageWorkflow = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
+const PackageWorkflow = async (driver: webdriver.ThenableWebDriver) => {
   // Package workflow
   await DropDownButton({
     driver: driver,
-    dropdownId: "btnBuildAndRunDropdown",
-    id: "btnBuilderPackageWorkflow",
+    dropdownId: 'btnBuildAndRunDropdown',
+    id: 'btnBuilderPackageWorkflow',
   });
-}
+};
 
-const BuildAsWorkflow = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
+const BuildAsWorkflow = async (driver: webdriver.ThenableWebDriver) => {
   // Build as workflow
   await DropDownButton({
     driver: driver,
-    dropdownId: "btnBuildAndRunDropdown",
-    id: "btnBuilderBuildAsWorkflow",
+    dropdownId: 'btnBuildAndRunDropdown',
+    id: 'btnBuilderBuildAsWorkflow',
   });
-}
+};
 
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
@@ -325,7 +395,7 @@ const BuildAndRun_MultiModuleWorkflow = async (
   connections: string[][],
   outfiles: string[],
 ) => {
-  console.log("::: test Build and Test the workflow");
+  console.log('::: test Build and Test the workflow');
   await MultiModuleWorkflow_Setup(driver, modulenames, connections);
   const target_files = await MultiModuleWorkflow_CleanAndDetermineTargets(
     driver,
@@ -345,36 +415,24 @@ export const MultiModuleWorkflow_Setup = async (
   modulenames: string[],
   connections: string[][],
 ) => {
-  console.log("::: test Build and Test the workflow (setup)");
+  console.log('::: test Build and Test the workflow (setup)');
   // Drag-and-drop module from modules-list into scene
   await ClearGraph(driver);
   // Force modules to be loaded in order
   for (let k = 0; k < modulenames.length; k++) {
-    const module = await driver.findElement(
-      By.id("modulelist-" + wranglename(modulenames[k])),
-    );
-    const canvas = await driver.findElement(By.className("react-flow__pane"));
+    const module = await driver.findElement(By.id('modulelist-' + wranglename(modulenames[k])));
+    const canvas = await driver.findElement(By.className('react-flow__pane'));
     await dragAndDrop(driver, module, canvas);
-    await driver.wait(
-      until.elementLocated(
-        By.xpath(
-          `//div[@data-id="n${k}"]`,
-        ),
-      ),
-    );
+    await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n${k}"]`)));
   }
 
   // Force connections to be connected in order
-  await driver.findElement(By.id("buttonReactflowArrange")).click();
+  await driver.findElement(By.id('buttonReactflowArrange')).click();
   for (let k = 0; k < connections.length; k++) {
     // We can connect modules by first clicking on the source port, then the target port
     const [fromport, toport] = connections[k];
-    const port1 = await driver.findElement(
-      By.xpath(`//div[@data-id="${fromport}"]`),
-    );
-    const port2 = await driver.findElement(
-      By.xpath(`//div[@data-id="${toport}"]`),
-    );
+    const port1 = await driver.findElement(By.xpath(`//div[@data-id="${fromport}"]`));
+    const port2 = await driver.findElement(By.xpath(`//div[@data-id="${toport}"]`));
     await dragAndDrop(driver, port1, port2);
   }
 };
@@ -385,15 +443,15 @@ export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
   connections: string[][],
   outfiles: string[],
 ) => {
-  console.log("::: test Build and Test the workflow (CleanAndDeterminTargets)");
+  console.log('::: test Build and Test the workflow (CleanAndDeterminTargets)');
   // Clean build folder (initial); assert target output does not exist
   await CleanBuildFolder(driver);
-  const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
+  const msg = await WaitForReturnCode(driver, 'builder/clean-build-folder');
   expect(msg.returncode).toEqual(0);
   const target_files = outfiles.map((outfile) => {
     return path.join((msg.body as Query).path as string, outfile);
   });
-  console.log("target_files: ", target_files);
+  console.log('target_files: ', target_files);
   target_files.forEach((target_file) => {
     expect(fs.existsSync(target_file)).toBeFalsy();
   });
@@ -412,11 +470,11 @@ export const MultiModuleWorkflow_BuildAndCheck = async ({
   target_files,
   should_fail,
 }: IMultiModuleWorkflow_BuildAndCheck) => {
-  console.log("::: test Build and Test the workflow (build-and-check)");
+  console.log('::: test Build and Test the workflow (build-and-check)');
 
   // Build and test; assert output files exist
   await BuildAndTest(driver);
-  const msg = await WaitForReturnCode(driver, "builder/build-and-run");
+  const msg = await WaitForReturnCode(driver, 'builder/build-and-run');
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
     if (should_fail) expect(fs.existsSync(target_file)).toBeFalsy();
@@ -428,17 +486,17 @@ export const MultiModuleWorkflow_TidyUp = async (
   driver: webdriver.ThenableWebDriver,
   target_files: string[],
 ) => {
-  console.log("::: test Build and Test the workflow (tidy-up)");
+  console.log('::: test Build and Test the workflow (tidy-up)');
 
   // Clean build folder (tidy-up); assert target output does not exist
   await CleanBuildFolder(driver);
-  const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
+  const msg = await WaitForReturnCode(driver, 'builder/clean-build-folder');
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
     expect(fs.existsSync(target_file)).toBeFalsy();
   });
 
-  console.log("<<< test Build and Test the workflow");
+  console.log('<<< test Build and Test the workflow');
 };
 
 interface IBuild_RunWithDocker_SingleModuleWorkflow {
@@ -458,23 +516,15 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   expand_module,
   packaged,
 }: IBuild_RunWithDocker_SingleModuleWorkflow) => {
-  console.log("::: test Build, then launch in Docker");
+  console.log('::: test Build, then launch in Docker');
 
   // Drag-and-drop module from modules-list into scene
-  console.log("Drag-and-drop module from modules-list into scene");
+  console.log('Drag-and-drop module from modules-list into scene');
   await ClearGraph(driver);
-  const module = await driver.findElement(
-    By.id("modulelist-" + wranglename(modulename)),
-  );
-  const canvas = await driver.findElement(By.className("react-flow__pane"));
+  const module = await driver.findElement(By.id('modulelist-' + wranglename(modulename)));
+  const canvas = await driver.findElement(By.className('react-flow__pane'));
   await dragAndDrop(driver, module, canvas);
-  await driver.wait(
-    until.elementLocated(
-      By.xpath(
-        `//div[@data-id="n0"]`,
-      ),
-    ),
-  )
+  await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n0"]`)));
   await canvas.click(); // Click on the canvas to deselect the module
 
   // Open the module in the editor and Expand, replacing the module with its sub-modules
@@ -489,57 +539,55 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   if (expand_module) {
     // Click on the canvas module element. This actually finds both the repository entry
     // and the canvas element, so we click on both as we cannot guarantee ordering.
-    console.log("Click the canvas module element");
-    const elements = await driver.findElements(
-      By.xpath(`//div[text()='${modulename}']`),
-    );
+    console.log('Click the canvas module element');
+    const elements = await driver.findElements(By.xpath(`//div[text()='${modulename}']`));
     for (const element of elements) await element.click();
     await driver.sleep(50); // Wait for module settings to expand
-    await driver.findElement(By.id("btnBuilderExpand")).click();
+    await driver.findElement(By.id('btnBuilderExpand')).click();
   }
 
   // Assert that build file does not exist
-  console.log("Assert that build file does not exist");
-  const buildfile = path.join(__dirname, "downloads", "build.zip");
+  console.log('Assert that build file does not exist');
+  const buildfile = path.join(__dirname, 'downloads', 'build.zip');
   if (fs.existsSync(buildfile)) fs.unlinkSync(buildfile);
   expect(fs.existsSync(buildfile)).toBeFalsy();
 
   // Build, outputs zip-file
-  console.log("Build, outputs zip-file");
+  console.log('Build, outputs zip-file');
   if (packaged) {
     await PackageWorkflow(driver);
   } else {
     await BuildAsWorkflow(driver);
   }
-  const msg = await WaitForReturnCode(driver, "builder/build-as-workflow");
+  const msg = await WaitForReturnCode(driver, 'builder/build-as-workflow');
   expect(msg.returncode).toEqual(0);
 
   // Wait for build file to be downloaded
-  console.log("Wait for build file to be downloaded");
-  console.log("Build file: ", buildfile);
+  console.log('Wait for build file to be downloaded');
+  console.log('Build file: ', buildfile);
   while (!fs.existsSync(buildfile)) {
     await driver.sleep(500); // test will timeout if this fails repeatedly
   }
   expect(fs.existsSync(buildfile)).toBeTruthy();
 
   // Unzip build file
-  console.log("Unzip build file");
-  const buildfolder = path.join(__dirname, "downloads", "build");
+  console.log('Unzip build file');
+  const buildfolder = path.join(__dirname, 'downloads', 'build');
   if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true, force: true });
   expect(fs.existsSync(buildfolder)).toBeFalsy();
   fs.mkdirSync(buildfolder);
   await unzip(buildfile, buildfolder);
   expect(fs.existsSync(buildfolder)).toBeTruthy();
 
-  console.log("Check Snakefile:");
-  console.log(fs.readFileSync(path.join(buildfolder, "workflow", "Snakefile"), "utf8"));
+  console.log('Check Snakefile:');
+  console.log(fs.readFileSync(path.join(buildfolder, 'workflow', 'Snakefile'), 'utf8'));
 
-  console.log("Check config:");
-  console.log(fs.readFileSync(path.join(buildfolder, "config", "config.yaml"), "utf8"));
+  console.log('Check config:');
+  console.log(fs.readFileSync(path.join(buildfolder, 'config', 'config.yaml'), 'utf8'));
 
   // Build and launch docker container; assert that workflow output file exists
-  console.log("Build and launch docker container");
-  const dockerfile = path.join(buildfolder, "Dockerfile");
+  console.log('Build and launch docker container');
+  const dockerfile = path.join(buildfolder, 'Dockerfile');
   expect(fs.existsSync(dockerfile)).toBeTruthy();
 
   // WINDOWS TEST STOPS HERE
@@ -553,26 +601,27 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   // itself relies on Docker images (notably mambaforge), that are not available for the
   // Windows platform at this time.
   if (is_windows) {
-    console.log("Windows platform detected: skipping container launch test...");
+    console.log('Windows platform detected: skipping container launch test...');
     return;
   }
 
-  // Assert that the target output files do not exist
-  console.log("Assert that target output files do not exist");
+  // Assert that the target output file does not exist
+  console.log('Assert that the target output file does not exist');
   const target_files = target_outfiles.map((outfile) => {
     return path.join(buildfolder, outfile);
   });
-  console.log("target_files: ", target_files);
+  console.log('target_files: ', target_files);
+
   target_files.forEach((target_file) => {
     expect(fs.existsSync(target_file)).toBeFalsy();
   });
 
-  console.log("Assert that the packaged payload files do exist");
+  console.log('Assert that the packaged payload files do exist');
   const payload_files = payload_outfiles.map((outfile) => {
     return path.join(buildfolder, outfile);
   });
-  console.log("payload_files: ", payload_files);
-  for(const payload_file of payload_files) {
+  console.log('payload_files: ', payload_files);
+  for (const payload_file of payload_files) {
     expect(fs.existsSync(payload_file)).toBeTruthy();
   }
   await payload_files.forEach(async (payload_file) => {
@@ -580,22 +629,18 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   });
 
   // Build docker image
-  console.log("Build docker image");
-  let { stdout, stderr } = await execPromise(
-    path.join(buildfolder, "build_container.sh"),
-  );
+  console.log('Build docker image');
+  let { stdout, stderr } = await execPromise(path.join(buildfolder, 'build_container.sh'));
   if (stdout) console.log(stdout);
   if (stderr) console.log(stderr);
 
   // Launch docker and wait for process to finish
-  console.log("Launch docker and wait for process to finish");
-  ({ stdout, stderr } = await execPromise(
-    path.join(buildfolder, "launch_container.sh"),
-  ));
+  console.log('Launch docker and wait for process to finish');
+  ({ stdout, stderr } = await execPromise(path.join(buildfolder, 'launch_container.sh')));
   if (stdout) console.log(stdout);
   if (stderr) console.log(stderr);
-  console.log("Check that target file has been created");
-  for(const target_file of target_files) {
+  console.log('Check that target file has been created');
+  for (const target_file of target_files) {
     expect(fs.existsSync(target_file)).toBeTruthy();
   }
 
@@ -607,22 +652,22 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
     expect(fs.existsSync(target_file)).toBeFalsy();
   });
 
-  console.log("<<< test Build, then launch in Docker");
+  console.log('<<< test Build, then launch in Docker');
 };
 
 export {
-  runif,
-  ClearGraph,
-  is_installed,
-  is_windows,
-  is_not_windows,
-  dragAndDrop,
-  RedirectConsoleLog,
-  FlushConsoleLog,
-  WaitForReturnCode,
-  SetCheckBoxByID,
-  OverwriteInputField,
-  BuildAndRun_SingleModuleWorkflow,
   BuildAndRun_MultiModuleWorkflow,
+  BuildAndRun_SingleModuleWorkflow,
   Build_RunWithDocker_SingleModuleWorkflow,
+  ClearGraph,
+  FlushConsoleLog,
+  OverwriteInputField,
+  RedirectConsoleLog,
+  SetCheckBoxByID,
+  WaitForReturnCode,
+  dragAndDrop,
+  is_installed,
+  is_not_windows,
+  is_windows,
+  runif,
 };

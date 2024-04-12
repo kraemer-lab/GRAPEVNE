@@ -2152,6 +2152,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@material-ui/icons@npm:^4.11.3":
+  version: 4.11.3
+  resolution: "@material-ui/icons@npm:4.11.3"
+  dependencies:
+    "@babel/runtime": "npm:^7.4.4"
+  peerDependencies:
+    "@material-ui/core": ^4.0.0
+    "@types/react": ^16.8.6 || ^17.0.0
+    react: ^16.8.0 || ^17.0.0
+    react-dom: ^16.8.0 || ^17.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 2c405785fc9f98a7d50a796fd294c52b5447b61c5a3d4563d86e07164400cda2ac667c944110b0ab8eca80f880b01846cf3525cbd05c5584b782c3bb4fd2d6eb
+  languageName: node
+  linkType: hard
+
 "@material-ui/styles@npm:^4.11.5":
   version: 4.11.5
   resolution: "@material-ui/styles@npm:4.11.5"
@@ -2408,6 +2425,42 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 42d3db7f73f47ad719b8a4769eac2aeaec683166c953e67518f6edb7d14464576daf6566619a384f5f7e48dcb1478053ff3e4ce1be244fd332f7e988da9e1401
+  languageName: node
+  linkType: hard
+
+"@mui/utils@npm:^5.14.16":
+  version: 5.15.14
+  resolution: "@mui/utils@npm:5.15.14"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.9"
+    "@types/prop-types": "npm:^15.7.11"
+    prop-types: "npm:^15.8.1"
+    react-is: "npm:^18.2.0"
+  peerDependencies:
+    "@types/react": ^17.0.0 || ^18.0.0
+    react: ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 36265988477637a011361456b40929de928e215466b72e6c48673a2088610d83e09960a3e0608100448910683079fc80a5e11dbf49b9ce7109dd8e49403ae3b3
+  languageName: node
+  linkType: hard
+
+"@mui/x-data-grid@npm:^6.19.6":
+  version: 6.19.6
+  resolution: "@mui/x-data-grid@npm:6.19.6"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+    "@mui/utils": "npm:^5.14.16"
+    clsx: "npm:^2.0.0"
+    prop-types: "npm:^15.8.1"
+    reselect: "npm:^4.1.8"
+  peerDependencies:
+    "@mui/material": ^5.4.1
+    "@mui/system": ^5.4.1
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: 1ae4c0482e2759d3445bf8d83aeb0fa3a96101c350e1bfa2586f4b9c203969840b370ce5e94c94a52051d630372535a2662939f7bc6c357a59c2f00e570e81b8
   languageName: node
   linkType: hard
 
@@ -9917,8 +9970,10 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": "npm:^6.5.1"
     "@fortawesome/react-fontawesome": "npm:^0.2.0"
     "@material-ui/core": "npm:^4.12.4"
+    "@material-ui/icons": "npm:^4.11.3"
     "@mui/icons-material": "npm:^5.15.10"
     "@mui/material": "npm:^5.15.10"
+    "@mui/x-data-grid": "npm:^6.19.6"
     "@mui/x-tree-view": "npm:^6.17.0"
     "@redux-devtools/extension": "npm:^3.3.0"
     "@reduxjs/toolkit": "npm:^1.9.7"

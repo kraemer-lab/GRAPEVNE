@@ -1,41 +1,33 @@
-import path from "path";
-import { IpcMainInvokeEvent } from "electron";
-import * as os from "node:os";
-import * as child from "child_process";
+import * as child from 'child_process';
+import { IpcMainInvokeEvent } from 'electron';
+import * as os from 'node:os';
+import path from 'path';
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
 
-const shell =
-  os.platform() === "win32" ? "powershell.exe" : process.env.SHELL || "bash";
+const shell = os.platform() === 'win32' ? 'powershell.exe' : process.env.SHELL || 'bash';
 
-const shell_args =
-  os.platform() === "win32" ? ["-NonInteractive", "-Command"] : ["-i", "-c"];
+const shell_args = os.platform() === 'win32' ? ['-NonInteractive', '-Command'] : ['-i', '-c'];
 
-const pyrunner = path.join(
-  process.resourcesPath,
-  "app",
-  "dist",
-  "pyrunner",
-  "pyrunner",
-);
+const pyrunner = path.join(process.resourcesPath, 'app', 'dist', 'pyrunner', 'pyrunner');
 
 const condaPath = path.join(
   process.resourcesPath,
-  "app",
-  "dist",
-  "conda",
-  os.platform() === "win32" ? "condabin" : "bin",
+  'app',
+  'dist',
+  'conda',
+  os.platform() === 'win32' ? 'condabin' : 'bin',
 );
 
-const pathSeparator = os.platform() === "win32" ? ";" : ":";
+const pathSeparator = os.platform() === 'win32' ? ';' : ':';
 
 // General query processing interface for Python scripts
 export const ProcessQuery = async (event: Event, query: Query): Promise<Query> => {
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
-    let stdout = ""; // collate return data
-    let stderr = ""; // collate error data
+    let stdout = ''; // collate return data
+    let stderr = ''; // collate error data
 
     // Launch child process; note that this does NOT use the system shell
     console.log(`open [${pyrunner}]: ${args}`);
@@ -43,12 +35,12 @@ export const ProcessQuery = async (event: Event, query: Query): Promise<Query> =
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
-    proc.on("close", () => {
+    proc.on('close', () => {
       console.log(`close: ${stdout} ${stderr}`);
-      if (stdout === "")
+      if (stdout === '')
         // Empty return, most likely a failure in python
         resolve({
-          query: "error",
+          query: 'error',
           returncode: 1,
           data: {
             code: 1,
@@ -62,10 +54,10 @@ export const ProcessQuery = async (event: Event, query: Query): Promise<Query> =
 
     // the backend will only fail under exceptional circumstances;
     // most python related errors are relayed as stderr messages
-    proc.on("error", (code: number) => {
+    proc.on('error', (code: number) => {
       console.log(`error: ${code}`);
       reject({
-        query: "error",
+        query: 'error',
         returncode: 1,
         data: {
           code: code,
@@ -76,18 +68,18 @@ export const ProcessQuery = async (event: Event, query: Query): Promise<Query> =
     });
 
     // collate stdout data
-    proc.stdout.on("data", (data: string) => {
+    proc.stdout.on('data', (data: string) => {
       console.log(`stdout: ${data}`);
       stdout += data;
     });
 
     // collate stderr data
-    proc.stderr.on("data", (data: string) => {
+    proc.stderr.on('data', (data: string) => {
       console.log(`stderr: ${data}`);
       stderr += data;
     });
   });
-}
+};
 
 // General query processing interface for Python scripts
 // (provides realtime stdout/stderr responses; used for workflow executions)
@@ -104,16 +96,12 @@ export const RunWorkflow = async (
 
     // Set PATH to include bundled conda during snakemake calls, plus any
     // other environment variables specified by the user
-    const systempath = process.env.PATH || "";
-    const userpath = envs.PATH || "";
+    const systempath = process.env.PATH || '';
+    const userpath = envs.PATH || '';
     let envpath = `${userpath}${pathSeparator}${systempath}`;
     const options = {
-      cwd: (
-        (query.data as Record<string, unknown>).content as Record<
-          string,
-          unknown
-        >
-      ).workdir as string,
+      cwd: ((query.data as Record<string, unknown>).content as Record<string, unknown>)
+        .workdir as string,
       env: {
         ...process.env,
         ...envs,
@@ -122,7 +110,6 @@ export const RunWorkflow = async (
     };
 
     // Spawn child process (pyrunner) to launch python code (incl. snakemake)
-    //if (conda_backend === "builtin") {
     let proc;
     const use_shell = true;
     if (use_shell) {
@@ -130,10 +117,10 @@ export const RunWorkflow = async (
       // environment is loaded including PATH (and any available conda
       // configuration)
       const shell_cmd =
-        os.platform() === "win32"
+        os.platform() === 'win32'
           ? pyrunner + " '" + querystr.replaceAll('"', '"""') + "'"
           : pyrunner + ' "' + querystr.replaceAll('"', '\\"') + '"';
-      console.log("shell_cmd: ", shell_cmd);
+      console.log('shell_cmd: ', shell_cmd);
       proc = child.spawn(
         // shell command (e.g. 'bash')
         shell,
@@ -151,28 +138,28 @@ export const RunWorkflow = async (
 
     // backend process closes; either successfully (stdout return)
     // or with an error (stderr return)
-    proc.on("close", () => {
+    proc.on('close', () => {
       console.log(`close:`);
       resolve(void 0);
     });
 
     // the backend will only fail under exceptional circumstances;
     // most python related errors are relayed as stderr messages
-    proc.on("error", (code: number) => {
+    proc.on('error', (code: number) => {
       console.log(`error: ${code}`);
       reject();
     });
 
     // collate stdout data
-    proc.stdout.on("data", (data: string) => {
+    proc.stdout.on('data', (data: string) => {
       console.log(`stdout: ${data}`);
       stdout_callback(data);
     });
 
     // collate stderr data
-    proc.stderr.on("data", (data: string) => {
+    proc.stderr.on('data', (data: string) => {
       console.log(`stderr: ${data}`);
       stderr_callback(data);
     });
   });
-}
+};
