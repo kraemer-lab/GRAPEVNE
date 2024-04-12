@@ -247,7 +247,7 @@ export const InputFilelistAddItem = async ({
   );
   await driver.actions().doubleClick(filename_clickable).perform();
   const filename_input = `//input[@value="<Filename>"]`;
-  await until.elementLocated(By.xpath(filename_input));
+  await driver.wait(until.elementLocated(By.xpath(filename_input)));
   await OverwriteInputField(driver.findElement(By.xpath(filename_input)), filename);
 };
 
@@ -276,7 +276,7 @@ export const OutputFilelistAddItem = async ({
   );
   await driver.actions().doubleClick(filename_clickable).perform();
   const filename_input = `//input[@value="<Filename>"]`;
-  await until.elementLocated(By.xpath(filename_input));
+  await driver.wait(until.elementLocated(By.xpath(filename_input)));
   await OverwriteInputField(driver.findElement(By.xpath(filename_input)), filename);
 };
 
