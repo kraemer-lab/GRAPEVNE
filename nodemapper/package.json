@@ -1,6 +1,6 @@
 {
   "name": "nodemapper",
-  "version": "0.0.2",
+  "version": "0.3.0",
   "main": "index.js",
   "license": "MIT",
   "proxy": "http://localhost:5000",
