@@ -23,7 +23,7 @@ const condaPath = path.join(
 const pathSeparator = os.platform() === 'win32' ? ';' : ':';
 
 // General query processing interface for Python scripts
-export async function ProcessQuery(event: Event, query: Query): Promise<Query> {
+export const ProcessQuery = async (event: Event, query: Query): Promise<Query> => {
   return new Promise((resolve, reject) => {
     const args = [JSON.stringify(query)];
     let stdout = ''; // collate return data
@@ -68,13 +68,13 @@ export async function ProcessQuery(event: Event, query: Query): Promise<Query> {
     });
 
     // collate stdout data
-    proc.stdout.on('data', function (data: string) {
+    proc.stdout.on("data", (data: string) => {
       console.log(`stdout: ${data}`);
       stdout += data;
     });
 
     // collate stderr data
-    proc.stderr.on('data', function (data: string) {
+    proc.stderr.on("data", (data: string) => {
       console.log(`stderr: ${data}`);
       stderr += data;
     });
@@ -83,14 +83,14 @@ export async function ProcessQuery(event: Event, query: Query): Promise<Query> {
 
 // General query processing interface for Python scripts
 // (provides realtime stdout/stderr responses; used for workflow executions)
-export async function RunWorkflow(
+export const RunWorkflow = async (
   event: Event,
   query: Record<string, unknown>,
   conda_backend: string,
   envs: Record<string, string>,
   stdout_callback: (cmd: string) => void,
   stderr_callback: (cmd: string) => void,
-): Promise<void> {
+): Promise<void> => {
   return new Promise((resolve, reject) => {
     const querystr = JSON.stringify(query);
 
@@ -151,13 +151,13 @@ export async function RunWorkflow(
     });
 
     // collate stdout data
-    proc.stdout.on('data', function (data: string) {
+    proc.stdout.on("data", (data: string) => {
       console.log(`stdout: ${data}`);
       stdout_callback(data);
     });
 
     // collate stderr data
-    proc.stderr.on('data', function (data: string) {
+    proc.stderr.on("data", (data: string) => {
       console.log(`stderr: ${data}`);
       stderr_callback(data);
     });

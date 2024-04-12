@@ -1,5 +1,4 @@
 import React from 'react';
-import { useAppSelector } from 'redux/store/hooks';
 import Logger from './Logger';
 
 import Box from '@mui/material/Box';
@@ -50,7 +49,7 @@ const tabProps = (index: number) => {
 };
 
 const InfoPanel = () => {
-  const terminal_visible = useAppSelector((state) => state.builder.terminal_visibile);
+  //const terminal_visible = useAppSelector((state) => state.builder.terminal_visibile);
 
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {

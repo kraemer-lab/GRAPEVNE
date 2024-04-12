@@ -14,11 +14,12 @@ const store = new Store();
 // Create electon window
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 768,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
+    show: false,
   });
   if (app.isPackaged) {
     win.loadFile('index.html'); //prod
@@ -37,6 +38,8 @@ const createWindow = () => {
       item.setSavePath(path.join(downloadpath, item.getFilename()));
     });
   }
+  const fullscreen = app.commandLine.hasSwitch("fullscreen");
+  (fullscreen) ? win.maximize() : win.show();
 
   return win;
 };
