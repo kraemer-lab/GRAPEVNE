@@ -68,18 +68,18 @@ export const ProcessQuery = async (event: Event, query: Query): Promise<Query> =
     });
 
     // collate stdout data
-    proc.stdout.on("data", (data: string) => {
+    proc.stdout.on('data', (data: string) => {
       console.log(`stdout: ${data}`);
       stdout += data;
     });
 
     // collate stderr data
-    proc.stderr.on("data", (data: string) => {
+    proc.stderr.on('data', (data: string) => {
       console.log(`stderr: ${data}`);
       stderr += data;
     });
   });
-}
+};
 
 // General query processing interface for Python scripts
 // (provides realtime stdout/stderr responses; used for workflow executions)
@@ -151,15 +151,15 @@ export const RunWorkflow = async (
     });
 
     // collate stdout data
-    proc.stdout.on("data", (data: string) => {
+    proc.stdout.on('data', (data: string) => {
       console.log(`stdout: ${data}`);
       stdout_callback(data);
     });
 
     // collate stderr data
-    proc.stderr.on("data", (data: string) => {
+    proc.stderr.on('data', (data: string) => {
       console.log(`stderr: ${data}`);
       stderr_callback(data);
     });
   });
-}
+};

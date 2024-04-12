@@ -291,7 +291,7 @@ const ClearGraph = async (driver: webdriver.ThenableWebDriver) => {
       break;
     }
   }
-}
+};
 
 interface IDropDownButton {
   driver: webdriver.ThenableWebDriver;
@@ -306,15 +306,11 @@ const IsElementVisible = async (driver: webdriver.ThenableWebDriver, id: string)
   } catch (NoSuchElementError) {
     return false;
   }
-}
+};
 
-const DropDownButton = async ({
-  driver,
-  dropdownId,
-  id,
-}: IDropDownButton) => {
+const DropDownButton = async ({ driver, dropdownId, id }: IDropDownButton) => {
   // Click on dropdown until menu opens
-  while (!await IsElementVisible(driver, id)) {
+  while (!(await IsElementVisible(driver, id))) {
     await driver.findElement(By.id(dropdownId)).click();
     await driver.sleep(250);
   }
@@ -327,51 +323,43 @@ const DropDownButton = async ({
     }
     await driver.sleep(250);
   }
-}
+};
 
-const CleanBuildFolder = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
+const CleanBuildFolder = async (driver: webdriver.ThenableWebDriver) => {
   // Clean build folder
   await DropDownButton({
     driver: driver,
-    dropdownId: "btnBuildAndRunDropdown",
-    id: "btnCleanBuildFolder",
+    dropdownId: 'btnBuildAndRunDropdown',
+    id: 'btnCleanBuildFolder',
   });
-}
+};
 
-const BuildAndTest = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
+const BuildAndTest = async (driver: webdriver.ThenableWebDriver) => {
   // Build and test
   await DropDownButton({
     driver: driver,
-    dropdownId: "btnBuildAndRunDropdown",
-    id: "btnBuilderBuildAndTest",
+    dropdownId: 'btnBuildAndRunDropdown',
+    id: 'btnBuilderBuildAndTest',
   });
-}
+};
 
-const PackageWorkflow = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
+const PackageWorkflow = async (driver: webdriver.ThenableWebDriver) => {
   // Package workflow
   await DropDownButton({
     driver: driver,
-    dropdownId: "btnBuildAndRunDropdown",
-    id: "btnBuilderPackageWorkflow",
+    dropdownId: 'btnBuildAndRunDropdown',
+    id: 'btnBuilderPackageWorkflow',
   });
-}
+};
 
-const BuildAsWorkflow = async (
-  driver: webdriver.ThenableWebDriver,
-) => {
+const BuildAsWorkflow = async (driver: webdriver.ThenableWebDriver) => {
   // Build as workflow
   await DropDownButton({
     driver: driver,
-    dropdownId: "btnBuildAndRunDropdown",
-    id: "btnBuilderBuildAsWorkflow",
+    dropdownId: 'btnBuildAndRunDropdown',
+    id: 'btnBuilderBuildAsWorkflow',
   });
-}
+};
 
 const BuildAndRun_SingleModuleWorkflow = async (
   driver: webdriver.ThenableWebDriver,
@@ -438,7 +426,7 @@ export const MultiModuleWorkflow_CleanAndDetermineTargets = async (
   console.log('::: test Build and Test the workflow (CleanAndDeterminTargets)');
   // Clean build folder (initial); assert target output does not exist
   await CleanBuildFolder(driver);
-  const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
+  const msg = await WaitForReturnCode(driver, 'builder/clean-build-folder');
   expect(msg.returncode).toEqual(0);
   const target_files = outfiles.map((outfile) => {
     return path.join((msg.body as Query).path as string, outfile);
@@ -466,7 +454,7 @@ export const MultiModuleWorkflow_BuildAndCheck = async ({
 
   // Build and test; assert output files exist
   await BuildAndTest(driver);
-  const msg = await WaitForReturnCode(driver, "builder/build-and-run");
+  const msg = await WaitForReturnCode(driver, 'builder/build-and-run');
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
     if (should_fail) expect(fs.existsSync(target_file)).toBeFalsy();
@@ -482,7 +470,7 @@ export const MultiModuleWorkflow_TidyUp = async (
 
   // Clean build folder (tidy-up); assert target output does not exist
   await CleanBuildFolder(driver);
-  const msg = await WaitForReturnCode(driver, "builder/clean-build-folder");
+  const msg = await WaitForReturnCode(driver, 'builder/clean-build-folder');
   expect(msg.returncode).toEqual(0);
   target_files.forEach((target_file) => {
     expect(fs.existsSync(target_file)).toBeFalsy();
@@ -545,7 +533,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   expect(fs.existsSync(buildfile)).toBeFalsy();
 
   // Build, outputs zip-file
-  console.log("Build, outputs zip-file");
+  console.log('Build, outputs zip-file');
   if (packaged) {
     await PackageWorkflow(driver);
   } else {
@@ -563,19 +551,19 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   expect(fs.existsSync(buildfile)).toBeTruthy();
 
   // Unzip build file
-  console.log("Unzip build file");
-  const buildfolder = path.join(__dirname, "downloads", "build");
+  console.log('Unzip build file');
+  const buildfolder = path.join(__dirname, 'downloads', 'build');
   if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true, force: true });
   expect(fs.existsSync(buildfolder)).toBeFalsy();
   fs.mkdirSync(buildfolder);
   await unzip(buildfile, buildfolder);
   expect(fs.existsSync(buildfolder)).toBeTruthy();
 
-  console.log("Check Snakefile:");
-  console.log(fs.readFileSync(path.join(buildfolder, "workflow", "Snakefile"), "utf8"));
+  console.log('Check Snakefile:');
+  console.log(fs.readFileSync(path.join(buildfolder, 'workflow', 'Snakefile'), 'utf8'));
 
-  console.log("Check config:");
-  console.log(fs.readFileSync(path.join(buildfolder, "config", "config.yaml"), "utf8"));
+  console.log('Check config:');
+  console.log(fs.readFileSync(path.join(buildfolder, 'config', 'config.yaml'), 'utf8'));
 
   // Build and launch docker container; assert that workflow output file exists
   console.log('Build and launch docker container');
@@ -608,12 +596,12 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
     expect(fs.existsSync(target_file)).toBeFalsy();
   });
 
-  console.log("Assert that the packaged payload files do exist");
+  console.log('Assert that the packaged payload files do exist');
   const payload_files = payload_outfiles.map((outfile) => {
     return path.join(buildfolder, outfile);
   });
-  console.log("payload_files: ", payload_files);
-  for(const payload_file of payload_files) {
+  console.log('payload_files: ', payload_files);
+  for (const payload_file of payload_files) {
     expect(fs.existsSync(payload_file)).toBeTruthy();
   }
   await payload_files.forEach(async (payload_file) => {
@@ -621,22 +609,18 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   });
 
   // Build docker image
-  console.log("Build docker image");
-  let { stdout, stderr } = await execPromise(
-    path.join(buildfolder, "build_container.sh"),
-  );
+  console.log('Build docker image');
+  let { stdout, stderr } = await execPromise(path.join(buildfolder, 'build_container.sh'));
   if (stdout) console.log(stdout);
   if (stderr) console.log(stderr);
 
   // Launch docker and wait for process to finish
-  console.log("Launch docker and wait for process to finish");
-  ({ stdout, stderr } = await execPromise(
-    path.join(buildfolder, "launch_container.sh"),
-  ));
+  console.log('Launch docker and wait for process to finish');
+  ({ stdout, stderr } = await execPromise(path.join(buildfolder, 'launch_container.sh')));
   if (stdout) console.log(stdout);
   if (stderr) console.log(stderr);
-  console.log("Check that target file has been created");
-  for(const target_file of target_files) {
+  console.log('Check that target file has been created');
+  for (const target_file of target_files) {
     expect(fs.existsSync(target_file)).toBeTruthy();
   }
 
@@ -648,7 +632,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
     expect(fs.existsSync(target_file)).toBeFalsy();
   });
 
-  console.log("<<< test Build, then launch in Docker");
+  console.log('<<< test Build, then launch in Docker');
 };
 
 export {

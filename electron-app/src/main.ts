@@ -38,8 +38,8 @@ const createWindow = () => {
       item.setSavePath(path.join(downloadpath, item.getFilename()));
     });
   }
-  const fullscreen = app.commandLine.hasSwitch("fullscreen");
-  (fullscreen) ? win.maximize() : win.show();
+  const fullscreen = app.commandLine.hasSwitch('fullscreen');
+  fullscreen ? win.maximize() : win.show();
 
   return win;
 };
