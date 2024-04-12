@@ -47,7 +47,7 @@ process.argv.slice(2).forEach((arg) => {
  */
 describe('modules', () => {
   let driver: webdriver.ThenableWebDriver;
-  jest.retryTimes(3);
+  //jest.retryTimes(3);
 
   beforeAll(async () => {
     console.log('::: beforeAll');
@@ -64,8 +64,8 @@ describe('modules', () => {
 
   afterAll(async () => {
     console.log('::: afterAll');
-    /*await driver.close();
-    await driver.quit();*/
+    await driver.close();
+    await driver.quit();
     console.log('<<< afterAll');
   });
 
@@ -707,7 +707,7 @@ describe('modules', () => {
       await InputFilelistAddItem({
         driver: driver,
         label: 'infile',
-        port: 'in',
+        port: 'in1',
         filename: 'infile.txt',
       });
       // Remove input file (not required for this module)
@@ -737,11 +737,9 @@ describe('modules', () => {
         'name: test-env\n' + 'channels:\n' + '  - conda-forge\n' + 'dependencies:',
       );
 
-      // Add script files
-      // TODO
+      // Add script files here --- none to add
 
-      // Add resource files
-      // TODO
+      // Add resource files here --- none to add
 
       // Build the module
       await driver.findElement(By.id('btnNewModuleBuild')).click();

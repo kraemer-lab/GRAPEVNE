@@ -44,6 +44,7 @@ const SafeProcessQuery = async (
       stderr_callback((data['data'] as Query)['stderr'] as string);
       return ErrorReturn(query.query as string, data);
     }
+    return data;
   } catch (err) {
     stderr_callback('Error processing query.');
     stderr_callback(err as string);
@@ -238,6 +239,7 @@ export async function runner_Build(
     stderr_callback((data['data'] as Query)['stderr'] as string);
     return ErrorReturn(query.query as string, data);
   }
+  return data;
 }
 
 export async function runner_DeleteResults(

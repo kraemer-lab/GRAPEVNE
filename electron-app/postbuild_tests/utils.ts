@@ -246,7 +246,9 @@ export const InputFilelistAddItem = async ({
     By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Filename>"]`),
   );
   await driver.actions().doubleClick(filename_clickable).perform();
-  await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="<Filename>"]`)), filename);
+  const filename_input = `//input[@value="<Filename>"]`;
+  await until.elementLocated(By.xpath(filename_input));
+  await OverwriteInputField(driver.findElement(By.xpath(filename_input)), filename);
 };
 
 interface IOutputFilelistAddItem {
