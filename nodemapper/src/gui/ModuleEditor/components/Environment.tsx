@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
 import React from 'react';
 import { newmoduleUpdateConfig } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';

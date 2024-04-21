@@ -1,20 +1,20 @@
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Accordion from '@mui/material/Accordion';
 import Typography from '@mui/material/Typography';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React from 'react';
 
 import ModuleCommands from './components/Commands';
-import ModuleParameters from './components/Parameters';
 import ModuleDocString from './components/DocString';
 import ModuleEnvironment from './components/Environment';
 import ModuleInputs from './components/Inputs';
 import ModuleBuild from './components/ModuleBuild';
 import ModuleNameAndRepo from './components/NameAndRepo';
 import ModuleOutputs from './components/OutputFiles';
+import ModuleParameters from './components/Parameters';
 import ModulePayloadResources from './components/PayloadResources';
 import ModulePayloadScripts from './components/PayloadScripts';
 
@@ -56,9 +56,7 @@ const CollapsibleSection = (props: CollapsibleSectionProps) => {
   return (
     <Grid item xs={8}>
       <Accordion defaultExpanded={props.defaultExpanded}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-        >
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography variant="h6" gutterBottom>
             {props.title}
           </Typography>
@@ -67,14 +65,13 @@ const CollapsibleSection = (props: CollapsibleSectionProps) => {
       </Accordion>
     </Grid>
   );
-}
+};
 
 CollapsibleSection.defaultProps = CollapsibleSectionDefaults;
 
 const ModuleEditor = () => {
   return (
     <Grid container spacing={1} alignItems="center" justifyContent="center">
-
       <CollapsibleSection title="Repository">
         <ModuleNameAndRepo />
       </CollapsibleSection>

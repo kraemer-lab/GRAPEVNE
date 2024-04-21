@@ -67,7 +67,7 @@ const ModuleInputs = () => {
       id += 1;
     }
     return id;
-  }
+  };
 
   const handleAdd = () => {
     const id = getUniqueLabelID();
@@ -90,8 +90,8 @@ const ModuleInputs = () => {
         <InputPorts />
         <Typography variant="body2" gutterBottom>
           Provide a list of the required input files for the module. Double-click to edit elements.
-          You may use &#123;&#123;wildcards&#125;&#125; to match multiple files. The Label can be left
-          blank if you do not need to reference that file in the command.
+          You may use &#123;&#123;wildcards&#125;&#125; to match multiple files. The Label can be
+          left blank if you do not need to reference that file in the command.
         </Typography>
         <DataGrid
           autoHeight
@@ -112,7 +112,11 @@ const ModuleInputs = () => {
           <Button id="btnInputFilesAdd" onClick={handleAdd}>
             Add
           </Button>
-          <Button id="btnInputFilesRemove" onClick={handleRemove} disabled={rowSelectionModel.length === 0}>
+          <Button
+            id="btnInputFilesRemove"
+            onClick={handleRemove}
+            disabled={rowSelectionModel.length === 0}
+          >
             Remove
           </Button>
         </Box>

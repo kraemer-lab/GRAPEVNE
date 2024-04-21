@@ -44,7 +44,7 @@ const PayloadFilelist = () => {
     newmoduleConfig.resources = newRows.map(fixId);
     dispatch(newmoduleUpdateConfig(newmoduleConfig));
   };
-  
+
   const handleAddFiles = () => {
     // Get file names (includes path if run in electron)
     const element = document.createElement('input');
@@ -111,7 +111,9 @@ const PayloadFilelist = () => {
       />
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', rowGap: 1 }}>
         <Button onClick={handleAddFiles}>Add files</Button>
-        <Button onClick={handleRemove} disabled={rowSelectionModel.length === 0}>Remove</Button>
+        <Button onClick={handleRemove} disabled={rowSelectionModel.length === 0}>
+          Remove
+        </Button>
       </Box>
     </Box>
   );

@@ -36,9 +36,7 @@ const Parameters = () => {
 };
 
 const ModuleParameters = () => {
-  return (
-    <Parameters />
-  );
+  return <Parameters />;
 };
 
 export default ModuleParameters;

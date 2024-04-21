@@ -62,7 +62,7 @@ const ModuleCommands = () => {
           variant="outlined"
           multiline
           rows={6}
-          sx={{width: '100%'}}
+          sx={{ width: '100%' }}
           placeholder={placeholder_command}
           value={moduleConfig.command}
           onChange={handleCommandChange}

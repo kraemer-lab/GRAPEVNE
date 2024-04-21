@@ -247,7 +247,7 @@ export const InputFilelistAddItem = async ({
   );
   // Double-click on the filename to enable editing (retry on fail)
   const filename_input = `//input[@value="<Filename>"]`;
-  for(let k = 0; k < 3; k++) {
+  for (let k = 0; k < 3; k++) {
     try {
       await driver.actions().doubleClick(filename_clickable).perform();
       await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);
@@ -284,7 +284,7 @@ export const OutputFilelistAddItem = async ({
   );
   // Double-click on the filename to enable editing (retry on fail)
   const filename_input = `//input[@value="<Filename>"]`;
-  for(let k = 0; k < 3; k++) {
+  for (let k = 0; k < 3; k++) {
     try {
       await driver.actions().doubleClick(filename_clickable).perform();
       await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);

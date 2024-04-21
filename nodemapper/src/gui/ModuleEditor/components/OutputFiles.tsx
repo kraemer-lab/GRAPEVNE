@@ -49,7 +49,7 @@ const ModuleOutputs = () => {
       filename: filename,
     };
   };
-  
+
   const getUniqueLabelID = () => {
     const labels = rows.map((r) => r.label);
     let id = 1;
@@ -57,7 +57,7 @@ const ModuleOutputs = () => {
       id += 1;
     }
     return id;
-  }
+  };
 
   const handleAdd = () => {
     const id = getUniqueLabelID();
@@ -96,7 +96,11 @@ const ModuleOutputs = () => {
         <Button id="btnOutputFilesAdd" onClick={handleAdd}>
           Add
         </Button>
-        <Button id="btnOutputFilesRemove" onClick={handleRemove} disabled={rowSelectionModel.length === 0}>
+        <Button
+          id="btnOutputFilesRemove"
+          onClick={handleRemove}
+          disabled={rowSelectionModel.length === 0}
+        >
           Remove
         </Button>
       </Box>
