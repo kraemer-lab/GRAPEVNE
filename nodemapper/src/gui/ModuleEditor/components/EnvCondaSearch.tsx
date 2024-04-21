@@ -54,7 +54,8 @@ const CondaPackages = () => {
 
   return (
     <DataGrid
-      sx={{ width: '100%', height: '100%' }}
+      autoHeight
+      sx={{ width: '100%' }}
       rows={rows}
       columns={columns}
       pageSizeOptions={[5, 10, 25]}

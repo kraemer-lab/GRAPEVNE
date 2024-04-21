@@ -6,6 +6,7 @@ import React from 'react';
 import { newmoduleUpdateConfig } from 'redux/actions';
 import { INewModuleStateConfigInputFilesRow } from 'redux/reducers/newmodule';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import InputPorts from './InputPorts';
 
 const ModuleInputs = () => {
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
@@ -59,8 +60,18 @@ const ModuleInputs = () => {
     } as INewModuleStateConfigInputFilesRow;
   };
 
+  const getUniqueLabelID = () => {
+    const labels = rows.map((r) => r.label);
+    let id = 1;
+    while (labels.includes(`Label${id}`)) {
+      id += 1;
+    }
+    return id;
+  }
+
   const handleAdd = () => {
-    addRow('<Label>', '', '<Filename>');
+    const id = getUniqueLabelID();
+    addRow(`Label${id}`, '', `filename${id}.ext`);
   };
 
   const handleRemove = () => {
@@ -72,35 +83,39 @@ const ModuleInputs = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        Input files
-      </Typography>
-      <Typography variant="body2" gutterBottom>
-        Provide a list of the required input files for the module. Double-click to edit elements.
-        You may use &#123;&#123;wildcards&#125;&#125; to match multiple files. The Label can be left
-        blank if you do not need to reference that file in the command.
-      </Typography>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        hideFooter={true}
-        processRowUpdate={(newRow, oldRow) => {
-          // Update the row in the state
-          setRows(rows.map((r) => (r.id === oldRow.id ? newRow : r)));
-          return newRow;
-        }}
-        onRowSelectionModelChange={(newRowSelectionModel) => {
-          setRowSelectionModel(newRowSelectionModel);
-        }}
-        rowSelectionModel={rowSelectionModel}
-      ></DataGrid>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', rowGap: 1 }}>
-        <Button id="btnInputFilesAdd" onClick={handleAdd}>
-          Add
-        </Button>
-        <Button id="btnInputFilesRemove" onClick={handleRemove}>
-          Remove
-        </Button>
+      <Box sx={{ display: 'flex', flexDirection: 'column', rowGap: 1, width: '100%' }}>
+        <Typography variant="body2" gutterBottom>
+          Enter new input port names (then RETURN or SPACE to add).
+        </Typography>
+        <InputPorts />
+        <Typography variant="body2" gutterBottom>
+          Provide a list of the required input files for the module. Double-click to edit elements.
+          You may use &#123;&#123;wildcards&#125;&#125; to match multiple files. The Label can be left
+          blank if you do not need to reference that file in the command.
+        </Typography>
+        <DataGrid
+          autoHeight
+          rows={rows}
+          columns={columns}
+          hideFooter={true}
+          processRowUpdate={(newRow, oldRow) => {
+            // Update the row in the state
+            setRows(rows.map((r) => (r.id === oldRow.id ? newRow : r)));
+            return newRow;
+          }}
+          onRowSelectionModelChange={(newRowSelectionModel) => {
+            setRowSelectionModel(newRowSelectionModel);
+          }}
+          rowSelectionModel={rowSelectionModel}
+        />
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', rowGap: 1 }}>
+          <Button id="btnInputFilesAdd" onClick={handleAdd}>
+            Add
+          </Button>
+          <Button id="btnInputFilesRemove" onClick={handleRemove} disabled={rowSelectionModel.length === 0}>
+            Remove
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

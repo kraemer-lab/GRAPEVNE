@@ -8,6 +8,8 @@ import Typography from '@mui/material/Typography';
 import React from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+const placeholder_command = `echo "Hello World" > {output.OutputFileLabel}`;
+
 const ModuleCommands = () => {
   // Get New Module configuration
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
@@ -49,9 +51,6 @@ const ModuleCommands = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        Commands
-      </Typography>
       <Typography variant="body2" gutterBottom>
         Provide the commands to be executed by the module. You can make use of
         &#123;input.Label&#125;, &#123;output.Label&#125; and &#123;params.Name&#125; to reference
@@ -63,7 +62,8 @@ const ModuleCommands = () => {
           variant="outlined"
           multiline
           rows={6}
-          sx={{ width: '100%' }}
+          sx={{width: '100%'}}
+          placeholder={placeholder_command}
           value={moduleConfig.command}
           onChange={handleCommandChange}
           InputProps={{ endAdornment: <DirectiveSelect /> }}
