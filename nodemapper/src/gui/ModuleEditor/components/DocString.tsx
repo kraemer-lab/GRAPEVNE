@@ -1,8 +1,5 @@
-import HelpIcon from '@mui/icons-material/HelpOutline';
 import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
 import React from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
@@ -26,14 +23,6 @@ const ModuleDocString = () => {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', flexDirection: 'row', columnGap: 1 }}>
-        <Box sx={{ flexGrow: 1 }} />
-        <Tooltip title="Provide a description for the module. This can be formatted as Markdown.">
-          <IconButton>
-            <HelpIcon />
-          </IconButton>
-        </Tooltip>
-      </Box>
       <TextField
         id="module-docstring"
         variant="outlined"

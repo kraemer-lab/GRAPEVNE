@@ -57,9 +57,7 @@ const CollapsibleSection = (props: CollapsibleSectionProps) => {
     <Grid item xs={8}>
       <Accordion defaultExpanded={props.defaultExpanded}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h6" gutterBottom>
-            {props.title}
-          </Typography>
+          <Typography variant="h6">{props.title}</Typography>
         </AccordionSummary>
         <AccordionDetails>{props.children}</AccordionDetails>
       </Accordion>
