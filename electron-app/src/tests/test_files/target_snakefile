@@ -4,6 +4,7 @@ configfile: "config/config.yaml"
 
 indir = config["input_namespace"]
 outdir = config["output_namespace"]
+params = config["params"]
 
 def script(name=""):
     from snakemake.remote import AUTO
@@ -31,6 +32,13 @@ rule all:
         resource_label = resource("test_resource_file"),
     output:
         out_label = f"results/{outdir}/out_filename",
+    log:
+        "logs/test_module.log"
+    conda:
+        "envs/env.yaml"
+    params:
+        outdir = outdir,
+        test_param = params["test_param"],
     test_directive:
         """
         test_command

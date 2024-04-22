@@ -25,10 +25,6 @@ interface AddNewProjectDialogProps {
 }
 
 const AddNewProjectDialog = ({ open, setOpen, callbackOk }: AddNewProjectDialogProps) => {
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -72,7 +68,11 @@ const AddNewProjectDialog = ({ open, setOpen, callbackOk }: AddNewProjectDialogP
   );
 };
 
-const ModuleName = () => {
+interface ModuleNameProps {
+  setSelectedRepo: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const ModuleName = ({ setSelectedRepo }: ModuleNameProps) => {
   // Get New Module configuration
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
   const dispatch = useAppDispatch();
@@ -99,7 +99,10 @@ const ModuleName = () => {
       const reader = new FileReader();
       reader.onload = (e: any) => {
         const newmoduleConfig = JSON.parse(e.target.result);
+        newmoduleConfig.repo = 'Zip file';
+        newmoduleConfig.project = '';
         dispatch(newmoduleUpdateConfig(newmoduleConfig));
+        setSelectedRepo(newmoduleConfig.repo);
       };
       reader.readAsText(file);
     };
@@ -142,14 +145,18 @@ const ModuleName = () => {
 
 let first_run = true;
 
-const ModuleRepo = () => {
+interface ModuleRepoProps {
+  selectedRepo: string;
+  setSelectedRepo: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const ModuleRepo = ({ selectedRepo, setSelectedRepo }: ModuleRepoProps) => {
   // Get New Module configuration
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
   const modules = useAppSelector((state) => state.builder.modules_list);
   const dispatch = useAppDispatch();
   const repositories = useAppSelector((state) => state.builder.repositories);
 
-  const [selectedRepo, setSelectedRepo] = React.useState(moduleConfig.repo);
   const [newProjectNameOpen, setNewProjectNameOpen] = React.useState(false);
   const [newProjectName, setNewProjectName] = React.useState('');
 
@@ -158,7 +165,7 @@ const ModuleRepo = () => {
     setNewProjectName(new_project); // keeps name in project list
     const newmoduleConfig = { ...moduleConfig };
     newmoduleConfig.project = new_project;
-    dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
+    dispatch(newmoduleUpdateConfig(newmoduleConfig));
   };
 
   // Get the list of repositories, filtered by local [writable] repositories
@@ -189,7 +196,8 @@ const ModuleRepo = () => {
     const newmoduleConfig = { ...moduleConfig };
     newmoduleConfig.repo = repo_list[0];
     newmoduleConfig.project = '';
-    dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
+    dispatch(newmoduleUpdateConfig(newmoduleConfig));
+    setSelectedRepo(newmoduleConfig.repo);
     first_run = false;
   }
 
@@ -233,7 +241,7 @@ const ModuleRepo = () => {
     setSelectedRepo(e.target.value as string);
     const newmoduleConfig = { ...moduleConfig };
     newmoduleConfig.repo = e.target.value as string;
-    dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
+    dispatch(newmoduleUpdateConfig(newmoduleConfig));
   };
 
   const handleProjectChange = (e: any) => {
@@ -244,7 +252,7 @@ const ModuleRepo = () => {
     } else {
       const newmoduleConfig = { ...moduleConfig };
       newmoduleConfig.project = project;
-      dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
+      dispatch(newmoduleUpdateConfig(newmoduleConfig));
     }
   };
 
@@ -297,13 +305,16 @@ const ModuleRepo = () => {
 };
 
 const ModuleNameAndRepo = () => {
+  const moduleConfig = useAppSelector((state) => state.newmodule.config);
+  const [selectedRepo, setSelectedRepo] = React.useState(moduleConfig.repo);
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
-        <ModuleName />
+        <ModuleName setSelectedRepo={setSelectedRepo} />
       </Grid>
       <Grid item xs={6}>
-        <ModuleRepo />
+        <ModuleRepo selectedRepo={selectedRepo} setSelectedRepo={setSelectedRepo} />
       </Grid>
     </Grid>
   );
