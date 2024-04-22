@@ -16,7 +16,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { CSSObject, Theme, styled } from '@mui/material/styles';
 import * as React from 'react';
 import Builder from './Builder/Builder';
-import NewModule from './NewModule/NewModule';
+import ModuleEditor from './ModuleEditor/ModuleEditor';
 import Settings from './Settings/Settings';
 
 const drawerWidth = 200;
@@ -124,8 +124,8 @@ export default function Navigation() {
         return <Builder />;
       case 'Settings':
         return <Settings />;
-      case 'New Module':
-        return <NewModule />;
+      case 'Module Editor':
+        return <ModuleEditor />;
       default:
         console.error('Unknown menu item selected:', selected);
         return <Builder />;
@@ -154,8 +154,8 @@ export default function Navigation() {
         <Divider />
         <List>
           <NavItem
-            id="btnSidenavNewModule"
-            text="New Module"
+            id="btnSidenavModuleEditor"
+            text="Module Editor"
             Icon={AddBox}
             open={open}
             onClick={handleListItemClick}

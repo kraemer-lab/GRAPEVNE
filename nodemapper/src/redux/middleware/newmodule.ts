@@ -81,6 +81,8 @@ const Build = async (moduleState, dispatch) => {
         response = await newmoduleAPI.Build(newModuleState);
         callback(response);
       }
+    } else {
+      alert(`Building failed with message:\n${msg}"`);
     }
   }
   dispatch(newmoduleUpdateResult({ building: false }));

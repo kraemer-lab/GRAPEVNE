@@ -231,10 +231,10 @@ export const InputFilelistAddItem = async ({
   await driver.findElement(By.id('btnInputFilesAdd')).click();
   // Set label (first enable editing by double-clicking on the item, then overwrite the value)
   const label_clickable = driver.findElement(
-    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Label>"]`),
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="Label1"]`),
   );
   await driver.actions().doubleClick(label_clickable).perform();
-  await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="<Label>"]`)), label);
+  await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="Label1"]`)), label);
   // Set port from list
   const port_clickable = await driver.findElement(
     By.xpath(`(//div[contains(@class, "MuiDataGrid-cell") and @data-field="port"])[last()]`),
@@ -243,11 +243,11 @@ export const InputFilelistAddItem = async ({
   await driver.findElement(By.xpath(`//li[@data-value="${port}"]`)).click();
   // Set filename
   const filename_clickable = driver.findElement(
-    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Filename>"]`),
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="filename1.ext"]`),
   );
   // Double-click on the filename to enable editing (retry on fail)
-  const filename_input = `//input[@value="<Filename>"]`;
-  for(let k = 0; k < 3; k++) {
+  const filename_input = `//input[@value="filename1.ext"]`;
+  for (let k = 0; k < 3; k++) {
     try {
       await driver.actions().doubleClick(filename_clickable).perform();
       await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);
@@ -274,17 +274,17 @@ export const OutputFilelistAddItem = async ({
   await driver.findElement(By.id('btnOutputFilesAdd')).click();
   // Set label (first enable editing by double-clicking on the item, then overwrite the value)
   const label_clickable = driver.findElement(
-    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Label>"]`),
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="Label1"]`),
   );
   await driver.actions().doubleClick(label_clickable).perform();
-  await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="<Label>"]`)), label);
+  await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="Label1"]`)), label);
   // Set filename
   const filename_clickable = driver.findElement(
-    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="<Filename>"]`),
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="filename1.ext"]`),
   );
   // Double-click on the filename to enable editing (retry on fail)
-  const filename_input = `//input[@value="<Filename>"]`;
-  for(let k = 0; k < 3; k++) {
+  const filename_input = `//input[@value="filename1.ext"]`;
+  for (let k = 0; k < 3; k++) {
     try {
       await driver.actions().doubleClick(filename_clickable).perform();
       await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);

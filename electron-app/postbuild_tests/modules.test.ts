@@ -636,8 +636,8 @@ describe('modules', () => {
       expect(fs.existsSync(target_folder)).toBeFalsy();
       console.log('Target folder does not exist');
 
-      // Side navbar to New Module page
-      await driver.findElement(By.id('btnSidenavNewModule')).click();
+      // Side navbar to Module Editor page
+      await driver.findElement(By.id('btnSidenavModuleEditor')).click();
 
       // Set module name
       await OverwriteInputField(

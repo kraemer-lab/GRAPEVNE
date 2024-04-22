@@ -9,13 +9,6 @@ export * from 'types';
 
 import { createReducer } from '@reduxjs/toolkit';
 
-const default_docstring = `Provide a short (one-line) description of the module.
-
-Then provide a longer description which can cover several lines or paragraphs, including links to any websites that may be relevant.
-
-Params:
-  param1 (str): Provide a description of any parameters that may be used by the module.`;
-
 // State
 const newmoduleStateInit: INewModuleState = {
   // New module configuration
@@ -24,7 +17,7 @@ const newmoduleStateInit: INewModuleState = {
     foldername: '',
     repo: '',
     project: '',
-    docstring: default_docstring,
+    docstring: '',
     ports: ['in'],
     params: '',
     input_files: [],

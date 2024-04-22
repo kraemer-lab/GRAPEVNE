@@ -1,7 +1,6 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
-import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import React from 'react';
@@ -22,11 +21,31 @@ interface ElectronFile extends File {
   path: string;
 }
 
-const PayloadDropzone = () => {
+const PayloadFilelist = () => {
+  const columns: GridColDef[] = [
+    { field: 'label', headerName: 'Label', editable: true, width: 100 },
+    { field: 'filename', headerName: 'Filename', editable: false, width: 400 },
+    {
+      field: 'isfolder',
+      headerName: 'Folder',
+      editable: false,
+      renderCell: (params) => {
+        return <Checkbox checked={params.value} disabled />;
+      },
+    },
+  ];
+  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
   const dispatch = useAppDispatch();
+  const rows = moduleConfig.resources;
 
-  const handleClick = () => {
+  const setRows = (newRows: INewModuleStateConfigFile[]) => {
+    const newmoduleConfig = { ...moduleConfig };
+    newmoduleConfig.resources = newRows.map(fixId);
+    dispatch(newmoduleUpdateConfig(newmoduleConfig));
+  };
+
+  const handleAddFiles = () => {
     // Get file names (includes path if run in electron)
     const element = document.createElement('input');
     element.setAttribute('type', 'file');
@@ -54,57 +73,13 @@ const PayloadDropzone = () => {
         )
         .map(fixId);
       const newfiles_ids = newfiles.map((f) => f.id);
-      newmoduleConfig.scripts = newmoduleConfig.scripts.filter((f) => !newfiles_ids.includes(f.id));
-      newmoduleConfig.scripts = newmoduleConfig.scripts.concat(newfiles);
+      newmoduleConfig.resources = newmoduleConfig.resources.filter(
+        (f) => !newfiles_ids.includes(f.id),
+      );
+      newmoduleConfig.resources = newmoduleConfig.resources.concat(newfiles);
       dispatch(newmoduleUpdateConfig(newmoduleConfig));
     };
     document.body.removeChild(element);
-  };
-
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        border: '1px dashed',
-        borderColor: 'primary.main',
-        borderRadius: 1,
-        height: '100%',
-        minHeight: 200,
-        width: '100%',
-        curosor: 'pointer',
-      }}
-      onClick={handleClick}
-    >
-      <Typography>Click to select files</Typography>
-    </Box>
-  );
-};
-
-const PayloadFilelist = () => {
-  const columns: GridColDef[] = [
-    { field: 'label', headerName: 'Label', editable: true, width: 100 },
-    { field: 'filename', headerName: 'Filename', editable: false, width: 400 },
-    {
-      field: 'isfolder',
-      headerName: 'Folder',
-      editable: false,
-      renderCell: (params) => {
-        return <Checkbox checked={params.value} disabled />;
-      },
-    },
-  ];
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
-  const moduleConfig = useAppSelector((state) => state.newmodule.config);
-  const dispatch = useAppDispatch();
-  const rows = moduleConfig.scripts;
-
-  const setRows = (newRows: INewModuleStateConfigFile[]) => {
-    const newmoduleConfig = { ...moduleConfig };
-    newmoduleConfig.scripts = newRows.map(fixId);
-    dispatch(newmoduleUpdateConfig(newmoduleConfig));
   };
 
   const handleRemove = () => {
@@ -117,6 +92,7 @@ const PayloadFilelist = () => {
   return (
     <Box>
       <DataGrid
+        autoHeight
         rows={rows}
         columns={columns}
         pageSizeOptions={[5, 10, 25]}
@@ -134,37 +110,24 @@ const PayloadFilelist = () => {
         rowSelectionModel={rowSelectionModel}
       />
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', rowGap: 1 }}>
-        <Button onClick={handleRemove}>Remove</Button>
+        <Button onClick={handleAddFiles}>Add files</Button>
+        <Button onClick={handleRemove} disabled={rowSelectionModel.length === 0}>
+          Remove
+        </Button>
       </Box>
     </Box>
   );
 };
 
-const PayloadInterface = () => {
-  return (
-    <Grid container spacing={2}>
-      <Grid item xs={8}>
-        <PayloadFilelist />
-      </Grid>
-      <Grid item xs={4}>
-        <PayloadDropzone />
-      </Grid>
-    </Grid>
-  );
-};
-
-const ModulePayloadScripts = () => {
+const ModulePayloadResources = () => {
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        Scripts
-      </Typography>
       <Typography variant="body2" gutterBottom>
         Provide the files to be included in the module.
       </Typography>
-      <PayloadInterface />
+      <PayloadFilelist />
     </Box>
   );
 };
 
-export default ModulePayloadScripts;
+export default ModulePayloadResources;

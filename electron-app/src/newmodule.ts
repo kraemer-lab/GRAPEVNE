@@ -65,6 +65,9 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   }
 
   // Create base folder
+  if (config.foldername === '') {
+    throw new Error('A valid module folder name is required');
+  }
   const module_folder = path.join(root_folder, config.foldername);
 
   // Create folder structure

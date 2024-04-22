@@ -50,8 +50,18 @@ const ModuleOutputs = () => {
     };
   };
 
+  const getUniqueLabelID = () => {
+    const labels = rows.map((r) => r.label);
+    let id = 1;
+    while (labels.includes(`Label${id}`)) {
+      id += 1;
+    }
+    return id;
+  };
+
   const handleAdd = () => {
-    addRow('<Label>', '<Filename>');
+    const id = getUniqueLabelID();
+    addRow(`Label${id}`, `filename${id}.ext`);
   };
 
   const handleRemove = () => {
@@ -63,14 +73,12 @@ const ModuleOutputs = () => {
 
   return (
     <Box>
-      <Typography variant="h6" gutterBottom>
-        Output files
-      </Typography>
       <Typography variant="body2" gutterBottom>
         Provide a list of the required output files for the module. You should use the same set of
         &#123;&#123;wildcards&#125;&#125; as used for the inputs.
       </Typography>
       <DataGrid
+        autoHeight
         rows={rows}
         columns={columns}
         hideFooter={true}
@@ -88,7 +96,11 @@ const ModuleOutputs = () => {
         <Button id="btnOutputFilesAdd" onClick={handleAdd}>
           Add
         </Button>
-        <Button id="btnOutputFilesRemove" onClick={handleRemove}>
+        <Button
+          id="btnOutputFilesRemove"
+          onClick={handleRemove}
+          disabled={rowSelectionModel.length === 0}
+        >
           Remove
         </Button>
       </Box>

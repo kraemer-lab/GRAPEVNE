@@ -1,4 +1,5 @@
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import Grid from '@mui/material/Grid';
 import InputLabel from '@mui/material/InputLabel';
@@ -11,6 +12,66 @@ import React from 'react';
 import { newmoduleUpdateConfig } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+interface AddNewProjectDialogProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  callbackOk: (new_project: string) => void;
+}
+
+const AddNewProjectDialog = ({ open, setOpen, callbackOk }: AddNewProjectDialogProps) => {
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOk = () => {
+    const new_project = (document.getElementById('ModuleEditorNewProjectName') as HTMLInputElement)
+      .value;
+    if (new_project === '') {
+      alert('Please enter a project name');
+      return;
+    }
+    callbackOk(new_project);
+    handleClose();
+  };
+
+  return (
+    <Box>
+      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title">Add New Project</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Enter the new project name here.</DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="ModuleEditorNewProjectName"
+            label="Project name"
+            type="text"
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleOk} color="primary">
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
 const ModuleName = () => {
   // Get New Module configuration
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
@@ -20,11 +81,40 @@ const ModuleName = () => {
     return name.replace(/ /g, '');
   };
 
-  const handleNameChange = (e: any) => {
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newmoduleConfig = { ...moduleConfig };
     newmoduleConfig.name = e.target.value as string;
     newmoduleConfig.foldername = folderName(newmoduleConfig.name);
     dispatch(newmoduleUpdateConfig(newmoduleConfig));
+  };
+
+  const handleImportConfig = () => {
+    console.log('Import Config');
+    // Import moduleConfig from a JSON file
+    const element = document.createElement('input');
+    element.type = 'file';
+    element.accept = '.json';
+    element.onchange = (e: any) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        const newmoduleConfig = JSON.parse(e.target.result);
+        dispatch(newmoduleUpdateConfig(newmoduleConfig));
+      };
+      reader.readAsText(file);
+    };
+    element.click();
+  };
+
+  const handleExportConfig = () => {
+    console.log('Export Config');
+    // Export moduleConfig to a JSON file
+    const element = document.createElement('a');
+    const file = new Blob([JSON.stringify(moduleConfig, null, 2)], { type: 'application/json' });
+    element.href = URL.createObjectURL(file);
+    element.download = 'module_config.json';
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
   };
 
   return (
@@ -38,6 +128,14 @@ const ModuleName = () => {
         onChange={handleNameChange}
       />
       <Typography>Folder Name: {folderName(moduleConfig.name)}</Typography>
+      <Box sx={{ display: 'flex', flexDirection: 'row', columnGap: 1 }}>
+        <Button variant="outlined" size="small" onClick={handleImportConfig}>
+          Import Config
+        </Button>
+        <Button variant="outlined" size="small" onClick={handleExportConfig}>
+          Export Config
+        </Button>
+      </Box>
     </Box>
   );
 };
@@ -49,8 +147,19 @@ const ModuleRepo = () => {
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
   const modules = useAppSelector((state) => state.builder.modules_list);
   const dispatch = useAppDispatch();
-
   const repositories = useAppSelector((state) => state.builder.repositories);
+
+  const [selectedRepo, setSelectedRepo] = React.useState(moduleConfig.repo);
+  const [newProjectNameOpen, setNewProjectNameOpen] = React.useState(false);
+  const [newProjectName, setNewProjectName] = React.useState('');
+
+  // Callback function for the Add New Project dialog
+  const newProjectNameCallback = (new_project: string) => {
+    setNewProjectName(new_project); // keeps name in project list
+    const newmoduleConfig = { ...moduleConfig };
+    newmoduleConfig.project = new_project;
+    dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
+  };
 
   // Get the list of repositories, filtered by local [writable] repositories
   const repo_list = repositories
@@ -62,7 +171,10 @@ const ModuleRepo = () => {
   // Extract unique projects from the module names for a filter list
   const filtered_modules = JSON.parse(modules);
   const project_list = filtered_modules
+    .filter((v) => v['repo']['url'] === selectedRepo)
     .map((m) => m['org'])
+    .concat(newProjectName)
+    .filter((v) => v !== '') // remove empty
     .filter((v, i, a) => a.indexOf(v) === i) // remove duplicates
     .sort(); // sort alphabetically
   if (project_list.length === 0) {
@@ -76,12 +188,10 @@ const ModuleRepo = () => {
   if (first_run) {
     const newmoduleConfig = { ...moduleConfig };
     newmoduleConfig.repo = repo_list[0];
-    newmoduleConfig.project = 'Test';
+    newmoduleConfig.project = '';
     dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
     first_run = false;
   }
-
-  const [value, setValue] = React.useState(moduleConfig.repo);
 
   const LookupRepoName = (repo: string) => {
     for (let i = 0; i < repositories.length; i++) {
@@ -120,16 +230,22 @@ const ModuleRepo = () => {
   };
 
   const handleRepoChange = (e: any) => {
-    setValue(e.target.value as string);
+    setSelectedRepo(e.target.value as string);
     const newmoduleConfig = { ...moduleConfig };
     newmoduleConfig.repo = e.target.value as string;
     dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
   };
 
   const handleProjectChange = (e: any) => {
-    const newmoduleConfig = { ...moduleConfig };
-    newmoduleConfig.project = e.target.value as string;
-    dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
+    const project = e.target.value as string;
+    if (project === '(Add new project)') {
+      // Add a new project
+      setNewProjectNameOpen(true);
+    } else {
+      const newmoduleConfig = { ...moduleConfig };
+      newmoduleConfig.project = project;
+      dispatch({ type: 'newmodule/update-config', payload: newmoduleConfig });
+    }
   };
 
   return (
@@ -140,7 +256,7 @@ const ModuleRepo = () => {
           <Select
             id="module-repo"
             label="Repository"
-            value={value}
+            value={selectedRepo}
             onChange={handleRepoChange}
             sx={{ width: '100%' }}
             size="small"
@@ -162,7 +278,6 @@ const ModuleRepo = () => {
             value={moduleConfig.project}
             onChange={handleProjectChange}
             sx={{ width: '100%' }}
-            size="small"
           >
             {project_list.map((m) => (
               <MenuItem key={m} value={m}>
@@ -172,6 +287,11 @@ const ModuleRepo = () => {
           </Select>
         </FormControl>
       </Box>
+      <AddNewProjectDialog
+        open={newProjectNameOpen}
+        setOpen={setNewProjectNameOpen}
+        callbackOk={newProjectNameCallback}
+      />
     </Box>
   );
 };
