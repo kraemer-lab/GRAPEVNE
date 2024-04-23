@@ -116,7 +116,7 @@ params:
     `test_script_file_contents`,
   );
   // Remove the new module
-  //fs.rmdirSync(repo_folder, { recursive: true });
+  fs.rmdirSync(repo_folder, { recursive: true });
 });
 
 test('CondaSearch', async () => {

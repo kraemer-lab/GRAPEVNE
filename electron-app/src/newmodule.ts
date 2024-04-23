@@ -38,30 +38,26 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   // Determine module type and repo folder
   const module_type = config.ports.length == 0 ? 'sources' : 'modules';
   let root_folder = '';
-  if (!config.repo || config.repo === 'Zip file') {
-    // Create zip archive
-    throw new Error('Zip file not supported yet');
-  } else {
-    // Create module directly in repository
-    if (!fs.existsSync(config.repo)) {
-      throw new Error('Repository does not exist: ' + config.repo);
-    }
-    if (!fs.existsSync(path.join(config.repo, 'workflows'))) {
-      throw new Error('Repository does not contain workflows folder');
-    }
-    if (config.project === '') {
-      throw new Error('Project name is required');
-    }
-    if (!fs.existsSync(path.join(config.repo, 'workflows', config.project))) {
-      console.debug('Project does not exist --- creating');
-      fs.mkdirSync(path.join(config.repo, 'workflows', config.project));
-    }
-    root_folder = path.join(config.repo, 'workflows', config.project, module_type);
-    if (!fs.existsSync(root_folder)) {
-      // creates 'module' or 'source' folder as required
-      console.debug('Modules / Sources folder does not exist --- creating');
-      fs.mkdirSync(root_folder);
-    }
+
+  // Create module directly in repository
+  if (!fs.existsSync(config.repo)) {
+    throw new Error('Repository does not exist: ' + config.repo);
+  }
+  if (!fs.existsSync(path.join(config.repo, 'workflows'))) {
+    throw new Error('Repository does not contain workflows folder');
+  }
+  if (config.repo !== 'Zip file' && config.project === '') {
+    throw new Error('Project name is required');
+  }
+  if (!fs.existsSync(path.join(config.repo, 'workflows', config.project))) {
+    console.debug('Project does not exist --- creating');
+    fs.mkdirSync(path.join(config.repo, 'workflows', config.project));
+  }
+  root_folder = path.join(config.repo, 'workflows', config.project, module_type);
+  if (!fs.existsSync(root_folder)) {
+    // creates 'module' or 'source' folder as required
+    console.debug('Modules / Sources folder does not exist --- creating');
+    fs.mkdirSync(root_folder);
   }
 
   // Create base folder
@@ -119,9 +115,15 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   const configfile = {
     input_namespace: input_dict,
     output_namespace: 'out',
-    params: yaml.load(config.params as string),
+    params: yaml.load(config.params as string) as Query,
   };
   fs.writeFileSync(path.join(module_folder, 'config', 'config.yaml'), yaml.dump(configfile));
+
+  // Determine parameter aliases for parameters in the config file
+  const param_alias: Query = {};
+  for (const key in configfile.params as Query) {
+    param_alias[key] = key.toLowerCase().replace(/ /g, '_');
+  }
 
   // Write Environment file
   if (config.env !== '') {
@@ -131,12 +133,23 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
     );
   }
 
+  // Update the command to replace the parameter names with the aliases
+  let command = config.command as string;
+  for (const key in configfile.params as Query) {
+    command = command
+      .replaceAll(`{params["${key}"]}`, `{params.${param_alias[key]}}`)
+      .replaceAll(`{params['${key}']}`, `{params.${param_alias[key]}}`);
+  }
+
   // Write Snakefile
   let snakefile = '';
   if (config.docstring) snakefile += `"""${config.docstring}\n"""\n`;
   snakefile += `configfile: "config/config.yaml"\n\n`;
   snakefile += `indir = config["input_namespace"]\n`;
-  snakefile += `outdir = config["output_namespace"]\n\n`;
+  snakefile += `outdir = config["output_namespace"]\n`;
+  if (config.params) {
+    snakefile += `params = config["params"]\n\n`;
+  }
   if (config.scripts.length > 0) {
     snakefile += `def script(name=""):\n`;
     snakefile += `    from snakemake.remote import AUTO\n\n`;
@@ -178,13 +191,26 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
     if (output.label) snakefile += `${output.label} = `;
     snakefile += `f"results/{outdir}/${output.filename}",\n`;
   }
+  snakefile += `    log:\n`;
+  snakefile += `        "logs/${config.foldername}.log"\n`;
+  snakefile += `    conda:\n`;
+  snakefile += `        "envs/env.yaml"\n`;
+  if (config.params) {
+    snakefile += `    params:\n`;
+    if (!Object.keys(configfile.params).includes('outdir')) {
+      snakefile += `        outdir = f"results/{outdir}",\n`;
+    }
+    for (const key in configfile.params as Query) {
+      snakefile += `        ${param_alias[key]} = params["${key}"],\n`;
+    }
+  }
   snakefile += `    ${config.command_directive}:\n`;
   snakefile += `        """\n`;
-  snakefile += `        ${config.command}\n`;
+  snakefile += `        ${command.replace(/\n/g, '\n        ')}\n`;
   snakefile += `        """\n`;
 
   // Replace script. and resource. wildcards (which are actually named .input's)
-  snakefile = snakefile.replace('{script.', '{input.').replace('{resource.', '{input.');
+  snakefile = snakefile.replace(/\{script\./g, '{input.').replace(/\{resource\./g, '{input.');
 
   // Write Snakefile
   fs.writeFileSync(path.join(module_folder, 'workflow', 'Snakefile'), snakefile);
