@@ -37,7 +37,7 @@ rule all:
     conda:
         "envs/env.yaml"
     params:
-        outdir = outdir,
+        outdir = f"results/{outdir}",
         test_param = params["test_param"],
     test_directive:
         """
