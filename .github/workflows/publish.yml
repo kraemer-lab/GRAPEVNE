@@ -28,7 +28,7 @@ jobs:
           node-version: 18
       - uses: nanasess/setup-chromedriver@v2
         with:
-          chromedriver-version: "118.0.5993.89"
+          chromedriver-version: "122.0.6261.156"
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:

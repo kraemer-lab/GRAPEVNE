@@ -47,6 +47,7 @@ process.argv.slice(2).forEach((arg) => {
  */
 describe('modules', () => {
   let driver: webdriver.ThenableWebDriver;
+  let opts = { async: undefined, bridge: undefined }; // driver.actions() options
   jest.retryTimes(3);
 
   beforeAll(async () => {
@@ -55,7 +56,7 @@ describe('modules', () => {
     // Start webdriver
     const options = new chrome.Options();
     options.debuggerAddress('localhost:9515');
-    driver = new webdriver.Builder().forBrowser('chrome', '118').setChromeOptions(options).build();
+    driver = new webdriver.Builder().forBrowser('chrome', '122').setChromeOptions(options).build();
     console.log('Webdriver started.');
 
     await RedirectConsoleLog(driver);
@@ -162,14 +163,14 @@ describe('modules', () => {
       const canvas = await driver.findElement(By.className('react-flow__pane'));
       for (const n of ['n0', 'n1', 'n2']) {
         console.log(`Dragging module to canvas: ${n}`);
-        await driver.actions().dragAndDrop(module, canvas).perform();
+        await driver.actions(opts).dragAndDrop(module, canvas).perform();
         await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="${n}"]`)));
       }
       await driver.findElement(By.id('buttonReactflowArrange')).click();
 
       // Connect the modules together
       await driver
-        .actions()
+        .actions(opts)
         .dragAndDrop(
           await driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
           await driver.findElement(
@@ -178,7 +179,7 @@ describe('modules', () => {
         )
         .perform(); // n0-to-n1
       await driver
-        .actions()
+        .actions(opts)
         .dragAndDrop(
           await driver.findElement(By.xpath('//div[@data-id="n1-out-source"]')),
           await driver.findElement(
@@ -313,7 +314,7 @@ describe('modules', () => {
 
       // Connect the modules together
       await driver
-        .actions()
+        .actions(opts)
         .dragAndDrop(
           driver.findElement(By.xpath('//div[@data-id="n0-out-source"]')),
           driver.findElement(By.xpath('//div[@data-id="n1-in-target"]')),

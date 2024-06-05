@@ -10,6 +10,7 @@ import { exec } from 'child_process';
 import * as shell from 'shelljs';
 import * as util from 'util';
 const execPromise = util.promisify(exec);
+const opts = { async: undefined, bridge: undefined }; // driver.actions() options
 
 // Test runner conditionals
 const runif = (condition: boolean) => (condition ? it : it.skip);
@@ -125,7 +126,7 @@ const dragAndDrop = async (
     return await dragAndDrop_script(driver, elementFrom, elementTo);
   } else {
     // webdriver seems to work fine on Linux and MacOS
-    await driver.actions().dragAndDrop(elementFrom, elementTo).perform();
+    await driver.actions(opts).dragAndDrop(elementFrom, elementTo).perform();
   }
 };
 
@@ -233,13 +234,13 @@ export const InputFilelistAddItem = async ({
   const label_clickable = driver.findElement(
     By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="Label1"]`),
   );
-  await driver.actions().doubleClick(label_clickable).perform();
+  await driver.actions(opts).doubleClick(label_clickable).perform();
   await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="Label1"]`)), label);
   // Set port from list
   const port_clickable = await driver.findElement(
     By.xpath(`(//div[contains(@class, "MuiDataGrid-cell") and @data-field="port"])[last()]`),
   );
-  await driver.actions().doubleClick(port_clickable).perform();
+  await driver.actions(opts).doubleClick(port_clickable).perform();
   await driver.findElement(By.xpath(`//li[@data-value="${port}"]`)).click();
   // Set filename
   const filename_clickable = driver.findElement(
@@ -249,7 +250,7 @@ export const InputFilelistAddItem = async ({
   const filename_input = `//input[@value="filename1.ext"]`;
   for (let k = 0; k < 3; k++) {
     try {
-      await driver.actions().doubleClick(filename_clickable).perform();
+      await driver.actions(opts).doubleClick(filename_clickable).perform();
       await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);
     } catch (NoSuchElementError) {
       // Retry on fail
@@ -276,7 +277,7 @@ export const OutputFilelistAddItem = async ({
   const label_clickable = driver.findElement(
     By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="Label1"]`),
   );
-  await driver.actions().doubleClick(label_clickable).perform();
+  await driver.actions(opts).doubleClick(label_clickable).perform();
   await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="Label1"]`)), label);
   // Set filename
   const filename_clickable = driver.findElement(
@@ -286,7 +287,7 @@ export const OutputFilelistAddItem = async ({
   const filename_input = `//input[@value="filename1.ext"]`;
   for (let k = 0; k < 3; k++) {
     try {
-      await driver.actions().doubleClick(filename_clickable).perform();
+      await driver.actions(opts).doubleClick(filename_clickable).perform();
       await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);
     } catch (NoSuchElementError) {
       // Retry on fail
