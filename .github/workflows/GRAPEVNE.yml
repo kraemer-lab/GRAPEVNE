@@ -19,8 +19,6 @@ jobs:
     uses: ./.github/workflows/nodemapper.yml
   electron-app:
     uses: ./.github/workflows/electron-app.yml
-  backend:
-    uses: ./.github/workflows/backend.yml
   builder:
     uses: ./.github/workflows/builder.yml
   runner:

@@ -4,7 +4,6 @@
   - `nodemapper`: graphical front-end for the GRAPEVNE Builder/Runner services
   - `builder`: Python library of build-related routines
   - `runner`: Python library of run-related routines (launches `snakemake`)
-- `backend`: Backend server if running the front-end in network mode
 
 ## Building the application
 
