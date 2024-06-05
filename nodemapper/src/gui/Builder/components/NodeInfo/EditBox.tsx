@@ -226,7 +226,7 @@ export const EditBoxList = ({ label, keyitem, keylist, json, onSave, nodecount }
   });
 
   return (
-    <TreeItem sx={{ width: '100%' }} nodeId={nodecount} key={keyitem} label={label}>
+    <TreeItem sx={{ width: '100%' }} itemId={nodecount} key={keyitem} label={label}>
       <Stack>{listitems}</Stack>
 
       <IconButton

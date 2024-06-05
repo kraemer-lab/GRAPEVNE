@@ -15,7 +15,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styled } from '@mui/material/styles';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -244,7 +244,7 @@ export default function ParameterList({
               <TreeItem
                 style={{ color: '#1876d2' }}
                 key={node.id + '__' + identifier}
-                nodeId={(nodeId++).toString()}
+                itemId={(nodeId++).toString()}
                 label={key + ': ' + value}
                 onClick={() => onParameterSelect(node, keylist, key)}
               >
@@ -264,7 +264,7 @@ export default function ParameterList({
             return (
               <TreeItem
                 key={node.id + '__' + identifier}
-                nodeId={(nodeId++).toString()}
+                itemId={(nodeId++).toString()}
                 label={key + ': ' + value}
                 onClick={() => onParameterSelect(node, keylist, key)}
               />
@@ -275,7 +275,7 @@ export default function ParameterList({
             <TreeItem
               style={{ color: '#bebebe' }}
               key={node.id + '__' + identifier}
-              nodeId={(nodeId++).toString()}
+              itemId={(nodeId++).toString()}
               label={key + ': ' + value}
             />
           );
@@ -289,7 +289,7 @@ export default function ParameterList({
           ) : (
             <TreeItem
               key={node.id + '__' + [...keylist, key].join('/')}
-              nodeId={(nodeId++).toString()}
+              itemId={(nodeId++).toString()}
               label={label}
             >
               <NodeParameters node={node} keylist={[...keylist, key]} />
@@ -337,9 +337,9 @@ export default function ParameterList({
             gap: '3px',
           }}
         >
-          <TreeView defaultExpanded={Array.from({ length: 999 }, (_, i) => i.toString())}>
+          <SimpleTreeView defaultExpandedItems={Array.from({ length: 999 }, (_, i) => i.toString())}>
             <NodeParameters node={node} keylist={[]} />
-          </TreeView>
+          </SimpleTreeView>
         </Box>
       </Box>
     </Item>

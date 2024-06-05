@@ -6,7 +6,7 @@ import { useAppSelector } from 'redux/store/hooks';
 import HighlightJSON from './HighlightJSON';
 
 import { Theme, ThemeProvider, createTheme } from '@mui/material/styles';
-import { TreeView } from '@mui/x-tree-view/TreeView';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 
 import Box from '@mui/material/Box';
@@ -106,9 +106,9 @@ const HighlightedJSON = (props: HighlightedJSONProps) => {
       }}
     >
       <ThemeProvider theme={parametersTheme}>
-        <TreeView defaultExpanded={concertinaIfHierarchicalModule(json)}>
+        <SimpleTreeView defaultExpandedItems={concertinaIfHierarchicalModule(json)}>
           <HighlightJSON keylist={[]} json={json} setMenu={setMenu} nodeid={props.nodeid} />
-        </TreeView>
+        </SimpleTreeView>
       </ThemeProvider>
 
       {menu && <ParameterList {...menu} />}
