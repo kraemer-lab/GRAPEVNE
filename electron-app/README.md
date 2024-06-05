@@ -8,9 +8,9 @@ The GRAPEVNE builder is distributed for download as a binary executable via
 [github Release](https://github.com/kraemer-lab/GRAPEVNE).
 
 The GRAPEVNE Builder uses `electron` to encapsulate a typescript/Redux-React
-front-end, with a Python backend. The Python backend is first compiled to
-binary using `PyInstaller` and queried as a subprocess. To use this software
-effectively, `snakemake` should be installed and accessible.
+front-end, with a Nodejs/Python backend. The Python backend is first compiled to
+binary using `PyInstaller` and queried as a subprocess. GRAPEVNE bundles `snakemake`
+as part of the install.
 
 ## Publishing workflow
 
