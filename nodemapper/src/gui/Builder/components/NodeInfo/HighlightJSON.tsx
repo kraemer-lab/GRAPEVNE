@@ -313,7 +313,7 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
         ) : (
           <TreeItem
             sx={{ width: '100%' }}
-            nodeId={(nodecount++).toString()}
+            itemId={(nodecount++).toString()}
             key={key}
             label={label}
           >

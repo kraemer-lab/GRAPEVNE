@@ -42,7 +42,7 @@
     "@mui/icons-material": "^5.15.10",
     "@mui/material": "^5.15.10",
     "@mui/x-data-grid": "^6.19.6",
-    "@mui/x-tree-view": "^6.17.0",
+    "@mui/x-tree-view": "^7.6.1",
     "@redux-devtools/extension": "^3.3.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/node": "^20.11.18",
