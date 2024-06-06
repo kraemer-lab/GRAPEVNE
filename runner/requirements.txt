@@ -30,7 +30,7 @@ PuLP==2.7.0
 pyrsistent==0.19.3
 pytest==7.2.2
 PyYAML==6.0
-requests==2.31.0
+requests==2.32.2
 reretry==0.11.8
 smart-open[all]==6.3.0
 smmap==5.0.0
