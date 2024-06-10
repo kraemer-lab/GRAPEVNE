@@ -2,23 +2,16 @@
 
 set -eoux pipefail
 
-# activate virtual environment
-if [ ! -d "venv" ]; then
-    python3 -m venv venv
-fi
+# setup and activate a virtual environment
+poetry install --no-root
 RUNNER_OS=${RUNNER_OS:-$(uname)}
 if [[ "$RUNNER_OS" == "Windows" ]]; then
-    venv/Scripts/Activate.bat
+    source "$(poetry env info --path)\\Scripts\\activate"
 else
-    source venv/bin/activate
+    source $(poetry env info --path)/bin/activate
 fi
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip install ../builder
-python -m pip install ../runner
 
 # compile python code to binary for deployment
-python -m pip install pyinstaller
 python -m PyInstaller src/python/pyrunner.py \
     --hidden-import builder \
     --hidden-import runner \
