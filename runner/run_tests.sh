@@ -3,16 +3,11 @@
 set -euox pipefail
 
 cd "$(dirname "$0")"
-if [ ! -d "venv" ]; then
-    python3 -m venv venv
-fi
-source venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip install -r requirements-dev.txt
+poetry install
+source $(poetry env info --path)/bin/activate
 
-python -m ruff check runner
-python -m pytest
+poetry run ruff check runner
+poetry run pytest
 
 # mypy --strict runner
 # mypy runner
