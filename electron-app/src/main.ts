@@ -20,6 +20,7 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
     show: false,
+    icon: "images/icon.png",
   });
   if (app.isPackaged) {
     win.loadFile('index.html'); //prod

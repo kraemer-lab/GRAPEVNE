@@ -34,6 +34,7 @@ module.exports = {
       /^\/Mambaforge-Windows-x86_64.exe/,
       /^\/postbuild_tests/,
     ],
+    icon: "images/icon",
     ...codesignConfig(),
   },
   rebuildConfig: {},
@@ -50,7 +51,11 @@ module.exports = {
     },
     {
       name: "@electron-forge/maker-deb",
-      config: {},
+      config: {
+        options: {
+          icon: "images/icon.png",
+        },
+      },
     },
     {
       name: "@electron-forge/maker-rpm",
