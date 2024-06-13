@@ -10,7 +10,7 @@ use rule * from module1 as module1_*
 
 module module2:
     snakefile:
-        eval(config["module2"]["snakefile"])
+        config["module2"]["snakefile"]
     config:
         config["module2"]["config"]
 

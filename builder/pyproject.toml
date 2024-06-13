@@ -8,6 +8,9 @@ description = "GRAPEVNE Builder"
 authors = ["Kraemer-lab"]
 license = "MIT"
 readme = "README.md"
+exclude = [
+    "builder/tests"
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
