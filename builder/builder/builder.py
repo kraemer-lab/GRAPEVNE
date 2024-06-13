@@ -179,7 +179,9 @@ class Model:
                 # Dynamic evaluation of function specified in config file
                 s += f'        globals().get(config["{node.rulename}"]["snakefile"]["function"])(\n'
                 s += f'            *config["{node.rulename}"]["snakefile"]["args"],\n'
-                s += f'            **config["{node.rulename}"]["snakefile"]["kwargs"],\n'
+                s += (
+                    f'            **config["{node.rulename}"]["snakefile"]["kwargs"],\n'
+                )
                 s += "        )\n"
             s += "    config:\n"
             s += f'        config["{node.rulename}"]["config"]\n'
