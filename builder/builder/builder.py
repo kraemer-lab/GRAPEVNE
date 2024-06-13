@@ -177,10 +177,9 @@ class Model:
                 s += f'        config["{node.rulename}"]["snakefile"]\n'
             else:
                 # Dynamic evaluation of function specified in config file
-                s += "        eval(\n"
-                s += f'            f\'{{config["{node.rulename}"]["snakefile"]["function"]}}\'\n'
-                s += f'            \'(*config["{node.rulename}"]["snakefile"]["args"],\'\n'
-                s += f'            \'**config["{node.rulename}"]["snakefile"]["kwargs"])\'\n'
+                s += f'        globals().get(config["{node.rulename}"]["snakefile"]["function"])(\n'
+                s += f'            *config["{node.rulename}"]["snakefile"]["args"],\n'
+                s += f'            **config["{node.rulename}"]["snakefile"]["kwargs"],\n'
                 s += "        )\n"
             s += "    config:\n"
             s += f'        config["{node.rulename}"]["config"]\n'
@@ -246,8 +245,8 @@ class Model:
             c["output_namespace"] = module_output_namespaces[0]
         else:
             logging.warn(
-                "Multiple output namespaces not currently supported. " "Requested: ",
-                module_output_namespaces,
+                "Multiple output namespaces not currently supported. Requested: "
+                f"{module_output_namespaces}",
             )
             c["output_namespace"] = module_output_namespaces[0]
         # Add configurations for each module

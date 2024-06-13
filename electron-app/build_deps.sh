@@ -2,8 +2,17 @@
 
 set -eoux pipefail
 
+# Rebuild components
+pushd ../builder/
+poetry build
+popd
+pushd ../runner/
+poetry build
+popd
+
 # setup and activate a virtual environment
-poetry install --no-root
+poetry env remove --all  # remove any existing virtual environment
+poetry install --no-root  # use poetry to install dependencies
 RUNNER_OS=${RUNNER_OS:-$(uname)}
 if [[ "$RUNNER_OS" == "Windows" ]]; then
     source "$(poetry env info --path)\\Scripts\\activate"

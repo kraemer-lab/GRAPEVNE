@@ -8,6 +8,9 @@ description = "GRAPEVNE Runner"
 authors = ["Kraemer-lab"]
 license = "MIT"
 readme = "README.md"
+exclude = [
+    "runner/snakemake_runner_test",
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
