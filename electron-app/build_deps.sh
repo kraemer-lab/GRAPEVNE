@@ -31,6 +31,7 @@ python -m PyInstaller src/python/pyrunner.py \
     --hidden-import smart_open.s3 \
     --hidden-import smart_open.ssh \
     --hidden-import smart_open.webhdfs \
+    $(python collect_stdlibs.py) \
     --add-data "src/python/Dockerfile:." \
     --add-data "src/python/build_container_sh:." \
     --add-data "src/python/launch_container_sh:."
