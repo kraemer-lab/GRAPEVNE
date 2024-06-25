@@ -14,6 +14,7 @@ contextBridge.exposeInMainWorld('displayAPI', {
   FolderInfo: (query: Query) => ipcRenderer.invoke('display/folderinfo', query),
   StoreReadConfig: () => ipcRenderer.invoke('display/store-read-config'),
   StoreWriteConfig: (query: Query) => ipcRenderer.invoke('display/store-write-config', query),
+  SelectFolder: (path: string) => ipcRenderer.invoke('display/select-folder', path),
 });
 
 contextBridge.exposeInMainWorld('builderAPI', {

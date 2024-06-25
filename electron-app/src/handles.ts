@@ -2,7 +2,7 @@ import Store from 'electron-store';
 import fs from 'fs';
 import web from './web';
 
-import { IpcMainInvokeEvent, shell } from 'electron';
+import { dialog, IpcMainInvokeEvent, shell } from 'electron';
 import { Build, CondaSearch, INewModuleState } from './newmodule';
 import { ProcessQuery, RunWorkflow } from './pyrunner';
 
@@ -74,6 +74,14 @@ export async function display_StoreWriteConfig(event: Event, store: Store, data:
   // Set up electron-store (persistent local configuration)
   store.set('config', data);
   return store.get('config');
+}
+
+export async function display_SelectFolder(event: Event, path: string, win: Electron.BrowserWindow) {
+  const result = await dialog.showOpenDialog(win, {
+    defaultPath: path,
+    properties: ['openDirectory'],
+  });
+  return result.filePaths;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -112,6 +112,9 @@ app.whenReady().then(() => {
   ipcMain.handle('display/store-write-config', (event: Event, data: Query) =>
     handles.display_StoreWriteConfig(event, store, data),
   );
+  ipcMain.handle('display/select-folder', (event: Event, path: string) =>
+    handles.display_SelectFolder(event, path, win),
+  );
 
   // Builder
   ipcMain.handle('builder/get-remote-modules', handles.builder_GetRemoteModules);

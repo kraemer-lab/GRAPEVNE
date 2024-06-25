@@ -10,6 +10,7 @@ export type DisplayAPI = {
   FolderInfo: (query: Query) => Promise<Query>;
   StoreReadConfig: () => Promise<Query>;
   StoreWriteConfig: (query: Query) => Promise<Query>;
+  SelectFolder: (path: string) => Promise<string[]>;
 };
 
 export type BuilderAPI = {
