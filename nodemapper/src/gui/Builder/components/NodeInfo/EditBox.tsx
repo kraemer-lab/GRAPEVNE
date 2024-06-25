@@ -94,6 +94,7 @@ export const EditBoxText = (userprops: IEditBoxText) => {
           onBlur();
         }
       }}
+      onKeyDown={e => e.stopPropagation()}  // prevent letter search-select in TreeView
       onBlur={onBlur}
       inputProps={{
         className: useStyle(valueType),
