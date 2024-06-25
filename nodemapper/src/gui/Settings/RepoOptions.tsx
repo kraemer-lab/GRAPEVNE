@@ -11,8 +11,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
+
+const displayAPI = window.displayAPI;
 
 const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
@@ -23,6 +27,7 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const [repoFormType, setRepoFormType] = useState('GithubDirectory');
   const [repoLocale, setRepoLocale] = useState('github');
   const [repoListingType, setRepoListingType] = useState('DirectoryListing');
+  const [displayFolderSelect, setDisplayFolderSelect] = useState(false);
 
   const [repoListSelectedItems, setRepoListSelectedItems] = useState([]);
 
@@ -34,12 +39,14 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
           type: 'local',
           listing_type: 'DirectoryListing',
         };
+        setDisplayFolderSelect(true);
         break;
       case 'GithubDirectory':
         repo = {
           type: 'github',
           listing_type: 'DirectoryListing',
         };
+        setDisplayFolderSelect(false);
         break;
       default:
         console.error('Unknown repository type selected: ', target);
@@ -101,6 +108,7 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
     if (selected_repo.type === 'local') setRepoFormType('LocalFilesystem');
     else setRepoFormType('GithubDirectory');
     setRepoURL(selected_repo.repo);
+    setDisplayFolderSelect(selected_repo.type === 'local');
     // Set the selected item
     setRepoListSelectedItems([value]);
   };
@@ -226,14 +234,35 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
         >
           <Typography variant="body1">URL:</Typography>
         </Box>
-        <TextField
-          id="inputBuilderSettingsRepositoryURL"
-          type="text"
-          value={repoURL}
-          onChange={(e) => setRepoURL(e.target.value)}
-          sx={{ width: '100%' }}
-          size="small"
-        />
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            width: '100%',
+          }}
+        >
+          <TextField
+            id="inputBuilderSettingsRepositoryURL"
+            type="text"
+            value={repoURL}
+            onChange={(e) => setRepoURL(e.target.value)}
+            sx={{ width: '100%' }}
+            size="small"
+          />
+          {displayFolderSelect && (
+            <IconButton
+              onClick = {() => {
+                displayAPI.SelectFolder(repoURL)
+                  .then((folderPaths) => {
+                    setRepoURL(folderPaths[0]);
+                  })
+                }
+              }
+            >
+              <FolderOutlinedIcon />
+            </IconButton>
+          )}
+        </Box>
       </Box>
     </Box>
   );
