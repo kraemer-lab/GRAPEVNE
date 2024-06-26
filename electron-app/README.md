@@ -14,14 +14,17 @@ as part of the install.
 
 ## Publishing workflow
 
-To publish the GRAPEVNE Builder follow these steps:
+To publish GRAPEVNE follow these steps:
 
-1.  Increment the version number (`yarn version`)
-2.  Push the version 'tag' to github (`git push --follow-tags`)
+1. Update the version numbers to match in:
+ - `electron-app/package.json`
+ - `nodemapper/package.json`
+ - `builder/pyproject.toml`
+ - `runner/pyproject.toml`
+1. Create a PR called "Make version 0.3.1" (or similar) and merge into `main`.
+1. Tag the commit with the verison number, e.g. `git tag v0.3.1` (check that the tag is associated with the correct commit using `git log` before pushing). Push the tag to github with `git push --tags` (note that this is the only time that a push to the main branch should be used).
 
-Publishing the tag will trigger the github action `Publish` creating a new
-_draft_ release (e.g. v1.0.0) and populates it with builds as configured in
-`forge.config.js`.
+Publishing the tag will trigger the github action `Publish` creating a new _draft_ release (e.g. v1.0.0) and populates it with builds as configured in `forge.config.js`. Once the draft is ready, edit the release to make it public.
 
 ## Upgrading electron
 
