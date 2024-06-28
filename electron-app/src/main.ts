@@ -115,6 +115,9 @@ app.whenReady().then(() => {
   ipcMain.handle('display/select-folder', (event: Event, path: string) =>
     handles.display_SelectFolder(event, path, win),
   );
+  ipcMain.handle('display/select-file', (event: Event, path: string) =>
+    handles.display_SelectFile(event, path, win),
+  );
 
   // Builder
   ipcMain.handle('builder/get-remote-modules', handles.builder_GetRemoteModules);

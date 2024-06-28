@@ -3,7 +3,7 @@ import React from 'react';
 import { builderUpdateNodeInfoKey } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { getNodeById, getNodeByName } from './../Flow';
-import { EditBoxBoolean, EditBoxList, EditBoxSelect, EditBoxText } from './EditBox';
+import { EditBoxBoolean, EditBoxFile, EditBoxList, EditBoxSelect, EditBoxText } from './EditBox';
 
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -136,7 +136,7 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
   const fieldlist = Object.keys(jsonObj).map((key) => {
     let value = jsonObj[key];
     let valueType: string = typeof value;
-    const isSimpleValue = simple_types.includes(valueType) || !value;
+    let isSimpleValue = simple_types.includes(valueType) || !value;
     if (isSimpleValue && valueType === 'object') {
       valueType = 'null' as undefined;
     }
@@ -165,13 +165,23 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
     let parameterValue = '(link)';
     if (metadata !== undefined) {
       // Determine the type of the parameter
-      if (metadata['type'] === 'select') {
-        valueType = 'select';
-        for (const option of metadata['options']) {
-          valueOptions.push({
-            label: option,
-            value: option,
-          });
+      if (typeof metadata['type'] === 'string') {
+        switch (metadata['type'].toLowerCase()) {
+          case 'select':
+            valueType = 'select';
+            for (const option of metadata['options']) {
+              valueOptions.push({
+                label: option,
+                value: option,
+              });
+            }
+            break;
+          case 'file':
+            valueType = 'file';
+            isSimpleValue = true; // Fake simple value for visualisation
+            break;
+          default:
+            console.log('Unknown parameter type specified: ', metadata['type']);
         }
       }
       // Check whether the parameter is linked to another parameter
@@ -288,6 +298,16 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
                 />
               ) : valueType === 'select' ? (
                 <EditBoxSelect value={value} options={valueOptions} onSave={setValue} />
+              ) : valueType === 'file' ? (
+                <EditBoxFile
+                  id={['nodeinfo', nodeid, ...keylist, key].join('-')}
+                  value={value['Folder'] + '/' + value['Filename']}
+                  valueType={valueType}
+                  onSave={setValue}
+                  canConnectParameter={canConnectParameter}
+                  connectParameter={connectParameter}
+                  allowEdit={!isParameterConnected && !isProtectedValue}
+                />
               ) : (
                 <EditBoxText
                   id={['nodeinfo', nodeid, ...keylist, key].join('-')}

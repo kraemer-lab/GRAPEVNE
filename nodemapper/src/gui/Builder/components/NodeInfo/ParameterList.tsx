@@ -14,8 +14,8 @@ import {
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { styled } from '@mui/material/styles';
-import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -337,7 +337,9 @@ export default function ParameterList({
             gap: '3px',
           }}
         >
-          <SimpleTreeView defaultExpandedItems={Array.from({ length: 999 }, (_, i) => i.toString())}>
+          <SimpleTreeView
+            defaultExpandedItems={Array.from({ length: 999 }, (_, i) => i.toString())}
+          >
             <NodeParameters node={node} keylist={[]} />
           </SimpleTreeView>
         </Box>

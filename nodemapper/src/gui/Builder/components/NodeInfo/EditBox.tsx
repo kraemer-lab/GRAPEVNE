@@ -16,6 +16,9 @@ import Typography from '@mui/material/Typography';
 
 import { faLink } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+
+const displayAPI = window.displayAPI;
 
 const useStyles = makeStyles(() => ({
   string: {
@@ -94,7 +97,7 @@ export const EditBoxText = (userprops: IEditBoxText) => {
           onBlur();
         }
       }}
-      onKeyDown={e => e.stopPropagation()}  // prevent letter search-select in TreeView
+      onKeyDown={(e) => e.stopPropagation()} // prevent letter search-select in TreeView
       onBlur={onBlur}
       inputProps={{
         className: useStyle(valueType),
@@ -243,6 +246,107 @@ export const EditBoxList = ({ label, keyitem, keylist, json, onSave, nodecount }
   );
 };
 
+interface IEditBoxFile {
+  id?: string;
+  value: string;
+  valueType?: string;
+  onSave?: (v) => void;
+  allowEdit?: boolean;
+  canConnectParameter?: boolean;
+  connectParameter?: () => void;
+}
+
+const EditBoxFileDefaults: IEditBoxFile = {
+  id: '',
+  value: '',
+  valueType: 'string',
+  allowEdit: true,
+  onSave: () => {},
+  canConnectParameter: false,
+};
+
+const path_sep = () => {
+  return navigator.platform.indexOf('Win') > -1 ? '\\' : '/';
+};
+
+export const EditBoxFile = (userprops: IEditBoxFile) => {
+  const {
+    id,
+    value,
+    valueType,
+    allowEdit,
+    onSave,
+    canConnectParameter,
+    connectParameter,
+  }: IEditBoxFile = { ...EditBoxFileDefaults, ...userprops };
+  const [name, setName] = React.useState(value);
+  const [hasChanged, setHasChanged] = React.useState(false);
+
+  const onChangeByEdit = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+    setHasChanged(true);
+  };
+
+  const onChangeByPicker = (v: string) => {
+    setName(v);
+    saveFileStruct(v);
+  };
+
+  const saveFileStruct = (v: string) => {
+    let filename = '';
+    let folder = '';
+    if (v === undefined) return;
+    if (typeof v === 'string') {
+      filename = v.substring(v.lastIndexOf(path_sep()) + 1) ?? '';
+      folder = v.substring(0, v.lastIndexOf(path_sep())) ?? '';
+    }
+    onSave({
+      Filename: filename,
+      Folder: folder,
+    });
+  };
+
+  const onBlur = () => {
+    if (hasChanged) {
+      setHasChanged(false);
+      saveFileStruct(name);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      onBlur(); // on unmount
+    };
+  }, []);
+
+  return (
+    <Input
+      id={id}
+      value={name}
+      onChange={onChangeByEdit}
+      onKeyPress={(event) => {
+        if (event.key === 'Enter') {
+          onBlur();
+        }
+      }}
+      onKeyDown={(e) => e.stopPropagation()} // prevent letter search-select in TreeView
+      onBlur={onBlur}
+      inputProps={{
+        className: useStyle(valueType),
+      }}
+      endAdornment={
+        <InputAdornment position="end">
+          <FileOpen filename={name} onChange={onChangeByPicker} />
+        </InputAdornment>
+      }
+      disabled={!allowEdit}
+      size="small"
+      margin="none"
+      fullWidth
+    />
+  );
+};
+
 const ConnectParameter = (props: { id; connectParameter }) => {
   return (
     <span
@@ -255,6 +359,26 @@ const ConnectParameter = (props: { id; connectParameter }) => {
     >
       <Typography variant="key" sx={{ marginLeft: '5px' }}>
         <FontAwesomeIcon icon={faLink} />
+      </Typography>
+    </span>
+  );
+};
+
+const FileOpen = (props: { filename; onChange }) => {
+  return (
+    <span
+      style={{
+        cursor: 'pointer',
+        fontSize: '0.8em',
+      }}
+      onClick={() => {
+        displayAPI.SelectFile(props.filename).then((file) => {
+          props.onChange(file[0]);
+        });
+      }}
+    >
+      <Typography variant="key" sx={{ marginLeft: '5px' }}>
+        <FolderOpenIcon />
       </Typography>
     </span>
   );
