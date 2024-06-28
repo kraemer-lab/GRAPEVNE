@@ -84,6 +84,14 @@ export async function display_SelectFolder(event: Event, path: string, win: Elec
   return result.filePaths;
 }
 
+export async function display_SelectFile(event: Event, path: string, win: Electron.BrowserWindow) {
+  const result = await dialog.showOpenDialog(win, {
+    defaultPath: path,
+    properties: ['openFile'],
+  });
+  return result.filePaths;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Builder query handlers
 ///////////////////////////////////////////////////////////////////////////////

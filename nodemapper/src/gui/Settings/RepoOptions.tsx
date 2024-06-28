@@ -7,14 +7,14 @@ import { getMasterRepoListURL } from 'redux/globals';
 import { IRepo } from 'redux/reducers/builder';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
 
 const displayAPI = window.displayAPI;
 
@@ -251,13 +251,11 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
           />
           {displayFolderSelect && (
             <IconButton
-              onClick = {() => {
-                displayAPI.SelectFolder(repoURL)
-                  .then((folderPaths) => {
-                    setRepoURL(folderPaths[0]);
-                  })
-                }
-              }
+              onClick={() => {
+                displayAPI.SelectFolder(repoURL).then((folderPaths) => {
+                  setRepoURL(folderPaths[0]);
+                });
+              }}
             >
               <FolderOutlinedIcon />
             </IconButton>
