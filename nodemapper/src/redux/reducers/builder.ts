@@ -11,6 +11,32 @@ export interface IRepo {
   repo: string;
 }
 
+export interface IWorkflowAlertEmail {
+  smtp_server: string;
+  smtp_port: number;
+
+  username: string;
+  password: string;
+}
+
+export interface IWorkflowAlertMessage {
+  subject: string;
+  body: string;
+  sender: string;
+  recipients: string[];
+}
+
+export interface IWorkflowAlert {
+  enabled: boolean;
+  message: IWorkflowAlertMessage;
+}
+
+export interface IWorkflowAlerts {
+  onsuccess: IWorkflowAlert;
+  onerror: IWorkflowAlert;
+  email_settings: IWorkflowAlertEmail;
+}
+
 export interface IBuilderState {
   // Builder state
   statustext: string;
@@ -38,6 +64,7 @@ export interface IBuilderState {
   auto_validate_connections: boolean;
   hide_params_in_module_info: boolean;
   dark_mode: boolean;
+  workflow_alerts: IWorkflowAlerts;
 }
 
 // Defaults
@@ -80,6 +107,32 @@ const builderStateInit: IBuilderState = {
   auto_validate_connections: false,
   hide_params_in_module_info: true,
   dark_mode: false,
+  workflow_alerts: {
+    onsuccess: {
+      enabled: false,
+      message: {
+        subject: 'Workflow completed successfully',
+        body: 'Workflow completed successfully',
+        sender: '',
+        recipients: [''],
+      },
+    },
+    onerror: {
+      enabled: false,
+      message: {
+        subject: 'Workflow failure',
+        body: 'Workflow failure',
+        sender: '',
+        recipients: [''],
+      },
+    },
+    email_settings: {
+      smtp_server: 'smtp.gmail.com',
+      smtp_port: 587,
+      username: '',
+      password: '',
+    },
+  },
 };
 
 // Nodemap
@@ -227,6 +280,46 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderBuildInProgress, (state, action) => {
       state.build_in_progress = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderToggleWorkflowAlertOnSuccessEnabled, (state, action) => {
+      state.workflow_alerts.onsuccess.enabled = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderToggleWorkflowAlertOnErrorEnabled, (state, action) => {
+      state.workflow_alerts.onerror.enabled = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsEmailSMTPServer, (state, action) => {
+      state.workflow_alerts.email_settings.smtp_server = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsEmailSMTPPort, (state, action) => {
+      state.workflow_alerts.email_settings.smtp_port = parseInt(action.payload);
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsEmailUsername, (state, action) => {
+      state.workflow_alerts.email_settings.username = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsEmailPassword, (state, action) => {
+      state.workflow_alerts.email_settings.password = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsOnSuccessSubject, (state, action) => {
+      state.workflow_alerts.onsuccess.message.subject = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsOnSuccessBody, (state, action) => {
+      state.workflow_alerts.onsuccess.message.body = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsOnErrorSubject, (state, action) => {
+      state.workflow_alerts.onerror.message.subject = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsOnErrorBody, (state, action) => {
+      state.workflow_alerts.onerror.message.body = action.payload;
       console.info('[Reducer] ' + action.type);
     });
 });

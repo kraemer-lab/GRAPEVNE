@@ -14,6 +14,7 @@ import DarkModeOption from './DarkModeOption';
 import EnvironmentOptions from './EnvironmentOptions';
 import InterfaceOptions from './InterfaceOptions';
 import SnakemakeOptions from './SnakemakeOptions';
+import WorkflowAlerts from './WorkflowAlerts';
 
 const OptionsPanel = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -77,6 +78,11 @@ const Settings = () => {
         <Grid item xs={8}>
           <OptionsPanel>
             <InterfaceOptions />
+          </OptionsPanel>
+        </Grid>
+        <Grid item xs={8}>
+          <OptionsPanel>
+            <WorkflowAlerts labelWidth="25%" />
           </OptionsPanel>
         </Grid>
       </Grid>

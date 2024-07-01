@@ -68,6 +68,36 @@ export const builderWriteStoreConfig = createAction('builder/write-store-config'
 export const builderToggleDarkMode = createAction('builder/toggle-dark-mode');
 export const builderOpenResultsFolder = createAction('builder/open-results-folder');
 export const builderUpdateWorkdir = createAction<string>('builder/update-workdir');
+export const builderToggleWorkflowAlertOnSuccessEnabled = createAction<boolean>(
+  'builder/toggle-workflow-alert-on-success-enabled'
+);
+export const builderToggleWorkflowAlertOnErrorEnabled = createAction<boolean>(
+  'builder/toggle-workflow-alert-on-error-enabled'
+);
+export const builderSetWorkflowAlertsEmailSMTPServer = createAction<string>(
+  'builder/set-workflow-alerts-email-smtp-server'
+);
+export const builderSetWorkflowAlertsEmailSMTPPort = createAction<string>(
+  'builder/set-workflow-alerts-email-smtp-port'
+);
+export const builderSetWorkflowAlertsEmailUsername = createAction<string>(
+  'builder/set-workflow-alerts-email-username'
+);
+export const builderSetWorkflowAlertsEmailPassword = createAction<string>(
+  'builder/set-workflow-alerts-email-password'
+);
+export const builderSetWorkflowAlertsOnSuccessSubject = createAction<string>(
+  'builder/set-workflow-alerts-onsuccess-subject'
+);
+export const builderSetWorkflowAlertsOnSuccessBody = createAction<string>(
+  'builder/set-workflow-alerts-onsuccess-body'
+);
+export const builderSetWorkflowAlertsOnErrorSubject = createAction<string>(
+  'builder/set-workflow-alerts-onerror-subject'
+);
+export const builderSetWorkflowAlertsOnErrorBody = createAction<string>(
+  'builder/set-workflow-alerts-onerror-body'
+);
 
 export const builderLoadScene = createAction('builder/load-scene');
 export const builderSaveScene = createAction('builder/save-scene');
