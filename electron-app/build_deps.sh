@@ -42,7 +42,6 @@ cp src/types.ts ../nodemapper/src
 
 # Build nodemapper (front-end)
 pushd ../nodemapper
-cp src/redux/globals_electron.ts src/redux/globals.ts
 rm -rf dist
 yarn install
 yarn

@@ -1,5 +1,4 @@
 import BuilderEngine from 'gui/Builder/components/BuilderEngine';
-import * as globals from 'redux/globals';
 
 import {
   builderBuildInProgress,
@@ -27,12 +26,9 @@ import { Edge } from 'reactflow';
 
 type Query = Record<string, unknown>;
 
-const API_ENDPOINT = globals.getApiEndpoint();
-
 const displayAPI = window.displayAPI;
 const builderAPI = window.builderAPI;
 const runnerAPI = window.runnerAPI;
-const backend = globals.getBackend();
 
 export const builderMiddleware = ({ getState, dispatch }) => {
   return (next) => {
@@ -347,17 +343,7 @@ const BuildAs = async ({
     dispatchBool(builderBuildInProgress(false));
     dispatchString(builderUpdateStatusText('')); // Idle
   };
-  switch (backend as string) {
-    case 'rest':
-      query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQueryExpectZip({ query, callback });
-      break;
-    case 'electron':
-      callback(await builder_api_fcn(query));
-      break;
-    default:
-      console.error('Unknown backend: ', backend);
-  }
+  callback(await builder_api_fcn(query));
 };
 
 interface IBuildAndRun {
@@ -413,17 +399,7 @@ const BuildAndRun = async ({
     dispatchString(builderUpdateStatusText('')); // Idle
     dispatchBool(builderBuildInProgress(false));
   };
-  switch (backend as string) {
-    case 'rest':
-      query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery({ query, dispatch: dispatchString, callback });
-      break;
-    case 'electron':
-      callback(await builderAPI.BuildAndRun(query));
-      break;
-    default:
-      console.error('Unknown backend: ', backend);
-  }
+  callback(await builderAPI.BuildAndRun(query));
 };
 
 interface IBuildAndRunToModule extends IBuildAndRun {
@@ -468,17 +444,7 @@ const BuildAndRunToModule = async ({
     dispatchBool(builderBuildInProgress(false));
     dispatchString(builderUpdateStatusText('')); // Idle
   };
-  switch (backend as string) {
-    case 'rest':
-      query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery({ query, dispatch: dispatchString, callback });
-      break;
-    case 'electron':
-      callback(await builderAPI.BuildAndRun(query));
-      break;
-    default:
-      console.error('Unknown backend: ', backend);
-  }
+  callback(await builderAPI.BuildAndRun(query));
 };
 
 const BuildAndForceRunToModule = async ({
@@ -529,17 +495,7 @@ const CleanBuildFolder = async ({ dispatchBool, dispatchString }: ICleanBuildFol
     dispatchString(builderUpdateWorkdir(''));
     dispatchBool(builderBuildInProgress(false));
   };
-  switch (backend as string) {
-    case 'rest':
-      query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery({ query, dispatch: dispatchString, callback });
-      break;
-    case 'electron':
-      callback(await builderAPI.CleanBuildFolder(query));
-      break;
-    default:
-      console.error('Unknown backend: ', backend);
-  }
+  callback(await builderAPI.CleanBuildFolder(query));
 };
 
 interface ICheckNodeDependencies {
@@ -603,16 +559,7 @@ const CheckNodeDependencies = async ({
     }
     console.log(data);
   };
-  switch (backend as string) {
-    case 'rest':
-      postRequestCheckNodeDependencies({ query, dispatch: dispatchString, callback });
-      break;
-    case 'electron':
-      callback(await runnerAPI.CheckNodeDependencies(query));
-      break;
-    default:
-      console.error('Unknown backend: ', backend);
-  }
+  callback(await runnerAPI.CheckNodeDependencies(query));
 };
 
 interface INodeSelected {
@@ -743,17 +690,7 @@ const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemo
       dispatchString(builderUpdateStatusText('Modules loaded.'));
     }
   };
-  switch (backend as string) {
-    case 'rest':
-      query['data']['content'] = JSON.stringify(query['data']['content']);
-      SubmitQuery({ query, dispatch: dispatchString, callback });
-      break;
-    case 'electron':
-      callback(await builderAPI.GetRemoteModules(query));
-      break;
-    default:
-      console.error('Unknown backend: ', backend);
-  }
+  callback(await builderAPI.GetRemoteModules(query));
 };
 
 const UpdateModulesList = (dispatch: TPayloadString) => {
@@ -805,137 +742,6 @@ const ReportResponse = (content: Query) => {
   // Responses are output to the console for debugging
   // These are used in end-to-end tests to interrogate the state of actions
   console.log(content);
-};
-
-interface ISubmitQueryExpectZip {
-  query: Query;
-  callback: (content: unknown) => void;
-}
-
-const SubmitQueryExpectZip = async ({ query, callback }: ISubmitQueryExpectZip) => {
-  // POST request handler
-  const postZIPRequest = async () => {
-    const postRequestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-        responseType: 'blob',
-      },
-      body: JSON.stringify(query),
-    };
-    console.info('Sending query: ', query);
-    fetch(API_ENDPOINT + '/post', postRequestOptions)
-      .then((response) => {
-        if (response.ok) {
-          const reader = response.body.getReader();
-          return new ReadableStream({
-            start(controller) {
-              const push = () => {
-                reader.read().then(({ done, value }) => {
-                  if (done) {
-                    controller.close();
-                    return;
-                  }
-                  controller.enqueue(value);
-                  push();
-                });
-              };
-              push();
-            },
-          });
-        }
-        throw response;
-      })
-      .then((stream) =>
-        new Response(stream, {
-          headers: { 'Content-type': 'application/zip' },
-        }).text(),
-      )
-      .then((result) => {
-        callback(result);
-      });
-  };
-  postZIPRequest();
-};
-
-interface IPostRequestCheckNodeDependencies {
-  query: Query;
-  dispatch: TPayloadString;
-  callback: (data: Query) => void;
-}
-
-const postRequestCheckNodeDependencies = ({
-  query,
-  dispatch,
-  callback,
-}: IPostRequestCheckNodeDependencies) => {
-  const postRequestOptions = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-    body: JSON.stringify(query),
-  };
-  console.info('Sending query: ', query);
-  dispatch(builderUpdateStatusText('Checking node dependencies...'));
-  fetch(API_ENDPOINT + '/post', postRequestOptions)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-      console.error('Error: ' + response.statusText);
-      dispatch(builderUpdateStatusText('Error: ' + response.statusText));
-      throw response;
-    })
-    .then((data) => {
-      console.info('Got response: ', data);
-      callback(data);
-    })
-    .catch((error) => {
-      console.error('Error during query: ', error);
-    });
-};
-
-interface ISubmitQuery {
-  query: Query;
-  dispatch: TPayloadString;
-  callback: (content: unknown) => void;
-}
-
-const SubmitQuery = async ({ query, dispatch, callback }: ISubmitQuery) => {
-  // POST request handler
-  const postRequest = async () => {
-    const postRequestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-      body: JSON.stringify(query),
-    };
-    console.info('Sending query: ', query);
-    fetch(API_ENDPOINT + '/post', postRequestOptions)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        dispatch(builderUpdateStatusText('Error: ' + response.statusText));
-        throw response;
-      })
-      .then((data) => {
-        if (data !== null) {
-          processResponse(data, callback);
-        }
-        console.info('Got response: ', data);
-      })
-      .catch((error) => {
-        console.error('Error during query: ', error);
-      });
-  };
-
-  const processResponse = (content: JSON, callback) => {
-    console.log('Process response: ', content);
-    dispatch(builderUpdateStatusText(''));
-    callback(content);
-  };
-
-  // Received query request
-  if (JSON.stringify(query) !== JSON.stringify({})) postRequest();
 };
 
 interface IUpdateStatusText {
