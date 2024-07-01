@@ -1,13 +1,13 @@
-import os
-import json
-import smtplib
-import logging
 import argparse
-from email.utils import formatdate
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
+import json
+import logging
+import os
+import smtplib
 from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import formatdate
 
 # SMTP username and password can be provided as environment variables (but can be
 # overriden by a credentials file if one is specified)

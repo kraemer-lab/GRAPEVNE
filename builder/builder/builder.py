@@ -13,11 +13,13 @@ from typing import Optional
 from typing import Tuple
 from typing import TypedDict
 from typing import Union
-from .workflow_alerts import WorkflowAlerts, ProcessWorkflowAlerts
 
 import cachetools
 import requests
 import yaml
+
+from .workflow_alerts import ProcessWorkflowAlerts
+from .workflow_alerts import WorkflowAlerts
 
 
 Namespace = Union[str, None, dict]
@@ -231,34 +233,34 @@ class Model:
             recipients,
         ) -> str:
             s = "\n"
-            s += f'{directive}:\n'
-            s += '    try:\n'  # don't fail the run because of the workflow alert
-            s += '        import sendmail\n'
-            s += '        sendmail.send_email(\n'
+            s += f"{directive}:\n"
+            s += "    try:\n"  # don't fail the run because of the workflow alert
+            s += "        import sendmail\n"
+            s += "        sendmail.send_email(\n"
             s += f'            server_address="{smtp_address}",\n'
             s += f'            server_port="{smtp_port}",\n'
             s += f'            subject="{subject}",\n'
             s += f'            body="{body}",\n'
-            s += f'            sender={sender},\n'  # don't quote (see below)
+            s += f"            sender={sender},\n"  # don't quote (see below)
             s += f'            recipients="{recipients}",\n'
-            s += f'            username={username},\n'  # don't quote as can be used to
-            s += f'            password={password},\n'  # get environment variables
-            s += '        )\n'
-            s += '    except Exception as e:\n'
+            s += f"            username={username},\n"  # don't quote as can be used to
+            s += f"            password={password},\n"  # get environment variables
+            s += "        )\n"
+            s += "    except Exception as e:\n"
             s += '        print("Error sending email: ", e)\n'
             return s
 
         s = ""
         if self.alerts.onsuccess:
             s += create_alert(
-                'onsuccess',
+                "onsuccess",
                 self.alerts.onsuccess.subject,
                 self.alerts.onsuccess.body,
                 self.alerts.onsuccess.recipients,
             )
         if self.alerts.onerror:
             s += create_alert(
-                'onerror',
+                "onerror",
                 self.alerts.onerror.subject,
                 self.alerts.onerror.body,
                 self.alerts.onerror.recipients,

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class EmailSettings:
     """EmailSettings class for the WorkflowAlert"""
+
     smtp_address: str = ""
     smtp_port: int = 0
     sender: str = ""
@@ -14,6 +15,7 @@ class EmailSettings:
 @dataclass
 class Message:
     """Message class for the WorkflowAlert"""
+
     subject: str = ""
     body: str = ""
     recipients: str = ""
@@ -22,6 +24,7 @@ class Message:
 @dataclass
 class WorkflowAlerts:
     """Initialise the WorkflowAlert"""
+
     email_settings = EmailSettings()
     onsuccess = Message()
     onerror = Message()

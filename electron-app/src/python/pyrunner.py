@@ -102,7 +102,11 @@ def BuildAndRun(
         # Add the first rule to appear in the list (mimics snakemake behaviour)
         try:
             target_rules.append(
-                next(rulename for rulename in snakemake_list if rulename.startswith(target))
+                next(
+                    rulename
+                    for rulename in snakemake_list
+                    if rulename.startswith(target)
+                )
             )
         except StopIteration:
             raise ValueError(f"Cannot determine target rule for module: {target}")
