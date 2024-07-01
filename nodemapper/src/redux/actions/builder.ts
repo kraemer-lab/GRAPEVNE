@@ -69,34 +69,43 @@ export const builderToggleDarkMode = createAction('builder/toggle-dark-mode');
 export const builderOpenResultsFolder = createAction('builder/open-results-folder');
 export const builderUpdateWorkdir = createAction<string>('builder/update-workdir');
 export const builderToggleWorkflowAlertOnSuccessEnabled = createAction<boolean>(
-  'builder/toggle-workflow-alert-on-success-enabled'
+  'builder/toggle-workflow-alert-on-success-enabled',
 );
 export const builderToggleWorkflowAlertOnErrorEnabled = createAction<boolean>(
-  'builder/toggle-workflow-alert-on-error-enabled'
+  'builder/toggle-workflow-alert-on-error-enabled',
 );
 export const builderSetWorkflowAlertsEmailSMTPServer = createAction<string>(
-  'builder/set-workflow-alerts-email-smtp-server'
+  'builder/set-workflow-alerts-email-smtp-server',
 );
 export const builderSetWorkflowAlertsEmailSMTPPort = createAction<string>(
-  'builder/set-workflow-alerts-email-smtp-port'
+  'builder/set-workflow-alerts-email-smtp-port',
+);
+export const builderSetWorkflowAlertsEmailSender = createAction<string>(
+  'builder/set-workflow-alerts-email-sender',
 );
 export const builderSetWorkflowAlertsEmailUsername = createAction<string>(
-  'builder/set-workflow-alerts-email-username'
+  'builder/set-workflow-alerts-email-username',
 );
 export const builderSetWorkflowAlertsEmailPassword = createAction<string>(
-  'builder/set-workflow-alerts-email-password'
+  'builder/set-workflow-alerts-email-password',
 );
 export const builderSetWorkflowAlertsOnSuccessSubject = createAction<string>(
-  'builder/set-workflow-alerts-onsuccess-subject'
+  'builder/set-workflow-alerts-onsuccess-subject',
 );
 export const builderSetWorkflowAlertsOnSuccessBody = createAction<string>(
-  'builder/set-workflow-alerts-onsuccess-body'
+  'builder/set-workflow-alerts-onsuccess-body',
+);
+export const builderSetWorkflowAlertsOnSuccessRecipients = createAction<string>(
+  'builder/set-workflow-alerts-onsuccess-recipients',
 );
 export const builderSetWorkflowAlertsOnErrorSubject = createAction<string>(
-  'builder/set-workflow-alerts-onerror-subject'
+  'builder/set-workflow-alerts-onerror-subject',
 );
 export const builderSetWorkflowAlertsOnErrorBody = createAction<string>(
-  'builder/set-workflow-alerts-onerror-body'
+  'builder/set-workflow-alerts-onerror-body',
+);
+export const builderSetWorkflowAlertsOnErrorRecipients = createAction<string>(
+  'builder/set-workflow-alerts-onerror-recipients',
 );
 
 export const builderLoadScene = createAction('builder/load-scene');

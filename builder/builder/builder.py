@@ -13,6 +13,7 @@ from typing import Optional
 from typing import Tuple
 from typing import TypedDict
 from typing import Union
+from .workflow_alerts import WorkflowAlerts, ProcessWorkflowAlerts
 
 import cachetools
 import requests
@@ -153,6 +154,7 @@ class Model:
     def __init__(self) -> None:
         """Initialise the model"""
         self.nodes: List[Node] = []  # List of Node objects
+        self.alerts: WorkflowAlerts = None
         self.partial_build: bool = False
 
     def SetPartialBuild(self, partial_build: bool) -> None:
@@ -186,6 +188,82 @@ class Model:
             s += "    config:\n"
             s += f'        config["{node.rulename}"]["config"]\n'
             s += f"use rule * from {node.rulename} as {node.rulename}_*\n"
+            s += self.AddWorkflowAlerts()
+        return s
+
+    def AddWorkflowAlerts(self) -> str:
+        """Adds workflow alerts (email) to the Snakefile"""
+        if not self.alerts:
+            return ""
+        if not self.alerts.email_settings:
+            return ""
+        if not self.alerts.onsuccess or not self.alerts.onerror:
+            return ""
+
+        smtp_address = self.alerts.email_settings.smtp_address
+        smtp_port = self.alerts.email_settings.smtp_port
+        username = (
+            # Look for environment variables if username not pre-defined
+            f'"{self.alerts.email_settings.username}"'
+            if self.alerts.email_settings.username
+            else "os.environ.get('GRAPEVNE_EMAIL_USERNAME')"
+        )
+        password = (
+            # Look for environment variables if password not pre-defined
+            f'"{self.alerts.email_settings.password}"'
+            if (
+                self.alerts.email_settings.username
+                and self.alerts.email_settings.password
+            )
+            else "os.environ.get('GRAPEVNE_EMAIL_PASSWORD')"
+        )
+        sender = (
+            # Use username as sender if not defined
+            f'"{self.alerts.email_settings.sender}"'
+            if self.alerts.email_settings.sender
+            else username
+        )
+
+        def create_alert(
+            directive,
+            subject,
+            body,
+            recipients,
+        ) -> str:
+            s = "\n"
+            s += f'{directive}:\n'
+            s += '    try:\n'  # don't fail the run because of the workflow alert
+            s += '        import sendmail\n'
+            s += '        sendmail.send_email(\n'
+            s += f'            server_address="{smtp_address}",\n'
+            s += f'            server_port="{smtp_port}",\n'
+            s += f'            subject="{subject}",\n'
+            s += f'            body="{body}",\n'
+            s += f'            sender={sender},\n'  # don't quote (see below)
+            s += f'            recipients="{recipients}",\n'
+            s += f'            username={username},\n'  # don't quote as can be used to
+            s += f'            password={password},\n'  # get environment variables
+            s += '        )\n'
+            s += '    except Exception as e:\n'
+            s += '        print("Error sending email: ", e)\n'
+            return s
+
+        s = ""
+        if self.alerts.onsuccess:
+            s += create_alert(
+                'onsuccess',
+                self.alerts.onsuccess.subject,
+                self.alerts.onsuccess.body,
+                self.alerts.onsuccess.recipients,
+            )
+        if self.alerts.onerror:
+            s += create_alert(
+                'onerror',
+                self.alerts.onerror.subject,
+                self.alerts.onerror.body,
+                self.alerts.onerror.recipients,
+            )
+
         return s
 
     def BuildSnakefileConfig(self) -> str:
@@ -514,6 +592,12 @@ class Model:
             file.write(self.BuildSnakefile())
         with open(f"{build_path}/config/config.yaml", "w") as file:
             file.write(self.BuildSnakefileConfig())
+        # Include sendmail script (if workflow alerts are present)
+        if self.alerts:
+            shutil.copyfile(
+                pathlib.Path(__file__).parent / "sendmail.py",
+                f"{build_path}/workflow/sendmail.py",
+            )
         return build_path
 
     def WrangleName(self, basename: str, subname: str = "") -> str:
@@ -938,6 +1022,7 @@ def BuildFromJSON(
     partial_build: bool = False,  # Don't throw an error if node is missing
     create_zip: bool = True,
     package_modules: bool = False,
+    workflow_alerts: dict = {},
 ) -> Tuple[Union[Tuple[str, str], bytes], Model, str]:
     """Builds a workflow from a JSON specification
 
@@ -969,6 +1054,9 @@ def BuildFromJSON(
                 item["name"],
                 item["config"],
             )
+    # Identify workflow alerts
+    if workflow_alerts:
+        m.alerts = ProcessWorkflowAlerts(workflow_alerts)
     if expand:
         logging.debug("Expanding modules...")
         m.ExpandAllModules()

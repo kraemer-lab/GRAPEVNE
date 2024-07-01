@@ -14,7 +14,7 @@ export interface IRepo {
 export interface IWorkflowAlertEmail {
   smtp_server: string;
   smtp_port: number;
-
+  sender: string;
   username: string;
   password: string;
 }
@@ -22,8 +22,7 @@ export interface IWorkflowAlertEmail {
 export interface IWorkflowAlertMessage {
   subject: string;
   body: string;
-  sender: string;
-  recipients: string[];
+  recipients: string;
 }
 
 export interface IWorkflowAlert {
@@ -108,13 +107,19 @@ const builderStateInit: IBuilderState = {
   hide_params_in_module_info: true,
   dark_mode: false,
   workflow_alerts: {
+    email_settings: {
+      smtp_server: 'smtp.gmail.com',
+      smtp_port: 587,
+      sender: '',
+      username: '',
+      password: '',
+    },
     onsuccess: {
       enabled: false,
       message: {
         subject: 'Workflow completed successfully',
         body: 'Workflow completed successfully',
-        sender: '',
-        recipients: [''],
+        recipients: '',
       },
     },
     onerror: {
@@ -122,15 +127,8 @@ const builderStateInit: IBuilderState = {
       message: {
         subject: 'Workflow failure',
         body: 'Workflow failure',
-        sender: '',
-        recipients: [''],
+        recipients: '',
       },
-    },
-    email_settings: {
-      smtp_server: 'smtp.gmail.com',
-      smtp_port: 587,
-      username: '',
-      password: '',
     },
   },
 };
@@ -298,6 +296,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       state.workflow_alerts.email_settings.smtp_port = parseInt(action.payload);
       console.info('[Reducer] ' + action.type);
     })
+    .addCase(actions.builderSetWorkflowAlertsEmailSender, (state, action) => {
+      state.workflow_alerts.email_settings.sender = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
     .addCase(actions.builderSetWorkflowAlertsEmailUsername, (state, action) => {
       state.workflow_alerts.email_settings.username = action.payload;
       console.info('[Reducer] ' + action.type);
@@ -314,12 +316,20 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       state.workflow_alerts.onsuccess.message.body = action.payload;
       console.info('[Reducer] ' + action.type);
     })
+    .addCase(actions.builderSetWorkflowAlertsOnSuccessRecipients, (state, action) => {
+      state.workflow_alerts.onsuccess.message.recipients = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
     .addCase(actions.builderSetWorkflowAlertsOnErrorSubject, (state, action) => {
       state.workflow_alerts.onerror.message.subject = action.payload;
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetWorkflowAlertsOnErrorBody, (state, action) => {
       state.workflow_alerts.onerror.message.body = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetWorkflowAlertsOnErrorRecipients, (state, action) => {
+      state.workflow_alerts.onerror.message.recipients = action.payload;
       console.info('[Reducer] ' + action.type);
     });
 });

@@ -42,9 +42,6 @@ def BuildAndRun(
     # First, build the workflow
     logging.info("Building workflow")
     js = data["content"]
-    # dump config file to disk for debug
-    # with open("workflow.json", "w") as f:
-    #     json.dump(js, f, indent=4)
     logging.info("BuildFromJSON")
     _, m, zipfilename = builder.BuildFromJSON(
         js,
@@ -52,6 +49,7 @@ def BuildAndRun(
         clean_build=clean_build,  # clean build folder before build
         create_zip=create_zip,  # create zip file
         package_modules=data.get("package_modules", False),  # package modules
+        workflow_alerts=data.get("workflow_alerts", {}),  # workflow alerts
     )
     targets = data.get("targets", [])
     target_modules = m.LookupRuleNames(targets)
@@ -102,9 +100,12 @@ def BuildAndRun(
             target_rules.append(target_rule)
             continue
         # Add the first rule to appear in the list (mimics snakemake behaviour)
-        target_rules.append(
-            [rulename for rulename in snakemake_list if rulename.startswith(target)][0]
-        )
+        try:
+            target_rules.append(
+                next(rulename for rulename in snakemake_list if rulename.startswith(target))
+            )
+        except StopIteration:
+            raise ValueError(f"Cannot determine target rule for module: {target}")
 
     # Second, return the launch command
     logging.info("Generating launch command")
