@@ -219,26 +219,25 @@ const checkManifest = (repo: string, branch: string) => {
 }
 
 const populateManifest = async (repo: string, branch: string) => {
-  // Check if manifest already exists
-  if (!checkManifest(repo, branch)) {
-    // Attempt to populate manifest file
-    const manifest_url = ['https://raw.githubusercontent.com', repo, branch, manifest_path].join('/');
-    const response = await axios.get(manifest_url)
-      .then((response) => response.data)
-      .then((data) => {
-        // may return undefined
-        if (data) {
-          manifest[repo] = data;
-        }
-      })
-      .catch((e) => {
-        console.log('Could not retrieve manifest file: ', e);
-      });
-  }
+  // Add / refresh manifest - typically called on Module Load (infrequent)
+
+  // Attempt to populate manifest file
+  const manifest_url = ['https://raw.githubusercontent.com', repo, branch, manifest_path].join('/');
+  const response = await axios.get(manifest_url)
+    .then((response) => response.data)
+    .then((data) => {
+      // may return undefined
+      if (data) {
+        manifest[repo] = data;
+      }
+    })
+    .catch((e) => {
+      console.log('Could not retrieve a manifest file.');
+    });
 }
 
 const getManifest = (repo: string, branch: string): Record<string, unknown> => {
-  if (!checkManifest(repo, branch)) {
+  if (checkManifest(repo, branch)) {
     return manifest[repo] as Record<string, unknown>;
   } else {
     return {};
