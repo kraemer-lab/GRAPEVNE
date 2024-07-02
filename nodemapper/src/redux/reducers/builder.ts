@@ -48,6 +48,7 @@ export interface IBuilderState {
   workdir: string;
   modules_loading: boolean;
   build_in_progress: boolean;
+  configfiles_list: string[];
 
   // react-flow parameters
   nodes: Node[];
@@ -83,6 +84,7 @@ const builderStateInit: IBuilderState = {
   workdir: '',
   modules_loading: false,
   build_in_progress: false,
+  configfiles_list: [],
 
   // react-flow parameters
   nodes: default_nodes,
@@ -330,6 +332,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetWorkflowAlertsOnErrorRecipients, (state, action) => {
       state.workflow_alerts.onerror.message.recipients = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetConfigFiles, (state, action) => {
+      state.configfiles_list = action.payload;
       console.info('[Reducer] ' + action.type);
     });
 });

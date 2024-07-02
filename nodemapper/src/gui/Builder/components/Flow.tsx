@@ -10,10 +10,11 @@ import {
   builderSetEdges,
   builderSetNodes,
   builderUpdateStatusText,
+  builderSetConfigFiles,
 } from 'redux/actions';
 
 import Box from '@mui/material/Box';
-import { Edge, Node, NodeData } from 'NodeMap/scene/Flow'; // Custom Node definition
+import { Edge, Node, NodeData } from 'NodeMap/scene/Flow';  // Custom Node definition
 
 import { toPng, toSvg } from 'html-to-image';
 import ReactFlow, {
@@ -374,6 +375,11 @@ export const setNodeWorkflow = (
   });
 };
 
+const getConfigFiles = async (snakefile: Record<string, unknown> | string): Promise<string[]> => {
+  console.log('Getting config files for: ', snakefile);
+  return await builderAPI.GetModuleConfigFilesList(snakefile);
+}
+
 const Flow = () => {
   const dispatch = useAppDispatch();
   const nodes = useAppSelector((state) => state.builder.nodes);
@@ -527,6 +533,12 @@ const Flow = () => {
           },
         },
       };
+      let snakefile = null;
+      if (typeof workflow['snakefile'] === 'string') {
+        snakefile = workflow['snakefile'] as string;
+      } else {
+        snakefile = workflow['snakefile'] as Query;
+      }
       const getConfig = async (query) => {
         return await builderAPI.GetRemoteModuleConfig(query);
       };
@@ -553,6 +565,11 @@ const Flow = () => {
           // Add node to graph
           dispatch(builderAddNode(newnode));
           dispatch(builderUpdateStatusText(`Module loaded.`));
+          // Get configuration file list (alternative config files)
+          getConfigFiles(snakefile)
+            .then((configfile_list) => {
+              dispatch(builderSetConfigFiles(configfile_list));
+            });
         })
         .catch((error) => {
           console.error(error);
@@ -569,6 +586,8 @@ const Flow = () => {
         position: point,
       } as Node;
       dispatch(builderAddNode(newnode));
+      // Set configuration file list (alternative config files) empty
+      dispatch(builderSetConfigFiles([]));
     }
     document.body.style.cursor = 'default';
   };

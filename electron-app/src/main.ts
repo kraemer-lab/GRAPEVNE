@@ -128,6 +128,7 @@ app.whenReady().then(() => {
   // Builder
   ipcMain.handle('builder/get-remote-modules', handles.builder_GetRemoteModules);
   ipcMain.handle('builder/get-remote-module-config', handles.builder_GetRemoteModuleConfig);
+  ipcMain.handle('builder/get-module-config-files-list', handles.builder_GetModuleConfigFilesList);
   ipcMain.handle('builder/build-as-module', (event: Event, data: Query) =>
     handles.builder_BuildAsModule(event, data, stderr_callback),
   );
@@ -141,6 +142,12 @@ app.whenReady().then(() => {
     handles.builder_CleanBuildFolder(event, data, status_callback),
   );
   ipcMain.handle('builder/open-results-folder', handles.builder_OpenResultsFolder);
+  ipcMain.handle('builder/get-file', (event: Event, filename: string) =>
+    handles.builder_GetFile(event, filename),
+  );
+  ipcMain.handle('builder/get-config-filename-from-snakefile', (event: Event, data: Query | string) =>
+     handles.builder_GetConfigFilenameFromSnakefile(event, data),
+  );
 
   // Runner
   ipcMain.handle('runner/build', (event: Event, data: Query) =>

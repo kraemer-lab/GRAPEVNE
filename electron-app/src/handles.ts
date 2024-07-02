@@ -1,6 +1,7 @@
 import Store from 'electron-store';
 import fs from 'fs';
 import web from './web';
+import axios from 'axios';
 
 import { dialog, IpcMainInvokeEvent, shell } from 'electron';
 import { Build, CondaSearch, INewModuleState } from './newmodule';
@@ -115,6 +116,10 @@ export async function builder_GetRemoteModuleConfig(event: Event, query: Query) 
     ((query['data'] as Query)['content'] as Query)['snakefile'],
   );
   return config;
+}
+
+export async function builder_GetModuleConfigFilesList(event: Event, snakefile: Query | string) {
+  return await web.GetModuleConfigFilesList(snakefile);
 }
 
 export async function builder_BuildAsModule(
@@ -238,6 +243,26 @@ export async function builder_CleanBuildFolder(
 export async function builder_OpenResultsFolder(event: Event, workdir: string) {
   shell.showItemInFolder(workdir);
   return { query: 'builder/open-results-folder', body: 'OK', returncode: 0 };
+}
+
+export async function builder_GetFile(event: Event, filename: string): Promise<string> {
+  if (filename.startsWith('http')) {
+    // Remote filename
+    try {
+      const response = await axios.get(filename);
+      return response.data;
+    } catch (err) {
+      console.error('Error getting remote file: ' + filename);
+      return '';
+    }
+  } else {
+    // Local file
+    return fs.readFileSync(filename as string, { encoding: 'utf8' });
+  }
+}
+
+export async function builder_GetConfigFilenameFromSnakefile(event: Event, snakefile: Query | string) {
+  return await web.getConfigFilenameFromSnakefile(snakefile);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

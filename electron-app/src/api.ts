@@ -21,8 +21,11 @@ export type BuilderAPI = {
   CleanBuildFolder: (query: Query) => Promise<Query>;
   GetRemoteModules: (query: Query) => Promise<Query>;
   GetRemoteModuleConfig: (query: Query) => Promise<Query>;
+  GetModuleConfigFilesList: (query: Query | string) => Promise<string[]>;
   OpenResultsFolder: (workdir: string) => Promise<Query>;
   logEvent: (callback: (event: Event, data: string) => void) => void;
+  GetFile: (filename: string) => Promise<string>;
+  GetConfigFilenameFromSnakefile: (filename: Query | string) => Promise<string>;
 };
 
 export type RunnerAPI = {
