@@ -13,7 +13,7 @@ module.exports = {
     filename: "bundle.js",
   },
   resolve: {
-    modules: ["src/", "node_modules"],
+    modules: ["src/", "node_modules", path.join(__dirname, "src")],
     alias: {
       components: path.resolve(__dirname, "src", "scripts", "components"),
       utils: path.resolve(__dirname, "src", "scripts", "utils"),
