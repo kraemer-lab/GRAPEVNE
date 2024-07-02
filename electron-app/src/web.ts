@@ -244,7 +244,7 @@ const getManifest = (repo: string, branch: string): Record<string, unknown> => {
     return {};
   }
 }
-  
+
 const api_get = async (url: string, url_base: string): Promise<Record<string, string>[]> => {
   // Attempt to look up folder contents in the manifest file; if the manifest file does
   // not exist, then resort to an API request (these can be rate limited)
@@ -282,7 +282,7 @@ const api_get = async (url: string, url_base: string): Promise<Record<string, st
       }
       return out;
     }
-  }  
+  }
   // API request (risks hitting github rate limit)
   const response = await axios.get(url);
   return await response.data;
