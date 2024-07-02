@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import Store from 'electron-store';
-import * as pty from 'node-pty';
+// import * as pty from 'node-pty';
 import * as os from 'node:os';
 import path from 'path';
 import * as handles from './handles';
@@ -59,6 +59,7 @@ app.whenReady().then(() => {
   // Setup pseudo terminal
   ////////////////////////
 
+  /*
   const shell = os.platform() === 'win32' ? 'powershell.exe' : process.env.SHELL || 'bash';
   const ptyProcess = pty.spawn(shell, [], {
     name: 'xterm-color',
@@ -85,6 +86,11 @@ app.whenReady().then(() => {
     win.webContents.send('terminal/receive-data', data.replace(/\r?\n/g, '\r\n'));
   };
   ptyProcess.onData(sendPtyData);
+  */
+
+  const terminal_sendLine = (data: string) => {
+    console.log(data);
+  }
 
   /////////////////////////////
   // Setup logging to front-end
