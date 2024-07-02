@@ -13,7 +13,7 @@ type ModuleUserConfigType = {
 
 // Module configuration, as appears in the config.yaml file
 type ModuleConfigType = {
-  snakefile: string;
+  snakefile: string | Record<string, string>;
   docstring?: string | null;
   config: ModuleUserConfigType;
 };

@@ -4,6 +4,7 @@ import React from 'react';
 import ResizeHandle from './../ResizeHandle';
 import styles from './../styles.module.css';
 import HighlightedJSON from './HighlightedJSON';
+import ConfigSelect from './ConfigSelect';
 
 import { useEffect, useState } from 'react';
 import { Panel, PanelGroup } from 'react-resizable-panels';
@@ -88,6 +89,7 @@ const NodeInfo = () => {
             overflowY: 'auto',
           }}
         >
+          <ConfigSelect />
           <HighlightedJSON nodeid={JSON.parse(nodeinfo).id} json={nodeparams} />
         </Panel>
       </PanelGroup>
