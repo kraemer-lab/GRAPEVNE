@@ -31,6 +31,8 @@ contextBridge.exposeInMainWorld('builderAPI', {
     ipcRenderer.invoke('builder/open-results-folder', workdir),
   logEvent: (callback: (event: Event, data: string) => void) =>
     ipcRenderer.on('builder/log-event', callback),
+  GetFile: (filename: string) => ipcRenderer.invoke('builder/get-file', filename),
+  GetConfigFilenameFromSnakefile: (filename: Query | string) => ipcRenderer.invoke('builder/get-config-filename-from-snakefile', filename),
 });
 
 contextBridge.exposeInMainWorld('runnerAPI', {

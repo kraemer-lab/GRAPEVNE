@@ -226,7 +226,6 @@ const populateManifest = async (repo: string, branch: string) => {
     const response = await axios.get(manifest_url)
       .then((response) => response.data)
       .then((data) => {
-        console.log('Got manifest data: ', data);
         // may return undefined
         if (data) {
           manifest[repo] = data;
@@ -506,7 +505,7 @@ const getConfigFilenameFromSnakefile_Local = (filepath: string): string | null =
   const lines = data.split(/\r?\n/);
   const configLine = lines.find(line => line.startsWith('configfile:'));
   if (configLine) {
-    const value = configLine.split('configfile: ')[1].trim();
+    const value = configLine.split('configfile: ')[1].trim().slice(1, -1);  // remove quotes
     return value;
   }
   return null;
@@ -561,10 +560,11 @@ const GetModuleConfigFilesList = async (
     const workflow_path = (snakefile['kwargs'] as Record<string, string>)['path'];
     const configfile_rel = await getConfigFilenameFromSnakefile(snakefile);
     if (configfile_rel) {
+      const repo = (snakefile['args'] as string[])[0];
       const branch = "main";
       const configfile_path = [
         url_github,
-        (snakefile['args'] as string[])[0],
+        repo,
         branch,
         'contents',
         workflow_path.split('/').slice(0, -2).join('/'),
@@ -578,9 +578,16 @@ const GetModuleConfigFilesList = async (
         'workflows',
       ].join('/');
       const configfiles = await api_get(configfile_path, url_base);
+      const filepath = [
+        'https://raw.githubusercontent.com',
+        repo,
+        branch,
+        'workflows',
+        configfile_path.replace(url_base, ''),
+      ].join('/');
       for (const file of configfiles) {
         if (file['name'].endsWith('.yaml')) {
-          configfiles_list.push(file['name']);
+          configfiles_list.push([filepath, file['name']].join('/'));
         }
       }
     }
@@ -597,6 +604,7 @@ export {
   GetModulesList,
   GetRemoteModulesGithubDirectoryListing,
   GetModuleConfigFilesList,
+  getConfigFilenameFromSnakefile,
   ParseDocstring,
 };
 module.exports = {
@@ -607,6 +615,7 @@ module.exports = {
   GetLocalModules,
   GetModulesList,
   GetModuleConfigFilesList,
+  getConfigFilenameFromSnakefile,
   GetRemoteModulesGithubDirectoryListing,
 };
 export default module.exports;

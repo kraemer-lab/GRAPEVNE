@@ -142,6 +142,12 @@ app.whenReady().then(() => {
     handles.builder_CleanBuildFolder(event, data, status_callback),
   );
   ipcMain.handle('builder/open-results-folder', handles.builder_OpenResultsFolder);
+  ipcMain.handle('builder/get-file', (event: Event, filename: string) =>
+    handles.builder_GetFile(event, filename),
+  );
+  ipcMain.handle('builder/get-config-filename-from-snakefile', (event: Event, data: Query | string) =>
+     handles.builder_GetConfigFilenameFromSnakefile(event, data),
+  );
 
   // Runner
   ipcMain.handle('runner/build', (event: Event, data: Query) =>

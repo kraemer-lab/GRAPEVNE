@@ -14,7 +14,7 @@ import {
 } from 'redux/actions';
 
 import Box from '@mui/material/Box';
-import { Edge, Node, NodeData } from 'NodeMap/scene/Flow'; // Custom Node definition
+import { Edge, Node, NodeData } from 'NodeMap/scene/Flow';  // Custom Node definition
 
 import { toPng, toSvg } from 'html-to-image';
 import ReactFlow, {
