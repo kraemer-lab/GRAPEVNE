@@ -117,6 +117,10 @@ export async function builder_GetRemoteModuleConfig(event: Event, query: Query) 
   return config;
 }
 
+export async function builder_GetModuleConfigFilesList(event: Event, snakefile: Query | string) {
+  return await web.GetModuleConfigFilesList(snakefile);
+}
+
 export async function builder_BuildAsModule(
   event: Event,
   query: Query,

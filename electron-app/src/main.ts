@@ -128,6 +128,7 @@ app.whenReady().then(() => {
   // Builder
   ipcMain.handle('builder/get-remote-modules', handles.builder_GetRemoteModules);
   ipcMain.handle('builder/get-remote-module-config', handles.builder_GetRemoteModuleConfig);
+  ipcMain.handle('builder/get-module-config-files-list', handles.builder_GetModuleConfigFilesList);
   ipcMain.handle('builder/build-as-module', (event: Event, data: Query) =>
     handles.builder_BuildAsModule(event, data, stderr_callback),
   );

@@ -26,6 +26,7 @@ contextBridge.exposeInMainWorld('builderAPI', {
   GetRemoteModules: (query: Query) => ipcRenderer.invoke('builder/get-remote-modules', query),
   GetRemoteModuleConfig: (query: Query) =>
     ipcRenderer.invoke('builder/get-remote-module-config', query),
+  GetModuleConfigFilesList: (query: Query | string) => ipcRenderer.invoke('builder/get-module-config-files-list', query),
   OpenResultsFolder: (workdir: string) =>
     ipcRenderer.invoke('builder/open-results-folder', workdir),
   logEvent: (callback: (event: Event, data: string) => void) =>
