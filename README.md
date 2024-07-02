@@ -1,13 +1,21 @@
 # GRAPEVNE
 
+![image](./docs/images/banner.png)
+
 [![GRAPEVNE](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml/badge.svg)](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml)
 
-Graphical Analytical Pipeline Development Environment
-
-An interactive environment for building and validating data processing workflows,
+Graphical Analytical Pipeline Development Environment - an interactive environment for building and validating data processing workflows,
 built around the [Snakemake](https://snakemake.github.io/) workflow manager.
 
 **Documentation**: [ReadTheDocs](https://GRAPEVNE.readthedocs.io)
+
+## Quick start
+
+Download GRAPEVNE from [github releases](https://github.com/kraemer-lab/GRAPEVNE/releases) and launch the application.
+
+![image](./docs/images/workflow_example_1.png)
+
+Check out our quick start [tutorials](https://grapevne.readthedocs.io/en/latest/getting_started/quickstart.html) and [documentation](https://GRAPEVNE.readthedocs.io).
 
 ## Have a question?
 
