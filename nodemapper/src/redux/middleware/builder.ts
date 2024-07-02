@@ -51,6 +51,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             package_modules: false,
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
+            workflow_alerts: {},  // Don't pass alerts for module builds
           });
           break;
 
@@ -67,6 +68,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             package_modules: false,
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
+            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
           });
           break;
 
@@ -83,6 +85,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             package_modules: true,
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
+            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
           });
           break;
 
@@ -96,6 +99,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             environment_variables: getState().builder.environment_variables,
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
+            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
           });
           break;
 
@@ -110,6 +114,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             environment_variables: getState().builder.environment_variables,
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
+            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
           });
           break;
 
@@ -124,6 +129,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             environment_variables: getState().builder.environment_variables,
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
+            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
           });
           break;
 
@@ -294,6 +300,7 @@ interface IBuildAs {
   package_modules: boolean;
   nodes: Node[];
   edges: Edge[];
+  workflow_alerts: Query;
 }
 
 const BuildAs = async ({
@@ -308,6 +315,7 @@ const BuildAs = async ({
   package_modules,
   nodes,
   edges,
+  workflow_alerts,
 }: IBuildAs) => {
   dispatchString(builderUpdateStatusText('Building workflow...'));
   dispatchBool(builderBuildInProgress(true));
@@ -323,6 +331,7 @@ const BuildAs = async ({
       conda_backend: conda_backend,
       environment_variables: environment_variables,
       package_modules: package_modules,
+      workflow_alerts: workflow_alerts,
     },
   };
   const callback = (result) => {
@@ -355,6 +364,7 @@ interface IBuildAndRun {
   environment_variables: string;
   nodes: Node[];
   edges: Edge[];
+  workflow_alerts: Query;
 }
 
 const BuildAndRun = async ({
@@ -366,6 +376,7 @@ const BuildAndRun = async ({
   environment_variables,
   nodes,
   edges,
+  workflow_alerts,
 }: IBuildAndRun) => {
   dispatchString(builderUpdateStatusText('Building workflow and launching a test run...'));
   dispatchBool(builderBuildInProgress(true));
@@ -380,6 +391,7 @@ const BuildAndRun = async ({
       backend: snakemake_backend,
       conda_backend: conda_backend,
       environment_variables: environment_variables,
+      workflow_alerts: workflow_alerts,
     },
   };
   const callback = (content: Query) => {
@@ -416,6 +428,7 @@ const BuildAndRunToModule = async ({
   environment_variables,
   nodes,
   edges,
+  workflow_alerts,
 }: IBuildAndRunToModule) => {
   dispatchString(builderUpdateStatusText('Building workflow and launching a test run...'));
   dispatchBool(builderBuildInProgress(true));
@@ -430,6 +443,7 @@ const BuildAndRunToModule = async ({
       backend: snakemake_backend,
       conda_backend: conda_backend,
       environment_variables: environment_variables,
+      workflow_alerts: workflow_alerts,
     },
   };
   const callback = (content: Query) => {
@@ -457,6 +471,7 @@ const BuildAndForceRunToModule = async ({
   environment_variables,
   nodes,
   edges,
+  workflow_alerts,
 }: IBuildAndRunToModule) => {
   if (snakemake_args.indexOf('--force') === -1) {
     snakemake_args = snakemake_args.concat(' --force');
@@ -471,6 +486,7 @@ const BuildAndForceRunToModule = async ({
     environment_variables,
     nodes,
     edges,
+    workflow_alerts,
   });
 };
 
@@ -805,3 +821,32 @@ const SaveScene = ({ dispatch, nodes, edges }: ISaveScene) => {
   document.body.removeChild(element);
   dispatch(builderUpdateStatusText('Scene saved.'));
 };
+
+const GetWorkflowAlerts = (alerts: Query) => {
+  if (
+    (alerts['email_settings'] === undefined)
+    || (alerts['email_settings']['smtp_server'] === '')
+    || (alerts['email_settings']['smtp_port'] === '')
+  ) {
+    // Email settings are not set
+    console.log('Email settings are not set.');
+    console.log(alerts);
+    console.log(alerts['email_settings']);
+    return {};
+  }
+  const onsuccess_enabled = (alerts['onsuccess'] !== undefined) && alerts['onsuccess']['enabled'];
+  const onerror_enabled = (alerts['onerror'] !== undefined) && alerts['onerror']['enabled'];
+  if (!onsuccess_enabled && !onerror_enabled) {
+    // Neither alerts are enabled
+    console.log('Neither alerts are enabled.');
+    return {};
+  }
+  console.log('Structure should have properties.');
+  const out_alerts = {};
+  out_alerts['email_settings'] = alerts.email_settings;
+  if (onsuccess_enabled)
+    out_alerts['onsuccess'] = alerts.onsuccess;
+  if (onerror_enabled)
+    out_alerts['onerror'] = alerts.onerror;
+  return out_alerts;
+}
