@@ -209,13 +209,14 @@ const GetRemoteModulesGithub = async (
 };
 
 const checkManifest = (repo: string, branch: string) => {
+  let exists = false;
   Object.keys(manifest).forEach((key) => {
     if (key === repo) {
       if (manifest[key])
-        return true;
+        exists = true;
     }
   });
-  return false;
+  return exists;
 }
 
 const populateManifest = async (repo: string, branch: string) => {
@@ -283,8 +284,13 @@ const api_get = async (url: string, url_base: string): Promise<Record<string, st
     }
   }
   // API request (risks hitting github rate limit)
-  const response = await axios.get(url);
-  return await response.data;
+  try {
+    const response = await axios.get(url);
+    return await response.data;
+  } catch (e) {
+    console.log('Could not retrieve requested url: ', url);
+  }
+  return [];
 }
 
 const GetRemoteModulesGithubDirectoryListing = async (
@@ -564,7 +570,6 @@ const GetModuleConfigFilesList = async (
       const configfile_path = [
         url_github,
         repo,
-        branch,
         'contents',
         workflow_path.split('/').slice(0, -2).join('/'),
         configfile_rel.split('/').slice(0, -1).join('/'),
@@ -572,7 +577,6 @@ const GetModuleConfigFilesList = async (
       const url_base = [
         url_github,
         (snakefile['args'] as string[])[0],
-        branch,
         'contents',
         'workflows',
       ].join('/');

@@ -19,10 +19,10 @@ const ConfigSelect = () => {
 
   const ParseAndModifyConfig = (contents: string) => {
     // Overwrite parameters structure (note: should use key-matching validation here)
-    const params = yaml.parse(contents);
+    const config = yaml.parse(contents);
     const keylist = ['config'];
     const key = 'params';
-    const value = params;
+    const value = config['params'] ?? {};
     dispatch(builderUpdateNodeInfoKey({ keys: [...keylist, key], value: value }));
   }
 
