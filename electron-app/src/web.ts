@@ -209,36 +209,36 @@ const GetRemoteModulesGithub = async (
 };
 
 const checkManifest = (repo: string, branch: string) => {
+  let exists = false;
   Object.keys(manifest).forEach((key) => {
     if (key === repo) {
       if (manifest[key])
-        return true;
+        exists = true;
     }
   });
-  return false;
+  return exists;
 }
 
 const populateManifest = async (repo: string, branch: string) => {
-  // Check if manifest already exists
-  if (!checkManifest(repo, branch)) {
-    // Attempt to populate manifest file
-    const manifest_url = ['https://raw.githubusercontent.com', repo, branch, manifest_path].join('/');
-    const response = await axios.get(manifest_url)
-      .then((response) => response.data)
-      .then((data) => {
-        // may return undefined
-        if (data) {
-          manifest[repo] = data;
-        }
-      })
-      .catch((e) => {
-        console.log('Could not retrieve manifest file: ', e);
-      });
-  }
+  // Add / refresh manifest - typically called on Module Load (infrequent)
+
+  // Attempt to populate manifest file
+  const manifest_url = ['https://raw.githubusercontent.com', repo, branch, manifest_path].join('/');
+  const response = await axios.get(manifest_url)
+    .then((response) => response.data)
+    .then((data) => {
+      // may return undefined
+      if (data) {
+        manifest[repo] = data;
+      }
+    })
+    .catch((e) => {
+      console.log('Could not retrieve a manifest file.');
+    });
 }
 
 const getManifest = (repo: string, branch: string): Record<string, unknown> => {
-  if (!checkManifest(repo, branch)) {
+  if (checkManifest(repo, branch)) {
     return manifest[repo] as Record<string, unknown>;
   } else {
     return {};
@@ -284,8 +284,13 @@ const api_get = async (url: string, url_base: string): Promise<Record<string, st
     }
   }
   // API request (risks hitting github rate limit)
-  const response = await axios.get(url);
-  return await response.data;
+  try {
+    const response = await axios.get(url);
+    return await response.data;
+  } catch (e) {
+    console.log('Could not retrieve requested url: ', url);
+  }
+  return [];
 }
 
 const GetRemoteModulesGithubDirectoryListing = async (
@@ -565,7 +570,6 @@ const GetModuleConfigFilesList = async (
       const configfile_path = [
         url_github,
         repo,
-        branch,
         'contents',
         workflow_path.split('/').slice(0, -2).join('/'),
         configfile_rel.split('/').slice(0, -1).join('/'),
@@ -573,7 +577,6 @@ const GetModuleConfigFilesList = async (
       const url_base = [
         url_github,
         (snakefile['args'] as string[])[0],
-        branch,
         'contents',
         'workflows',
       ].join('/');
