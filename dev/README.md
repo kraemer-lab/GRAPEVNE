@@ -5,18 +5,31 @@
   - `builder`: Python library of build-related routines
   - `runner`: Python library of run-related routines (launches `snakemake`)
 
+## Dev container
+
+There is a dev container (including custom Dockerfile) compatible with VS Code in `/.devcontainer` that can be used to build GRAPEVNE in a linux environment. Once started the dev container will automatically attempt to build GRAPEVNE by calling `./build.sh` before launching into a `bash` shell in the terminal. The built application can be found in `./electron-app/out/`. Note that you will need to launch the app as `./{GRAPEVNE-binary} --no-sandbox` when running in the dev container.
+
 ## Building the application
 
-Clone the repository then, from the [root of the GRAPEVNE repository](../), run
-`./build.sh`. This will configure and build the GRAPEVNE application. The final
-build will be available in `./electron-app/out`.
+From the [root of the GRAPEVNE repository](../), run `./build.sh`. This will configure and build the GRAPEVNE application. The final build will be available in `./electron-app/out`.
 
 ## Packaging
 
-See the [electron-app](../electron-app) folder for information on packaging and
-generating releases.
+See the [electron-app](../electron-app) folder for information on packaging and generating releases.
 
-## Contributing code
+## Hot reload
+
+TLDR - To launch GRAPEVNE in development mode:
+```
+cd nodemapper
+yarn start &
+cd ../electron-app
+yarn start
+```
+
+Both the front-end (`nodemapper`) and electron backend (`electron-app`) components can be started by changing to their respective folders and typing `yarn start`. For `nodemapper`, this will launch the GRAPEVNE front-end from a local server which can be loaded into a web-browser (`http://localhost:5001`); alternatively, launching a dev version of the electron app will connect to this server and render the front-end through an application interface. Running the app in development mode in this fashion will enable some [but not all] GRAPEVNE functionality, such as menu navigation. Development involving updates to the `builder` and `runner` components require re-building GRAPEVNE and launching as a packaged application. To run GRAPEVNE with hot reload, first launch `nodemapper` with `yarn start`, then change to the `electron-app` folder and launch the app in development mode (`yarn start`). If `nodemapper` is not running when you do this (or if `nodemapper` has not started fully) then you will see a blank screen in your application - if this happens start `nodemapper` and refresh GRAPEVNE. Note that launching GRAPEVNE in this way starts the application with the `--no-sandbox` option to permit launching inside a dev container.
+
+# Contributing code
 
 Before contributing code you should make sure there is an Issue raised
 corresponding to your change. If this is a feature request then it is best to

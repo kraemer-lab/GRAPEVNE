@@ -41,6 +41,11 @@ python -m PyInstaller src/python/pyrunner.py \
 cp src/api.ts ../nodemapper/src
 cp src/types.ts ../nodemapper/src
 
+# Prepare corepack / yarn
+corepack enable
+corepack prepare yarn@latest --activate
+export COREPACK_ENABLE_NETWORK=true
+
 # Build nodemapper (front-end)
 pushd ../nodemapper
 rm -rf dist
