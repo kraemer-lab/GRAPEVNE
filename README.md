@@ -13,7 +13,7 @@ built around the [Snakemake](https://snakemake.github.io/) workflow manager.
 
 Download GRAPEVNE from [github releases](https://github.com/kraemer-lab/GRAPEVNE/releases) and launch the application. Click `Load Modules` to see what's available by default, then drag-and-drop to get started!
 
-![image](./docs/images/workflow_example_1.png)
+![image](./docs/images/helloworld.gif)
 
 Check out our [tutorial workflows](https://grapevne.readthedocs.io/en/latest/getting_started/quickstart.html) and extended features in our [documentation](https://GRAPEVNE.readthedocs.io).
 
