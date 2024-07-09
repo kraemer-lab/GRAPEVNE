@@ -11,7 +11,10 @@ const builderAPI = window.builderAPI;
 const ConfigSelect = () => {
   const dispatch = useAppDispatch();
   const configfiles_list_state = useAppSelector((state) => state.builder.configfiles_list);
-  const configfiles_list = [...configfiles_list_state, "(Select file)"];
+  const configfiles_list = [
+    ...configfiles_list_state.filter((configfile) => !configfile.split("/").pop().startsWith(".")),
+    "(Select file)"
+  ];
   const configfiles_names = configfiles_list.map((configfile) => configfile.split("/").pop());
 
   const default_configfile = configfiles_names[0] ?? "";
