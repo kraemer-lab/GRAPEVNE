@@ -1,0 +1,35 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+	"name": "Node.js & TypeScript",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"build": {
+		"context": "..",
+		"dockerfile": "Dockerfile"
+	},
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "./build.sh",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			// Add a settings section to specify the default shell
+			"settings": {
+				// Specify the default shell for Linux containers
+				"terminal.integrated.defaultProfile.linux": "bash",
+				// Optionally, specify the shell path if bash is not in the default PATH
+				"terminal.integrated.shell.linux": "/bin/bash"
+			},
+		}
+	},
+
+	// Non-root user specified in Dockerfile
+	"containerUser": "user",
+}

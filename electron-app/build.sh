@@ -12,13 +12,16 @@ set -eoux pipefail
 # clean distributables
 rm -rf dist out
 
-# compile build dependencies
+# Prepare corepack / yarn
 corepack enable
+corepack prepare yarn@latest --activate
+export COREPACK_ENABLE_NETWORK=true
+
+# compile build dependencies
 ./build_deps.sh
 
 # compile GRAPEVNE
 export DEBUG=*
-#rm -rf node_modules  # deep clean
 yarn install
 yarn
 yarn build
