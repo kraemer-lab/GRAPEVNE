@@ -13,6 +13,7 @@ from typing import Optional
 from typing import Tuple
 from typing import TypedDict
 from typing import Union
+from .quoted_yaml import quoted_yaml_dump
 
 import cachetools
 import requests
@@ -271,7 +272,7 @@ class Model:
     def BuildSnakefileConfig(self) -> str:
         """Builds the workflow configuration as YAML"""
         c = self.ConstructSnakefileConfig()
-        return yaml.dump(c, sort_keys=False)
+        return quoted_yaml_dump(c, sort_keys=False, default_flow_style=False)
 
     def ResolveLinkValue(self, metadata: dict):
         """Resolves a link value"""
