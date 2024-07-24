@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 alabaster==0.7.13
 appdirs==1.4.4
 attrs==23.1.0
@@ -36,25 +37,10 @@ pyrsistent==0.19.3
 PyYAML==6.0.1
 requests==2.31.0
 reretry==0.11.8
+=======
+>>>>>>> Stashed changes
 ./runner
-smart-open==6.3.0
-smmap==5.0.0
-snowballstemmer==2.2.0
-Sphinx==6.2.1
-sphinx-rtd-theme==1.2.2
-sphinxcontrib-applehelp==1.0.4
-sphinxcontrib-devhelp==1.0.2
-sphinxcontrib-htmlhelp==2.0.1
-sphinxcontrib-jquery==4.1
-sphinxcontrib-jsmath==1.0.1
-sphinxcontrib-qthelp==1.0.3
-sphinxcontrib-serializinghtml==1.1.5
-stopit==1.1.2
-tabulate==0.9.0
-throttler==1.2.2
-toposort==1.10
-traitlets==5.9.0
-urllib3==2.0.7
-wrapt==1.15.0
-yte==1.5.1
-zipp==3.15.0
+./builder
+sphinx
+myst_parser
+sphinx_rtd_theme

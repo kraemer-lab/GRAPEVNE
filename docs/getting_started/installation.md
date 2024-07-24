@@ -3,31 +3,20 @@
 ## Download
 
 You can download the latest version of GRAPVEVNE for your system from
-[github releases](https://github.com/kraemer-lab/GRAPEVNE/releases).
+[github releases](https://github.com/kraemer-lab/GRAPEVNE/releases) and get started straight away!
 
-For Windows users, ensure you have
-[PowerShell](https://learn.microsoft.com/en-us/powershell/), which comes
-pre-installed as standard on most modern versions of Windows.
+For Windows users, ensure you have [PowerShell](https://learn.microsoft.com/en-us/powershell/), which comes pre-installed as standard on most modern versions of Windows.
 
-GRAPEVNE includes all of the necessary software needed to build and launch
-workflows bundled as part of the application (namely snakemake and python).
+GRAPEVNE comes with all of the necessary software to build and launch workflows, including `Python` (v3.11), `Snakemake` (v7) and `mamba` (the recommended distribution to use is [mambaforge](https://github.com/conda-forge/miniforge#mambaforge). To launch workflows outside of GRAPEVNE you will require these dependencies to be installed on your system.
 
-However, it is still recommended that you install a version of `conda` on your
-system since many workflows (including the GRAPEVNE tutorials) make use of conda
-environments for package management. The recommended distribution to use is
-[mambaforge](https://github.com/conda-forge/miniforge#mambaforge).
 
 ### Module repositories
 
-The GRAPEVNE Builder reads modules from a repository.
-
 ```{note}
-You don't need your own repository to use GRAPEVNE, instead you can make use of
-repositories setup by others (including for the tutorials).
+You don't need your own module repository to use GRAPEVNE, instead you can make use of repositories setup by others (including for the tutorials).
 ```
 
-If you do want to set-up your own repository, then please be aware that GRAPEVNE
-expects the repository to be ordered in a particular fashion, namely:
+If you decide you do want to set-up your own repository, then please be aware that GRAPEVNE will expect the repository to be structured in the following way:
 
 ```
 vneyard                     <--- root repository folder
@@ -43,24 +32,19 @@ The folders `workflows` and `modules` are required names, whereas the names of
 the base repository folder (`vneyard`, the project name `My Modules` and the
 list of modules themselves (e.g. `MyModule1`) can be changed.
 
-Within a module (e.g. `MyModule`) there is a (strongly recommended) folder
-convention that follows the snakemake
+Within a module you should follow the standard conventions outlined in the snakemake
 [Distribution and Reproducibility guidelines](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
 
-You can also clone an existing repository (such as the
-[vneyard](https://github.com/kraemer-lab/vneyard)) as a base environment.
+You can also clone an existing repository (such as the [vneyard](https://github.com/kraemer-lab/vneyard)) as a base environment to kick-start your own repository.
 
 ## Developer build
 
-If you intend to contribute towards GRAPEVNE, or simply wish to build from
-source, then follow these instructions.
+GRAPEVNE comes with a dev container (located in `.devcontainer`).
 
-Dependencies:
-
-- Python 3.9+
-- Nodejs 16+
-- [yarn](https://yarnpkg.com/) package manager (can be installed through npm as
-  `npm i yarn`)
+For manual build, you will need to have the following dependencies installed:
+- Python 3.11
+- Nodejs 18
+- [yarn 4](https://yarnpkg.com/) package manager (see [installation instructions](https://yarnpkg.com/getting-started/install)
 
 To build locally, clone the GRAPEVNE repository and run the build script:
 
@@ -76,7 +60,8 @@ following additional dependencies in order to allow `node-canvas` to compile. Th
 be installed via homebrew:
 `brew install pkg-config pixman cairo glib pango`
 or conda:
-`conda install pkg-config pixman cairo glib pango`
+`conda install pkg-config pixman cairo glib pango`. No additional installation is
+necessary if you are using the dev-container.
 ```
 
 This will generate the GRAPEVNE Builder app for your system, located in

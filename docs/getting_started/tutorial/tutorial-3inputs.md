@@ -5,7 +5,7 @@ multiple inputs. This is a feature of GRAPEVNE modules that allows processes to
 have access to data from multiple different namespaces.
 
 To understand how these are specified and can be used within modules, see
-[inside modules](inside-modules.md).
+[inside modules](../quickstart/inside-modules.md).
 
 ## Optional inputs
 

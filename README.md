@@ -1,6 +1,6 @@
 # GRAPEVNE
 
-![image](./docs/images/banner.png)
+![image](./docs/images/banner_white_background.png)
 
 [![GRAPEVNE](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml/badge.svg)](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml)
 

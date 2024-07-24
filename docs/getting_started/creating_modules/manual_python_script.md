@@ -1,4 +1,4 @@
-# Converting a python script to a GRAPEVNE module
+# The manual approach
 
 We are going to convert a script designed for geospatial analysis into a GRAPEVNE module.
 The specifics of the script are not important, although if you would like to run the
@@ -598,10 +598,7 @@ shape files. Now, connect the `Local folder`s to the appropriate inputs of the
 `RWI_ProcAndAgg` module and the `Local folder` module to the `shape` input.
 
 Your final workflow should look something like this:
-
-```{figure} RWI_ProcAndAgg.png
-:alt: Complete layout for the Builder Tutorial
-```
+![Complete layout for the Builder Tutorial](images/RWI_ProcAndAgg.png "Complete layout for the Builder Tutorial")
 
 We are now ready to `Build and Test` run your workflow. After waiting a minute or two
 for the `conda` environments to download, you will see a Log message stating that your
