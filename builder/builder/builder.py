@@ -13,12 +13,12 @@ from typing import Optional
 from typing import Tuple
 from typing import TypedDict
 from typing import Union
-from .quoted_yaml import quoted_yaml_dump
 
 import cachetools
 import requests
 import yaml
 
+from .quoted_yaml import quoted_yaml_dump
 from .workflow_alerts import ProcessWorkflowAlerts
 from .workflow_alerts import WorkflowAlerts
 
