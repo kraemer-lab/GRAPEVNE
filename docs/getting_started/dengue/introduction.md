@@ -55,16 +55,16 @@ The steps in the pipeline are as follows (see the [Dengue repository](https://gi
 3. Filter for sequences from SEA
 4. Split into serotype, add serotypes to sequence name and generate sequence specific metadata
 5. (Future step not currently implemented) Verifying Serotypes and Genotypes
-6. Sequence alignment 
+6. Sequence alignment
 7. Segregating E gene and Whole Genomes and performing quality control
 8. Subsampler
-9. Correct metadata and fasta files into the correct format for iqtree and treetime  
+9. Correct metadata and fasta files into the correct format for iqtree and treetime
 10. ML-Treebuilding
 11. Build time-calibrated trees
 12. Infer "ancestral" mutations across the tree (nextstrain)
 13. Translate sequences (nextstrain)
 14. Discrete trait reconstruction (nextstrain)
 15. Export for visualisation in Auspice (nextstrain)
-16. Extract annotated tree from nextstrain JSON format 
-17. Extract information from tree 
+16. Extract annotated tree from nextstrain JSON format
+17. Extract information from tree
 18. Quantify number of exports and imports from desired country

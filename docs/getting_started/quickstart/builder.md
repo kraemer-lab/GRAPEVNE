@@ -131,7 +131,7 @@ You are now able to build a workflow to either
 1. distribute to others for use, or
 2. use as a module in another workflow
 
-Indeed, it is this form of hierarchical modularization that makes GRAPEVNE so powerful. However, to demonstrate this we will want to set-up our own repository for testing (which we discuss in the next set of tutorials). 
+Indeed, it is this form of hierarchical modularization that makes GRAPEVNE so powerful. However, to demonstrate this we will want to set-up our own repository for testing (which we discuss in the next set of tutorials).
 ## Wait, but why is the workflow so slow on a first run?
 
-You may be wondering why the workflow was so slow to execute on its first run. After all, it was simply reading a file, filtering it, and plotting the result. The answer is that each module was set up to operate within a _conda_ environment. These configurations come with the modules so that you don't have to worry about them when building your workflows. Essentially, the conda environments set-up an isolated environment and download all of the necessary software to execute the contents of each module in a highly reproducible manner. Further details of conda environments and how snakemake / GRAPEVNE makes use of them are available in the next set of tutorials. 
+You may be wondering why the workflow was so slow to execute on its first run. After all, it was simply reading a file, filtering it, and plotting the result. The answer is that each module was set up to operate within a _conda_ environment. These configurations come with the modules so that you don't have to worry about them when building your workflows. Essentially, the conda environments set-up an isolated environment and download all of the necessary software to execute the contents of each module in a highly reproducible manner. Further details of conda environments and how snakemake / GRAPEVNE makes use of them are available in the next set of tutorials.
