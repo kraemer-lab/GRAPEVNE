@@ -2,7 +2,7 @@
 
 ![image](./docs/images/banner_white_background.png)
 
-[![GRAPEVNE](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml/badge.svg)](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml)
+[![GRAPEVNE](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml/badge.svg)](https://github.com/kraemer-lab/GRAPEVNE/actions/workflows/GRAPEVNE.yml) [![Documentation Status](https://readthedocs.org/projects/grapevne/badge/?version=latest)](https://grapevne.readthedocs.io/en/latest/?badge=latest)
 
 Graphical Analytical Pipeline Development Environment - an interactive environment for building and validating data processing workflows,
 built around the [Snakemake](https://snakemake.github.io/) workflow manager.

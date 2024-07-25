@@ -7,7 +7,7 @@ You can download the latest version of GRAPVEVNE for your system from
 
 For Windows users, ensure you have [PowerShell](https://learn.microsoft.com/en-us/powershell/), which comes pre-installed as standard on most modern versions of Windows.
 
-GRAPEVNE comes with all of the necessary software to build and launch workflows, including `Python` (v3.11), `Snakemake` (v7) and `mamba` (the recommended distribution to use is [mambaforge](https://github.com/conda-forge/miniforge#mambaforge). To launch workflows outside of GRAPEVNE you will require these dependencies to be installed on your system.
+GRAPEVNE comes with all of the necessary software to build and launch workflows, including `Python` (v3.11), `Snakemake` (v7) and `mamba` (the recommended distribution to use is [miniforge](https://github.com/conda-forge/miniforge)). To launch workflows outside of GRAPEVNE you will require these dependencies to be installed on your system.
 
 
 ### Module repositories

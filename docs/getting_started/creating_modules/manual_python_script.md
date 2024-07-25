@@ -1,4 +1,4 @@
-# The manual approach
+# Wrapping a Python script (manual approach)
 
 We are going to convert a script designed for geospatial analysis into a GRAPEVNE module.
 The specifics of the script are not important, although if you would like to run the

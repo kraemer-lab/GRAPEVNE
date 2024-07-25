@@ -12,5 +12,5 @@ caption: Creating Modules
 maxdepth: 1
 ---
 creating_modules/module_builder.md
-creating_modules/manual_python_script.md
+creating_modules/manual_approach.md
 ```

@@ -126,10 +126,7 @@ the workflow at this point then you should see our familiar aggregated data
 graph.
 
 ```{note}
-At present each module is limited to a single output, meaning that modules do
-not currently support branching workflows,  so we cannot fully
-recreate our previous graph (which plotted directly from the `Filter`
-module also).
+Each module is limited to a single output, meaning that modules do not currently support branching workflows, so while we can create workflows with multiple leaf nodes, we cannot create modules with multiple leaves.
 ```
 
 This module is much more useful as it provides composite functionality, while

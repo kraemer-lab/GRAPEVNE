@@ -23,7 +23,7 @@ maxdepth: 1
 ---
 getting_started/installation
 getting_started/quickstart
-getting_started/tutorial
+getting_started/dengue
 getting_started/creating_modules
 ```
 
@@ -32,7 +32,9 @@ getting_started/creating_modules
 caption: Use-cases
 maxdepth: 1
 ---
-use-cases/index.md
+use-cases/vocpl
+use-cases/dengue
+use-cases/epiline
 ```
 
 ```{toctree}
