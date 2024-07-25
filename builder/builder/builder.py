@@ -18,6 +18,7 @@ import cachetools
 import requests
 import yaml
 
+from .quoted_yaml import quoted_yaml_dump
 from .workflow_alerts import ProcessWorkflowAlerts
 from .workflow_alerts import WorkflowAlerts
 
@@ -271,7 +272,7 @@ class Model:
     def BuildSnakefileConfig(self) -> str:
         """Builds the workflow configuration as YAML"""
         c = self.ConstructSnakefileConfig()
-        return yaml.dump(c, sort_keys=False)
+        return quoted_yaml_dump(c, sort_keys=False, default_flow_style=False)
 
     def ResolveLinkValue(self, metadata: dict):
         """Resolves a link value"""
