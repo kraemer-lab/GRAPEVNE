@@ -6,14 +6,14 @@ Though complex, the [Dengue repository](https://github.com/rhysinward/dengue_pip
 
 We will approach the workflow by considering the following steps:
 
-- [Sequence alignment](sequence-alignment)
-- [Split genome](split-genome)
-- [Subsample DENV](subsample-denv)
-- [Tree building](tree-building)
-- [Mutation, mugration and translation](mutations-mugrations-translation)
-- [Extract and plot](extract-and-plot)
+- [Sequence alignment](#sequence-alignment)
+- [Split genome](#split-genome)
+- [Subsample DENV](#subsample-denv)
+- [Tree building](#tree-building)
+- [Mutation, mugration and translation](#mutations-mugrations-translation)
+- [Extract and plot](#extract-and-plot)
 
-Finally we will [run the workflow](run-workflow) and (briefly) examine some results.
+Finally we will [run the workflow](#run-workflow) and (briefly) examine some results.
 
 (sequence-alignment)=
 ## Sequence alignment
