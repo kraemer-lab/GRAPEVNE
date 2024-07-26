@@ -16,11 +16,11 @@ to selectively extract and switch-out sub-modules from broader workflows.
 caption: Guides
 maxdepth: 1
 ---
-builder
-submodules
-validation
-modules
-inside-modules
-challenge
-datadeps
+quickstart/builder
+quickstart/submodules
+quickstart/validation
+quickstart/modules
+quickstart/inside-modules
+quickstart/challenge
+quickstart/datadeps
 ```

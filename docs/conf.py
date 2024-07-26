@@ -6,7 +6,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "GRAPEVNE"
-copyright = "2023, kraemer-lab"
+copyright = "2023-4, kraemer-lab"
 author = "kraemer-lab"
 
 # -- General configuration ---------------------------------------------------
