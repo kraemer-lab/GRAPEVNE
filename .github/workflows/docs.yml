@@ -4,8 +4,8 @@ on:
   workflow_call:
 
 jobs:
-  lychee:
-    name: Lychee (find broken links in docs)
+  docs:
+    name: Build documentation and check links
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -13,7 +13,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Link Checker
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Build documentation
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r docs/requirements.txt
+          cd docs
+          make html
+      - name: Lychee (link checker)
         uses: lycheeverse/lychee-action@v1
         with:
           # Check all markdown, html and reStructuredText files in repo (default)
