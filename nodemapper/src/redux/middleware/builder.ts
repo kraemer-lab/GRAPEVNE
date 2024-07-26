@@ -51,7 +51,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             package_modules: false,
             nodes: getState().builder.nodes,
             edges: getState().builder.edges,
-            workflow_alerts: {},  // Don't pass alerts for module builds
+            workflow_alerts: {}, // Don't pass alerts for module builds
           });
           break;
 
@@ -824,9 +824,9 @@ const SaveScene = ({ dispatch, nodes, edges }: ISaveScene) => {
 
 const GetWorkflowAlerts = (alerts: Query) => {
   if (
-    (alerts['email_settings'] === undefined)
-    || (alerts['email_settings']['smtp_server'] === '')
-    || (alerts['email_settings']['smtp_port'] === '')
+    alerts['email_settings'] === undefined ||
+    alerts['email_settings']['smtp_server'] === '' ||
+    alerts['email_settings']['smtp_port'] === ''
   ) {
     // Email settings are not set
     console.log('Email settings are not set.');
@@ -834,8 +834,8 @@ const GetWorkflowAlerts = (alerts: Query) => {
     console.log(alerts['email_settings']);
     return {};
   }
-  const onsuccess_enabled = (alerts['onsuccess'] !== undefined) && alerts['onsuccess']['enabled'];
-  const onerror_enabled = (alerts['onerror'] !== undefined) && alerts['onerror']['enabled'];
+  const onsuccess_enabled = alerts['onsuccess'] !== undefined && alerts['onsuccess']['enabled'];
+  const onerror_enabled = alerts['onerror'] !== undefined && alerts['onerror']['enabled'];
   if (!onsuccess_enabled && !onerror_enabled) {
     // Neither alerts are enabled
     console.log('Neither alerts are enabled.');
@@ -844,9 +844,7 @@ const GetWorkflowAlerts = (alerts: Query) => {
   console.log('Structure should have properties.');
   const out_alerts = {};
   out_alerts['email_settings'] = alerts.email_settings;
-  if (onsuccess_enabled)
-    out_alerts['onsuccess'] = alerts.onsuccess;
-  if (onerror_enabled)
-    out_alerts['onerror'] = alerts.onerror;
+  if (onsuccess_enabled) out_alerts['onsuccess'] = alerts.onsuccess;
+  if (onerror_enabled) out_alerts['onerror'] = alerts.onerror;
   return out_alerts;
-}
+};
