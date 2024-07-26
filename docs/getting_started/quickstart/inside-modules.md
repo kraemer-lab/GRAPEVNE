@@ -206,11 +206,11 @@ This module demonstrates the broad applicability and functionality of Snakemake.
 
 ### Aggregate By Month
 
-The `AggregateByMonth` module follows the same pattern as the `Filter` module, except for the specifics of the script file and associated dependencies. To view these files, see the corresponding github folder: [AggregateByMonth](https://github.com/kraemer-lab/vneyard/tree/main/workflows/Tutorial Builder/modules/AggregateByMonth).
+The `AggregateByMonth` module follows the same pattern as the `Filter` module, except for the specifics of the script file and associated dependencies. To view these files, see the corresponding github folder: [AggregateByMonth](https://github.com/kraemer-lab/vneyard/tree/main/workflows/TutorialBuilder/modules/AggregateByMonth).
 
 ### Select
 
-Likewise the `Select` module follows a similar pattern to both the `Filter` and `AggregateByMonth` modules, excepting the specifics of their implementation in the script file, and associated dependencies. To view these files, see the corresponding github folder: [Select](https://github.com/kraemer-lab/vneyard/tree/main/workflows/Tutorial%20Builder/modules/Select)
+Likewise the `Select` module follows a similar pattern to both the `Filter` and `AggregateByMonth` modules, excepting the specifics of their implementation in the script file, and associated dependencies. To view these files, see the corresponding github folder: [Select](https://github.com/kraemer-lab/vneyard/tree/main/workflows/TutorialBuilder/modules/Select)
 
 ### Plot
 
