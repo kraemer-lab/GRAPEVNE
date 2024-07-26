@@ -1,0 +1,31 @@
+name: docs
+
+on:
+  workflow_call:
+
+jobs:
+  docs:
+    name: Build documentation and check links
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Build documentation
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r docs/requirements.txt
+          cd docs
+          make html
+      - name: Lychee (link checker)
+        uses: lycheeverse/lychee-action@v1
+        with:
+          # Check all markdown, html and reStructuredText files in repo (default)
+          args: --base . --verbose --no-progress './**/*.md' './**/*.html' './**/*.rst'
+          fail: true
