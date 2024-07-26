@@ -7,14 +7,14 @@ import {
   builderAddNode,
   builderNodeDeselected,
   builderNodeSelected,
+  builderSetConfigFiles,
   builderSetEdges,
   builderSetNodes,
   builderUpdateStatusText,
-  builderSetConfigFiles,
 } from 'redux/actions';
 
 import Box from '@mui/material/Box';
-import { Edge, Node, NodeData } from 'NodeMap/scene/Flow';  // Custom Node definition
+import { Edge, Node, NodeData } from 'NodeMap/scene/Flow'; // Custom Node definition
 
 import { toPng, toSvg } from 'html-to-image';
 import ReactFlow, {
@@ -378,7 +378,7 @@ export const setNodeWorkflow = (
 const getConfigFiles = async (snakefile: Record<string, unknown> | string): Promise<string[]> => {
   console.log('Getting config files for: ', snakefile);
   return await builderAPI.GetModuleConfigFilesList(snakefile);
-}
+};
 
 const Flow = () => {
   const dispatch = useAppDispatch();
@@ -566,10 +566,9 @@ const Flow = () => {
           dispatch(builderAddNode(newnode));
           dispatch(builderUpdateStatusText(`Module loaded.`));
           // Get configuration file list (alternative config files)
-          getConfigFiles(snakefile)
-            .then((configfile_list) => {
-              dispatch(builderSetConfigFiles(configfile_list));
-            });
+          getConfigFiles(snakefile).then((configfile_list) => {
+            dispatch(builderSetConfigFiles(configfile_list));
+          });
         })
         .catch((error) => {
           console.error(error);

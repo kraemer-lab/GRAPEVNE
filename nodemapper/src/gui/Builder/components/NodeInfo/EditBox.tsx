@@ -347,6 +347,98 @@ export const EditBoxFile = (userprops: IEditBoxFile) => {
   );
 };
 
+interface IEditBoxFolder {
+  id?: string;
+  value: string;
+  valueType?: string;
+  onSave?: (v) => void;
+  allowEdit?: boolean;
+  canConnectParameter?: boolean;
+  connectParameter?: () => void;
+}
+
+const EditBoxFolderDefaults: IEditBoxFolder = {
+  id: '',
+  value: '',
+  valueType: 'string',
+  allowEdit: true,
+  onSave: () => {},
+  canConnectParameter: false,
+};
+
+export const EditBoxFolder = (userprops: IEditBoxFolder) => {
+  const {
+    id,
+    value,
+    valueType,
+    allowEdit,
+    onSave,
+    canConnectParameter,
+    connectParameter,
+  }: IEditBoxFolder = { ...EditBoxFolderDefaults, ...userprops };
+  const [name, setName] = React.useState(value);
+  const [hasChanged, setHasChanged] = React.useState(false);
+
+  const onChangeByEdit = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+    setHasChanged(true);
+  };
+
+  const onChangeByPicker = (v: string) => {
+    setName(v);
+    saveFileStruct(v);
+  };
+
+  const saveFileStruct = (v: string) => {
+    let folder = '';
+    if (v === undefined) return;
+    if (typeof v === 'string') {
+      folder = v;
+    }
+    onSave(folder);
+  };
+
+  const onBlur = () => {
+    if (hasChanged) {
+      setHasChanged(false);
+      saveFileStruct(name);
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      onBlur(); // on unmount
+    };
+  }, []);
+
+  return (
+    <Input
+      id={id}
+      value={name}
+      onChange={onChangeByEdit}
+      onKeyPress={(event) => {
+        if (event.key === 'Enter') {
+          onBlur();
+        }
+      }}
+      onKeyDown={(e) => e.stopPropagation()} // prevent letter search-select in TreeView
+      onBlur={onBlur}
+      inputProps={{
+        className: useStyle(valueType),
+      }}
+      endAdornment={
+        <InputAdornment position="end">
+          <FolderOpen foldername={name} onChange={onChangeByPicker} />
+        </InputAdornment>
+      }
+      disabled={!allowEdit}
+      size="small"
+      margin="none"
+      fullWidth
+    />
+  );
+};
+
 const ConnectParameter = (props: { id; connectParameter }) => {
   return (
     <span
@@ -373,6 +465,26 @@ const FileOpen = (props: { filename; onChange }) => {
       }}
       onClick={() => {
         displayAPI.SelectFile(props.filename).then((file) => {
+          props.onChange(file[0]);
+        });
+      }}
+    >
+      <Typography variant="key" sx={{ marginLeft: '5px' }}>
+        <FolderOpenIcon />
+      </Typography>
+    </span>
+  );
+};
+
+const FolderOpen = (props: { foldername; onChange }) => {
+  return (
+    <span
+      style={{
+        cursor: 'pointer',
+        fontSize: '0.8em',
+      }}
+      onClick={() => {
+        displayAPI.SelectFolder(props.foldername).then((file) => {
           props.onChange(file[0]);
         });
       }}

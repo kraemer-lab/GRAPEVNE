@@ -3,8 +3,8 @@ import Typography from '@mui/material/Typography';
 import React from 'react';
 import ResizeHandle from './../ResizeHandle';
 import styles from './../styles.module.css';
-import HighlightedJSON from './HighlightedJSON';
 import ConfigSelect from './ConfigSelect';
+import HighlightedJSON from './HighlightedJSON';
 
 import { useEffect, useState } from 'react';
 import { Panel, PanelGroup } from 'react-resizable-panels';

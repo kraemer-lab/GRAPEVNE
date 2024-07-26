@@ -3,7 +3,14 @@ import React from 'react';
 import { builderUpdateNodeInfoKey } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { getNodeById, getNodeByName } from './../Flow';
-import { EditBoxBoolean, EditBoxFile, EditBoxList, EditBoxSelect, EditBoxText } from './EditBox';
+import {
+  EditBoxBoolean,
+  EditBoxFile,
+  EditBoxFolder,
+  EditBoxList,
+  EditBoxSelect,
+  EditBoxText,
+} from './EditBox';
 
 import { Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -180,6 +187,10 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
             valueType = 'file';
             isSimpleValue = true; // Fake simple value for visualisation
             break;
+          case 'folder':
+            valueType = 'folder';
+            isSimpleValue = true; // Fake simple value for visualisation
+            break;
           default:
             console.log('Unknown parameter type specified: ', metadata['type']);
         }
@@ -302,6 +313,16 @@ export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSON
                 <EditBoxFile
                   id={['nodeinfo', nodeid, ...keylist, key].join('-')}
                   value={value['Folder'] + '/' + value['Filename']}
+                  valueType={valueType}
+                  onSave={setValue}
+                  canConnectParameter={canConnectParameter}
+                  connectParameter={connectParameter}
+                  allowEdit={!isParameterConnected && !isProtectedValue}
+                />
+              ) : valueType === 'folder' ? (
+                <EditBoxFolder
+                  id={['nodeinfo', nodeid, ...keylist, key].join('-')}
+                  value={value}
                   valueType={valueType}
                   onSave={setValue}
                   canConnectParameter={canConnectParameter}
