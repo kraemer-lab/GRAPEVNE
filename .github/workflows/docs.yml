@@ -1,0 +1,21 @@
+name: docs
+
+on:
+  workflow_call:
+
+jobs:
+  lychee:
+    name: Lychee (find broken links in docs)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@v1
+        with:
+          # Check all markdown, html and reStructuredText files in repo (default)
+          args: --base . --verbose --no-progress './**/*.md' './**/*.html' './**/*.rst'
+          fail: true
