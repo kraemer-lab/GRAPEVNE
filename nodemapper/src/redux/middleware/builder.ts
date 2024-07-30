@@ -686,7 +686,7 @@ const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemo
   // Get list of remote modules
   dispatchString(builderUpdateStatusText('Loading modules...'));
   dispatchBool(builderSetModulesLoading(true));
-  console.log('Repository settings: ', repo);
+  dispatchString(builderUpdateModulesList('[]'));
   const query: Query = {
     query: 'builder/get-remote-modules',
     data: {

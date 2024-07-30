@@ -199,11 +199,17 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateModulesList, (state, action) => {
-      state.modules_list = JSON.stringify(action.payload);
+      // Accepts string representation or JSON (modules_list should be a list!)
+      if (typeof action.payload === 'string') state.modules_list = action.payload
+      else state.modules_list = JSON.stringify(action.payload);
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {
-      state.statustext = setStatusText(action.payload);
+      // Accepts strings or {msg: string}
+      if (Object.keys(action.payload).length === 0) state.statustext = 'Idle';
+      if (typeof action.payload === 'string') state.statustext = action.payload;
+      else if ('msg' in action.payload) state.statustext = action.payload['msg'];
+      else state.statustext = "WARNING: Unknown status message format";
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateNodeInfo, (state, action) => {
@@ -258,7 +264,11 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderLogEvent, (state, action) => {
-      addLogEvent(state, action.payload);
+      let text = "";
+      if (typeof action.payload === "string") text = action.payload;
+      else if ('msg' in action.payload) text = action.payload['msg'];
+      else text = "WARNING: Unknown log format";
+      addLogEvent(state, text);
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateSettings, (state, action) => {

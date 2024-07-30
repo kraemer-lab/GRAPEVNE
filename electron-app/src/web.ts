@@ -143,11 +143,12 @@ const GetModulesList = async (
   }
 };
 
-const GetFolders = (root_folder: string): Array<string> =>
-  fs
+const GetFolders = (root_folder: string): Array<string> => {
+  return fs
     .readdirSync(root_folder, { withFileTypes: true })
     .filter((f) => f.isDirectory())
     .map((f) => f.name);
+}
 
 const GetLocalModules = (root_folder: string): Array<Record<string, unknown>> => {
   // static return for now
@@ -201,8 +202,6 @@ const GetRemoteModulesGithub = async (
   switch (listing_type) {
     case 'DirectoryListing':
       return GetRemoteModulesGithubDirectoryListing(repo);
-    case 'BranchListing':
-      return GetRemoteModulesGithubBranchListing(repo);
     default:
       throw new Error('Invalid Github listing type.');
   }
@@ -397,69 +396,6 @@ const GetRemoteModulesGithubDirectoryListing = async (
         modules.push(module);
       }
     }
-  }
-  return modules;
-};
-
-const GetRemoteModulesGithubBranchListing = async (
-  repo: string,
-): Promise<Record<string, unknown>[]> => {
-  const url_github = 'https://api.github.com/repos';
-  const url_base = path.join(url_github, repo, 'branches');
-  const modules: Array<Record<string, unknown>> = [];
-
-  async function get(url: string) {
-    const response = await axios.get(url);
-    return await response.data;
-  }
-
-  // Branch listing
-  const module_types = {
-    m: 'module',
-    c: 'connector',
-    s: 'source',
-    t: 'terminal',
-  };
-  const branches = await get(url_base).then((data) => {
-    return data
-      .filter((branch: Record<string, unknown>) => branch['name'] !== 'main')
-      .map((branch: Record<string, unknown>) => branch['name']);
-  });
-  for (const branch of branches) {
-    const [module_type, module_org, module_name] = branch.split('/');
-    if (!Object.keys(module_types).includes(module_type)) {
-      throw new Error(`Invalid module type '${module_type}' in branch '${branch}'.`);
-    }
-    const url_config = path.join(
-      'https://raw.githubusercontent.com',
-      repo,
-      branch,
-      'config/config.yaml',
-    );
-    let config = {};
-    let module_classification = module_types[module_type as keyof typeof module_types];
-    const module = {
-      name: FormatName(module_name),
-      type: module_classification,
-      org: module_org,
-      repo: {
-        type: 'github',
-        listing_type: 'DirectoryListing',
-        url: repo,
-      },
-      config: {
-        snakefile: {
-          function: 'github',
-          args: [repo],
-          kwargs: {
-            path: 'workflow/Snakefile',
-            branch: branch,
-          },
-        },
-        config: config,
-      },
-    };
-    modules.push(module);
   }
   return modules;
 };
