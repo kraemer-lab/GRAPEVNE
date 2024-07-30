@@ -1,62 +1,190 @@
 import axios from 'axios';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-import { useState } from 'react';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { builderLogEvent, builderSetRepositoryTarget } from 'redux/actions';
 import { getMasterRepoListURL } from 'redux/globals';
 import { IRepo } from 'redux/reducers/builder';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 const displayAPI = window.displayAPI;
 
-const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
+const RepoOptions = () => {
   const dispatch = useAppDispatch();
   const repoSettings = useAppSelector((state) => state.builder.repositories as IRepo[]);
+  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const containerRef = useRef(null);
 
-  const [repoLabel, setRepoLabel] = useState('');
-  const [repoURL, setRepoURL] = useState('');
-  const [repoFormType, setRepoFormType] = useState('GithubDirectory');
-  const [repoLocale, setRepoLocale] = useState('github');
-  const [repoListingType, setRepoListingType] = useState('DirectoryListing');
-  const [displayFolderSelect, setDisplayFolderSelect] = useState(false);
+  const initialColumns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'ID',
+      maxWidth: 150,
+      width: 0,
+      editable: true,
+    },
+    {
+      field: 'active',
+      headerName: '',
+      maxWidth: 50,
+      width: 6,
+      editable: true,
+      type: 'boolean',
+      renderCell: (params) => ActiveDisplay(params), // custom display
+    },
+    {
+      field: 'label',
+      headerName: 'Label',
+      maxWidth: 150, // px
+      width: 37, // percentage (will be rescaled below)
+      editable: true,
+    },
+    {
+      field: 'type',
+      headerName: 'Type',
+      maxWidth: 100, // px
+      width: 27, // %
+      editable: true,
+      type: 'singleSelect',
+      valueOptions: ['github', 'local'],
+    },
+    {
+      field: 'url',
+      headerName: 'URL',
+      maxWidth: 10000,
+      width: 40, // %
+      editable: true,
+      renderCell: (params) => UrlDisplay(params), // custom display
+    },
+  ];
+  const [columns, setColumns] = useState<GridColDef[]>(initialColumns);
 
-  const [repoListSelectedItems, setRepoListSelectedItems] = useState([]);
-
-  const selectRepositoryTarget = (target) => {
-    let repo = {};
-    switch (target) {
-      case 'LocalFilesystem':
-        repo = {
-          type: 'local',
-          listing_type: 'DirectoryListing',
-        };
-        setDisplayFolderSelect(true);
-        break;
-      case 'GithubDirectory':
-        repo = {
-          type: 'github',
-          listing_type: 'DirectoryListing',
-        };
-        setDisplayFolderSelect(false);
-        break;
-      default:
-        console.error('Unknown repository type selected: ', target);
-    }
-    setRepoListingType(repo['listing_type']);
-    setRepoLocale(repo['type']);
-    setRepoFormType(target);
+  const ActiveDisplay = (params) => {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100%',
+        }}
+        onClick={() => {
+          params.row.active = !params.row.active;
+          setRows(rows.map((r) => (r.id === params.row.id ? params.row : r)));
+        }}
+      >
+        {params.value ? (
+          <CheckCircleIcon style={{ color: 'green' }} />
+        ) : (
+          <HighlightOffIcon style={{ color: 'grey' }} />
+        )}
+      </Box>
+    );
   };
 
-  const OnClickReloadMasterList = () => {
+  const UrlDisplay = (params) => {
+    if (params.row.type !== 'local') {
+      return params.formattedValue; // default rendering
+    }
+
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            textAlign: 'left',
+            overflowX: 'hidden',
+          }}
+        >
+          {params.row.url}
+        </Box>
+        <IconButton
+          onClick={() => {
+            displayAPI.SelectFolder(params.row.url).then((folderPaths) => {
+              params.row.url = folderPaths[0];
+              setRows(rows.map((r) => (r.id === params.row.id ? params.row : r)));
+            });
+          }}
+          disableRipple // prevent field edit activating button on Enter
+          disableFocusRipple //
+          tabIndex={-1} //
+        >
+          <FolderOutlinedIcon />
+        </IconButton>
+      </Box>
+    );
+  };
+
+  let rows = repoSettings.map((repo) => {
+    return {
+      id: repo.label,
+      active: repo.active,
+      label: repo.label,
+      type: repo.type,
+      url: repo.repo,
+    };
+  });
+
+  const AddItem = () => {
+    const newRepoSettings = [
+      ...repoSettings,
+      {
+        active: true,
+        type: '', // github | local
+        label: NextLabel(), // user label for the repo
+        listing_type: 'DirectoryListing', // LocalFilesystem | DirectoryListing | BranchListing
+        repo: '', // github repo or local path
+      },
+    ];
+    dispatch(builderSetRepositoryTarget(newRepoSettings));
+  };
+
+  const NextLabel = () => {
+    const labels = repoSettings.map((r) => r.label);
+    let id = 1;
+    while (labels.includes(`Label ${id}`)) {
+      id += 1;
+    }
+    return `Label ${id}`;
+  };
+
+  const RemoveItem = () => {
+    if (rows.length === 0) {
+      return;
+    }
+    setRows(rows.filter((r) => !rowSelectionModel.includes(r.id)));
+  };
+
+  const setRows = (newrows) => {
+    rows = newrows;
+    const newRepoSettings = newrows.map((repo) => ({
+      active: repo.active,
+      type: repo.type,
+      label: repo.label,
+      listing_type: 'DirectoryListing',
+      repo: repo.url,
+    }));
+    dispatch(builderSetRepositoryTarget(newRepoSettings));
+  };
+
+  const ReloadMasterList = () => {
     const getMasterRepoList = async () => {
       const url = getMasterRepoListURL();
       return await axios
@@ -78,58 +206,63 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
     });
   };
 
-  const OnClickAddItem = () => {
-    const newRepoSettings = [
-      ...repoSettings,
-      {
-        type: repoLocale, // github | local
-        label: repoLabel, // user label for the repo
-        listing_type: 'DirectoryListing', // LocalFilesystem | DirectoryListing | BranchListing
-        repo: repoURL, // github repo or local path
-      },
-    ];
-    dispatch(builderSetRepositoryTarget(newRepoSettings));
+  const processRowUpdate = (newrow, oldrow) => {
+    setRows(rows.map((r) => (r.id === oldrow.id ? newrow : r)));
+    return newrow;
   };
 
-  const OnClickRemoveItem = () => {
-    const newRepoSettings = repoSettings.filter(
-      (repo) => !repoListSelectedItems.includes(repo.label),
-    );
-    dispatch(builderSetRepositoryTarget(newRepoSettings));
-  };
-
-  const RepoListSelectItem = (value) => {
-    console.log('Select item:', value);
-    const selected_repo = repoSettings.filter((repo) => repo.label === value)[0];
-    // Display repo settings on form
-    setRepoLocale(selected_repo.type);
-    setRepoLabel(selected_repo.label);
-    setRepoListingType(selected_repo.listing_type);
-    if (selected_repo.type === 'local') setRepoFormType('LocalFilesystem');
-    else setRepoFormType('GithubDirectory');
-    setRepoURL(selected_repo.repo);
-    setDisplayFolderSelect(selected_repo.type === 'local');
-    // Set the selected item
-    setRepoListSelectedItems([value]);
-  };
+  // Handle column widths upon resizing of the datagrid
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth;
+        // First sweep - set columns widths proportional to their requested percentages
+        // but within their maximum allowed limits
+        let newColumns = initialColumns.map((col) => ({
+          ...col,
+          width: Math.min((containerWidth * col.width) / 100, col.maxWidth),
+        }));
+        // Add up the total space used
+        const usedWidth = newColumns
+          .map((col) => col.width)
+          .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        // Allocate all unused space to the 'url' column
+        newColumns = newColumns.map((col) => ({
+          ...col,
+          width: col.field === 'url' ? containerWidth - usedWidth + col.width - 5 : col.width,
+        }));
+        setColumns(newColumns);
+      }
+    };
+    handleResize(); // Set initial widths
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <Box>
       <Typography variant="h6">Repository List</Typography>
-      <Select
-        multiple
-        native
-        id="selectBuilderSettingsRepositoryList"
+      <Box
+        ref={containerRef}
         sx={{
           width: '100%',
         }}
-        value={repoListSelectedItems}
-        onChange={(e) => RepoListSelectItem(e.target.value)}
       >
-        {repoSettings.map((repo) => (
-          <option key={repo.label}>{repo.label}</option>
-        ))}
-      </Select>
+        <DataGrid
+          autoHeight
+          rows={rows}
+          columns={columns}
+          columnVisibilityModel={{
+            id: false,
+          }}
+          processRowUpdate={processRowUpdate}
+          onRowSelectionModelChange={(newRowSelectionModel) => {
+            setRowSelectionModel(newRowSelectionModel);
+          }}
+          rowSelectionModel={rowSelectionModel}
+          hideFooter={true}
+        />
+      </Box>
       <Box
         sx={{
           display: 'flex',
@@ -140,7 +273,7 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
         <Box display="flex" flexDirection="row" width="100%" justifyContent="flex-end">
           <Button
             id="buttonBuilderSettingsRepositoryLoadMasterList"
-            onClick={() => OnClickReloadMasterList()}
+            onClick={() => ReloadMasterList()}
             sx={{ marginRight: '5px' }}
             size="small"
             variant="contained"
@@ -149,7 +282,7 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
           </Button>
           <Button
             id="buttonBuilderSettingsRepositoryListAddItem"
-            onClick={() => OnClickAddItem()}
+            onClick={() => AddItem()}
             sx={{ marginRight: '5px' }}
             size="small"
             variant="contained"
@@ -158,108 +291,13 @@ const RepoOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
           </Button>
           <Button
             id="buttonBuilderSettingsRepositoryListRemoveItem"
-            onClick={() => OnClickRemoveItem()}
+            onClick={() => RemoveItem()}
+            disabled={rowSelectionModel.length === 0}
             size="small"
             variant="contained"
           >
             REMOVE
           </Button>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '10px',
-          flexDirection: 'row',
-        }}
-      >
-        <Box
-          sx={{
-            width: labelWidth,
-            textAlign: 'right',
-            alignSelf: 'center',
-          }}
-        >
-          <Typography variant="body1">Label:</Typography>
-        </Box>
-        <TextField
-          id="inputBuilderSettingsRepositoryLabel"
-          type="text"
-          value={repoLabel}
-          onChange={(e) => setRepoLabel(e.target.value)}
-          size="small"
-          sx={{ width: '100%' }}
-        />
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '10px',
-          flexDirection: 'row',
-        }}
-      >
-        <Box
-          sx={{
-            width: labelWidth,
-            textAlign: 'right',
-            alignSelf: 'center',
-          }}
-        >
-          <Typography variant="body1">Type:</Typography>
-        </Box>
-        <Select
-          id="selectBuilderSettingsRepositoryType"
-          value={repoFormType}
-          onChange={(e) => selectRepositoryTarget(e.target.value)}
-          sx={{ width: '100%' }}
-          size="small"
-        >
-          <MenuItem value="GithubDirectory">Github (Directory Listing)</MenuItem>
-          <MenuItem value="LocalFilesystem">Local filesystem</MenuItem>
-        </Select>
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          gap: '10px',
-          flexDirection: 'row',
-        }}
-      >
-        <Box
-          sx={{
-            width: labelWidth,
-            textAlign: 'right',
-            alignSelf: 'center',
-          }}
-        >
-          <Typography variant="body1">URL:</Typography>
-        </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            width: '100%',
-          }}
-        >
-          <TextField
-            id="inputBuilderSettingsRepositoryURL"
-            type="text"
-            value={repoURL}
-            onChange={(e) => setRepoURL(e.target.value)}
-            sx={{ width: '100%' }}
-            size="small"
-          />
-          {displayFolderSelect && (
-            <IconButton
-              onClick={() => {
-                displayAPI.SelectFolder(repoURL).then((folderPaths) => {
-                  setRepoURL(folderPaths[0]);
-                });
-              }}
-            >
-              <FolderOutlinedIcon />
-            </IconButton>
-          )}
         </Box>
       </Box>
     </Box>

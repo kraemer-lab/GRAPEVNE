@@ -143,11 +143,12 @@ const GetModulesList = async (
   }
 };
 
-const GetFolders = (root_folder: string): Array<string> =>
-  fs
+const GetFolders = (root_folder: string): Array<string> => {
+  return fs
     .readdirSync(root_folder, { withFileTypes: true })
     .filter((f) => f.isDirectory())
     .map((f) => f.name);
+};
 
 const GetLocalModules = (root_folder: string): Array<Record<string, unknown>> => {
   // static return for now
@@ -201,8 +202,6 @@ const GetRemoteModulesGithub = async (
   switch (listing_type) {
     case 'DirectoryListing':
       return GetRemoteModulesGithubDirectoryListing(repo);
-    case 'BranchListing':
-      return GetRemoteModulesGithubBranchListing(repo);
     default:
       throw new Error('Invalid Github listing type.');
   }
@@ -212,19 +211,19 @@ const checkManifest = (repo: string, branch: string) => {
   let exists = false;
   Object.keys(manifest).forEach((key) => {
     if (key === repo) {
-      if (manifest[key])
-        exists = true;
+      if (manifest[key]) exists = true;
     }
   });
   return exists;
-}
+};
 
 const populateManifest = async (repo: string, branch: string) => {
   // Add / refresh manifest - typically called on Module Load (infrequent)
 
   // Attempt to populate manifest file
   const manifest_url = ['https://raw.githubusercontent.com', repo, branch, manifest_path].join('/');
-  const response = await axios.get(manifest_url)
+  const response = await axios
+    .get(manifest_url)
     .then((response) => response.data)
     .then((data) => {
       // may return undefined
@@ -235,7 +234,7 @@ const populateManifest = async (repo: string, branch: string) => {
     .catch((e) => {
       console.log('Could not retrieve a manifest file.');
     });
-}
+};
 
 const getManifest = (repo: string, branch: string): Record<string, unknown> => {
   if (checkManifest(repo, branch)) {
@@ -243,7 +242,7 @@ const getManifest = (repo: string, branch: string): Record<string, unknown> => {
   } else {
     return {};
   }
-}
+};
 
 const api_get = async (url: string, url_base: string): Promise<Record<string, string>[]> => {
   // Attempt to look up folder contents in the manifest file; if the manifest file does
@@ -251,8 +250,12 @@ const api_get = async (url: string, url_base: string): Promise<Record<string, st
 
   if (url.includes(url_github)) {
     // Extract repo from url
-    const repo = url.replace(url_github + "/", '').split('/').slice(0, 2).join('/');
-    const branch = "main";  // only main branch manifest is available
+    const repo = url
+      .replace(url_github + '/', '')
+      .split('/')
+      .slice(0, 2)
+      .join('/');
+    const branch = 'main'; // only main branch manifest is available
     const manifest_repo = getManifest(repo, branch);
     if (Object.keys(manifest_repo).length > 0) {
       // Look up item in manifest file
@@ -260,7 +263,9 @@ const api_get = async (url: string, url_base: string): Promise<Record<string, st
       const manifest_key = url.replace(url_base, '');
       const path = manifest_key.split('/').filter((item) => item !== '');
       let contents = manifest_repo['children'] as Record<string, unknown>[];
-      let workflows = contents.find((item: Record<string, unknown>) => item['name'] === 'workflows') as Record<string, unknown>;
+      let workflows = contents.find(
+        (item: Record<string, unknown>) => item['name'] === 'workflows',
+      ) as Record<string, unknown>;
       let data = workflows['children'] as Record<string, unknown>[];
       for (const p of path) {
         const datum = data.find((item: Record<string, unknown>) => item['name'] === p);
@@ -273,8 +278,7 @@ const api_get = async (url: string, url_base: string): Promise<Record<string, st
       // Format data for return
       const out: Record<string, string>[] = [];
       for (const item of data) {
-        if (item['type'] === 'folder')
-          item['type'] = 'dir';
+        if (item['type'] === 'folder') item['type'] = 'dir';
         out.push({
           name: item['name'] as string,
           type: item['type'] as string,
@@ -291,7 +295,7 @@ const api_get = async (url: string, url_base: string): Promise<Record<string, st
     console.log('Could not retrieve requested url: ', url);
   }
   return [];
-}
+};
 
 const GetRemoteModulesGithubDirectoryListing = async (
   repo: string,
@@ -309,7 +313,8 @@ const GetRemoteModulesGithubDirectoryListing = async (
   }
 
   // Get latest commit of main branch (explit use of axios here; not manifest)
-  const commit = await axios.get([url_github, repo, "commits", branch].join('/'))
+  const commit = await axios
+    .get([url_github, repo, 'commits', branch].join('/'))
     .then((response) => response.data)
     .then((data) => {
       return data['sha'];
@@ -401,69 +406,6 @@ const GetRemoteModulesGithubDirectoryListing = async (
   return modules;
 };
 
-const GetRemoteModulesGithubBranchListing = async (
-  repo: string,
-): Promise<Record<string, unknown>[]> => {
-  const url_github = 'https://api.github.com/repos';
-  const url_base = path.join(url_github, repo, 'branches');
-  const modules: Array<Record<string, unknown>> = [];
-
-  async function get(url: string) {
-    const response = await axios.get(url);
-    return await response.data;
-  }
-
-  // Branch listing
-  const module_types = {
-    m: 'module',
-    c: 'connector',
-    s: 'source',
-    t: 'terminal',
-  };
-  const branches = await get(url_base).then((data) => {
-    return data
-      .filter((branch: Record<string, unknown>) => branch['name'] !== 'main')
-      .map((branch: Record<string, unknown>) => branch['name']);
-  });
-  for (const branch of branches) {
-    const [module_type, module_org, module_name] = branch.split('/');
-    if (!Object.keys(module_types).includes(module_type)) {
-      throw new Error(`Invalid module type '${module_type}' in branch '${branch}'.`);
-    }
-    const url_config = path.join(
-      'https://raw.githubusercontent.com',
-      repo,
-      branch,
-      'config/config.yaml',
-    );
-    let config = {};
-    let module_classification = module_types[module_type as keyof typeof module_types];
-    const module = {
-      name: FormatName(module_name),
-      type: module_classification,
-      org: module_org,
-      repo: {
-        type: 'github',
-        listing_type: 'DirectoryListing',
-        url: repo,
-      },
-      config: {
-        snakefile: {
-          function: 'github',
-          args: [repo],
-          kwargs: {
-            path: 'workflow/Snakefile',
-            branch: branch,
-          },
-        },
-        config: config,
-      },
-    };
-    modules.push(module);
-  }
-  return modules;
-};
-
 const FormatName = (name: string): string => {
   return name;
 };
@@ -491,9 +433,9 @@ const getBranchOrCommit = (snakefile: Record<string, unknown>) => {
   } else {
     throw new Error('Branch or commit not specified');
   }
-}
+};
 
-const getConfigFilenameFromSnakefile = async(
+const getConfigFilenameFromSnakefile = async (
   snakefile: Record<string, unknown> | string | null,
 ): Promise<string | null> => {
   if (typeof snakefile === 'string') {
@@ -503,42 +445,42 @@ const getConfigFilenameFromSnakefile = async(
     // Remote repository
     return getConfigFilenameFromSnakefile_Remote(snakefile as Record<string, unknown>);
   }
-}
+};
 
 const getConfigFilenameFromSnakefile_Local = (filepath: string): string | null => {
   const data = fs.readFileSync(filepath, 'utf8');
   const lines = data.split(/\r?\n/);
-  const configLine = lines.find(line => line.startsWith('configfile:'));
+  const configLine = lines.find((line) => line.startsWith('configfile:'));
   if (configLine) {
-    const value = configLine.split('configfile: ')[1].trim().slice(1, -1);  // remove quotes
+    const value = configLine.split('configfile: ')[1].trim().slice(1, -1); // remove quotes
     return value;
   }
   return null;
-}
+};
 
-const getConfigFilenameFromSnakefile_Remote = async(
+const getConfigFilenameFromSnakefile_Remote = async (
   snakefile: Record<string, unknown>,
 ): Promise<string | null> => {
   // Remote repository
   snakefile = snakefile as Record<string, unknown>;
   const snakefile_rel =
     (snakefile.args as string[])[0] +
-    '/' + getBranchOrCommit(snakefile) +
-    '/' + (snakefile.kwargs as Record<string, string>)['path'];
+    '/' +
+    getBranchOrCommit(snakefile) +
+    '/' +
+    (snakefile.kwargs as Record<string, string>)['path'];
   const snakefile_url = 'https://raw.githubusercontent.com/' + snakefile_rel;
-  const data = await axios.get(snakefile_url).then(response => response.data);
+  const data = await axios.get(snakefile_url).then((response) => response.data);
   const lines = data.split(/\r?\n/);
   const configLine = lines.find((line: string) => line.startsWith('configfile:'));
   if (configLine) {
-    const value = configLine.split('configfile: ')[1].trim().slice(1, -1);  // remove quotes
+    const value = configLine.split('configfile: ')[1].trim().slice(1, -1); // remove quotes
     return value;
   }
   return null;
-}
+};
 
-const GetModuleConfigFilesList = async (
-  snakefile: Record<string, unknown> | string,
-) => {
+const GetModuleConfigFilesList = async (snakefile: Record<string, unknown> | string) => {
   // Get list of available config.yaml files from config folder.
   // Should work got either local or remote repositories
 
@@ -566,7 +508,7 @@ const GetModuleConfigFilesList = async (
     const configfile_rel = await getConfigFilenameFromSnakefile(snakefile);
     if (configfile_rel) {
       const repo = (snakefile['args'] as string[])[0];
-      const branch = "main";
+      const branch = 'main';
       const configfile_path = [
         url_github,
         repo,
@@ -603,12 +545,12 @@ export {
   GetLocalModules,
   GetModuleConfig,
   GetModuleConfigFile,
+  GetModuleConfigFilesList,
   GetModuleDocstring,
   GetModulesList,
   GetRemoteModulesGithubDirectoryListing,
-  GetModuleConfigFilesList,
-  getConfigFilenameFromSnakefile,
   ParseDocstring,
+  getConfigFilenameFromSnakefile,
 };
 module.exports = {
   GetModuleConfig,

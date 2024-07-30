@@ -24,6 +24,8 @@ import {
 } from 'gui/Builder/components/Flow';
 import { Edge } from 'reactflow';
 
+import { IRepo } from 'redux/reducers/builder';
+
 type Query = Record<string, unknown>;
 
 const displayAPI = window.displayAPI;
@@ -677,20 +679,20 @@ const UpdateNodeInfoName = ({ action, dispatch, nodeinfo, nodes }: IUpdateNodeIn
 interface IGetRemoteModules {
   dispatchString: TPayloadString;
   dispatchBool: TPayloadBool;
-  repo: string;
+  repo: IRepo[];
 }
 
 const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemoteModules) => {
   // Get list of remote modules
   dispatchString(builderUpdateStatusText('Loading modules...'));
   dispatchBool(builderSetModulesLoading(true));
-  console.log('Repository settings: ', repo);
+  dispatchString(builderUpdateModulesList('[]'));
   const query: Query = {
     query: 'builder/get-remote-modules',
     data: {
       format: 'Snakefile',
       content: {
-        url: repo,
+        url: repo.filter((repo) => repo.active),
       },
     },
   };

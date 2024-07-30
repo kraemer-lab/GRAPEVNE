@@ -1,7 +1,7 @@
+import axios from 'axios';
 import Store from 'electron-store';
 import fs from 'fs';
 import web from './web';
-import axios from 'axios';
 
 import { dialog, IpcMainInvokeEvent, shell } from 'electron';
 import { Build, CondaSearch, INewModuleState } from './newmodule';
@@ -77,7 +77,11 @@ export async function display_StoreWriteConfig(event: Event, store: Store, data:
   return store.get('config');
 }
 
-export async function display_SelectFolder(event: Event, path: string, win: Electron.BrowserWindow) {
+export async function display_SelectFolder(
+  event: Event,
+  path: string,
+  win: Electron.BrowserWindow,
+) {
   const result = await dialog.showOpenDialog(win, {
     defaultPath: path,
     properties: ['openDirectory'],
@@ -261,7 +265,10 @@ export async function builder_GetFile(event: Event, filename: string): Promise<s
   }
 }
 
-export async function builder_GetConfigFilenameFromSnakefile(event: Event, snakefile: Query | string) {
+export async function builder_GetConfigFilenameFromSnakefile(
+  event: Event,
+  snakefile: Query | string,
+) {
   return await web.getConfigFilenameFromSnakefile(snakefile);
 }
 

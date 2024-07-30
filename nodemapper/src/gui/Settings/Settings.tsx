@@ -62,7 +62,7 @@ const Settings = () => {
       <Grid container spacing={0} alignItems="center" justifyContent="center">
         <Grid item xs={8}>
           <OptionsPanel>
-            <RepoOptions labelWidth="25%" />
+            <RepoOptions />
           </OptionsPanel>
         </Grid>
         <Grid item xs={8}>

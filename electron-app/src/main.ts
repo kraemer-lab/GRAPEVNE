@@ -1,7 +1,6 @@
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import Store from 'electron-store';
 // import * as pty from 'node-pty';
-import * as os from 'node:os';
 import path from 'path';
 import * as handles from './handles';
 
@@ -20,7 +19,7 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
     show: false,
-    icon: "images/icon.png",
+    icon: 'images/icon.png',
   });
   if (app.isPackaged) {
     win.loadFile('index.html'); //prod
@@ -90,7 +89,7 @@ app.whenReady().then(() => {
 
   const terminal_sendLine = (data: string) => {
     console.log(data);
-  }
+  };
 
   /////////////////////////////
   // Setup logging to front-end
@@ -145,8 +144,10 @@ app.whenReady().then(() => {
   ipcMain.handle('builder/get-file', (event: Event, filename: string) =>
     handles.builder_GetFile(event, filename),
   );
-  ipcMain.handle('builder/get-config-filename-from-snakefile', (event: Event, data: Query | string) =>
-     handles.builder_GetConfigFilenameFromSnakefile(event, data),
+  ipcMain.handle(
+    'builder/get-config-filename-from-snakefile',
+    (event: Event, data: Query | string) =>
+      handles.builder_GetConfigFilenameFromSnakefile(event, data),
   );
 
   // Runner
