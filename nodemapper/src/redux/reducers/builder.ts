@@ -352,14 +352,13 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     });
 });
 
-const setStatusText = (text: string) => {
-  if (text === '' || text === ' ' || text === null || text === undefined) text = 'Idle';
-  return text;
-};
-
 const addLogEvent = (state: IBuilderState, text: string) => {
+  text = text.trim();
+  if (text === "")
+    return;
+  text += '\n';
   if (state.logtext === ' ') state.logtext = '';
-  if (text[text.length - 1] !== '\n') text += '\n';
+  console.log("Log text: ", text);
   state.logtext += text;
   if (state.logtext === '') state.logtext = ' ';
 };
