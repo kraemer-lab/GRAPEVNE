@@ -22,7 +22,7 @@ const RepoOptions = () => {
   const repoSettings = useAppSelector((state) => state.builder.repositories as IRepo[]);
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
   const containerRef = useRef(null);
-  
+
   const initialColumns: GridColDef[] = [
     {
       field: 'id',
@@ -47,7 +47,7 @@ const RepoOptions = () => {
       width: 37,      // percentage (will be rescaled below)
       editable: true,
     },
-    { 
+    {
       field: 'type',
       headerName: 'Type',
       maxWidth: 100,  // px
@@ -131,7 +131,7 @@ const RepoOptions = () => {
       </Box>
     )
   };
-  
+
   let rows = repoSettings.map((repo) => {
     return {
       id: repo.label,
@@ -141,7 +141,7 @@ const RepoOptions = () => {
       url: repo.repo,
     }
   });
-  
+
   const AddItem = () => {
     const newRepoSettings = [
       ...repoSettings,
@@ -155,7 +155,7 @@ const RepoOptions = () => {
     ];
     dispatch(builderSetRepositoryTarget(newRepoSettings));
   };
-  
+
   const NextLabel = () => {
     const labels = repoSettings.map((r) => r.label);
     let id = 1;
