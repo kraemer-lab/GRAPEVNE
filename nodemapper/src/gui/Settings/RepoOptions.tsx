@@ -77,6 +77,10 @@ const RepoOptions = () => {
           width: '100%',
           height: '100%',
         }}
+        onClick={() => {
+          params.row.active = !params.row.active;
+          setRows(rows.map((r) => (r.id === params.row.id ? params.row : r)));
+        }}
       >
         {params.value ? (
           <CheckCircleIcon style={{ color: 'green' }} />
