@@ -14,7 +14,7 @@ There are various options available at the top of the screen. For this tutorial 
 
 ![Sidebar navigation](images/sidebar.png)
 
-To access the repository ensure that 'Directory Listing (github)' is selected from the repository drop-down box at the top of the screen, and that `kraemer-lab/vneyard` (note the spelling) is displayed in the repository field.
+To access the repository ensure that `kraemer-lab/vneyard` (note the spelling) is available and active in the repository list. You can click `Reload Master List` to store the repository list to defaults if necessary.
 
 ![Select repository](images/settings_vneyard.png)
 
