@@ -4,6 +4,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import {
@@ -194,11 +195,11 @@ const WorkflowAlerts = ({ labelWidth }: IWorkflowAlerts) => {
       <Typography variant="body1">
         Configure email alerts for workflow success and failure.
       </Typography>
-      <Typography variant="body1" sx={{ color: theme.palette.warning.main }}>
+      <Alert severity="warning">
         Warning: If entered below your email username and password will be stored in a plain text
         file. You can alternatively provide them as environment variables `GRAPEVNE_EMAIL_USERNAME`
         and `GRAPEVNE_EMAIL_PASSWORD` within the execution environment.
-      </Typography>
+      </Alert>
       <FormGroup>
         <EmailSettings labelWidth={labelWidth} />
         <FormControlLabel
