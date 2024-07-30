@@ -656,6 +656,46 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   console.log('<<< test Build, then launch in Docker');
 };
 
+interface IRepoListAddItem {
+  driver: webdriver.ThenableWebDriver;
+  label: string;
+  type: string;
+  url: string;
+}
+
+export const RepoListAddItem = async ({ driver, label, type, url }: IRepoListAddItem) => {
+  // Click on the Add button
+  await driver.findElement(By.id('buttonBuilderSettingsRepositoryListAddItem')).click();
+  // Set label (first enable editing by double-clicking on the item, then overwrite the value)
+  const label_clickable = driver.findElement(
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @title="Label 1"]`),
+  );
+  await driver.actions(opts).doubleClick(label_clickable).perform();
+  await OverwriteInputField(driver.findElement(By.xpath(`//input[@value="Label 1"]`)), label);
+  // Set type from list
+  const type_clickable = await driver.findElement(
+    By.xpath(`(//div[contains(@class, "MuiDataGrid-cell") and @data-field="type"])[last()]`),
+  );
+  await driver.actions(opts).doubleClick(type_clickable).perform();
+  await driver.findElement(By.xpath(`//li[@data-value="${type}"]`)).click();
+  // Set url
+  const url_clickable = driver.findElement(
+    By.xpath(`//div[contains(@class, "MuiDataGrid-cell") and @data-field="url"]`),
+  );
+  // Double-click on the url to enable editing (retry on fail)
+  const url_input = `//div[contains(@class, "MuiDataGrid-cell") and @data-field="url"]/div/input`;
+  for (let k = 0; k < 3; k++) {
+    try {
+      await driver.actions(opts).doubleClick(url_clickable).perform();
+      await driver.wait(until.elementLocated(By.xpath(url_input)), 1000);
+    } catch (NoSuchElementError) {
+      // Retry on fail
+      continue;
+    }
+  }
+  await OverwriteInputField(driver.findElement(By.xpath(url_input)), url);
+};
+
 export {
   Build_RunWithDocker_SingleModuleWorkflow,
   BuildAndRun_MultiModuleWorkflow,

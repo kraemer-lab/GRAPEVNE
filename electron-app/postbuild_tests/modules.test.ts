@@ -1,5 +1,4 @@
 import { By, until } from 'selenium-webdriver';
-import { Select } from 'selenium-webdriver/lib/select';
 
 import * as fs from 'fs';
 import * as yaml from 'js-yaml';
@@ -21,6 +20,7 @@ import {
   OutputFilelistAddItem,
   OverwriteInputField,
   RedirectConsoleLog,
+  RepoListAddItem,
   SetCheckBoxByID,
   WaitForReturnCode,
   dragAndDrop,
@@ -98,40 +98,30 @@ describe('modules', () => {
       // Open settings pane
       await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
-      // Clear repository list
-      const repo_list = new Select(
-        await driver.findElement(By.id('selectBuilderSettingsRepositoryList')),
+      // Select each item in the repositories list and click Remove
+      let repo_list = await driver.findElements(By.xpath('//div[@data-rowindex]'));
+      const btnRemove = await driver.findElement(
+        By.id('buttonBuilderSettingsRepositoryListRemoveItem'),
       );
-      let options = await repo_list.getOptions();
-      for (let i = 0; i < options.length; i++) {
-        await repo_list.selectByIndex(0);
-        await driver.findElement(By.id('buttonBuilderSettingsRepositoryListRemoveItem')).click();
+      for (let i = 0; i < repo_list.length; i++) {
+        await repo_list[i].click();
+        await btnRemove.click();
       }
-      options = await repo_list.getOptions();
-      expect(options.length).toEqual(0);
+      repo_list = await driver.findElements(By.xpath('//div[@data-rowindex]'));
+      expect(repo_list.length).toEqual(0); // ensure all items removed
 
-      // Set new (local) repository type
-      const repo_type = await driver.findElement(By.id('selectBuilderSettingsRepositoryType'));
-      await repo_type.click();
-      await repo_type.findElement(By.xpath('//li[@data-value="LocalFilesystem"]')).click();
-
-      // Set new (local) repository label
-      const repo_label = await driver.findElement(
-        webdriver.By.id('inputBuilderSettingsRepositoryLabel'),
-      );
-      await OverwriteInputField(repo_label, 'test-repo');
-
-      // Set new (local) repository path
-      const repo_path = await driver.findElement(
-        webdriver.By.id('inputBuilderSettingsRepositoryURL'),
-      );
-      await OverwriteInputField(repo_path, path.join(__dirname, 'test-repo'));
-
-      // Add repository to repository list
-      await driver.findElement(By.id('buttonBuilderSettingsRepositoryListAddItem')).click();
+      // Add test repository to list
+      const btnAdd = await driver.findElement(By.id('buttonBuilderSettingsRepositoryListAddItem'));
+      await RepoListAddItem({
+        driver: driver,
+        label: 'test-repo',
+        type: 'local',
+        url: path.join(__dirname, 'test-repo'),
+      });
 
       // Ensure that interface options are set as expected
       await SetCheckBoxByID(driver, 'display_module_settings', false);
+      await SetCheckBoxByID(driver, 'hide_params_in_module_info', true);
       await SetCheckBoxByID(driver, 'auto_validate_connections', false);
 
       // Close settings pane
