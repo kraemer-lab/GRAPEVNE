@@ -5,6 +5,7 @@ import { Edge, Node } from 'NodeMap/scene/Flow';
 import { ConfigPaneDisplay } from 'redux/types';
 
 export interface IRepo {
+  active: boolean;
   type: string;
   label: string;
   listing_type: string;
@@ -94,6 +95,7 @@ const builderStateInit: IBuilderState = {
   repositories: [
     // Default - should be overwritten by local state
     {
+      active: true,
       type: 'github', // local | github
       label: 'Kraemer Lab',
       listing_type: 'DirectoryListing', // LocalFilesystem | DirectoryListing | BranchListing
