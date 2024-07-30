@@ -599,7 +599,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   //
   // While the build process is consistent for Windows (i.e. the workflow
   // is produced), the launch scripts have not been translated, and the Dockerfile
-  // itself relies on Docker images (notably mambaforge), that are not available for the
+  // itself relies on Docker images (notably miniforge), that are not available for the
   // Windows platform at this time.
   if (is_windows) {
     console.log('Windows platform detected: skipping container launch test...');
