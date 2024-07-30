@@ -1,19 +1,19 @@
 import axios from 'axios';
-import React, {useRef, useEffect, useState} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { builderLogEvent, builderSetRepositoryTarget } from 'redux/actions';
 import { getMasterRepoListURL } from 'redux/globals';
 import { IRepo } from 'redux/reducers/builder';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 const displayAPI = window.displayAPI;
 
@@ -38,20 +38,20 @@ const RepoOptions = () => {
       width: 6,
       editable: true,
       type: 'boolean',
-      renderCell: (params) => ActiveDisplay(params),  // custom display
+      renderCell: (params) => ActiveDisplay(params), // custom display
     },
     {
       field: 'label',
       headerName: 'Label',
-      maxWidth: 150,  // px
-      width: 37,      // percentage (will be rescaled below)
+      maxWidth: 150, // px
+      width: 37, // percentage (will be rescaled below)
       editable: true,
     },
     {
       field: 'type',
       headerName: 'Type',
-      maxWidth: 100,  // px
-      width: 27,  // %
+      maxWidth: 100, // px
+      width: 27, // %
       editable: true,
       type: 'singleSelect',
       valueOptions: ['github', 'local'],
@@ -60,10 +60,10 @@ const RepoOptions = () => {
       field: 'url',
       headerName: 'URL',
       maxWidth: 10000,
-      width: 40,  // %
+      width: 40, // %
       editable: true,
-      renderCell: (params) => UrlDisplay(params),  // custom display
-    }
+      renderCell: (params) => UrlDisplay(params), // custom display
+    },
   ];
   const [columns, setColumns] = useState<GridColDef[]>(initialColumns);
 
@@ -88,12 +88,12 @@ const RepoOptions = () => {
           <HighlightOffIcon style={{ color: 'grey' }} />
         )}
       </Box>
-    )
-  }
+    );
+  };
 
   const UrlDisplay = (params) => {
-    if (params.row.type !== "local") {
-      return params.formattedValue;  // default rendering
+    if (params.row.type !== 'local') {
+      return params.formattedValue; // default rendering
     }
 
     return (
@@ -102,15 +102,15 @@ const RepoOptions = () => {
           display: 'flex',
           flexDirection: 'row',
           width: '100%',
-          alignItems: "center",
+          alignItems: 'center',
         }}
       >
         <Box
           sx={{
-            width: "100%",
-            height: "100%",
-            textAlign: "left",
-            overflowX: "hidden",
+            width: '100%',
+            height: '100%',
+            textAlign: 'left',
+            overflowX: 'hidden',
           }}
         >
           {params.row.url}
@@ -122,14 +122,14 @@ const RepoOptions = () => {
               setRows(rows.map((r) => (r.id === params.row.id ? params.row : r)));
             });
           }}
-          disableRipple       // prevent field edit activating button on Enter
-          disableFocusRipple  //
-          tabIndex={-1}       //
+          disableRipple // prevent field edit activating button on Enter
+          disableFocusRipple //
+          tabIndex={-1} //
         >
           <FolderOutlinedIcon />
         </IconButton>
       </Box>
-    )
+    );
   };
 
   let rows = repoSettings.map((repo) => {
@@ -139,7 +139,7 @@ const RepoOptions = () => {
       label: repo.label,
       type: repo.type,
       url: repo.repo,
-    }
+    };
   });
 
   const AddItem = () => {
@@ -147,10 +147,10 @@ const RepoOptions = () => {
       ...repoSettings,
       {
         active: true,
-        type: "", // github | local
+        type: '', // github | local
         label: NextLabel(), // user label for the repo
         listing_type: 'DirectoryListing', // LocalFilesystem | DirectoryListing | BranchListing
-        repo: "", // github repo or local path
+        repo: '', // github repo or local path
       },
     ];
     dispatch(builderSetRepositoryTarget(newRepoSettings));
@@ -163,7 +163,7 @@ const RepoOptions = () => {
       id += 1;
     }
     return `Label ${id}`;
-  }
+  };
 
   const RemoveItem = () => {
     if (rows.length === 0) {
@@ -174,15 +174,13 @@ const RepoOptions = () => {
 
   const setRows = (newrows) => {
     rows = newrows;
-    const newRepoSettings = newrows.map((repo) =>
-      ({
-        active: repo.active,
-        type: repo.type,
-        label: repo.label,
-        listing_type: 'DirectoryListing',
-        repo: repo.url,
-      })
-    );
+    const newRepoSettings = newrows.map((repo) => ({
+      active: repo.active,
+      type: repo.type,
+      label: repo.label,
+      listing_type: 'DirectoryListing',
+      repo: repo.url,
+    }));
     dispatch(builderSetRepositoryTarget(newRepoSettings));
   };
 
@@ -225,11 +223,13 @@ const RepoOptions = () => {
           width: Math.min((containerWidth * col.width) / 100, col.maxWidth),
         }));
         // Add up the total space used
-        const usedWidth = newColumns.map((col) => col.width).reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        const usedWidth = newColumns
+          .map((col) => col.width)
+          .reduce((accumulator, currentValue) => accumulator + currentValue, 0);
         // Allocate all unused space to the 'url' column
         newColumns = newColumns.map((col) => ({
           ...col,
-          width: (col.field === "url") ? (containerWidth - usedWidth + col.width - 5) : (col.width),
+          width: col.field === 'url' ? containerWidth - usedWidth + col.width - 5 : col.width,
         }));
         setColumns(newColumns);
       }
@@ -245,7 +245,7 @@ const RepoOptions = () => {
       <Box
         ref={containerRef}
         sx={{
-          width: "100%",
+          width: '100%',
         }}
       >
         <DataGrid
@@ -253,7 +253,7 @@ const RepoOptions = () => {
           rows={rows}
           columns={columns}
           columnVisibilityModel={{
-            id: false
+            id: false,
           }}
           processRowUpdate={processRowUpdate}
           onRowSelectionModelChange={(newRowSelectionModel) => {

@@ -657,18 +657,18 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 };
 
 export {
+  Build_RunWithDocker_SingleModuleWorkflow,
   BuildAndRun_MultiModuleWorkflow,
   BuildAndRun_SingleModuleWorkflow,
-  Build_RunWithDocker_SingleModuleWorkflow,
   ClearGraph,
-  FlushConsoleLog,
-  OverwriteInputField,
-  RedirectConsoleLog,
-  SetCheckBoxByID,
-  WaitForReturnCode,
   dragAndDrop,
+  FlushConsoleLog,
   is_installed,
   is_not_windows,
   is_windows,
+  OverwriteInputField,
+  RedirectConsoleLog,
   runif,
+  SetCheckBoxByID,
+  WaitForReturnCode,
 };
