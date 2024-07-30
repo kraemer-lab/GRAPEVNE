@@ -14,10 +14,10 @@ done
 
 RUNNER_OS=${RUNNER_OS:-$(uname)}
 
-# install mambaforge if not already installed
+# install miniforge if not already installed
 if ! command -v mamba &> /dev/null
 then
-    . ./install_mambaforge.sh
+    . ./install_miniforge.sh
 fi
 
 # launch GRAPEVNE in the background and in debug mode

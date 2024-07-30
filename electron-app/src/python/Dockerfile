@@ -1,4 +1,4 @@
-FROM condaforge/mambaforge:23.3.1-1 as conda
+FROM condaforge/miniforge3:24.3.0-0 as conda
 
 # Install snakemake
 RUN mamba install -y snakemake-minimal==7.32 -c bioconda
