@@ -31,20 +31,18 @@ export const Tray = styled.div<{ color: string }>`
   overflow: hidden;
 `;
 
-export class TrayItemWidget extends React.Component<TrayItemWidgetProps> {
-  render() {
-    return (
-      <Tray
-        id={'modulelist-' + wranglename(this.props.name)}
-        className="tray-item"
-        color={this.props.color}
-        draggable={true}
-        onDragStart={(event) => {
-          event.dataTransfer.setData('flow-diagram-node', JSON.stringify(this.props.model));
-        }}
-      >
-        {this.props.name}
-      </Tray>
-    );
-  }
-}
+export const TrayItemWidget = (props: TrayItemWidgetProps) => {
+  return (
+    <Tray
+      id={'modulelist-' + wranglename(props.name)}
+      className="tray-item"
+      color={props.color}
+      draggable={true}
+      onDragStart={(event) => {
+        event.dataTransfer.setData('flow-diagram-node', JSON.stringify(props.model));
+      }}
+    >
+      {props.name}
+    </Tray>
+  );
+};

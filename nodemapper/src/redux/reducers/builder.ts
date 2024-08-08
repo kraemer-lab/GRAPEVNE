@@ -354,11 +354,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
 
 const addLogEvent = (state: IBuilderState, text: string) => {
   text = text.trim();
-  if (text === "")
-    return;
+  if (text === '') return;
   text += '\n';
   if (state.logtext === ' ') state.logtext = '';
-  console.log("Log text: ", text);
+  console.log('Log text: ', text);
   state.logtext += text;
   if (state.logtext === '') state.logtext = ' ';
 };

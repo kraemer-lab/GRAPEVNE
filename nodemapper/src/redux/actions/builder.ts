@@ -53,10 +53,10 @@ export const builderUpdateNodeInfoKey = createAction<Record<string, string[] | s
 export const builderUpdateNodeInfoName = createAction<string>('builder/update-node-info-name');
 export const builderSetSnakemakeArgs = createAction<string>('builder/set-snakemake-args');
 export const builderLogEvent = createAction<string>('builder/log-event');
-export const builderSetRepositoryTarget = createAction<Record<string, any>>( // eslint-disable-line @typescript-eslint/no-explicit-any
+export const builderSetRepositoryTarget = createAction<Record<string, any>>(
   'builder/set-repository-target',
 );
-export const builderAddLink = createAction<Record<string, any> | undefined>('builder/add-link'); // eslint-disable-line @typescript-eslint/no-explicit-any
+export const builderAddLink = createAction<Record<string, any> | undefined>('builder/add-link');
 export const builderNodeSelected = createAction<Node>('builder/node-selected');
 export const builderNodeSelectedByID = createAction<string>('builder/node-selected-by-id');
 export const builderNodeDeselected = createAction('builder/node-deselected');
