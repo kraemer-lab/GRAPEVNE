@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import ResizeHandle from './../ResizeHandle';
-import styles from './../styles.module.css';
+import * as styles from './../styles.module.css';
 import ConfigSelect from './ConfigSelect';
 import HighlightedJSON from './HighlightedJSON';
 
