@@ -22,22 +22,3 @@ export default {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
 };
-
-/*import type { Config } from '@jest/types';
-
-const config: Config.InitialOptions = {
-  preset: 'ts-jest',
-  testEnvironment: 'jsdom',
-  //setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/dist/'],
-  moduleDirectories: ['node_modules', 'src'],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-    '^.+\\.jsx?$': 'babel-jest',
-  },
-  transformIgnorePatterns: ['<rootDir>/node_modules/'],
-};
-
-export default config;
-*/
