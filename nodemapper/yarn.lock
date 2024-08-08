@@ -10813,7 +10813,7 @@ __metadata:
     react-error-boundary: "npm:^4.0.13"
     react-lazylog: "npm:^4.5.3"
     react-redux: "npm:^9.1.2"
-    react-resizable-panels: "npm:^2.0.22"
+    react-resizable-panels: "npm:^2.0.23"
     react-router-dom: "npm:^6.26.0"
     react-sliding-pane: "npm:^7.3.0"
     react-tabs: "npm:^6.0.2"
@@ -11926,13 +11926,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-resizable-panels@npm:^2.0.22":
-  version: 2.0.22
-  resolution: "react-resizable-panels@npm:2.0.22"
+"react-resizable-panels@npm:^2.0.23":
+  version: 2.0.23
+  resolution: "react-resizable-panels@npm:2.0.23"
   peerDependencies:
     react: ^16.14.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.14.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/03a177fd3c381c30fbd615a189d665f2a2236b200e26e977a0540276fee9f26010ff81906ae4aec249d9b82653c17d59d4d38b245a6ffab13c8dc4e8f536a178
+  checksum: 10c0/74bcfb4952bda2e8f3e780891fde27da2be9ec3ae0e6d5efa45edd2ae566b3867bb715da887a563f9f110af495d0c02f818e24991d2f30604079421995dc9f1a
   languageName: node
   linkType: hard
 
