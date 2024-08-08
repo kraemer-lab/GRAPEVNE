@@ -2355,7 +2355,6 @@ __metadata:
     jszip: "npm:^3.10.1"
     prettier: "npm:^3.3.3"
     prettier-plugin-organize-imports: "npm:^4.0.0"
-    python-shell: "npm:^5.0.0"
     selenium-webdriver: "npm:^4.23.0"
     shelljs: "npm:^0.8.5"
     ts-jest: "npm:^29.2.4"
@@ -8412,13 +8411,6 @@ __metadata:
   version: 6.1.0
   resolution: "pure-rand@npm:6.1.0"
   checksum: 10c0/1abe217897bf74dcb3a0c9aba3555fe975023147b48db540aa2faf507aee91c03bf54f6aef0eb2bf59cc259a16d06b28eca37f0dc426d94f4692aeff02fb0e65
-  languageName: node
-  linkType: hard
-
-"python-shell@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "python-shell@npm:5.0.0"
-  checksum: 10c0/5db210839c57db62f13e38c3c71ebedc3ea36d3c767addbed40362597d82de06f536468ed83298b6b80d245d86a02984b0ee1297430c32dc7959b4bfc189fede
   languageName: node
   linkType: hard
 
