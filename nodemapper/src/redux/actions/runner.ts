@@ -14,9 +14,9 @@ export const runnerLaunchSnakefile = createAction('runner/launch-snakefile');
 export const runnerStoreJobStatus = createAction<string>('runner/store-job-status');
 export const runnerUpdateStatusText = createAction<string>('runner/update-status-text');
 export const runnerLoadSnakefile = createAction<string>('runner/load-snakefile');
-export const runnerNodeSelected = createAction<Record<string, any> | undefined>( // eslint-disable-line @typescript-eslint/no-explicit-any
+export const runnerNodeSelected = createAction<Record<string, any> | undefined>(
   'runner/node-selected',
 );
-export const runnerNodeDeselected = createAction<
-  Record<string, any> | undefined // eslint-disable-line @typescript-eslint/no-explicit-any
->('runner/node-deselected');
+export const runnerNodeDeselected = createAction<Record<string, any> | undefined>(
+  'runner/node-deselected',
+);

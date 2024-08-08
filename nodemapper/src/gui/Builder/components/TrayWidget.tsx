@@ -13,8 +13,6 @@ interface ItemProps {
   children: ReactNode;
 }
 
-export class TrayWidget extends React.Component<ItemProps> {
-  render() {
-    return <Tray>{this.props.children}</Tray>;
-  }
-}
+export const TrayWidget = (props: ItemProps) => {
+  return <Tray>{props.children}</Tray>;
+};

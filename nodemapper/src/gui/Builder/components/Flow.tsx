@@ -45,7 +45,7 @@ import Button from '@mui/material/Button';
 import 'reactflow/dist/style.css';
 import ContextMenu from './ContextMenu';
 import './flow.css';
-import styles from './flow.module.css';
+import * as styles from './flow.module.css';
 
 import dagre from 'dagre';
 

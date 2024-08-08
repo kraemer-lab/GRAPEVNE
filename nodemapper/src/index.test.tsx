@@ -9,7 +9,8 @@ import { render } from '@testing-library/react';
 import App from './gui/App';
 
 // Polyfill ResizeObserver which otherwise throws an error in tests
-global.ResizeObserver = require('resize-observer-polyfill');
+import * as polyfill from 'resize-observer-polyfill';
+global.ResizeObserver = polyfill.default;
 
 test('code quality', () => {
   render(

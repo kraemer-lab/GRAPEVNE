@@ -1,14 +1,10 @@
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
-import Store from 'electron-store';
 // import * as pty from 'node-pty';
 import path from 'path';
 import * as handles from './handles';
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
-
-// Set up electron-store (persistent local configuration)
-const store = new Store();
 
 // Create electon window
 const createWindow = () => {
@@ -112,10 +108,10 @@ app.whenReady().then(() => {
     handles.display_FolderInfo(event, data, stderr_callback),
   );
   ipcMain.handle('display/store-read-config', (event: Event) =>
-    handles.display_StoreReadConfig(event, store),
+    handles.display_StoreReadConfig(event),
   );
   ipcMain.handle('display/store-write-config', (event: Event, data: Query) =>
-    handles.display_StoreWriteConfig(event, store, data),
+    handles.display_StoreWriteConfig(event, data),
   );
   ipcMain.handle('display/select-folder', (event: Event, path: string) =>
     handles.display_SelectFolder(event, path, win),

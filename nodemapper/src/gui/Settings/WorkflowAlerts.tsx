@@ -1,11 +1,11 @@
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
+import { useTheme } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import Alert from '@mui/material/Alert';
-import { useTheme } from '@mui/material/styles';
 import React from 'react';
 import {
   builderSetWorkflowAlertsEmailPassword,

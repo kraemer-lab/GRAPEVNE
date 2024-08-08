@@ -6,7 +6,7 @@ import RepoBrowser from './components/RepoBrowser';
 
 import { Panel, PanelGroup } from 'react-resizable-panels';
 import ResizeHandle from './components/ResizeHandle';
-import styles from './components/styles.module.css';
+import * as styles from './components/styles.module.css';
 
 import { Box } from '@mui/material';
 import { useAppSelector } from 'redux/store/hooks';

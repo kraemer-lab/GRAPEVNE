@@ -1,11 +1,15 @@
 import axios from 'axios';
-import Store from 'electron-store';
 import fs from 'fs';
 import web from './web';
 
 import { dialog, IpcMainInvokeEvent, shell } from 'electron';
 import { Build, CondaSearch, INewModuleState } from './newmodule';
 import { ProcessQuery, RunWorkflow } from './pyrunner';
+
+async function loadStore() {
+  const { default: Store } = await import('electron-store');
+  return new Store();
+}
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
@@ -65,14 +69,16 @@ export async function display_FolderInfo(
   return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function display_StoreReadConfig(event: Event, store: Store) {
+export async function display_StoreReadConfig(event: Event) {
   // Set up electron-store (persistent local configuration)
+  const store = await loadStore();
   const config = store.get('config');
   return config;
 }
 
-export async function display_StoreWriteConfig(event: Event, store: Store, data: Query) {
+export async function display_StoreWriteConfig(event: Event, data: Query) {
   // Set up electron-store (persistent local configuration)
+  const store = await loadStore();
   store.set('config', data);
   return store.get('config');
 }
