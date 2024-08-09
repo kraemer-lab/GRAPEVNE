@@ -15,6 +15,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { CSSObject, Theme, styled } from '@mui/material/styles';
 import * as React from 'react';
+import { builderSetTerminalMounted } from 'redux/actions';
+import { useAppDispatch } from 'redux/store/hooks';
 import Builder from './Builder/Builder';
 import ModuleEditor from './ModuleEditor/ModuleEditor';
 import Settings from './Settings/Settings';
@@ -107,15 +109,17 @@ const NavItem = ({
   );
 };
 
-export default function Navigation() {
+const Navigation = () => {
   const [open, setOpen] = React.useState(false);
   const [selected, setSelected] = React.useState('Canvas');
+  const dispatch = useAppDispatch();
 
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     text: string,
   ) => {
     setSelected(text);
+    dispatch(builderSetTerminalMounted(false)); // permit terminal to reload
   };
 
   const ContentPicker = () => {
@@ -185,4 +189,6 @@ export default function Navigation() {
       </Box>
     </Box>
   );
-}
+};
+
+export default Navigation;

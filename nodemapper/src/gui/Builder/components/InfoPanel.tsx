@@ -1,5 +1,8 @@
+import { FitAddon } from '@xterm/addon-fit';
 import React from 'react';
+import { Terminal } from 'xterm';
 import Logger from './Logger';
+import TerminalWindow from './TerminalWindow';
 
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
@@ -26,17 +29,17 @@ const TabPanel = (props: TabPanelProps) => {
       }}
       {...other}
     >
-      {value === index && (
-        <Box
-          sx={{
-            width: '100%',
-            height: '100%',
-            p: 0,
-          }}
-        >
-          {children}
-        </Box>
-      )}
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          p: 0,
+          background: value === 1 ? 'black' : 'default',
+        }}
+        hidden={value !== index}
+      >
+        {children}
+      </Box>
     </Box>
   );
 };
@@ -48,12 +51,21 @@ const tabProps = (index: number) => {
   };
 };
 
-const InfoPanel = () => {
-  //const terminal_visible = useAppSelector((state) => state.builder.terminal_visibile);
+interface IInfoPanel {
+  terminal: Terminal;
+  fitAddon: FitAddon;
+}
 
+const InfoPanel = (props: IInfoPanel) => {
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+    setTimeout(() => {
+      props.fitAddon.fit();
+    }, 10); // Near-instant resize
+    setTimeout(() => {
+      props.fitAddon.fit();
+    }, 100); // Slower resize
   };
 
   return (
@@ -61,11 +73,15 @@ const InfoPanel = () => {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="footer tabs">
           <Tab label="Log" {...tabProps(0)} />
+          <Tab label="Terminal" {...tabProps(1)} />
         </Tabs>
       </Box>
-      <Box sx={{ alignItems: 'stretch', height: '100%' }}>
+      <Box sx={{ alignItems: 'stretch', height: '100%', overflowY: 'hidden' }}>
         <TabPanel value={value} index={0}>
           <Logger />
+        </TabPanel>
+        <TabPanel value={value} index={1}>
+          <TerminalWindow terminal={props.terminal} />
         </TabPanel>
       </Box>
     </Box>

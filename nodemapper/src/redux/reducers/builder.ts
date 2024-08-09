@@ -43,13 +43,13 @@ export interface IBuilderState {
   nodeinfo: string;
   modules_list: string;
   can_selected_expand: boolean;
-  terminal_visibile: boolean;
   config_pane_display: string;
   logtext: string;
   workdir: string;
   modules_loading: boolean;
   build_in_progress: boolean;
   configfiles_list: string[];
+  terminal_mounted: boolean;
 
   // react-flow parameters
   nodes: Node[];
@@ -78,7 +78,6 @@ const builderStateInit: IBuilderState = {
   statustext: 'Idle',
   nodeinfo: '{}', // {} required to be a valid JSON string
   can_selected_expand: true,
-  terminal_visibile: false,
   config_pane_display: ConfigPaneDisplay.None,
   logtext: ' ',
   modules_list: '[]',
@@ -86,6 +85,7 @@ const builderStateInit: IBuilderState = {
   modules_loading: false,
   build_in_progress: false,
   configfiles_list: [],
+  terminal_mounted: false,
 
   // react-flow parameters
   nodes: default_nodes,
@@ -223,14 +223,6 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       state.repositories = action.payload as IRepo[];
       console.info('[Reducer] ' + action.type);
     })
-    .addCase(actions.builderToggleTerminalVisibility, (state, action) => {
-      state.terminal_visibile = !state.terminal_visibile;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderOpenTerminal, (state, action) => {
-      state.terminal_visibile = true;
-      console.info('[Reducer] ' + action.type);
-    })
     .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
       state.snakemake_args = action.payload;
       console.info('[Reducer] ' + action.type);
@@ -348,6 +340,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetConfigFiles, (state, action) => {
       state.configfiles_list = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetTerminalMounted, (state, action) => {
+      state.terminal_mounted = action.payload;
       console.info('[Reducer] ' + action.type);
     });
 });

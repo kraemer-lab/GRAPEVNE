@@ -24,7 +24,6 @@ export const builderToggleAutoValidateConnections = createAction(
 export const builderBuildAsModule = createAction('builder/build-as-module');
 export const builderBuildAsWorkflow = createAction('builder/build-as-workflow');
 export const builderPackageWorkflow = createAction('builder/package-workflow');
-export const builderOpenTerminal = createAction('builder/open-terminal');
 export const builderBuildAndRun = createAction('builder/build-and-run');
 export const builderBuildAndRunToModule = createAction<string>('builder/build-and-run-to-module');
 export const builderBuildAndForceRunToModule = createAction<string>(
@@ -33,7 +32,6 @@ export const builderBuildAndForceRunToModule = createAction<string>(
 export const builderCleanBuildFolder = createAction('builder/clean-build-folder');
 export const builderGetRemoteModules = createAction('builder/get-remote-modules');
 
-export const builderToggleTerminalVisibility = createAction('builder/toggle-terminal-visibility');
 export const builderSetDisplayModuleSettings = createAction<boolean>(
   'builder/set-display-module-settings',
 );
@@ -115,3 +113,4 @@ export const builderSetModulesLoading = createAction<boolean>('builder/set-modul
 export const builderSetHideParamsInModuleInfo = createAction<boolean>(
   'builder/set-hide-params-in-module-info',
 );
+export const builderSetTerminalMounted = createAction<boolean>('builder/set-terminal-mounted');
