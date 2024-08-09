@@ -3,7 +3,7 @@ type Query = Record<string, unknown>;
 
 export type TerminalAPI = {
   sendData: (data: string) => void;
-  receiveData: (callback: (event: Event, data: Query) => void) => void;
+  receiveData: (callback: (event: Event, data: string) => void) => void;
 };
 
 export type DisplayAPI = {

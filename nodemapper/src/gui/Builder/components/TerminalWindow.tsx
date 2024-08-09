@@ -1,33 +1,56 @@
-import Box from '@mui/material/Box';
-import TerminalController from 'Terminal/TerminalController';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { builderSetTerminalMounted } from 'redux/actions/builder';
+import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-class TerminalWindow extends React.Component {
-  terminal: TerminalController;
-  xtermRef: React.RefObject<HTMLDivElement>;
+import 'xterm/css/xterm.css';
 
-  constructor(props) {
-    super(props);
-    this.terminal = TerminalController.Instance; // singleton instance
-    this.xtermRef = React.createRef();
-    this.terminal.setReference(this.xtermRef);
+const terminalAPI = window.terminalAPI;
+
+// local switch permits interactivity; global switch can be set to permit reloading
+let terminal_mounted = false;
+
+const TerminalWindow = (props) => {
+  const xtermRef = useRef(null);
+  const dispatch = useAppDispatch();
+  const terminal_mounted_global = useAppSelector((state) => state.builder.terminal_mounted);
+  if (!terminal_mounted_global) {
+    terminal_mounted = false;
   }
 
-  componentDidMount() {
-    this.terminal.init();
-  }
+  useEffect(() => {
+    console.log('TerminalWindow: useEffect');
+    if (terminal_mounted) return;
+    if (!props.terminal || !xtermRef.current) return;
 
-  render() {
-    return (
-      <Box
-        ref={this.xtermRef}
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-      />
-    );
-  }
-}
+    const terminal = props.terminal;
+    terminal.open(xtermRef.current);
+
+    terminalAPI.sendData('clear\r\n');
+
+    terminal.onData((data) => {
+      terminalAPI.sendData(data);
+    });
+    terminalAPI.receiveData((event, data) => {
+      terminal.write(data);
+    });
+
+    terminal_mounted = true;
+    dispatch(builderSetTerminalMounted(true));
+
+    return () => {
+      // Cleanup
+    };
+  }, [props.terminal]);
+
+  return (
+    <div
+      ref={xtermRef}
+      style={{
+        width: '100%',
+        height: '100%',
+      }}
+    />
+  );
+};
 
 export default TerminalWindow;
