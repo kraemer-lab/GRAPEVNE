@@ -1,7 +1,10 @@
 import React from 'react';
 import { Box } from '@mui/material';
+import { useAppSelector } from 'redux/store/hooks';
 
 const Vineyard = () => {
+  const vneyard_url = useAppSelector((state) => state.builder.vneyard_url);
+
   return (
     <Box
       sx={{
@@ -11,7 +14,7 @@ const Vineyard = () => {
       }}
     >
       <iframe
-        src="https://kraemer-lab.github.io/vneyard/"
+        src={vneyard_url}
         style={{
           width: '100%',
           height: '100%',

@@ -66,6 +66,7 @@ export interface IBuilderState {
   hide_params_in_module_info: boolean;
   dark_mode: boolean;
   workflow_alerts: IWorkflowAlerts;
+  vneyard_url: string;
 }
 
 // Defaults
@@ -135,6 +136,7 @@ const builderStateInit: IBuilderState = {
       },
     },
   },
+  vneyard_url: 'https://kraemer-lab.github.io/vneyard/',
 };
 
 // Nodemap
