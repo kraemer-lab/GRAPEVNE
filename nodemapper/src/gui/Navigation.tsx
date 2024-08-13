@@ -3,6 +3,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import BuildIcon from '@mui/icons-material/Schema';
 import SettingsIcon from '@mui/icons-material/Settings';
+import VneyardIcon from '@mui/icons-material/Storage';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
@@ -16,6 +17,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { CSSObject, Theme, styled } from '@mui/material/styles';
 import * as React from 'react';
 import Builder from './Builder/Builder';
+import Vneyard from './Vneyard/Vneyard';
 import ModuleEditor from './ModuleEditor/ModuleEditor';
 import Settings from './Settings/Settings';
 
@@ -122,6 +124,8 @@ export default function Navigation() {
     switch (selected) {
       case 'Canvas':
         return <Builder />;
+      case 'Vneyard':
+        return <Vneyard />;
       case 'Settings':
         return <Settings />;
       case 'Module Editor':
@@ -147,6 +151,16 @@ export default function Navigation() {
             id="btnSidenavBuilder"
             text="Canvas"
             Icon={BuildIcon}
+            open={open}
+            onClick={handleListItemClick}
+          />
+        </List>
+        <Divider />
+        <List>
+          <NavItem
+            id="btnSidenavVneyard"
+            text="Vneyard"
+            Icon={VneyardIcon}
             open={open}
             onClick={handleListItemClick}
           />
