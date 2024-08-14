@@ -14,7 +14,7 @@ const Vineyard = () => {
       }}
     >
       <iframe
-        src={vneyard_url}
+        src={vneyard_url + '?no-cache=' + new Date().getTime() /* prevents caching */}
         style={{
           width: '100%',
           height: '100%',
