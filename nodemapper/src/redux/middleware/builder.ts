@@ -12,6 +12,7 @@ import {
   builderUpdateStatusText,
   builderUpdateWorkdir,
 } from 'redux/actions';
+import { IState } from 'redux/reducers';
 
 import { Node } from 'NodeMap/scene/Flow';
 import {
@@ -37,6 +38,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
       if (action.type.split('/')[0] === 'builder') {
         console.log('Middleware [builder]: ', action);
       }
+      const state = getState() as IState;
       switch (action.type) {
         case 'builder/build-as-module':
           BuildAs({
@@ -44,13 +46,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             builder_api_fcn: builderAPI.BuildAsModule,
             dispatchBool: dispatch,
             dispatchString: dispatch,
-            snakemake_args: getState().builder.snakemake_args,
-            snakemake_backend: getState().builder.snakemake_backend,
-            conda_backend: getState().builder.conda_backend,
-            environment_variables: getState().builder.environment_variables,
+            snakemake_args: state.settings.snakemake_args,
+            snakemake_backend: state.settings.snakemake_backend,
+            conda_backend: state.settings.conda_backend,
+            environment_variables: state.settings.environment_variables,
             package_modules: false,
-            nodes: getState().builder.nodes,
-            edges: getState().builder.edges,
+            nodes: state.builder.nodes,
+            edges: state.builder.edges,
             workflow_alerts: {}, // Don't pass alerts for module builds
           });
           break;
@@ -61,14 +63,14 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             builder_api_fcn: builderAPI.BuildAsWorkflow,
             dispatchBool: dispatch,
             dispatchString: dispatch,
-            snakemake_args: getState().builder.snakemake_args,
-            snakemake_backend: getState().builder.snakemake_backend,
-            conda_backend: getState().builder.conda_backend,
-            environment_variables: getState().builder.environment_variables,
+            snakemake_args: state.settings.snakemake_args,
+            snakemake_backend: state.settings.snakemake_backend,
+            conda_backend: state.settings.conda_backend,
+            environment_variables: state.settings.environment_variables,
             package_modules: false,
-            nodes: getState().builder.nodes,
-            edges: getState().builder.edges,
-            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
+            nodes: state.builder.nodes,
+            edges: state.builder.edges,
+            workflow_alerts: GetWorkflowAlerts(state.settings.workflow_alerts),
           });
           break;
 
@@ -78,14 +80,14 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             builder_api_fcn: builderAPI.BuildAsWorkflow,
             dispatchBool: dispatch,
             dispatchString: dispatch,
-            snakemake_args: getState().builder.snakemake_args,
-            snakemake_backend: getState().builder.snakemake_backend,
-            conda_backend: getState().builder.conda_backend,
-            environment_variables: getState().builder.environment_variables,
+            snakemake_args: state.settings.snakemake_args,
+            snakemake_backend: state.settings.snakemake_backend,
+            conda_backend: state.settings.conda_backend,
+            environment_variables: state.settings.environment_variables,
             package_modules: true,
-            nodes: getState().builder.nodes,
-            edges: getState().builder.edges,
-            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
+            nodes: state.builder.nodes,
+            edges: state.builder.edges,
+            workflow_alerts: GetWorkflowAlerts(state.settings.workflow_alerts),
           });
           break;
 
@@ -93,13 +95,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           BuildAndRun({
             dispatchBool: dispatch,
             dispatchString: dispatch,
-            snakemake_args: getState().builder.snakemake_args,
-            snakemake_backend: getState().builder.snakemake_backend,
-            conda_backend: getState().builder.conda_backend,
-            environment_variables: getState().builder.environment_variables,
-            nodes: getState().builder.nodes,
-            edges: getState().builder.edges,
-            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
+            snakemake_args: state.settings.snakemake_args,
+            snakemake_backend: state.settings.snakemake_backend,
+            conda_backend: state.settings.conda_backend,
+            environment_variables: state.settings.environment_variables,
+            nodes: state.builder.nodes,
+            edges: state.builder.edges,
+            workflow_alerts: GetWorkflowAlerts(state.settings.workflow_alerts),
           });
           break;
 
@@ -108,13 +110,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             nodename: action.payload,
             dispatchBool: dispatch,
             dispatchString: dispatch,
-            snakemake_args: getState().builder.snakemake_args,
-            snakemake_backend: getState().builder.snakemake_backend,
-            conda_backend: getState().builder.conda_backend,
-            environment_variables: getState().builder.environment_variables,
-            nodes: getState().builder.nodes,
-            edges: getState().builder.edges,
-            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
+            snakemake_args: state.settings.snakemake_args,
+            snakemake_backend: state.settings.snakemake_backend,
+            conda_backend: state.settings.conda_backend,
+            environment_variables: state.settings.environment_variables,
+            nodes: state.builder.nodes,
+            edges: state.builder.edges,
+            workflow_alerts: GetWorkflowAlerts(state.settings.workflow_alerts),
           });
           break;
 
@@ -123,13 +125,13 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             nodename: action.payload,
             dispatchBool: dispatch,
             dispatchString: dispatch,
-            snakemake_args: getState().builder.snakemake_args,
-            snakemake_backend: getState().builder.snakemake_backend,
-            conda_backend: getState().builder.conda_backend,
-            environment_variables: getState().builder.environment_variables,
-            nodes: getState().builder.nodes,
-            edges: getState().builder.edges,
-            workflow_alerts: GetWorkflowAlerts(getState().builder.workflow_alerts),
+            snakemake_args: state.settings.snakemake_args,
+            snakemake_backend: state.settings.snakemake_backend,
+            conda_backend: state.settings.conda_backend,
+            environment_variables: state.settings.environment_variables,
+            nodes: state.builder.nodes,
+            edges: state.builder.edges,
+            workflow_alerts: GetWorkflowAlerts(state.settings.workflow_alerts),
           });
           break;
 
@@ -143,11 +145,11 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case 'builder/check-node-dependencies':
           CheckNodeDependencies({
             nodename: action.payload,
-            nodes: getState().builder.nodes,
-            edges: getState().builder.edges,
+            nodes: state.builder.nodes,
+            edges: state.builder.edges,
             dispatchString: dispatch,
             dispatchNodeList: dispatch,
-            snakemake_backend: getState().builder.snakemake_backend,
+            snakemake_backend: state.settings.snakemake_backend,
           });
           break;
 
@@ -161,7 +163,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case 'builder/node-selected-by-id':
           NodeSelectedByID({
             id: action.payload,
-            nodes: getState().builder.nodes,
+            nodes: state.builder.nodes,
             dispatchString: dispatch,
           });
           break;
@@ -174,8 +176,8 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateNodeInfoKey({
             action: action,
             dispatch: dispatch,
-            nodeinfo: JSON.parse(getState().builder.nodeinfo),
-            nodes: getState().builder.nodes,
+            nodeinfo: JSON.parse(state.builder.nodeinfo),
+            nodes: state.builder.nodes,
           });
           break;
 
@@ -183,8 +185,8 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           UpdateNodeInfoName({
             action: action,
             dispatch: dispatch,
-            nodeinfo: JSON.parse(getState().builder.nodeinfo),
-            nodes: getState().builder.nodes,
+            nodeinfo: JSON.parse(state.builder.nodeinfo),
+            nodes: state.builder.nodes,
           });
           break;
 
@@ -192,7 +194,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           GetRemoteModules({
             dispatchString: dispatch,
             dispatchBool: dispatch,
-            repo: getState().builder.repositories,
+            repo: state.settings.repositories,
           });
           break;
 
@@ -209,7 +211,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
 
         case 'builder/open-results-folder':
           OpenResultsFolder({
-            workdir: getState().builder.workdir,
+            workdir: state.builder.workdir,
           });
           break;
 
@@ -224,17 +226,17 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case 'builder/save-scene':
           SaveScene({
             dispatch: dispatch,
-            nodes: getState().builder.nodes,
-            edges: getState().builder.edges,
+            nodes: state.builder.nodes,
+            edges: state.builder.edges,
           });
           break;
 
         case 'builder/export-as-png':
-          ExportAsPNG(getState().builder.nodes);
+          ExportAsPNG(state.builder.nodes);
           break;
 
         case 'builder/export-as-svg':
-          ExportAsSVG(getState().builder.nodes);
+          ExportAsSVG(state.builder.nodes);
           break;
 
         default:
@@ -254,7 +256,6 @@ interface IPayloadRecord {
   payload: Query;
   type: string;
 }
-type TPayloadRecord = (action: IPayloadRecord) => void;
 
 interface IPayloadString {
   payload: string;
@@ -787,11 +788,11 @@ const SaveScene = ({ dispatch, nodes, edges }: ISaveScene) => {
   dispatch(builderUpdateStatusText('Scene saved.'));
 };
 
-const GetWorkflowAlerts = (alerts: Query) => {
+const GetWorkflowAlerts = (alerts: IState['settings']['workflow_alerts']) => {
   if (
     alerts['email_settings'] === undefined ||
     alerts['email_settings']['smtp_server'] === '' ||
-    alerts['email_settings']['smtp_port'] === ''
+    alerts['email_settings']['smtp_port'] !== 0
   ) {
     // Email settings are not set
     console.log('Email settings are not set.');

@@ -1,7 +1,15 @@
 import { createReducer } from '@reduxjs/toolkit';
 import * as action from '../actions';
 
-const displayStateInit = {
+export interface IDisplayState {
+  graph_is_moveable: boolean;
+  nodeinfo: string;
+  filename: string;
+  folderinfo: string;
+  statustext: string;
+}
+
+const displayStateInit: IDisplayState = {
   graph_is_moveable: false,
   nodeinfo: '',
   filename: '',

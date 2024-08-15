@@ -1,4 +1,5 @@
 import { settingsUpdateSettings } from 'redux/actions';
+import { IState } from 'redux/reducers';
 
 const settingsAPI = window.settingsAPI;
 
@@ -9,12 +10,13 @@ export const settingsMiddleware = ({ getState, dispatch }) => {
       if (action.type.split('/')[0] === 'settings') {
         console.log('Middleware [settings]: ', action);
       }
+      const state = getState() as IState;
       switch (action.type) {
         case 'settings/read-store-config':
           ReadStoreConfig(dispatch);
           break;
         case 'settings/write-store-config':
-          WriteStoreConfig(getState().settings);
+          WriteStoreConfig(state.settings);
           break;
         default:
           break;

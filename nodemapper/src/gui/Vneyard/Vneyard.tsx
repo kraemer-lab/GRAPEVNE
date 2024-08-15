@@ -3,7 +3,7 @@ import React from 'react';
 import { useAppSelector } from 'redux/store/hooks';
 
 const Vineyard = () => {
-  const vneyard_url = useAppSelector((state) => state.builder.vneyard_url);
+  const vneyard_url = useAppSelector((state) => state.settings.vneyard_url);
 
   return (
     <Box

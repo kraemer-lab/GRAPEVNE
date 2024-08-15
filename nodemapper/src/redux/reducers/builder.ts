@@ -54,19 +54,6 @@ export interface IBuilderState {
   // react-flow parameters
   nodes: Node[];
   edges: Edge[];
-
-  // Settings -- TODO: Move to separate reducer
-  repositories: IRepo[];
-  snakemake_backend: string;
-  snakemake_args: string;
-  conda_backend: string;
-  environment_variables: string;
-  display_module_settings: boolean;
-  auto_validate_connections: boolean;
-  hide_params_in_module_info: boolean;
-  dark_mode: boolean;
-  workflow_alerts: IWorkflowAlerts;
-  vneyard_url: string;
 }
 
 // Defaults
@@ -91,52 +78,6 @@ const builderStateInit: IBuilderState = {
   // react-flow parameters
   nodes: default_nodes,
   edges: default_edges,
-
-  // Settings -- TODO: Move to separate reducer
-  repositories: [
-    // Default - should be overwritten by local state
-    {
-      active: true,
-      type: 'github', // local | github
-      label: 'Kraemer Lab',
-      listing_type: 'DirectoryListing', // LocalFilesystem | DirectoryListing | BranchListing
-      repo: 'kraemer-lab/vneyard',
-    },
-  ],
-  snakemake_backend: 'builtin', // builtin | system
-  snakemake_args: '--cores 1 --use-conda',
-  conda_backend: 'builtin', // builtin | system
-  environment_variables: '',
-  display_module_settings: false,
-  auto_validate_connections: false,
-  hide_params_in_module_info: true,
-  dark_mode: false,
-  workflow_alerts: {
-    email_settings: {
-      smtp_server: 'smtp.gmail.com',
-      smtp_port: 587,
-      sender: '',
-      username: '',
-      password: '',
-    },
-    onsuccess: {
-      enabled: false,
-      message: {
-        subject: 'Workflow completed successfully',
-        body: 'Workflow completed successfully',
-        recipients: '',
-      },
-    },
-    onerror: {
-      enabled: false,
-      message: {
-        subject: 'Workflow failure',
-        body: 'Workflow failure',
-        recipients: '',
-      },
-    },
-  },
-  vneyard_url: 'https://kraemer-lab.github.io/vneyard/',
 };
 
 // Nodemap

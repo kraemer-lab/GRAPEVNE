@@ -1,4 +1,5 @@
 import { newmoduleEnvCondaSearchUpdatePackageList, newmoduleUpdateResult } from 'redux/actions';
+import { IState } from 'redux/reducers';
 
 type Query = Record<string, unknown>;
 const newmoduleAPI = window.newmoduleAPI;
@@ -10,20 +11,21 @@ export const newmoduleMiddleware = ({ getState, dispatch }) => {
       if (action.type.split('/')[0] === 'builder') {
         console.log('Middleware [builder]: ', action);
       }
+      const state = getState() as IState;
       switch (action.type) {
         case 'newmodule/update-config':
           break;
 
         case 'newmodule/build':
-          Build(getState().newmodule, dispatch);
+          Build(state.newmodule, dispatch);
           break;
 
         case 'newmodule/validate':
-          Validate(getState().newmodule.config);
+          Validate(state.newmodule.config);
           break;
 
         case 'newmodule/open-module-folder':
-          OpenModuleFolder(getState().newmodule.result.folder);
+          OpenModuleFolder(state.newmodule.result.folder);
           break;
 
         case 'newmodule/env-conda-search':

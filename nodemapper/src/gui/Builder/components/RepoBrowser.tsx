@@ -39,7 +39,7 @@ const hash = (s: string) => {
 const RepoBrowser = () => {
   const dispatch = useAppDispatch();
   const modules = useAppSelector((state) => state.builder.modules_list);
-  const repositories = useAppSelector((state) => state.builder.repositories);
+  const repositories = useAppSelector((state) => state.settings.repositories);
   const loading = useAppSelector((state) => state.builder.modules_loading);
 
   const [filterFreetext, setFilterFreetext] = React.useState('');
