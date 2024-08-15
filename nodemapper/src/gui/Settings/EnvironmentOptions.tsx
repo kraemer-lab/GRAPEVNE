@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { builderSetEnvironmentVars } from 'redux/actions';
+import { settingsSetEnvironmentVars } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import Box from '@mui/material/Box';
@@ -10,8 +10,8 @@ import Typography from '@mui/material/Typography';
 const EnvironmentOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
 
-  const environment_vars = useAppSelector((state) => state.builder.environment_variables);
-  const SetEnvironmentVars = (args: string) => dispatch(builderSetEnvironmentVars(args));
+  const environment_vars = useAppSelector((state) => state.settings.environment_variables);
+  const SetEnvironmentVars = (args: string) => dispatch(settingsSetEnvironmentVars(args));
 
   return (
     <Box>

@@ -9,7 +9,6 @@ import {
   builderSetNodes,
   builderUpdateModulesList,
   builderUpdateNodeInfo,
-  builderUpdateSettings,
   builderUpdateStatusText,
   builderUpdateWorkdir,
 } from 'redux/actions';
@@ -28,7 +27,6 @@ import { IRepo } from 'redux/reducers/builder';
 
 type Query = Record<string, unknown>;
 
-const displayAPI = window.displayAPI;
 const builderAPI = window.builderAPI;
 const runnerAPI = window.runnerAPI;
 
@@ -207,14 +205,6 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             dispatch: dispatch,
             text: action.payload,
           });
-          break;
-
-        case 'builder/read-store-config':
-          ReadStoreConfig(dispatch);
-          break;
-
-        case 'builder/write-store-config':
-          WriteStoreConfig(getState().builder);
           break;
 
         case 'builder/open-results-folder':
@@ -714,33 +704,6 @@ const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemo
 const UpdateModulesList = (dispatch: TPayloadString) => {
   // Update list of modules - done in reducer
   dispatch(builderUpdateStatusText(''));
-};
-
-// Write persistent state to electron frontend
-const WriteStoreConfig = async (state) => {
-  displayAPI.StoreWriteConfig({
-    repositories: state.repositories,
-    snakemake_backend: state.snakemake_backend,
-    snakemake_args: state.snakemake_args,
-    conda_backend: state.conda_backend,
-    environment_variables: state.environment_variables,
-    display_module_settings: state.display_module_settings,
-    auto_validate_connections: state.auto_validate_connections,
-    package_modules_in_workflow: state.package_modules_in_workflow,
-    dark_mode: state.dark_mode,
-  });
-};
-
-// Read persistent state from electron frontend
-const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
-  let local_config = {};
-  try {
-    local_config = await displayAPI.StoreReadConfig();
-  } catch (error) {
-    // Error reading local config
-    return;
-  }
-  dispatch(builderUpdateSettings(local_config));
 };
 
 interface IOpenResultsFolder {

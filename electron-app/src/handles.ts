@@ -69,20 +69,6 @@ export async function display_FolderInfo(
   return await SafeProcessQuery(event, query, stderr_callback);
 }
 
-export async function display_StoreReadConfig(event: Event) {
-  // Set up electron-store (persistent local configuration)
-  const store = await loadStore();
-  const config = store.get('config');
-  return config;
-}
-
-export async function display_StoreWriteConfig(event: Event, data: Query) {
-  // Set up electron-store (persistent local configuration)
-  const store = await loadStore();
-  store.set('config', data);
-  return store.get('config');
-}
-
 export async function display_SelectFolder(
   event: Event,
   path: string,
@@ -398,4 +384,22 @@ export async function newmodule_CondaSearch(event: Event, query: Query) {
 export async function newmodule_OpenModuleFolder(event: Event, folder: string) {
   shell.showItemInFolder(folder);
   return { query: 'newmodule/open-module-folder', body: 'OK', returncode: 0 };
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Settings query handlers
+///////////////////////////////////////////////////////////////////////////////
+
+export async function settings_StoreReadConfig(event: Event) {
+  // Set up electron-store (persistent local configuration)
+  const store = await loadStore();
+  const config = store.get('config');
+  return config;
+}
+
+export async function settings_StoreWriteConfig(event: Event, data: Query) {
+  // Set up electron-store (persistent local configuration)
+  const store = await loadStore();
+  store.set('config', data);
+  return store.get('config');
 }

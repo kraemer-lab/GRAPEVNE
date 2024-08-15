@@ -12,8 +12,6 @@ contextBridge.exposeInMainWorld('terminalAPI', {
 
 contextBridge.exposeInMainWorld('displayAPI', {
   FolderInfo: (query: Query) => ipcRenderer.invoke('display/folderinfo', query),
-  StoreReadConfig: () => ipcRenderer.invoke('display/store-read-config'),
-  StoreWriteConfig: (query: Query) => ipcRenderer.invoke('display/store-write-config', query),
   SelectFolder: (path: string) => ipcRenderer.invoke('display/select-folder', path),
   SelectFile: (path: string) => ipcRenderer.invoke('display/select-file', path),
 });
@@ -54,6 +52,11 @@ contextBridge.exposeInMainWorld('newmoduleAPI', {
   Build: (query: Query) => ipcRenderer.invoke('newmodule/build', query),
   CondaSearch: (query: Query) => ipcRenderer.invoke('newmodule/env-conda-search', query),
   OpenModuleFolder: (folder: string) => ipcRenderer.invoke('newmodule/open-module-folder', folder),
+});
+
+contextBridge.exposeInMainWorld('settingsAPI', {
+  StoreReadConfig: () => ipcRenderer.invoke('settings/store-read-config'),
+  StoreWriteConfig: (query: Query) => ipcRenderer.invoke('settings/store-write-config', query),
 });
 
 declare global {

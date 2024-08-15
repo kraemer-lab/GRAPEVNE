@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
-import { builderSelectSnakemakeBackend, builderSetSnakemakeArgs } from 'redux/actions';
+import { settingsSelectSnakemakeBackend, settingsSetSnakemakeArgs } from 'redux/actions';
 
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
@@ -11,11 +11,11 @@ import Typography from '@mui/material/Typography';
 
 const SnakemakeOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
-  const snakemake_backend = useAppSelector((state) => state.builder.snakemake_backend);
-  const snakemake_args = useAppSelector((state) => state.builder.snakemake_args);
+  const snakemake_backend = useAppSelector((state) => state.settings.snakemake_backend);
+  const snakemake_args = useAppSelector((state) => state.settings.snakemake_args);
 
-  const selectSnakemakeBackend = (value: string) => dispatch(builderSelectSnakemakeBackend(value));
-  const SetSnakemakeArgs = (args: string) => dispatch(builderSetSnakemakeArgs(args));
+  const selectSnakemakeBackend = (value: string) => dispatch(settingsSelectSnakemakeBackend(value));
+  const SetSnakemakeArgs = (args: string) => dispatch(settingsSetSnakemakeArgs(args));
 
   return (
     <Box>

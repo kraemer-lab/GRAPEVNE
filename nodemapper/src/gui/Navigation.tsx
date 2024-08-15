@@ -19,9 +19,9 @@ import * as React from 'react';
 import { builderSetTerminalMounted } from 'redux/actions';
 import { useAppDispatch } from 'redux/store/hooks';
 import Builder from './Builder/Builder';
-import Vneyard from './Vneyard/Vneyard';
 import ModuleEditor from './ModuleEditor/ModuleEditor';
 import Settings from './Settings/Settings';
+import Vneyard from './Vneyard/Vneyard';
 
 const drawerWidth = 200;
 

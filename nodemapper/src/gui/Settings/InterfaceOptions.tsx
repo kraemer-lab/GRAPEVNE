@@ -2,9 +2,9 @@ import React from 'react';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import {
-  builderSetAutoValidateConnections,
-  builderSetDisplayModuleSettings,
-  builderSetHideParamsInModuleInfo,
+  settingsSetAutoValidateConnections,
+  settingsSetDisplayModuleSettings,
+  settingsSetHideParamsInModuleInfo,
 } from 'redux/actions';
 
 import Checkbox from '@mui/material/Checkbox';
@@ -15,23 +15,23 @@ import Typography from '@mui/material/Typography';
 const InterfaceOptions = () => {
   const dispatch = useAppDispatch();
 
-  const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
+  const display_module_settings = useAppSelector((state) => state.settings.display_module_settings);
   const SetDisplayModuleSettings = (value: boolean) => {
-    dispatch(builderSetDisplayModuleSettings(value));
-    dispatch(builderSetHideParamsInModuleInfo(!value));
+    dispatch(settingsSetDisplayModuleSettings(value));
+    dispatch(settingsSetHideParamsInModuleInfo(!value));
   };
 
   const hide_params_in_module_info = useAppSelector(
-    (state) => state.builder.hide_params_in_module_info,
+    (state) => state.settings.hide_params_in_module_info,
   );
   const SetHideParamsInModuleInfo = (value: boolean) =>
-    dispatch(builderSetHideParamsInModuleInfo(value));
+    dispatch(settingsSetHideParamsInModuleInfo(value));
 
   const auto_validate_connections = useAppSelector(
-    (state) => state.builder.auto_validate_connections,
+    (state) => state.settings.auto_validate_connections,
   );
   const SetAutoValidateConnections = (value: boolean) =>
-    dispatch(builderSetAutoValidateConnections(value));
+    dispatch(settingsSetAutoValidateConnections(value));
 
   return (
     <>

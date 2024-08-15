@@ -2,9 +2,9 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
-import { builderLogEvent, builderSetRepositoryTarget } from 'redux/actions';
+import { builderLogEvent, settingsSetRepositoryTarget } from 'redux/actions';
 import { getMasterRepoListURL } from 'redux/globals';
-import { IRepo } from 'redux/reducers/builder';
+import { IRepo } from 'redux/reducers/settings';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -19,7 +19,7 @@ const displayAPI = window.displayAPI;
 
 const RepoOptions = () => {
   const dispatch = useAppDispatch();
-  const repoSettings = useAppSelector((state) => state.builder.repositories as IRepo[]);
+  const repoSettings = useAppSelector((state) => state.settings.repositories as IRepo[]);
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
   const containerRef = useRef(null);
 
@@ -153,7 +153,7 @@ const RepoOptions = () => {
         repo: '', // github repo or local path
       },
     ];
-    dispatch(builderSetRepositoryTarget(newRepoSettings));
+    dispatch(settingsSetRepositoryTarget(newRepoSettings));
   };
 
   const NextLabel = () => {
@@ -181,7 +181,7 @@ const RepoOptions = () => {
       listing_type: 'DirectoryListing',
       repo: repo.url,
     }));
-    dispatch(builderSetRepositoryTarget(newRepoSettings));
+    dispatch(settingsSetRepositoryTarget(newRepoSettings));
   };
 
   const ReloadMasterList = () => {
@@ -201,7 +201,7 @@ const RepoOptions = () => {
     getMasterRepoList().then((data) => {
       if (data) {
         console.log('Master repo list: ', data);
-        dispatch(builderSetRepositoryTarget(data));
+        dispatch(settingsSetRepositoryTarget(data));
       }
     });
   };

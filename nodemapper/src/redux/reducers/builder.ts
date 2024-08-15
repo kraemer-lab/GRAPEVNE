@@ -221,59 +221,12 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     .addCase(actions.builderUpdateNodeInfoKey, (state, action) => {
       console.info('[Reducer] ' + action.type);
     })
-    .addCase(actions.builderSetRepositoryTarget, (state, action) => {
-      state.repositories = action.payload as IRepo[];
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetSnakemakeArgs, (state, action) => {
-      state.snakemake_args = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetDisplayModuleSettings, (state, action) => {
-      state.display_module_settings = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetHideParamsInModuleInfo, (state, action) => {
-      state.hide_params_in_module_info = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetAutoValidateConnections, (state, action) => {
-      state.auto_validate_connections = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderToggleAutoValidateConnections, (state, action) => {
-      state.auto_validate_connections = !state.auto_validate_connections;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSelectSnakemakeBackend, (state, action) => {
-      state.snakemake_backend = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSelectCondaBackend, (state, action) => {
-      state.conda_backend = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetEnvironmentVars, (state, action) => {
-      state.environment_variables = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
     .addCase(actions.builderLogEvent, (state, action) => {
       let text = '';
       if (typeof action.payload === 'string') text = action.payload;
       else if ('msg' in action.payload) text = action.payload['msg'];
       else text = 'WARNING: Unknown log format';
       addLogEvent(state, text);
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderUpdateSettings, (state, action) => {
-      const local_config = action.payload as Record<string, unknown>;
-      for (const key in local_config) {
-        state[key] = local_config[key];
-      }
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderToggleDarkMode, (state, action) => {
-      state.dark_mode = !state.dark_mode;
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateWorkdir, (state, action) => {
@@ -286,58 +239,6 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderBuildInProgress, (state, action) => {
       state.build_in_progress = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderToggleWorkflowAlertOnSuccessEnabled, (state, action) => {
-      state.workflow_alerts.onsuccess.enabled = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderToggleWorkflowAlertOnErrorEnabled, (state, action) => {
-      state.workflow_alerts.onerror.enabled = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsEmailSMTPServer, (state, action) => {
-      state.workflow_alerts.email_settings.smtp_server = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsEmailSMTPPort, (state, action) => {
-      state.workflow_alerts.email_settings.smtp_port = parseInt(action.payload);
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsEmailSender, (state, action) => {
-      state.workflow_alerts.email_settings.sender = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsEmailUsername, (state, action) => {
-      state.workflow_alerts.email_settings.username = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsEmailPassword, (state, action) => {
-      state.workflow_alerts.email_settings.password = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsOnSuccessSubject, (state, action) => {
-      state.workflow_alerts.onsuccess.message.subject = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsOnSuccessBody, (state, action) => {
-      state.workflow_alerts.onsuccess.message.body = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsOnSuccessRecipients, (state, action) => {
-      state.workflow_alerts.onsuccess.message.recipients = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsOnErrorSubject, (state, action) => {
-      state.workflow_alerts.onerror.message.subject = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsOnErrorBody, (state, action) => {
-      state.workflow_alerts.onerror.message.body = action.payload;
-      console.info('[Reducer] ' + action.type);
-    })
-    .addCase(actions.builderSetWorkflowAlertsOnErrorRecipients, (state, action) => {
-      state.workflow_alerts.onerror.message.recipients = action.payload;
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderSetConfigFiles, (state, action) => {
