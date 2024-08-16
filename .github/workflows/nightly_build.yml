@@ -1,0 +1,98 @@
+name: Nightly build
+
+on:
+  workflow_call:
+    inputs:
+      os:
+        required: true
+        type: string
+
+jobs:
+  build:
+    permissions: write-all
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: nanasess/setup-chromedriver@v2
+        with:
+          chromedriver-version: "126.0.6478.185"
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+      - name: install MacOS (M1) build dependencies
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "ARM64" ]; then
+            brew install pango
+          fi
+      - name: build
+        working-directory: ./electron-app
+        shell: bash
+        run: |
+          corepack enable
+          ./build_deps.sh
+          yarn install
+          yarn
+          yarn build
+          yarn package
+      # only publish builds if they pass post-build tests
+      - name: postbuild-tests
+        working-directory: ./electron-app
+        shell: bash
+        run: |
+          ./run_postbuild_tests.sh
+      - name: Build distributables
+        working-directory: ./electron-app
+        shell: bash
+        env:
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_NAME: ${{ github.event.repository.name }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_PWD }}
+          MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_NAME }}
+          MACOS_CI_KEYCHAIN_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_PWD }}
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            # Convert base64-encoded certificate from secrets into a regular .p12 file
+            echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+
+            # Create a keychain to hold the certificate
+            security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+            security default-keychain -s build.keychain
+            security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+            security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+
+            # Repackage with code-signing and notarization (enabled when MACOS_CERTIFICATE_NAME is set)
+            export DEBUG=*
+            yarn package
+
+            # Verify signing process
+            pushd out/GRAPEVNE-darwin-*
+            codesign --verbose --verify GRAPEVNE.app
+            codesign -vvv GRAPEVNE.app
+            xcrun stapler validate GRAPEVNE.app
+            spctl --assess --verbose GRAPEVNE.app
+            popd
+          fi
+
+          # Package for distribution
+          yarn make
+      - name: Nightly build to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./electron-app/out/make/**/*!(.zip)
+          tag: "nightly"
+          overwrite: true
+          file_glob: true
+          release_name: "Nightly build"
