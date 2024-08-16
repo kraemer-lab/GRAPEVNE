@@ -16,7 +16,7 @@ test('Build', async () => {
   expect(fs.existsSync(test_folder)).toBe(true);
   // Create a test repo folder
   const repo_folder = path.join(test_folder, 'test-repo');
-  if (fs.existsSync(repo_folder)) fs.rmdirSync(repo_folder, { recursive: true });
+  if (fs.existsSync(repo_folder)) fs.rmSync(repo_folder, { recursive: true, force: true });
   const workflows_folder = path.join(repo_folder, 'workflows');
   fs.mkdirSync(workflows_folder, { recursive: true });
   expect(fs.existsSync(workflows_folder)).toBe(true);
@@ -116,7 +116,7 @@ params:
     `test_script_file_contents`,
   );
   // Remove the new module
-  fs.rmdirSync(repo_folder, { recursive: true });
+  fs.rmSync(repo_folder, { recursive: true, force: true });
 });
 
 test('CondaSearch', async () => {

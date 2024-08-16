@@ -622,7 +622,7 @@ describe('modules', () => {
       console.log(`Target folder: ${target_folder}`);
       if (fs.existsSync(target_folder)) {
         console.log('Target folder exists; deleting');
-        fs.rmdirSync(target_folder, { recursive: true });
+        fs.rmSync(target_folder, { recursive: true, force: true });
       }
       expect(fs.existsSync(target_folder)).toBeFalsy();
       console.log('Target folder does not exist');
@@ -789,7 +789,7 @@ describe('modules', () => {
 
       // Tidy-up (remove module from repository)
       console.log('Tidy-up (remove module from repository)');
-      fs.rmdirSync(target_folder, { recursive: true });
+      fs.rmSync(target_folder, { recursive: true, force: true });
 
       console.log('<<< test Create a new module (new module screen)');
     },
