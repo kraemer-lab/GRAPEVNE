@@ -6,8 +6,10 @@ type Query = Record<string, unknown>;
 
 contextBridge.exposeInMainWorld('terminalAPI', {
   sendData: (data: string) => ipcRenderer.send('terminal/send-data', data),
-  receiveData: (callback: (event: Event, data: string) => void) =>
-    ipcRenderer.on('terminal/receive-data', callback),
+  receiveData: (callback: (event: Event, data: string) => void) => {
+    ipcRenderer.removeAllListeners('terminal/receive-data');
+    ipcRenderer.on('terminal/receive-data', callback);
+  },
 });
 
 contextBridge.exposeInMainWorld('displayAPI', {
@@ -28,8 +30,10 @@ contextBridge.exposeInMainWorld('builderAPI', {
     ipcRenderer.invoke('builder/get-module-config-files-list', query),
   OpenResultsFolder: (workdir: string) =>
     ipcRenderer.invoke('builder/open-results-folder', workdir),
-  logEvent: (callback: (event: Event, data: string) => void) =>
-    ipcRenderer.on('builder/log-event', callback),
+  logEvent: (callback: (event: Event, data: string) => void) => {
+    ipcRenderer.removeAllListeners('builder/log-event');
+    ipcRenderer.on('builder/log-event', callback);
+  },
   GetFile: (filename: string) => ipcRenderer.invoke('builder/get-file', filename),
   GetConfigFilenameFromSnakefile: (filename: Query | string) =>
     ipcRenderer.invoke('builder/get-config-filename-from-snakefile', filename),
