@@ -1,4 +1,5 @@
 import { displayGetFolderInfo } from 'redux/actions';
+import { IState } from 'redux/reducers';
 
 import { runnerUpdateStatusText } from 'redux/actions';
 
@@ -14,9 +15,10 @@ export const runnerMiddleware = ({ getState, dispatch }) => {
       if (action.type.split('/')[0] === 'runner') {
         console.log('Middleware [runner]: ', action);
       }
+      const state = getState() as IState;
       switch (action.type) {
         case 'runner/delete-results':
-          DeleteResults(dispatch, getState().display.folderinfo);
+          DeleteResults(dispatch, state.display.folderinfo);
           break;
         default:
           break;

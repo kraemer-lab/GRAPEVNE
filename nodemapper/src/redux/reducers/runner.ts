@@ -1,8 +1,17 @@
 import { createReducer } from '@reduxjs/toolkit';
 import * as actions from '../actions';
 
+export interface IRunnerState {
+  serialize: string;
+  linter: string;
+  jobstatus: string;
+  jobstatus_update: boolean;
+  query: {};
+  statustext: string;
+}
+
 // State
-const runnerStateInit = {
+const runnerStateInit: IRunnerState = {
   serialize: '',
   linter: '',
   jobstatus: '',

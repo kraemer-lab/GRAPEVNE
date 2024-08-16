@@ -8,8 +8,6 @@ export type TerminalAPI = {
 
 export type DisplayAPI = {
   FolderInfo: (query: Query) => Promise<Query>;
-  StoreReadConfig: () => Promise<Query>;
-  StoreWriteConfig: (query: Query) => Promise<Query>;
   SelectFolder: (path: string) => Promise<string[]>;
   SelectFile: (path: string) => Promise<string[]>;
 };
@@ -46,6 +44,11 @@ export type NewModuleAPI = {
   OpenModuleFolder: (folder: string) => Promise<Query>;
 };
 
+export type SettingsAPI = {
+  StoreReadConfig: () => Promise<Query>;
+  StoreWriteConfig: (query: Query) => Promise<Query>;
+};
+
 declare global {
   interface Window {
     terminalAPI: TerminalAPI;
@@ -53,5 +56,6 @@ declare global {
     builderAPI: BuilderAPI;
     runnerAPI: RunnerAPI;
     newmoduleAPI: NewModuleAPI;
+    settingsAPI: SettingsAPI;
   }
 }

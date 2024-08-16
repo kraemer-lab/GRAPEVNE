@@ -8,19 +8,19 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import {
-  builderSetWorkflowAlertsEmailPassword,
-  builderSetWorkflowAlertsEmailSMTPPort,
-  builderSetWorkflowAlertsEmailSMTPServer,
-  builderSetWorkflowAlertsEmailSender,
-  builderSetWorkflowAlertsEmailUsername,
-  builderSetWorkflowAlertsOnErrorBody,
-  builderSetWorkflowAlertsOnErrorRecipients,
-  builderSetWorkflowAlertsOnErrorSubject,
-  builderSetWorkflowAlertsOnSuccessBody,
-  builderSetWorkflowAlertsOnSuccessRecipients,
-  builderSetWorkflowAlertsOnSuccessSubject,
-  builderToggleWorkflowAlertOnErrorEnabled,
-  builderToggleWorkflowAlertOnSuccessEnabled,
+  settingsSetWorkflowAlertsEmailPassword,
+  settingsSetWorkflowAlertsEmailSMTPPort,
+  settingsSetWorkflowAlertsEmailSMTPServer,
+  settingsSetWorkflowAlertsEmailSender,
+  settingsSetWorkflowAlertsEmailUsername,
+  settingsSetWorkflowAlertsOnErrorBody,
+  settingsSetWorkflowAlertsOnErrorRecipients,
+  settingsSetWorkflowAlertsOnErrorSubject,
+  settingsSetWorkflowAlertsOnSuccessBody,
+  settingsSetWorkflowAlertsOnSuccessRecipients,
+  settingsSetWorkflowAlertsOnSuccessSubject,
+  settingsToggleWorkflowAlertOnErrorEnabled,
+  settingsToggleWorkflowAlertOnSuccessEnabled,
 } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
@@ -72,18 +72,19 @@ interface IEmailSettings {
 
 const EmailSettings = ({ labelWidth }: IEmailSettings) => {
   const dispatch = useAppDispatch();
-  const email_settings = useAppSelector((state) => state.builder.workflow_alerts.email_settings);
-  const setSMTPServer = (value: string) => dispatch(builderSetWorkflowAlertsEmailSMTPServer(value));
+  const email_settings = useAppSelector((state) => state.settings.workflow_alerts.email_settings);
+  const setSMTPServer = (value: string) =>
+    dispatch(settingsSetWorkflowAlertsEmailSMTPServer(value));
   const setSMTPPort = (value: string) => {
     if (isNaN(parseInt(value))) {
       alert('Port must be a number');
       return;
     }
-    dispatch(builderSetWorkflowAlertsEmailSMTPPort(value));
+    dispatch(settingsSetWorkflowAlertsEmailSMTPPort(value));
   };
-  const setUsername = (value: string) => dispatch(builderSetWorkflowAlertsEmailUsername(value));
-  const setPassword = (value: string) => dispatch(builderSetWorkflowAlertsEmailPassword(value));
-  const setSender = (value: string) => dispatch(builderSetWorkflowAlertsEmailSender(value));
+  const setUsername = (value: string) => dispatch(settingsSetWorkflowAlertsEmailUsername(value));
+  const setPassword = (value: string) => dispatch(settingsSetWorkflowAlertsEmailPassword(value));
+  const setSender = (value: string) => dispatch(settingsSetWorkflowAlertsEmailSender(value));
 
   return (
     <Box
@@ -146,7 +147,7 @@ const WorkflowAlertSettings = ({
   setBody,
   setRecipients,
 }: IWorkflowAlertSettings) => {
-  const message = useAppSelector((state) => state.builder.workflow_alerts[alert_type].message);
+  const message = useAppSelector((state) => state.settings.workflow_alerts[alert_type].message);
 
   return (
     <Box
@@ -185,8 +186,8 @@ interface IWorkflowAlerts {
 
 const WorkflowAlerts = ({ labelWidth }: IWorkflowAlerts) => {
   const dispatch = useAppDispatch();
-  const settings_onsuccess = useAppSelector((state) => state.builder.workflow_alerts.onsuccess);
-  const settings_onerror = useAppSelector((state) => state.builder.workflow_alerts.onerror);
+  const settings_onsuccess = useAppSelector((state) => state.settings.workflow_alerts.onsuccess);
+  const settings_onerror = useAppSelector((state) => state.settings.workflow_alerts.onerror);
   const theme = useTheme();
 
   return (
@@ -208,7 +209,7 @@ const WorkflowAlerts = ({ labelWidth }: IWorkflowAlerts) => {
               id="settings_workflow_alerts_onsuccess_enabled"
               checked={settings_onsuccess.enabled}
               onChange={(e) =>
-                dispatch(builderToggleWorkflowAlertOnSuccessEnabled(e.target.checked))
+                dispatch(settingsToggleWorkflowAlertOnSuccessEnabled(e.target.checked))
               }
             />
           }
@@ -219,11 +220,11 @@ const WorkflowAlerts = ({ labelWidth }: IWorkflowAlerts) => {
             labelWidth={labelWidth}
             alert_type="onsuccess"
             setSubject={(value: string) =>
-              dispatch(builderSetWorkflowAlertsOnSuccessSubject(value))
+              dispatch(settingsSetWorkflowAlertsOnSuccessSubject(value))
             }
-            setBody={(value: string) => dispatch(builderSetWorkflowAlertsOnSuccessBody(value))}
+            setBody={(value: string) => dispatch(settingsSetWorkflowAlertsOnSuccessBody(value))}
             setRecipients={(value: string) =>
-              dispatch(builderSetWorkflowAlertsOnSuccessRecipients(value))
+              dispatch(settingsSetWorkflowAlertsOnSuccessRecipients(value))
             }
           />
         ) : null}
@@ -232,7 +233,9 @@ const WorkflowAlerts = ({ labelWidth }: IWorkflowAlerts) => {
             <Checkbox
               id="settings_workflow_alerts_onerror_enabled"
               checked={settings_onerror.enabled}
-              onChange={(e) => dispatch(builderToggleWorkflowAlertOnErrorEnabled(e.target.checked))}
+              onChange={(e) =>
+                dispatch(settingsToggleWorkflowAlertOnErrorEnabled(e.target.checked))
+              }
             />
           }
           label="Enable failure alert"
@@ -241,10 +244,10 @@ const WorkflowAlerts = ({ labelWidth }: IWorkflowAlerts) => {
           <WorkflowAlertSettings
             labelWidth={labelWidth}
             alert_type="onerror"
-            setSubject={(value: string) => dispatch(builderSetWorkflowAlertsOnErrorSubject(value))}
-            setBody={(value: string) => dispatch(builderSetWorkflowAlertsOnErrorBody(value))}
+            setSubject={(value: string) => dispatch(settingsSetWorkflowAlertsOnErrorSubject(value))}
+            setBody={(value: string) => dispatch(settingsSetWorkflowAlertsOnErrorBody(value))}
             setRecipients={(value: string) =>
-              dispatch(builderSetWorkflowAlertsOnErrorRecipients(value))
+              dispatch(settingsSetWorkflowAlertsOnErrorRecipients(value))
             }
           />
         ) : null}

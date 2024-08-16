@@ -155,7 +155,7 @@ const ModuleRepo = ({ selectedRepo, setSelectedRepo }: ModuleRepoProps) => {
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
   const modules = useAppSelector((state) => state.builder.modules_list);
   const dispatch = useAppDispatch();
-  const repositories = useAppSelector((state) => state.builder.repositories);
+  const repositories = useAppSelector((state) => state.settings.repositories);
 
   const [newProjectNameOpen, setNewProjectNameOpen] = React.useState(false);
   const [newProjectName, setNewProjectName] = React.useState('');

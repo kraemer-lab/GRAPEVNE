@@ -2,7 +2,7 @@ import React from 'react';
 import RepoOptions from './RepoOptions';
 
 import { useEffect } from 'react';
-import { builderWriteStoreConfig } from 'redux/actions';
+import { settingsWriteStoreConfig } from 'redux/actions';
 import { useAppDispatch } from 'redux/store/hooks';
 
 import Box from '@mui/material/Box';
@@ -31,7 +31,7 @@ const Settings = () => {
     return;
   };
   const onComponentUnmount = () => {
-    dispatch(builderWriteStoreConfig());
+    dispatch(settingsWriteStoreConfig());
   };
   useEffect(() => {
     onComponentMount();

@@ -129,9 +129,9 @@ interface IHighlightJSONProps {
 // Recursive function to render the JSON tree
 export const HighlightJSON = ({ keylist, json, setMenu, nodeid }: IHighlightJSONProps) => {
   const nodes = useAppSelector((state) => state.builder.nodes);
-  const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
+  const display_module_settings = useAppSelector((state) => state.settings.display_module_settings);
   const hide_params_in_module_info = useAppSelector(
-    (state) => state.builder.hide_params_in_module_info,
+    (state) => state.settings.hide_params_in_module_info,
   );
   const dispatch = useAppDispatch();
   // Isolate current branch in the json tree (indexed by keylist)

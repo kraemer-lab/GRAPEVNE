@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
 import { ErrorBoundary } from 'react-error-boundary';
-import { builderReadStoreConfig } from 'redux/actions';
+import { settingsReadStoreConfig } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { errorHandler } from './ErrorHandling/Error';
 
@@ -13,12 +13,12 @@ let started = false;
 const startup = () => {
   started = true;
   const dispatch = useAppDispatch();
-  dispatch(builderReadStoreConfig());
+  dispatch(settingsReadStoreConfig());
 };
 
 const App = () => {
   if (!started) startup();
-  const dark_mode = useAppSelector((state) => state.builder.dark_mode);
+  const dark_mode = useAppSelector((state) => state.settings.dark_mode);
 
   const themeOptions: ThemeOptions = {
     palette: {

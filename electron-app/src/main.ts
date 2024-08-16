@@ -103,12 +103,6 @@ app.whenReady().then(() => {
   ipcMain.handle('display/folderinfo', (event: Event, data: Query) =>
     handles.display_FolderInfo(event, data, stderr_callback),
   );
-  ipcMain.handle('display/store-read-config', (event: Event) =>
-    handles.display_StoreReadConfig(event),
-  );
-  ipcMain.handle('display/store-write-config', (event: Event, data: Query) =>
-    handles.display_StoreWriteConfig(event, data),
-  );
   ipcMain.handle('display/select-folder', (event: Event, path: string) =>
     handles.display_SelectFolder(event, path, win),
   );
@@ -175,6 +169,14 @@ app.whenReady().then(() => {
   ipcMain.handle('newmodule/build', handles.newmodule_Build);
   ipcMain.handle('newmodule/env-conda-search', handles.newmodule_CondaSearch);
   ipcMain.handle('newmodule/open-module-folder', handles.newmodule_OpenModuleFolder);
+
+  // Settings
+  ipcMain.handle('settings/store-read-config', (event: Event) =>
+    handles.settings_StoreReadConfig(event),
+  );
+  ipcMain.handle('settings/store-write-config', (event: Event, data: Query) =>
+    handles.settings_StoreWriteConfig(event, data),
+  );
 });
 
 app.on('will-quit', () => {

@@ -1,13 +1,13 @@
 import { FormControl, FormControlLabel, FormGroup, Switch } from '@mui/material';
 import React from 'react';
-import { builderToggleDarkMode } from 'redux/actions';
+import { settingsToggleDarkMode } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 const DarkModeOption = () => {
   const dispatch = useAppDispatch();
-  const darkMode = useAppSelector((state) => state.builder.dark_mode);
+  const darkMode = useAppSelector((state) => state.settings.dark_mode);
   const handleToggleDarkMode = () => {
-    dispatch(builderToggleDarkMode());
+    dispatch(settingsToggleDarkMode());
   };
 
   return (

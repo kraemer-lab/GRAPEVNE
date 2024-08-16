@@ -73,7 +73,7 @@ interface HighlightedJSONProps {
 }
 
 const HighlightedJSON = (props: HighlightedJSONProps) => {
-  const display_module_settings = useAppSelector((state) => state.builder.display_module_settings);
+  const display_module_settings = useAppSelector((state) => state.settings.display_module_settings);
   const [menu, setMenu] = useState(null);
 
   // Parse JSON string
