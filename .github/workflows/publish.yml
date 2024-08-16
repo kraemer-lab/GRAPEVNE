@@ -35,7 +35,7 @@ jobs:
     with:
       os: macos14-latest
     secrets: inherit
-  
+
   # Separate macOS-12 and macOS-14 builds to avoid signing conflicts
   # (https://github.com/kraemer-lab/GRAPEVNE/issues/243)
   build_macos12:
