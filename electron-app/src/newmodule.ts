@@ -28,7 +28,7 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   if (build_settings.as_zip) {
     const tempdir = fs.mkdtempSync(path.join(os.tmpdir(), 'module-'));
     if (fs.existsSync(tempdir)) {
-      fs.rmdirSync(tempdir, { recursive: true });
+      fs.rmSync(tempdir, { recursive: true, force: true });
     }
     config.repo = tempdir;
     // Setup repo
@@ -70,7 +70,7 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   if (fs.existsSync(module_folder)) {
     if (build_settings.overwrite_existing_module_folder) {
       console.warn('Module folder already exists, deleting...');
-      fs.rmdirSync(module_folder, { recursive: true });
+      fs.rmSync(module_folder, { recursive: true, force: true });
     } else {
       throw new Error('Module folder already exists');
     }
