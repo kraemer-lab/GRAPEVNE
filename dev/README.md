@@ -1,9 +1,12 @@
 # Components
 
-- `electron-app`: application builder for GRAPEVNE encapsulating:
-  - `nodemapper`: graphical front-end for the GRAPEVNE Builder/Runner services
-  - `builder`: Python library of build-related routines
-  - `runner`: Python library of run-related routines (launches `snakemake`)
+GRAPEVNE consists of several components, each of which is responsible for a different aspect of the application. These components are:
+- `electron-app`: application builder for GRAPEVNE; entry point for the application
+- `nodemapper`: graphical front-end for the GRAPEVNE Builder/Runner services
+- `builder`: Python library of build-related routines
+- `runner`: Python library of run-related routines (launches `snakemake`)
+
+Users interact with GRAPEVNE as an electron-app through the front-end (`nodemapper`) service, which passes queries to the backend (`electron-app`). These queries are either handled in node.js (such as web retrieval code), or passed to a Python backend that is generated (and packaged) within the electron app using `pyinstaller`. The `pyinstaller` interface (`electron-app/src/python/pyrunner.py`) is responsible for handling these queries and passing them on to the appropriate Python library (`builder` or `runner`). These libraries handle most of the workflow logic, such as producing connected workflows etc., although there is also some (lightweight) logic in the `nodemapper` front-end. Snakemake workflows are launched from the `runner` library by passing command-line arguments into the imported `snakemake.main` function (or by spawning a subprocess if the 'system' launcher is selected).
 
 ## Dev container
 
