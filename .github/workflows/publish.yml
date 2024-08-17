@@ -33,7 +33,7 @@ jobs:
     permissions: write-all
     uses: ./.github/workflows/publish_build.yml
     with:
-      os: macos14-latest
+      os: macos-14
     secrets: inherit
 
   # Separate macOS-12 and macOS-14 builds to avoid signing conflicts
