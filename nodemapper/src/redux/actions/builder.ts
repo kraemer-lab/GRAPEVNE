@@ -1,6 +1,7 @@
 import { createAction } from '@reduxjs/toolkit';
 import { Node } from 'gui/Builder/components/Flow';
 import { Edge } from 'reactflow';
+import { IModulesList } from 'redux/reducers/builder';
 
 export const builderSetNodes = createAction<Node[]>('builder/set-nodes');
 export const builderAddNode = createAction<Node>('builder/add-node');
@@ -12,7 +13,7 @@ export const builderExportAsSVG = createAction('builder/export-as-svg');
 export const builderLoadNodemap = createAction('builder/load-nodemap');
 export const builderSaveNodemap = createAction('builder/save-nodemap');
 export const builderBuildInProgress = createAction<boolean>('builder/build-in-progress');
-export const builderBuildAsModule = createAction('builder/build-as-module');
+export const builderBuildAsModule = createAction<string | undefined>('builder/build-as-module');
 export const builderBuildAsWorkflow = createAction('builder/build-as-workflow');
 export const builderPackageWorkflow = createAction('builder/package-workflow');
 export const builderBuildAndRun = createAction('builder/build-and-run');
@@ -22,7 +23,7 @@ export const builderBuildAndForceRunToModule = createAction<string>(
 );
 export const builderCleanBuildFolder = createAction('builder/clean-build-folder');
 export const builderGetRemoteModules = createAction('builder/get-remote-modules');
-export const builderUpdateModulesList = createAction<string>('builder/update-modules-list');
+export const builderUpdateModulesList = createAction<IModulesList>('builder/update-modules-list');
 export const builderCheckNodeDependencies = createAction<string>('builder/check-node-dependencies');
 export const builderUpdateStatusText = createAction<string>('builder/update-status-text');
 export const builderUpdateNodeInfo = createAction<string>('builder/update-node-info');

@@ -131,6 +131,11 @@ export async function builder_BuildAsModule(
     stderr_callback((data['data'] as Query)['stderr'] as string);
     return ErrorReturn(query.query as string, data);
   }
+  if (!(query['data'] as Query)['build_path']) {
+    // Module built to folder
+    return null;
+  }
+  // Module returned as zip file
   return fs.readFileSync((data['body'] as Query)['zipfile'] as string, {
     encoding: 'base64',
   });

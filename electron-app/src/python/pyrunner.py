@@ -223,11 +223,14 @@ def post(request):
 
         # Builder queries
         elif query == "builder/build-as-module":
+            build_path = data.get("build_path", None)
+            if not build_path:
+                build_path = default_build_path
             data = {
                 "query": query,
                 "body": BuildAndRun(
                     data,
-                    default_build_path,
+                    build_path,
                     clean_build=True,
                     create_zip=True,
                     containerize=False,

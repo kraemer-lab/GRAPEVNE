@@ -1,3 +1,6 @@
 node_modules
 react-diagrams
 coverage
+
+*storybook.log
+storybook-static

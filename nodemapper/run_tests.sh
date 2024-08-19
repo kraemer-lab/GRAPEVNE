@@ -8,4 +8,5 @@ corepack enable
 yarn
 yarn lint
 yarn madge
+yarn build-storybook
 yarn test

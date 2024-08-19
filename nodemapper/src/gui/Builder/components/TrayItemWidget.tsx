@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
+import { IModulesListEntry } from 'redux/reducers/builder';
 import { wranglename } from './Flow';
 
 type Query = Record<string, unknown>;
 
 export interface TrayItemWidgetProps {
-  model: Query;
+  model: IModulesListEntry;
   color?: string;
   name: string;
 }

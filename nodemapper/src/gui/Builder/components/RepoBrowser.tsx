@@ -57,13 +57,13 @@ const RepoBrowser = () => {
           'correct and is reachable',
       ),
     );
-    modules_list = '[]';
+    modules_list = [];
   }
 
   const updateTrayItems = (freetext: string, repo: string, prj: string) =>
     // We pass the filter values as parameters to ensure that the filters are applied
     // with the updated values, and not the state values which may not have refreshed
-    JSON.parse(modules_list)
+    modules_list
       .filter((m) => m['repo']['url'].startsWith(repo) || repo === '(all)')
       .filter((m) => m['org'].startsWith(prj) || prj === '(all)')
       .filter((m) => m['name'].toLowerCase().includes(freetext.toLowerCase()) || freetext === '')
@@ -122,7 +122,7 @@ const RepoBrowser = () => {
   };
 
   // Extract unique repos from the module names for a filter list
-  let filtered_modules = JSON.parse(modules);
+  let filtered_modules = modules;
   const repo_list = filtered_modules
     .map((m) => m['repo']['url'])
     .filter((v, i, a) => a.indexOf(v) === i) // remove duplicates

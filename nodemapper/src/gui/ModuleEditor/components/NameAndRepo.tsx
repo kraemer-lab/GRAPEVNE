@@ -176,7 +176,7 @@ const ModuleRepo = ({ selectedRepo, setSelectedRepo }: ModuleRepoProps) => {
   repo_list.push('Zip file');
 
   // Extract unique projects from the module names for a filter list
-  const filtered_modules = JSON.parse(modules);
+  const filtered_modules = modules;
   const project_list = filtered_modules
     .filter((v) => v['repo']['url'] === selectedRepo)
     .map((m) => m['org'])
