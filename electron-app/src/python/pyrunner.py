@@ -223,16 +223,20 @@ def post(request):
 
         # Builder queries
         elif query == "builder/build-as-module":
+            # Build in-place if a build-path is provided, otherwise build to temp folder
+            # and return a zip archive
+            create_zip = False
             build_path = data.get("build_path", None)
             if not build_path:
                 build_path = default_build_path
+                create_zip = True
             data = {
                 "query": query,
                 "body": BuildAndRun(
                     data,
                     build_path,
                     clean_build=True,
-                    create_zip=True,
+                    create_zip=create_zip,
                     containerize=False,
                 ),
                 "returncode": 0,

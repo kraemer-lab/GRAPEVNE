@@ -86,7 +86,7 @@ const Header = () => {
   return (
     <Stack direction="row" spacing={1} justifyContent="center">
       {/* Scene menu */}
-      <DropdownMenu label="SCENE">
+      <DropdownMenu id="btnGraphDropdown" label="SCENE">
         <MenuItem id="btnBuilderLoadScene" onClick={btnLoadScene}>
           LOAD
         </MenuItem>
@@ -108,7 +108,7 @@ const Header = () => {
 
       {/* Build and run menu */}
       <Box>
-        <DropdownMenu label="BUILD & RUN" disabled={build_in_progress}>
+        <DropdownMenu id="btnBuildAndRunDropdown" label="BUILD & RUN" disabled={build_in_progress}>
           <MenuItem id="btnBuilderBuildAndTest" onClick={btnRun}>
             TEST BUILD
           </MenuItem>

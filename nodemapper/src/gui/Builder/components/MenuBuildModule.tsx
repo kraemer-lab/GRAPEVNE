@@ -58,7 +58,7 @@ export const MenuBuildModule = () => {
     const [confirmDialogOpen, setConfirmDialogOpen] = React.useState(false);
     const [selectedName, setSelectedName] = React.useState('');
     const [selectedType, setSelectedType] = React.useState('');
-    const org_modules_list = modules_list.filter((v) => ((v.repo.url === repo) && (v.org === org)));
+    const org_modules_list = modules_list.filter((v) => v.repo.url === repo && v.org === org);
 
     return (
       <>
@@ -118,7 +118,7 @@ export const MenuBuildModule = () => {
           }}
           onConfirm={() => {
             setPromptDialogOpen(false);
-            btnBuildToPath(repo, selectedOrg, "module", folderName(promptDialogValue));
+            btnBuildToPath(repo, selectedOrg, 'module', folderName(promptDialogValue));
           }}
         />
         {repo_modules_list
@@ -149,7 +149,7 @@ export const MenuBuildModule = () => {
           ))}
       </>
     );
-  }
+  };
 
   const RepositoriesList = ({ modules_list, btnBuildToPath }) => {
     const [promptDialogOpen, setPromptDialogOpen] = React.useState(false);
@@ -181,7 +181,7 @@ export const MenuBuildModule = () => {
             new_modules_list.push({
               repo: { url: selectedUrl, type: 'local' },
               org: promptDialogValue,
-              name: "",
+              name: '',
               type: 'module',
             });
             setLocalModulesList(new_modules_list);
@@ -203,12 +203,16 @@ export const MenuBuildModule = () => {
                 New project
               </MenuItem>
               <hr />
-              <ProjectsList modules_list={local_modules_list} repo={repo} btnBuildToPath={btnBuildToPath} />
+              <ProjectsList
+                modules_list={local_modules_list}
+                repo={repo}
+                btnBuildToPath={btnBuildToPath}
+              />
             </NestedMenuItem>
           ))}
       </>
     );
-  }
+  };
 
   return (
     <NestedMenuItem label="BUILD MODULE">

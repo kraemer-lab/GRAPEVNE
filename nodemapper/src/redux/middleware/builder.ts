@@ -2,6 +2,7 @@ import BuilderEngine from 'gui/Builder/components/BuilderEngine';
 
 import {
   builderBuildInProgress,
+  builderGetRemoteModules,
   builderLogEvent,
   builderNodeSelected,
   builderSetEdges,
@@ -342,17 +343,23 @@ const BuildAs = async ({
     },
   };
   const callback = (result) => {
-    // Download returned content as file
-    console.log(result);
-    if (result) {
+    // Module can be built in-place, or returned as a zip file
+    if (result['zip']) {
+      // Download returned content as file
       const filename = 'build.zip';
       const element = document.createElement('a');
-      element.setAttribute('href', 'data:application/zip;base64,' + encodeURIComponent(result));
+      element.setAttribute(
+        'href',
+        'data:application/zip;base64,' + encodeURIComponent(result['zip']),
+      );
       element.setAttribute('download', filename);
       element.style.display = 'none';
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
+    } else {
+      // Local repository has been updated - refresh module list
+      dispatchString(builderGetRemoteModules());
     }
     // Report success (this should be returned by the backend, but that is currently
     // set-up to return the [binary] zip file); console.logs are important for

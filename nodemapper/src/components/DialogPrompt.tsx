@@ -31,12 +31,7 @@ export const DialogPrompt: React.FC<DialogPromptProps> = ({
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{content}</DialogContentText>
-        <TextField
-          id="dialog-input"
-          value={value}
-          onChange={onChange}
-          sx={{ width: '100%' }}
-        />
+        <TextField id="dialog-input" value={value} onChange={onChange} sx={{ width: '100%' }} />
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel} color="primary">

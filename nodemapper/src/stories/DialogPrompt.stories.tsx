@@ -21,7 +21,7 @@ type Story = StoryObj<typeof DialogPrompt>;
 export const Default: Story = {
   render: () => {
     const [open, setOpen] = useState(false); // eslint-disable-line react-hooks/rules-of-hooks
-    const [value, setValue] = useState('value');  // eslint-disable-line react-hooks/rules-of-hooks
+    const [value, setValue] = useState('value'); // eslint-disable-line react-hooks/rules-of-hooks
 
     return (
       <>
