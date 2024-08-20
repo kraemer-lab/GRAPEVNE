@@ -18,12 +18,6 @@ export const MenuBuildModule = () => {
     closeAllMenus();
   };
 
-  // New project
-  const btnNewProject = () => {
-    alert(`New project`);
-    closeAllMenus();
-  };
-
   // Build module to existing path
   const btnBuildToPath = (repo: string, org: string, type: string, name: string) => {
     dispatch(builderBuildAsModule(`${repo}/workflows/${org}/${type}s/${name}`));

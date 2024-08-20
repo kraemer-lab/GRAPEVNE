@@ -305,7 +305,7 @@ const ClearGraph = async (driver: webdriver.ThenableWebDriver) => {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
-      await driver.findElement(By.xpath('//ul[@aria-labelledby="graphDropdown"]'));
+      await driver.findElement(By.id('btnBuilderClearScene'));
       await driver.sleep(50);
     } catch (NoSuchElementError) {
       // Element has closed
