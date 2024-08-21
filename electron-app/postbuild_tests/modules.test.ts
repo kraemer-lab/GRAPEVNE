@@ -832,7 +832,7 @@ describe('modules', () => {
     },
     ONE_MINUTE,
   );
-  
+
   test(
     'Prepare: Ensure new module are not present in repository',
     async () => {
@@ -845,7 +845,7 @@ describe('modules', () => {
 
       // Refresh the modules list to ensure that the project / modules are removed
       await driver.findElement(By.id('btnBuilderGetModuleList')).click();
-      
+
       console.log('<<< test Prepare: Ensure new module are not present in repository');
     },
     ONE_MINUTE,
@@ -1064,7 +1064,7 @@ describe('modules', () => {
     'Tidy-up: Ensure new project and modules were created, then remove from repository',
     async () => {
       console.log('::: test Tidy-up: Ensure new project and modules were created, then remove from repository');
-      
+
       // Check that new project and modules were created
       const project_folder = path.join(__dirname, 'test-repo', 'workflows', 'MyNewProject');
       expect(fs.existsSync(project_folder)).toBeTruthy();
