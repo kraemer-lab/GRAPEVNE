@@ -1,4 +1,6 @@
+import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
+import { DialogAlert } from 'components/DialogAlert';
 import { DialogConfirm } from 'components/DialogConfirm';
 import { NestedMenuItem, useMenu } from 'components/DropdownMenu';
 import React, { forwardRef } from 'react';
@@ -15,6 +17,11 @@ export const MenuBuildModule = forwardRef(({ promptDialog }: MenuBuildModuleProp
   const modules_list = useAppSelector((state) => state.builder.modules_list);
   const repositories = useAppSelector((state) => state.settings.repositories);
   const { closeAllMenus } = useMenu();
+
+  // Alert dialogs
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertTitle, setAlertTitle] = React.useState('');
+  const [alertContent, setAlertContent] = React.useState('');
 
   // Dummy modules list stores new projects until they contain modules
   // This list reinitialises each time the Build menu is opened
@@ -54,6 +61,28 @@ export const MenuBuildModule = forwardRef(({ promptDialog }: MenuBuildModuleProp
       }
     }
     return 'module'; // default to 'module' folder
+  };
+
+  const LookupProject = (repo: string, org: string) => {
+    for (let i = 0; i < modules_list.length; i++) {
+      if (modules_list[i].repo.url === repo && modules_list[i].org === org) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const LookupModule = (repo: string, org: string, name: string) => {
+    for (let i = 0; i < modules_list.length; i++) {
+      if (
+        modules_list[i].repo.url === repo &&
+        modules_list[i].org === org &&
+        modules_list[i].name === name
+      ) {
+        return modules_list[i];
+      }
+    }
+    return null;
   };
 
   const WrangleFolderName = (name: string) => {
@@ -123,14 +152,21 @@ export const MenuBuildModule = forwardRef(({ promptDialog }: MenuBuildModuleProp
                       return;
                     }
                     const name = WrangleFolderName(promptDialog.inputRef.current.value);
-                    btnBuildToPath(repo, org, 'module', name);
+                    // Check if module already exists
+                    if (LookupModule(repo, org, name)) {
+                      setAlertTitle('Module already exists');
+                      setAlertContent('A module with this name already exists.');
+                      setAlertOpen(true);
+                    } else {
+                      btnBuildToPath(repo, org, 'module', name);
+                    }
                   });
                   promptDialog.setOpen(true);
                 }}
               >
                 New module
               </MenuItem>
-              <hr />
+              <Divider />
               <ModulesList
                 modules_list={repo_modules_list}
                 repo={repo}
@@ -173,21 +209,27 @@ export const MenuBuildModule = forwardRef(({ promptDialog }: MenuBuildModuleProp
                       return;
                     }
                     const org = WrangleFolderName(promptDialog.inputRef.current.value);
-                    const new_dummy_modules_list = [...dummy_modules_list];
-                    new_dummy_modules_list.push({
-                      repo: { type: 'local', url: repo },
-                      org: org,
-                      name: '',
-                      type: 'module',
-                    });
-                    setDummyModulesList(new_dummy_modules_list);
+                    if (LookupProject(repo, org)) {
+                      setAlertTitle('Project already exists');
+                      setAlertContent('A project with this name already exists.');
+                      setAlertOpen(true);
+                    } else {
+                      const new_dummy_modules_list = [...dummy_modules_list];
+                      new_dummy_modules_list.push({
+                        repo: { type: 'local', url: repo },
+                        org: org,
+                        name: '',
+                        type: 'module',
+                      });
+                      setDummyModulesList(new_dummy_modules_list);
+                    }
                   });
                   promptDialog.setOpen(true);
                 }}
               >
                 New project
               </MenuItem>
-              <hr />
+              <Divider />
               <ProjectsList
                 modules_list={local_modules_list}
                 repo={repo}
@@ -201,10 +243,20 @@ export const MenuBuildModule = forwardRef(({ promptDialog }: MenuBuildModuleProp
 
   return (
     <NestedMenuItem label="BUILD MODULE">
+      {/* Alert dialogs */}
+      <DialogAlert
+        open={alertOpen}
+        title={alertTitle}
+        content={alertContent}
+        onClose={() => {
+          setAlertOpen(false);
+        }}
+      />
+
       <MenuItem id="btnBuilderBuildAsModule" onClick={btnBuildAsModule}>
         Zip file
       </MenuItem>
-      <hr />
+      <Divider />
       <RepositoriesList modules_list={modules_list} btnBuildToPath={btnBuildToPath} />
     </NestedMenuItem>
   );

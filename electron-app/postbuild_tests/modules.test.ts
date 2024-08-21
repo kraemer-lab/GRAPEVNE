@@ -11,6 +11,7 @@ import {
   BuildAndRun_SingleModuleWorkflow,
   Build_RunWithDocker_SingleModuleWorkflow,
   ClearGraph,
+  DragAndDrop,
   FlushConsoleLog,
   InputFilelistAddItem,
   MultiModuleWorkflow_BuildAndCheck,
@@ -23,7 +24,6 @@ import {
   RepoListAddItem,
   SetCheckBoxByID,
   WaitForReturnCode,
-  dragAndDrop,
   is_installed,
   is_windows,
   runif,
@@ -296,9 +296,9 @@ describe('modules', () => {
       // Drag-and-drop a source and copy module into the scene
       await ClearGraph(driver);
       const canvas = await driver.findElement(By.className('react-flow__pane'));
-      await dragAndDrop(driver, driver.findElement(By.id(`modulelist-payload_run`)), canvas);
+      await DragAndDrop(driver, driver.findElement(By.id(`modulelist-payload_run`)), canvas);
       await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n0"]`)));
-      await dragAndDrop(driver, driver.findElement(By.id(`modulelist-copy_run`)), canvas);
+      await DragAndDrop(driver, driver.findElement(By.id(`modulelist-copy_run`)), canvas);
       await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n1"]`)));
       await driver.findElement(By.id('buttonReactflowArrange')).click();
 
@@ -345,7 +345,7 @@ describe('modules', () => {
     await ClearGraph(driver);
     const module = await driver.findElement(By.id('modulelist-payload_shell'));
     const canvas = await driver.findElement(By.className('react-flow__pane'));
-    await dragAndDrop(driver, module, canvas);
+    await DragAndDrop(driver, module, canvas);
     await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n0"]`)));
 
     // Wait for module to be added to the scene and for the config to load
@@ -780,7 +780,7 @@ describe('modules', () => {
       await ClearGraph(driver);
       const module = await driver.findElement(By.id('modulelist-newmodule'));
       const canvas = await driver.findElement(By.className('react-flow__pane'));
-      await dragAndDrop(driver, module, canvas);
+      await DragAndDrop(driver, module, canvas);
       await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n0"]`)));
       await driver.findElement(By.id('btnBuildAndRunDropdown')).click();
       await driver.findElement(By.id('btnBuilderBuildAndTest')).click();
@@ -794,6 +794,296 @@ describe('modules', () => {
       console.log('<<< test Create a new module (new module screen)');
     },
     5 * ONE_MINUTE,
+  );
+
+  test(
+    'Build module to zip file',
+    async () => {
+      console.log('::: test Build module to zip file');
+      await ClearGraph(driver);
+
+      // Assert that build file does not exist
+      const buildfile = path.join(__dirname, 'downloads', 'build.zip');
+      if (fs.existsSync(buildfile)) fs.unlinkSync(buildfile);
+      expect(fs.existsSync(buildfile)).toBeFalsy();
+
+      // Create a simple one module workflow
+      const module = await driver.findElement(By.id('modulelist-payload_run'));
+      const canvas = await driver.findElement(By.className('react-flow__pane'));
+      await DragAndDrop(driver, module, canvas);
+
+      // 'Build & Run' - 'Build Module' - 'Zip file'
+      const btnBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
+      await btnBuild.click();
+      const btnBuildModule = btnBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      await btnBuildModule.click();
+      const btnZipFile = await driver.findElement(By.xpath('//li[text()="Zip file"]'));
+      await btnZipFile.click();
+
+      // Wait for build file to be downloaded
+      console.log('Wait for build file to be downloaded');
+      console.log('Build file: ', buildfile);
+      while (!fs.existsSync(buildfile)) {
+        await driver.sleep(500); // test will timeout if this fails repeatedly
+      }
+      expect(fs.existsSync(buildfile)).toBeTruthy();
+
+      console.log('<<< test Build module to zip file');
+    },
+    ONE_MINUTE,
+  );
+  
+  test(
+    'Prepare: Ensure new module are not present in repository',
+    async () => {
+      console.log('::: test Prepare: Ensure new module are not present in repository');
+
+      // Remove new module from repository
+      const folder = path.join(__dirname, 'test-repo', 'workflows', 'MyNewProject');
+      fs.rmSync(folder, { recursive: true, force: true });
+      expect(fs.existsSync(folder)).toBeFalsy();
+
+      // Refresh the modules list to ensure that the project / modules are removed
+      await driver.findElement(By.id('btnBuilderGetModuleList')).click();
+      
+      console.log('<<< test Prepare: Ensure new module are not present in repository');
+    },
+    ONE_MINUTE,
+  );
+
+  test(
+    'Build module to local repository (new project, new module)',
+    async () => {
+      console.log('::: test Build module to local repository (new project, new module)');
+      await ClearGraph(driver);
+
+      // Create a simple one module workflow
+      const module = await driver.findElement(By.id('modulelist-payload_run'));
+      const canvas = await driver.findElement(By.className('react-flow__pane'));
+      await DragAndDrop(driver, module, canvas);
+      // 'Build & Run' - 'Build Module' - 'test-repo' - 'New Project'
+      const menuBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
+      await menuBuild.click();
+      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      await menuBuildModule.click();
+      let menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
+      await menuTestRepo.click();
+      const btnNewProject = await menuTestRepo.findElement(By.xpath('//li[text()="New project"]'));
+      await btnNewProject.click();
+      // New Project dialog: 'My New Project'
+      const inputProjectName = await driver.findElement(
+        By.xpath("//h2[text()='New project']/following::div[1]//input"),
+      );
+      await OverwriteInputField(inputProjectName, 'My New Project');
+      await driver.findElement(By.xpath('//button[text()="Confirm"]')).click();
+      // 'test-repo' - 'My New Project' - 'New Module'
+      menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
+      await menuTestRepo.click();
+      const menuProjectFolder = await menuTestRepo.findElement(
+        By.xpath('//li[text()="MyNewProject"]'),
+      );
+      await menuProjectFolder.click();
+      const btnNewModule = await menuProjectFolder.findElement(
+        By.xpath('//li[text()="New module"]'),
+      );
+      await btnNewModule.click();
+      // New Module dialog: 'My New Module'
+      const inputModuleName = await driver.findElement(
+        By.xpath("//h2[text()='New module']/following::div[1]//input"),
+      );
+      await OverwriteInputField(inputModuleName, 'My New Module');
+      await driver.findElement(By.xpath('//button[text()="Confirm"]')).click();
+      // Wait for module to build, and check return code
+      let msg = await WaitForReturnCode(driver, 'builder/build-as-module');
+      expect(msg.returncode).toEqual(0);
+      // Check for new module in modules list
+      while (true) {
+        console.log('Checking for new module in modules list');
+        const modulelist = await driver.findElement(By.id('modulelist-mynewmodule'));
+        if (modulelist) break;
+        await driver.sleep(100);
+      }
+
+      console.log('<<< test Build module to local repository (new project, new module)');
+    },
+    ONE_MINUTE,
+  );
+
+  test(
+    'Build module to local repository (existing project, new module)',
+    async () => {
+      console.log('::: test Build module to local repository (existing project, new module)');
+      await ClearGraph(driver);
+
+      // Create a simple one module workflow
+      const module = await driver.findElement(By.id('modulelist-payload_run'));
+      const canvas = await driver.findElement(By.className('react-flow__pane'));
+      await DragAndDrop(driver, module, canvas);
+      // 'Build & Run' - 'Build Module' - 'test-repo' - 'New Project'
+      const menuBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
+      await menuBuild.click();
+      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      await menuBuildModule.click();
+      let menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
+      await menuTestRepo.click();
+      // 'My New Project' - 'New Module'
+      const menuProjectFolder = await menuTestRepo.findElement(
+        By.xpath('//li[text()="MyNewProject"]'),
+      );
+      await menuProjectFolder.click();
+      const btnNewModule = await menuProjectFolder.findElement(
+        By.xpath('//li[text()="New module"]'),
+      );
+      await btnNewModule.click();
+      // New Module dialog: 'My New Module'
+      const inputModuleName = await driver.findElement(
+        By.xpath("//h2[text()='New module']/following::div[1]//input"),
+      );
+      await OverwriteInputField(inputModuleName, 'My New Module 2');
+      await driver.findElement(By.xpath('//button[text()="Confirm"]')).click();
+      // Wait for module to build, and check return code
+      let msg = await WaitForReturnCode(driver, 'builder/build-as-module');
+      expect(msg.returncode).toEqual(0);
+      // Check for new module in modules list
+      while (true) {
+        console.log('Checking for new module in modules list');
+        const modulelist = await driver.findElement(By.id('modulelist-mynewmodule2'));
+        if (modulelist) break;
+        await driver.sleep(100);
+      }
+
+      console.log('<<< test Build module to local repository (existing project, new module)');
+    },
+    ONE_MINUTE,
+  );
+
+  test(
+    'Build module to local repository (existing project, existing module [reject])',
+    async () => {
+      console.log(
+        '::: test Build module to local repository (existing project, existing module [alert])',
+      );
+      await ClearGraph(driver);
+
+      // Create a simple one module workflow
+      const module = await driver.findElement(By.id('modulelist-payload_run'));
+      const canvas = await driver.findElement(By.className('react-flow__pane'));
+      await DragAndDrop(driver, module, canvas);
+      // 'Build & Run' - 'Build Module' - 'test-repo' - 'New Project'
+      const menuBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
+      await menuBuild.click();
+      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      await menuBuildModule.click();
+      let menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
+      await menuTestRepo.click();
+      const btnNewProject = await menuTestRepo.findElement(By.xpath('//li[text()="New project"]'));
+      await btnNewProject.click();
+      // New Project dialog: 'My New Project' (existing project, should alert user)
+      const inputProjectName = await driver.findElement(
+        By.xpath("//h2[text()='New project']/following::div[1]//input"),
+      );
+      await OverwriteInputField(inputProjectName, 'My New Project');
+      await driver.findElement(By.xpath('//button[text()="Confirm"]')).click();
+      // Should reject as module already exists - check for alert
+      const projectAlert = await driver.wait(
+        until.elementLocated(By.xpath('//h2[text()="Project already exists"]')),
+      );
+      await driver.findElement(By.xpath('//button[text()="CLOSE"]')).click();
+      // 'test-repo' - 'My New Project' - 'New Module'
+      menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
+      await menuTestRepo.click();
+      const menuProjectFolder = await menuTestRepo.findElement(
+        By.xpath('//li[text()="MyNewProject"]'),
+      );
+      await menuProjectFolder.click();
+      const btnNewModule = await menuProjectFolder.findElement(
+        By.xpath('//li[text()="New module"]'),
+      );
+      await btnNewModule.click();
+      // New Module dialog: 'My New Module'
+      const inputModuleName = await driver.findElement(
+        By.xpath("//h2[text()='New module']/following::div[1]//input"),
+      );
+      await OverwriteInputField(inputModuleName, 'My New Module 2');
+      await driver.findElement(By.xpath('//button[text()="Confirm"]')).click();
+      // Should reject as module already exists - check for alert
+      const msgAlert = await driver.wait(
+        until.elementLocated(By.xpath('//h2[text()="Module already exists"]')),
+      );
+      await driver.findElement(By.xpath('//button[text()="CLOSE"]')).click();
+
+      console.log(
+        '<<< test Build module to local repository (existing project, existing module [alert])',
+      );
+    },
+    ONE_MINUTE,
+  );
+
+  test(
+    'Build module to local repository (existing project, existing module [overwrite])',
+    async () => {
+      console.log(
+        '::: test Build module to local repository (existing project, existing module [overwrite])',
+      );
+      await ClearGraph(driver);
+
+      // Create a simple one module workflow
+      const module = await driver.findElement(By.id('modulelist-payload_run'));
+      const canvas = await driver.findElement(By.className('react-flow__pane'));
+      await DragAndDrop(driver, module, canvas);
+      // 'Build & Run' - 'Build Module' - 'test-repo' - 'New Project'
+      const menuBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
+      await menuBuild.click();
+      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      await menuBuildModule.click();
+      const menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
+      await menuTestRepo.click();
+      // 'My New Project' - 'New Module'
+      const menuProjectFolder = await menuTestRepo.findElement(
+        By.xpath('//li[text()="MyNewProject"]'),
+      );
+      await menuProjectFolder.click();
+      const btnExistingModule = await menuProjectFolder.findElement(
+        By.xpath('//li[text()="MyNewModule2"]'),
+      );
+      await btnExistingModule.click();
+      // 'Overwrite existing module' dialog
+      await driver.findElement(By.xpath('//button[text()="Confirm"]')).click();
+      // Wait for module to build, and check return code
+      let msg = await WaitForReturnCode(driver, 'builder/build-as-module');
+      expect(msg.returncode).toEqual(0);
+
+      console.log(
+        '<<< test Build module to local repository (existing project, existing module [overwrite])',
+      );
+    },
+    ONE_MINUTE,
+  );
+
+  test(
+    'Tidy-up: Ensure new project and modules were created, then remove from repository',
+    async () => {
+      console.log('::: test Tidy-up: Ensure new project and modules were created, then remove from repository');
+      
+      // Check that new project and modules were created
+      const project_folder = path.join(__dirname, 'test-repo', 'workflows', 'MyNewProject');
+      expect(fs.existsSync(project_folder)).toBeTruthy();
+      ['MyNewModule', 'MyNewModule2'].forEach((modulename) => {
+        const mymodule_folder = path.join(project_folder, 'modules', modulename);
+        expect(fs.existsSync(mymodule_folder)).toBeTruthy();
+        expect(fs.existsSync(path.join(mymodule_folder, 'workflow', 'Snakefile'))).toBeTruthy();
+        expect(fs.existsSync(path.join(mymodule_folder, 'config', 'config.yaml'))).toBeTruthy();
+      });
+
+      // Remove new projects folder
+      fs.rmSync(project_folder, { recursive: true, force: true });
+
+      // Ensure new project and modules were removed
+      expect(fs.existsSync(project_folder)).toBeFalsy();
+
+      console.log('<<< test Tidy-up: Ensure new project and modules were created, then remove from repository');
+    },
+    ONE_MINUTE,
   );
 
   // Container tests
