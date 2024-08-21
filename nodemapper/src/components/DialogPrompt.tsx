@@ -7,12 +7,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import React from 'react';
 
-interface DialogPromptProps {
+export interface DialogPromptProps {
   open: boolean;
   title?: string;
   content: string;
   value: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  inputRef?: React.RefObject<HTMLInputElement>;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onCancel?: () => void;
   onConfirm: () => void;
 }
@@ -22,22 +23,36 @@ export const DialogPrompt: React.FC<DialogPromptProps> = ({
   title,
   content,
   value,
+  inputRef,
   onChange,
   onCancel,
   onConfirm,
 }) => {
+  // Defaults
+  inputRef = inputRef || React.createRef<HTMLInputElement>();
+  onChange = onChange || (() => {});
+  onCancel = onCancel || (() => {});
+
   return (
-    <Dialog open={open} onClose={onCancel}>
-      <DialogTitle>{title}</DialogTitle>
+    <Dialog open={open} onClose={onCancel} disableEnforceFocus>
+      {title && <DialogTitle>{title}</DialogTitle>}
       <DialogContent>
         <DialogContentText>{content}</DialogContentText>
-        <TextField id="dialog-input" value={value} onChange={onChange} sx={{ width: '100%' }} />
+        <TextField
+          id="dialog-input"
+          value={value}
+          inputRef={inputRef}
+          onChange={onChange}
+          variant="outlined"
+          fullWidth
+          autoFocus
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel} color="primary">
           Cancel
         </Button>
-        <Button onClick={onConfirm} color="primary">
+        <Button onClick={() => onConfirm()} color="primary">
           Confirm
         </Button>
       </DialogActions>

@@ -27,7 +27,6 @@ export const useMenu = () => {
 
 export const NestedMenuItem = ({ label, children, ...props }: NestedMenuItemProps) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const menuClick = (event: React.MouseEvent<HTMLLIElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -43,7 +42,7 @@ export const NestedMenuItem = ({ label, children, ...props }: NestedMenuItemProp
 
       {/* Sub-menu */}
       <Menu
-        open={open}
+        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'top',

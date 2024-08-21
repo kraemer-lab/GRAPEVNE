@@ -33,6 +33,7 @@ contextBridge.exposeInMainWorld('builderAPI', {
   GetFile: (filename: string) => ipcRenderer.invoke('builder/get-file', filename),
   GetConfigFilenameFromSnakefile: (filename: Query | string) =>
     ipcRenderer.invoke('builder/get-config-filename-from-snakefile', filename),
+  CreateFolder: (folder: string) => ipcRenderer.invoke('builder/create-folder', folder),
 });
 
 contextBridge.exposeInMainWorld('runnerAPI', {

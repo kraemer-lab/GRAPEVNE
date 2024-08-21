@@ -1,5 +1,6 @@
+import { DialogPrompt } from 'components/DialogPrompt';
 import { DropdownMenu, NestedMenuItem, useMenu } from 'components/DropdownMenu';
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { MenuBuildModule } from './components/MenuBuildModule';
 
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
@@ -59,6 +60,7 @@ const MenuGraphDropdown = () => {
     dispatch(builderSetNodes([]));
     dispatch(builderSetEdges([]));
   };
+
   return (
     <>
       <MenuItem id="btnBuilderLoadScene" onClick={btnLoadScene}>
@@ -82,12 +84,16 @@ const MenuGraphDropdown = () => {
   );
 };
 
-const MenuBuildAndRunDropdown = () => {
+interface MenuBuildAndRunDropdownProps {
+  promptDialog: HeaderDialogPromptProps;
+}
+
+const MenuBuildAndRunDropdown = forwardRef(({ promptDialog }: MenuBuildAndRunDropdownProps) => {
   const dispatch = useAppDispatch();
   const { closeAllMenus } = useMenu();
 
   // Run - build and run the workflow
-  const btnRun = () => {
+  const btnTestBuild = () => {
     closeAllMenus();
     dispatch(builderBuildAndRun());
   };
@@ -112,14 +118,14 @@ const MenuBuildAndRunDropdown = () => {
 
   return (
     <>
-      <MenuItem id="btnBuilderBuildAndTest" onClick={btnRun}>
+      <MenuItem id="btnBuilderBuildAndTest" onClick={btnTestBuild}>
         TEST BUILD
       </MenuItem>
       <MenuItem id="btnCleanBuildFolder" onClick={btnCleanBuildFolder}>
         DELETE TEST BUILD
       </MenuItem>
       <Divider />
-      <MenuBuildModule />
+      <MenuBuildModule promptDialog={promptDialog} />
       <MenuItem id="btnBuilderBuildAsWorkflow" onClick={btnBuildAsWorkflow}>
         BUILD WORKFLOW
       </MenuItem>
@@ -128,9 +134,38 @@ const MenuBuildAndRunDropdown = () => {
       </MenuItem>
     </>
   );
-};
+});
+
+export interface HeaderDialogPromptProps extends React.ComponentProps<typeof DialogPrompt> {
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setTitle: React.Dispatch<React.SetStateAction<string>>;
+  setContent: React.Dispatch<React.SetStateAction<string>>;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  setOnConfirm: React.Dispatch<React.SetStateAction<() => void>>;
+}
 
 const Header = () => {
+  const [promptDialogTitle, setPromptDialogTitle] = React.useState('');
+  const [promptDialogOpen, setPromptDialogOpen] = React.useState(false);
+  const [promptDialogValue, setPromptDialogValue] = React.useState('');
+  const [promptDialogContent, setPromptDialogContent] = React.useState('');
+  const [promptDialogConfirm, setPromptDialogConfirm] = React.useState(() => () => {});
+  const inputRef = React.useRef(null);
+
+  const promptDialog: HeaderDialogPromptProps = {
+    open: promptDialogOpen,
+    title: promptDialogTitle,
+    setTitle: setPromptDialogTitle,
+    content: promptDialogContent,
+    setOpen: setPromptDialogOpen,
+    setContent: setPromptDialogContent,
+    value: promptDialogValue,
+    setValue: setPromptDialogValue,
+    inputRef: inputRef,
+    onConfirm: promptDialogConfirm,
+    setOnConfirm: setPromptDialogConfirm,
+  };
+
   const dispatch = useAppDispatch();
   const build_in_progress = useAppSelector((state) => state.builder.build_in_progress);
 
@@ -143,31 +178,57 @@ const Header = () => {
   };
 
   return (
-    <Stack direction="row" spacing={1} justifyContent="center">
-      {/* Scene menu */}
-      <DropdownMenu id="btnGraphDropdown" label="SCENE">
-        <MenuGraphDropdown />
-      </DropdownMenu>
+    <>
+      {/* Prompt dialog - keep outside of the menu, otherwise focus issues */}
+      <DialogPrompt
+        open={promptDialogOpen}
+        value={promptDialogValue}
+        inputRef={inputRef}
+        title={promptDialogTitle}
+        content={promptDialogContent}
+        onChange={(event) => {
+          setPromptDialogValue(event.target.value);
+        }}
+        onCancel={() => {
+          setPromptDialogOpen(false);
+        }}
+        onConfirm={() => {
+          setPromptDialogOpen(false);
+          promptDialogConfirm();
+        }}
+      />
 
-      {/* Build and run menu */}
-      <Box>
-        <DropdownMenu id="btnBuildAndRunDropdown" label="BUILD & RUN" disabled={build_in_progress}>
-          <MenuBuildAndRunDropdown />
+      {/* Header menu bar */}
+      <Stack direction="row" spacing={1} justifyContent="center">
+        {/* Scene menu */}
+        <DropdownMenu id="btnGraphDropdown" label="SCENE">
+          <MenuGraphDropdown />
         </DropdownMenu>
-        {build_in_progress && <LinearProgress />}
-      </Box>
 
-      {/* Open results folder */}
-      <Button
-        id="btnBuilderOpenResultsFolder"
-        className="btn"
-        onClick={btnOpenResultsFolder}
-        variant="contained"
-        disabled={hasTestRun ? false : true}
-      >
-        OPEN RESULTS
-      </Button>
-    </Stack>
+        {/* Build and run menu */}
+        <Box>
+          <DropdownMenu
+            id="btnBuildAndRunDropdown"
+            label="BUILD & RUN"
+            disabled={build_in_progress}
+          >
+            <MenuBuildAndRunDropdown promptDialog={promptDialog} />
+          </DropdownMenu>
+          {build_in_progress && <LinearProgress />}
+        </Box>
+
+        {/* Open results folder */}
+        <Button
+          id="btnBuilderOpenResultsFolder"
+          className="btn"
+          onClick={btnOpenResultsFolder}
+          variant="contained"
+          disabled={hasTestRun ? false : true}
+        >
+          OPEN RESULTS
+        </Button>
+      </Stack>
+    </>
   );
 };
 

@@ -221,6 +221,12 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           });
           break;
 
+        case 'builder/create-folder':
+          CreateFolder({
+            folder: action.payload,
+          });
+          break;
+
         case 'builder/load-scene':
           LoadScene({
             dispatchString: dispatch,
@@ -765,6 +771,10 @@ interface IUpdateStatusText {
 const UpdateStatusText = ({ dispatch, text }: IUpdateStatusText) => {
   // Send a copy of the status text to the logger
   dispatch(builderLogEvent(text));
+};
+
+const CreateFolder = ({ folder }: { folder: string }) => {
+  builderAPI.CreateFolder(folder);
 };
 
 interface ILoadScene {

@@ -135,6 +135,9 @@ app.whenReady().then(() => {
     (event: Event, data: Query | string) =>
       handles.builder_GetConfigFilenameFromSnakefile(event, data),
   );
+  ipcMain.handle('builder/create-folder', (event: Event, folder: string) =>
+    handles.builder_CreateFolder(event, folder),
+  );
 
   // Runner
   ipcMain.handle('runner/build', (event: Event, data: Query) =>

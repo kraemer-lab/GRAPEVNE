@@ -15,6 +15,7 @@ export const builderSaveNodemap = createAction('builder/save-nodemap');
 export const builderBuildInProgress = createAction<boolean>('builder/build-in-progress');
 export const builderBuildAsModule = createAction<string | undefined>('builder/build-as-module');
 export const builderBuildAsWorkflow = createAction('builder/build-as-workflow');
+export const builderCreateFolder = createAction<string>('builder/create-folder');
 export const builderPackageWorkflow = createAction('builder/package-workflow');
 export const builderBuildAndRun = createAction('builder/build-and-run');
 export const builderBuildAndRunToModule = createAction<string>('builder/build-and-run-to-module');

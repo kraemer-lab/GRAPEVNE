@@ -1,16 +1,24 @@
 import MenuItem from '@mui/material/MenuItem';
 import { DialogConfirm } from 'components/DialogConfirm';
-import { DialogPrompt } from 'components/DialogPrompt';
 import { NestedMenuItem, useMenu } from 'components/DropdownMenu';
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { builderBuildAsModule } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import { HeaderDialogPromptProps } from '../Header';
 
-export const MenuBuildModule = () => {
+interface MenuBuildModuleProps {
+  promptDialog: HeaderDialogPromptProps;
+}
+
+export const MenuBuildModule = forwardRef(({ promptDialog }: MenuBuildModuleProps) => {
   const dispatch = useAppDispatch();
   const modules_list = useAppSelector((state) => state.builder.modules_list);
   const repositories = useAppSelector((state) => state.settings.repositories);
   const { closeAllMenus } = useMenu();
+
+  // Dummy modules list stores new projects until they contain modules
+  // This list reinitialises each time the Build menu is opened
+  const [dummy_modules_list, setDummyModulesList] = React.useState([]);
 
   // Build as module
   const btnBuildAsModule = () => {
@@ -46,6 +54,10 @@ export const MenuBuildModule = () => {
       }
     }
     return 'module'; // default to 'module' folder
+  };
+
+  const WrangleFolderName = (name: string) => {
+    return name.replace(/ /g, '');
   };
 
   const ModulesList = ({ modules_list, repo, org, btnBuildToPath }) => {
@@ -88,33 +100,10 @@ export const MenuBuildModule = () => {
   };
 
   const ProjectsList = ({ modules_list, repo, btnBuildToPath }) => {
-    const [promptDialogOpen, setPromptDialogOpen] = React.useState(false);
-    const [promptDialogValue, setPromptDialogValue] = React.useState('');
-    const [selectedOrg, setSelectedOrg] = React.useState('');
     const repo_modules_list = modules_list.filter((v) => v.repo.url === repo);
-
-    const folderName = (name: string) => {
-      return name.replace(/ /g, '');
-    };
 
     return (
       <>
-        <DialogPrompt
-          open={promptDialogOpen}
-          value={promptDialogValue}
-          title="New module"
-          content="Enter the name of the new module:"
-          onChange={(event) => {
-            setPromptDialogValue(event.target.value);
-          }}
-          onCancel={() => {
-            setPromptDialogOpen(false);
-          }}
-          onConfirm={() => {
-            setPromptDialogOpen(false);
-            btnBuildToPath(repo, selectedOrg, 'module', folderName(promptDialogValue));
-          }}
-        />
         {repo_modules_list
           .map((m) => m.org)
           .filter((v) => v !== '') // remove empty
@@ -125,9 +114,18 @@ export const MenuBuildModule = () => {
               <MenuItem
                 key={org + '_new'}
                 onClick={() => {
-                  setSelectedOrg(org);
-                  setPromptDialogValue('');
-                  setPromptDialogOpen(true);
+                  promptDialog.setTitle('New module');
+                  promptDialog.setContent('Enter the name of the new module:');
+                  promptDialog.setValue('');
+                  promptDialog.setOnConfirm(() => () => {
+                    if (!promptDialog.inputRef.current) {
+                      console.error('MenuBuildModule/RepositoriesList: inputRef is null');
+                      return;
+                    }
+                    const name = WrangleFolderName(promptDialog.inputRef.current.value);
+                    btnBuildToPath(repo, org, 'module', name);
+                  });
+                  promptDialog.setOpen(true);
                 }}
               >
                 New module
@@ -146,41 +144,17 @@ export const MenuBuildModule = () => {
   };
 
   const RepositoriesList = ({ modules_list, btnBuildToPath }) => {
-    const [promptDialogOpen, setPromptDialogOpen] = React.useState(false);
-    const [promptDialogValue, setPromptDialogValue] = React.useState('');
-    const [selectedUrl, setSelectedUrl] = React.useState('');
     const [local_modules_list, setLocalModulesList] = React.useState([]);
 
     React.useEffect(() => {
-      setLocalModulesList(modules_list.filter((m) => m.repo.type === 'local'));
+      // Add dummy entries to the modules_list to permit access to new projects
+      setLocalModulesList(
+        [...modules_list, ...dummy_modules_list].filter((m) => m.repo.type === 'local'),
+      );
     }, [modules_list]);
 
     return (
       <>
-        <DialogPrompt
-          open={promptDialogOpen}
-          value={promptDialogValue}
-          title="New project"
-          content="Enter the name of the new project:"
-          onChange={(event) => {
-            setPromptDialogValue(event.target.value);
-          }}
-          onCancel={() => {
-            setPromptDialogOpen(false);
-          }}
-          onConfirm={() => {
-            setPromptDialogOpen(false);
-            // Add a dummy entry to the modules_list to permit access to the new project
-            const new_modules_list = modules_list.slice();
-            new_modules_list.push({
-              repo: { url: selectedUrl, type: 'local' },
-              org: promptDialogValue,
-              name: '',
-              type: 'module',
-            });
-            setLocalModulesList(new_modules_list);
-          }}
-        />
         {local_modules_list
           .map((m) => m.repo.url)
           .filter((value, index, self) => self.indexOf(value) === index)
@@ -189,9 +163,26 @@ export const MenuBuildModule = () => {
               <MenuItem
                 key={repo + '_new'}
                 onClick={() => {
-                  setSelectedUrl(repo);
-                  setPromptDialogValue('');
-                  setPromptDialogOpen(true);
+                  promptDialog.setTitle('New project');
+                  promptDialog.setContent('Enter the name of the new project:');
+                  promptDialog.setValue('');
+                  promptDialog.setOnConfirm(() => () => {
+                    // Add a dummy entry to the modules_list to permit access to the new project
+                    if (!promptDialog.inputRef.current) {
+                      console.error('MenuBuildModule/RepositoriesList: inputRef is null');
+                      return;
+                    }
+                    const org = WrangleFolderName(promptDialog.inputRef.current.value);
+                    const new_dummy_modules_list = [...dummy_modules_list];
+                    new_dummy_modules_list.push({
+                      repo: { type: 'local', url: repo },
+                      org: org,
+                      name: '',
+                      type: 'module',
+                    });
+                    setDummyModulesList(new_dummy_modules_list);
+                  });
+                  promptDialog.setOpen(true);
                 }}
               >
                 New project
@@ -217,4 +208,4 @@ export const MenuBuildModule = () => {
       <RepositoriesList modules_list={modules_list} btnBuildToPath={btnBuildToPath} />
     </NestedMenuItem>
   );
-};
+});

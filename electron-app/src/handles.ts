@@ -267,6 +267,11 @@ export async function builder_GetConfigFilenameFromSnakefile(
   return await web.getConfigFilenameFromSnakefile(snakefile);
 }
 
+export async function builder_CreateFolder(event: Event, folder: string) {
+  fs.mkdirSync(folder, { recursive: true });
+  return { query: 'builder/create-folder', body: 'OK', returncode: 0 };
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Runner query handlers
 ///////////////////////////////////////////////////////////////////////////////
