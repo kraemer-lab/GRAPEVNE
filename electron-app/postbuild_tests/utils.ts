@@ -553,6 +553,12 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   if (fs.existsSync(buildfile)) fs.unlinkSync(buildfile);
   expect(fs.existsSync(buildfile)).toBeFalsy();
 
+  // Assert that build folder does not exist
+  console.log('Assert that build folder does not exist');
+  const buildfolder = path.join(__dirname, 'downloads', 'build');
+  if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true, force: true });
+  expect(fs.existsSync(buildfolder)).toBeFalsy();
+
   // Build, outputs zip-file
   console.log('Build, outputs zip-file');
   if (packaged) {
@@ -573,7 +579,6 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
   // Unzip build file
   console.log('Unzip build file');
-  const buildfolder = path.join(__dirname, 'downloads', 'build');
   if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true, force: true });
   expect(fs.existsSync(buildfolder)).toBeFalsy();
   fs.mkdirSync(buildfolder);

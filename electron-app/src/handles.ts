@@ -152,9 +152,12 @@ export async function builder_BuildAsWorkflow(
     stderr_callback((data['data'] as Query)['stderr'] as string);
     return ErrorReturn(query.query as string, data);
   }
-  return fs.readFileSync((data['body'] as Query)['zipfile'] as string, {
-    encoding: 'base64',
-  });
+  // Module returned as zip file
+  const zipfile = (data['body'] as Query)['zipfile'] as string;
+  if (zipfile) {
+    data['zip'] = fs.readFileSync(zipfile, { encoding: 'base64' });
+  }
+  return data;
 }
 
 export async function builder_BuildAndRun(
