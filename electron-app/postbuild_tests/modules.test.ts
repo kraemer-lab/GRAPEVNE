@@ -1063,7 +1063,9 @@ describe('modules', () => {
   test(
     'Tidy-up: Ensure new project and modules were created, then remove from repository',
     async () => {
-      console.log('::: test Tidy-up: Ensure new project and modules were created, then remove from repository');
+      console.log(
+        '::: test Tidy-up: Ensure new project and modules were created, then remove from repository',
+      );
 
       // Check that new project and modules were created
       const project_folder = path.join(__dirname, 'test-repo', 'workflows', 'MyNewProject');
@@ -1081,7 +1083,9 @@ describe('modules', () => {
       // Ensure new project and modules were removed
       expect(fs.existsSync(project_folder)).toBeFalsy();
 
-      console.log('<<< test Tidy-up: Ensure new project and modules were created, then remove from repository');
+      console.log(
+        '<<< test Tidy-up: Ensure new project and modules were created, then remove from repository',
+      );
     },
     ONE_MINUTE,
   );

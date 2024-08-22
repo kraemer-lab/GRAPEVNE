@@ -34,7 +34,6 @@ interface IPayloadRecord {
 }
 type TPayloadRecord = (action: IPayloadRecord) => void;
 
-// Write persistent state to electron frontend
 const WriteStoreConfig = async (state) => {
   if (settingsAPI === undefined) return;
   settingsAPI.StoreWriteConfig({

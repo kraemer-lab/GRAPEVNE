@@ -48,6 +48,15 @@ export type NewModuleAPI = {
 export type SettingsAPI = {
   StoreReadConfig: () => Promise<Query>;
   StoreWriteConfig: (query: Query) => Promise<Query>;
+  GithubGetRepoStatus: (query: Query) => Promise<Query>;
+  GithubGetUntrackedFiles: (query: Query) => Promise<Query>;
+  GithubGetTrackedFileChanges: (query: Query) => Promise<Query>;
+  GithubPull: (query: Query) => Promise<Query>;
+  GithubPush: (query: Query) => Promise<Query>;
+  GithubStageFiles: (query: Query) => Promise<Query>;
+  GithubUnstageFiles: (query: Query) => Promise<Query>;
+  GithubCommit: (query: Query) => Promise<Query>;
+  GithubClone: (query: Query) => Promise<Query>;
 };
 
 declare global {

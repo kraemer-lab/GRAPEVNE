@@ -333,6 +333,58 @@ def post(request):
                 "body": runner.CheckNodeDependencies(data),
                 "returncode": 0,
             }
+        elif query == "settings/github-get-repo-status":
+            data = {
+                "query": query,
+                "body": runner.github.GetRepoStatus(data["repo"], data["branch"]),
+                "returncode": 0,
+            }
+        elif query == "settings/github-get-tracked-file-changes":
+            data = {
+                "query": query,
+                "body": runner.github.GetTrackedFileChanges(data["repo"]),
+                "returncode": 0,
+            }
+        elif query == "settings/github-get-untracked-files":
+            data = {
+                "query": query,
+                "body": runner.github.GetUntrackedFiles(data["repo"]),
+                "returncode": 0,
+            }
+        elif query == "settings/github-pull":
+            data = {
+                "query": query,
+                "body": runner.github.Pull(data["repo"], data["branch"]),
+                "returncode": 0,
+            }
+        elif query == "settings/github-push":
+            data = {
+                "query": query,
+                "body": runner.github.Push(data["repo"], data["branch"]),
+                "returncode": 0,
+            }
+        elif query == "settings/github-stage-files":
+            data = {
+                "query": query,
+                "body": runner.github.StageFiles(data["repo"], data["files"]),
+                "returncode": 0,
+            }
+        elif query == "settings/github-unstage-files":
+            data = {
+                "query": query,
+                "body": runner.github.UnstageFiles(data["repo"], data["files"]),
+                "returncode": 0,
+            }
+        elif query == "settings/github-commit":
+            author = data.get("author", None)
+            email = data.get("email", None)
+            data = {
+                "query": query,
+                "body": runner.github.Commit(
+                    data["repo"], data["message"], author, email
+                ),
+                "returncode": 0,
+            }
 
         else:
             raise NotImplementedError(f"Unknown query: {query}")

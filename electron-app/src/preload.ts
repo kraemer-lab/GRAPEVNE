@@ -62,6 +62,18 @@ contextBridge.exposeInMainWorld('newmoduleAPI', {
 contextBridge.exposeInMainWorld('settingsAPI', {
   StoreReadConfig: () => ipcRenderer.invoke('settings/store-read-config'),
   StoreWriteConfig: (query: Query) => ipcRenderer.invoke('settings/store-write-config', query),
+  GithubGetRepoStatus: (query: Query) =>
+    ipcRenderer.invoke('settings/github-get-repo-status', query),
+  GithubGetUntrackedFiles: (query: Query) =>
+    ipcRenderer.invoke('settings/github-get-untracked-files', query),
+  GithubGetTrackedFileChanges: (query: Query) =>
+    ipcRenderer.invoke('settings/github-get-tracked-file-changes', query),
+  GithubPull: (query: Query) => ipcRenderer.invoke('settings/github-pull', query),
+  GithubPush: (query: Query) => ipcRenderer.invoke('settings/github-push', query),
+  GithubStageFiles: (query: Query) => ipcRenderer.invoke('settings/github-stage-files', query),
+  GithubUnstageFiles: (query: Query) => ipcRenderer.invoke('settings/github-unstage-files', query),
+  GithubCommit: (query: Query) => ipcRenderer.invoke('settings/github-commit', query),
+  GithubClone: (query: Query) => ipcRenderer.invoke('settings/github-clone', query),
 });
 
 declare global {

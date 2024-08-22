@@ -180,6 +180,33 @@ app.whenReady().then(() => {
   ipcMain.handle('settings/store-write-config', (event: Event, data: Query) =>
     handles.settings_StoreWriteConfig(event, data),
   );
+  ipcMain.handle('settings/github-get-repo-status', (event: Event, query: Query) =>
+    handles.settings_GithubGetRepoStatus(event, query, stderr_callback),
+  );
+  ipcMain.handle('settings/github-get-untracked-files', (event: Event, query: Query) =>
+    handles.settings_GithubGetUntrackedFiles(event, query, stderr_callback),
+  );
+  ipcMain.handle('settings/github-get-tracked-file-changes', (event: Event, query: Query) =>
+    handles.settings_GithubGetTrackedFileChanges(event, query, stderr_callback),
+  );
+  ipcMain.handle('settings/github-pull', (event: Event, query: Query) =>
+    handles.settings_GithubPull(event, query, stderr_callback),
+  );
+  ipcMain.handle('settings/github-push', (event: Event, query: Query) =>
+    handles.settings_GithubPush(event, query, stderr_callback),
+  );
+  ipcMain.handle('settings/github-stage-files', (event: Event, query: Query) =>
+    handles.settings_GithubStageFiles(event, query, stderr_callback),
+  );
+  ipcMain.handle('settings/github-unstage-files', (event: Event, query: Query) =>
+    handles.settings_GithubUnstageFiles(event, query, stderr_callback),
+  );
+  ipcMain.handle('settings/github-commit', (event: Event, query: Query) =>
+    handles.settings_GithubCommit(event, query, stderr_callback),
+  );
+  ipcMain.handle('settings/github-clone', (event: Event, query: Query) =>
+    handles.settings_GithubClone(event, query, stderr_callback),
+  );
 });
 
 app.on('will-quit', () => {

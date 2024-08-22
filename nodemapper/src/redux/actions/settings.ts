@@ -18,12 +18,8 @@ export const settingsSelectSnakemakeBackend = createAction<string>(
 export const settingsSelectCondaBackend = createAction<string>('settings/select-conda-backend');
 export const settingsSetEnvironmentVars = createAction<string>('settings/set-environment_vars');
 export const settingsSetSnakemakeArgs = createAction<string>('settings/set-snakemake-args');
-export const settingsSetRepositoryTarget = createAction<Record<string, any>>(
-  'settings/set-repository-target',
-);
-export const settingsUpdateSettings = createAction<Record<string, unknown>>(
-  'settings/update-settings',
-);
+export const settingsSetRepositoryTarget = createAction<{}>('settings/set-repository-target');
+export const settingsUpdateSettings = createAction<{}>('settings/update-settings');
 export const settingsToggleDarkMode = createAction('settings/toggle-dark-mode');
 export const settingsReadStoreConfig = createAction('settings/read-store-config');
 export const settingsWriteStoreConfig = createAction('settings/write-store-config');
