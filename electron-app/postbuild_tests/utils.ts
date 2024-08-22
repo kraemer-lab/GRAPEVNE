@@ -116,21 +116,21 @@ const WaitForReturnCode = async (
   }
 };
 
-const dragAndDrop = async (
+const DragAndDrop = async (
   driver: webdriver.ThenableWebDriver,
   elementFrom: webdriver.WebElement,
   elementTo: webdriver.WebElement,
 ) => {
   if (os.platform() === 'win32') {
     // Windows implementation - see function for details
-    return await dragAndDrop_script(driver, elementFrom, elementTo);
+    return await DragAndDrop_script(driver, elementFrom, elementTo);
   } else {
     // webdriver seems to work fine on Linux and MacOS
     await driver.actions(opts).dragAndDrop(elementFrom, elementTo).perform();
   }
 };
 
-const dragAndDrop_script = async (
+const DragAndDrop_script = async (
   driver: webdriver.ThenableWebDriver,
   elementFrom: webdriver.WebElement,
   elementTo: webdriver.WebElement,
@@ -305,7 +305,7 @@ const ClearGraph = async (driver: webdriver.ThenableWebDriver) => {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     try {
-      await driver.findElement(By.xpath('//ul[@aria-labelledby="graphDropdown"]'));
+      await driver.findElement(By.id('btnBuilderClearScene'));
       await driver.sleep(50);
     } catch (NoSuchElementError) {
       // Element has closed
@@ -423,7 +423,7 @@ export const MultiModuleWorkflow_Setup = async (
   for (let k = 0; k < modulenames.length; k++) {
     const module = await driver.findElement(By.id('modulelist-' + wranglename(modulenames[k])));
     const canvas = await driver.findElement(By.className('react-flow__pane'));
-    await dragAndDrop(driver, module, canvas);
+    await DragAndDrop(driver, module, canvas);
     await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n${k}"]`)));
   }
 
@@ -434,7 +434,7 @@ export const MultiModuleWorkflow_Setup = async (
     const [fromport, toport] = connections[k];
     const port1 = await driver.findElement(By.xpath(`//div[@data-id="${fromport}"]`));
     const port2 = await driver.findElement(By.xpath(`//div[@data-id="${toport}"]`));
-    await dragAndDrop(driver, port1, port2);
+    await DragAndDrop(driver, port1, port2);
   }
 };
 
@@ -524,7 +524,7 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   await ClearGraph(driver);
   const module = await driver.findElement(By.id('modulelist-' + wranglename(modulename)));
   const canvas = await driver.findElement(By.className('react-flow__pane'));
-  await dragAndDrop(driver, module, canvas);
+  await DragAndDrop(driver, module, canvas);
   await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n0"]`)));
   await canvas.click(); // Click on the canvas to deselect the module
 
@@ -553,6 +553,12 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
   if (fs.existsSync(buildfile)) fs.unlinkSync(buildfile);
   expect(fs.existsSync(buildfile)).toBeFalsy();
 
+  // Assert that build folder does not exist
+  console.log('Assert that build folder does not exist');
+  const buildfolder = path.join(__dirname, 'downloads', 'build');
+  if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true, force: true });
+  expect(fs.existsSync(buildfolder)).toBeFalsy();
+
   // Build, outputs zip-file
   console.log('Build, outputs zip-file');
   if (packaged) {
@@ -573,7 +579,6 @@ const Build_RunWithDocker_SingleModuleWorkflow = async ({
 
   // Unzip build file
   console.log('Unzip build file');
-  const buildfolder = path.join(__dirname, 'downloads', 'build');
   if (fs.existsSync(buildfolder)) fs.rmSync(buildfolder, { recursive: true, force: true });
   expect(fs.existsSync(buildfolder)).toBeFalsy();
   fs.mkdirSync(buildfolder);
@@ -701,7 +706,7 @@ export {
   BuildAndRun_MultiModuleWorkflow,
   BuildAndRun_SingleModuleWorkflow,
   ClearGraph,
-  dragAndDrop,
+  DragAndDrop,
   FlushConsoleLog,
   is_installed,
   is_not_windows,

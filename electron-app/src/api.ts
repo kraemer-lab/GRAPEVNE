@@ -24,6 +24,7 @@ export type BuilderAPI = {
   logEvent: (callback: (event: Event, data: string) => void) => void;
   GetFile: (filename: string) => Promise<string>;
   GetConfigFilenameFromSnakefile: (filename: Query | string) => Promise<string>;
+  CreateFolder: (folder: string) => Promise<Query>;
 };
 
 export type RunnerAPI = {

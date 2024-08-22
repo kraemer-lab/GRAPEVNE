@@ -2,6 +2,7 @@ import BuilderEngine from 'gui/Builder/components/BuilderEngine';
 
 import {
   builderBuildInProgress,
+  builderGetRemoteModules,
   builderLogEvent,
   builderNodeSelected,
   builderSetEdges,
@@ -24,7 +25,8 @@ import {
 } from 'gui/Builder/components/Flow';
 import { Edge } from 'reactflow';
 
-import { IRepo } from 'redux/reducers/builder';
+import { IModulesList } from 'redux/reducers/builder';
+import { IRepo } from 'redux/reducers/settings';
 
 type Query = Record<string, unknown>;
 
@@ -44,6 +46,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           BuildAs({
             query_name: 'builder/build-as-module',
             builder_api_fcn: builderAPI.BuildAsModule,
+            build_path: action.payload || '',
             dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: state.settings.snakemake_args,
@@ -61,6 +64,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           BuildAs({
             query_name: 'builder/build-as-workflow',
             builder_api_fcn: builderAPI.BuildAsWorkflow,
+            build_path: '', // temp location
             dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: state.settings.snakemake_args,
@@ -78,6 +82,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           BuildAs({
             query_name: 'builder/build-as-workflow',
             builder_api_fcn: builderAPI.BuildAsWorkflow,
+            build_path: '', // temp location
             dispatchBool: dispatch,
             dispatchString: dispatch,
             snakemake_args: state.settings.snakemake_args,
@@ -194,6 +199,7 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           GetRemoteModules({
             dispatchString: dispatch,
             dispatchBool: dispatch,
+            dispatchModulesList: dispatch,
             repo: state.settings.repositories,
           });
           break;
@@ -212,6 +218,12 @@ export const builderMiddleware = ({ getState, dispatch }) => {
         case 'builder/open-results-folder':
           OpenResultsFolder({
             workdir: state.builder.workdir,
+          });
+          break;
+
+        case 'builder/create-folder':
+          CreateFolder({
+            folder: action.payload,
           });
           break;
 
@@ -269,6 +281,12 @@ interface IPayloadBool {
 }
 type TPayloadBool = (action: IPayloadBool) => void;
 
+interface IPayloadModulesList {
+  payload: IModulesList;
+  type: string;
+}
+type TPayloadModulesList = (action: IPayloadModulesList) => void;
+
 interface IPayloadNodeList {
   payload: Node[];
   type: string;
@@ -284,6 +302,7 @@ type TPayloadEdgeList = (action: IPayloadEdgeList) => void;
 interface IBuildAs {
   query_name: string;
   builder_api_fcn: (query: Query) => Promise<Query>;
+  build_path: string;
   dispatchBool: TPayloadBool;
   dispatchString: TPayloadString;
   snakemake_args: string;
@@ -299,6 +318,7 @@ interface IBuildAs {
 const BuildAs = async ({
   query_name,
   builder_api_fcn,
+  build_path,
   dispatchBool,
   dispatchString,
   snakemake_args,
@@ -319,6 +339,7 @@ const BuildAs = async ({
       format: 'Snakefile',
       content: app.GetModuleListJSON(nodes, edges),
       targets: app.GetLeafNodeNames(nodes, edges),
+      build_path: build_path,
       args: snakemake_args,
       backend: snakemake_backend,
       conda_backend: conda_backend,
@@ -328,15 +349,24 @@ const BuildAs = async ({
     },
   };
   const callback = (result) => {
-    // Download returned content as file
-    const filename = 'build.zip';
-    const element = document.createElement('a');
-    element.setAttribute('href', 'data:application/zip;base64,' + encodeURIComponent(result));
-    element.setAttribute('download', filename);
-    element.style.display = 'none';
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
+    // Module can be built in-place, or returned as a zip file
+    if (result['zip']) {
+      // Download returned content as file
+      const filename = 'build.zip';
+      const element = document.createElement('a');
+      element.setAttribute(
+        'href',
+        'data:application/zip;base64,' + encodeURIComponent(result['zip']),
+      );
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    } else {
+      // Local repository has been updated - refresh module list
+      dispatchString(builderGetRemoteModules());
+    }
     // Report success (this should be returned by the backend, but that is currently
     // set-up to return the [binary] zip file); console.logs are important for
     // post-build tests
@@ -670,14 +700,20 @@ const UpdateNodeInfoName = ({ action, dispatch, nodeinfo, nodes }: IUpdateNodeIn
 interface IGetRemoteModules {
   dispatchString: TPayloadString;
   dispatchBool: TPayloadBool;
+  dispatchModulesList: TPayloadModulesList;
   repo: IRepo[];
 }
 
-const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemoteModules) => {
+const GetRemoteModules = async ({
+  dispatchString,
+  dispatchBool,
+  dispatchModulesList,
+  repo,
+}: IGetRemoteModules) => {
   // Get list of remote modules
   dispatchString(builderUpdateStatusText('Loading modules...'));
   dispatchBool(builderSetModulesLoading(true));
-  dispatchString(builderUpdateModulesList('[]'));
+  dispatchModulesList(builderUpdateModulesList([]));
   const query: Query = {
     query: 'builder/get-remote-modules',
     data: {
@@ -694,7 +730,8 @@ const GetRemoteModules = async ({ dispatchString, dispatchBool, repo }: IGetRemo
       dispatchBool(builderSetModulesLoading(false));
       dispatchString(builderUpdateStatusText(content['body'] as string));
     } else {
-      dispatchString(builderUpdateModulesList(content['body'] as string));
+      const modules_list = content['body'] as IModulesList;
+      dispatchModulesList(builderUpdateModulesList(modules_list));
       dispatchBool(builderSetModulesLoading(false));
       dispatchString(builderUpdateStatusText('Modules loaded.'));
     }
@@ -734,6 +771,10 @@ interface IUpdateStatusText {
 const UpdateStatusText = ({ dispatch, text }: IUpdateStatusText) => {
   // Send a copy of the status text to the logger
   dispatch(builderLogEvent(text));
+};
+
+const CreateFolder = ({ folder }: { folder: string }) => {
+  builderAPI.CreateFolder(folder);
 };
 
 interface ILoadScene {

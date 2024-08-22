@@ -131,9 +131,12 @@ export async function builder_BuildAsModule(
     stderr_callback((data['data'] as Query)['stderr'] as string);
     return ErrorReturn(query.query as string, data);
   }
-  return fs.readFileSync((data['body'] as Query)['zipfile'] as string, {
-    encoding: 'base64',
-  });
+  // Module returned as zip file
+  const zipfile = (data['body'] as Query)['zipfile'] as string;
+  if (zipfile) {
+    data['zip'] = fs.readFileSync(zipfile, { encoding: 'base64' });
+  }
+  return data;
 }
 
 export async function builder_BuildAsWorkflow(
@@ -149,9 +152,12 @@ export async function builder_BuildAsWorkflow(
     stderr_callback((data['data'] as Query)['stderr'] as string);
     return ErrorReturn(query.query as string, data);
   }
-  return fs.readFileSync((data['body'] as Query)['zipfile'] as string, {
-    encoding: 'base64',
-  });
+  // Module returned as zip file
+  const zipfile = (data['body'] as Query)['zipfile'] as string;
+  if (zipfile) {
+    data['zip'] = fs.readFileSync(zipfile, { encoding: 'base64' });
+  }
+  return data;
 }
 
 export async function builder_BuildAndRun(
@@ -262,6 +268,11 @@ export async function builder_GetConfigFilenameFromSnakefile(
   snakefile: Query | string,
 ) {
   return await web.getConfigFilenameFromSnakefile(snakefile);
+}
+
+export async function builder_CreateFolder(event: Event, folder: string) {
+  fs.mkdirSync(folder, { recursive: true });
+  return { query: 'builder/create-folder', body: 'OK', returncode: 0 };
 }
 
 ///////////////////////////////////////////////////////////////////////////////

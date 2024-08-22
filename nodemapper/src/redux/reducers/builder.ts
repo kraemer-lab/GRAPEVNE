@@ -4,44 +4,32 @@ import { createReducer } from '@reduxjs/toolkit';
 import { Edge, Node } from 'NodeMap/scene/Flow';
 import { ConfigPaneDisplay } from 'redux/types';
 
-export interface IRepo {
-  active: boolean;
+export interface IModulesListConfig {
+  config: {};
+  snakefile: {};
+}
+
+export interface IModulesListRepo {
   type: string;
-  label: string;
   listing_type: string;
-  repo: string;
+  url: string;
 }
 
-export interface IWorkflowAlertEmail {
-  smtp_server: string;
-  smtp_port: number;
-  sender: string;
-  username: string;
-  password: string;
+export interface IModulesListEntry {
+  config: IModulesListConfig;
+  name: string;
+  org: string;
+  repo: IModulesListRepo;
+  type: 'source' | 'module';
 }
 
-export interface IWorkflowAlertMessage {
-  subject: string;
-  body: string;
-  recipients: string;
-}
-
-export interface IWorkflowAlert {
-  enabled: boolean;
-  message: IWorkflowAlertMessage;
-}
-
-export interface IWorkflowAlerts {
-  onsuccess: IWorkflowAlert;
-  onerror: IWorkflowAlert;
-  email_settings: IWorkflowAlertEmail;
-}
+export type IModulesList = IModulesListEntry[];
 
 export interface IBuilderState {
   // Builder state
   statustext: string;
   nodeinfo: string;
-  modules_list: string;
+  modules_list: IModulesList;
   can_selected_expand: boolean;
   config_pane_display: string;
   logtext: string;
@@ -68,7 +56,7 @@ const builderStateInit: IBuilderState = {
   can_selected_expand: true,
   config_pane_display: ConfigPaneDisplay.None,
   logtext: ' ',
-  modules_list: '[]',
+  modules_list: [],
   workdir: '',
   modules_loading: false,
   build_in_progress: false,
@@ -143,8 +131,7 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderUpdateModulesList, (state, action) => {
       // Accepts string representation or JSON (modules_list should be a list!)
-      if (typeof action.payload === 'string') state.modules_list = action.payload;
-      else state.modules_list = JSON.stringify(action.payload);
+      state.modules_list = action.payload;
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderUpdateStatusText, (state, action) => {

@@ -36,6 +36,7 @@ type TPayloadRecord = (action: IPayloadRecord) => void;
 
 // Write persistent state to electron frontend
 const WriteStoreConfig = async (state) => {
+  if (settingsAPI === undefined) return;
   settingsAPI.StoreWriteConfig({
     repositories: state.repositories,
     snakemake_backend: state.snakemake_backend,
@@ -51,6 +52,7 @@ const WriteStoreConfig = async (state) => {
 
 // Read persistent state from electron frontend
 const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
+  if (settingsAPI === undefined) return;
   let local_config = {};
   try {
     local_config = await settingsAPI.StoreReadConfig();
