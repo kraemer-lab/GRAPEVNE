@@ -12,93 +12,37 @@ on:
         default: false
 
 jobs:
-  build:
+  build_ubuntu:
+    name: Build ubuntu
     permissions: write-all
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        # macos-12 provides Intel builds, macos-14 provides M1 builds
-        os: [ubuntu-latest, windows-latest, macos-12, macos-14]
-      fail-fast: false
+    uses: ./.github/workflows/publish_build.yml
+    with:
+      os: ubuntu-latest
+    secrets: inherit
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - uses: nanasess/setup-chromedriver@v2
-        with:
-          chromedriver-version: "126.0.6478.185"
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-      - name: install MacOS (M1) build dependencies
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "ARM64" ]; then
-            brew install pango
-          fi
-      - name: build
-        working-directory: ./electron-app
-        shell: bash
-        run: |
-          corepack enable
-          ./build_deps.sh
-          yarn install
-          yarn
-          yarn build
-      # Enable tmate debugging of manually-triggered workflows if the input option was provided
-      - name: tmate debugging
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-      - name: postbuild-tests
-        working-directory: ./electron-app
-        shell: bash
-        # 'yarn package' is only run to allow build_testsuite.sh to run before
-        # the package is pushed for publishing ('yarn run publish' builds and
-        # publishes in one step)
-        run: |
-          yarn package
-          ./run_postbuild_tests.sh
-      - name: publish
-        working-directory: ./electron-app
-        env:
-          REPO_OWNER: ${{ github.repository_owner }}
-          REPO_NAME: ${{ github.event.repository.name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          MACOS_CERTIFICATE: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE }}
-          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_PWD }}
-          MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_NAME }}
-          MACOS_CI_KEYCHAIN_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_PWD }}
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            # Convert base64-encoded certificate from secrets into a regular .p12 file
-            echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
+  build_windows:
+    name: Build windows
+    permissions: write-all
+    uses: ./.github/workflows/publish_build.yml
+    with:
+      os: windows-latest
+    secrets: inherit
 
-            # Create a keychain to hold the certificate
-            security create-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
-            security default-keychain -s build.keychain
-            security unlock-keychain -p "$MACOS_CI_KEYCHAIN_PWD" build.keychain
-            security import certificate.p12 -k build.keychain -P "$MACOS_CERTIFICATE_PWD" -T /usr/bin/codesign
-            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$MACOS_CI_KEYCHAIN_PWD" build.keychain
+  build_macos14:
+    name: Build macOS-14
+    permissions: write-all
+    uses: ./.github/workflows/publish_build.yml
+    with:
+      os: macos-14
+    secrets: inherit
 
-            # Repackage with code-signing and notarization (enabled when MACOS_CERTIFICATE_NAME is set)
-            export DEBUG=*
-            yarn package
-
-            # Verify signing process
-            pushd out/GRAPEVNE-darwin-*
-            codesign --verbose --verify GRAPEVNE.app
-            codesign -vvv GRAPEVNE.app
-            xcrun stapler validate GRAPEVNE.app
-            spctl --assess --verbose GRAPEVNE.app
-            popd
-          fi
-          yarn run publish
+  # Separate macOS-12 and macOS-14 builds to avoid signing conflicts
+  # (https://github.com/kraemer-lab/GRAPEVNE/issues/243)
+  build_macos12:
+    name: Build macOS-12
+    needs: [build_macos14]
+    permissions: write-all
+    uses: ./.github/workflows/publish_build.yml
+    with:
+      os: macos-12
+    secrets: inherit
