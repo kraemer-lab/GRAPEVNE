@@ -38,8 +38,10 @@ const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
 
   // Github repo status
   type ghStatusOpts =
+    // query states
     | 'unknown'
     | 'checking'
+    // return codes
     | 'not-a-repo'
     | 'up-to-date'
     | 'behind'
@@ -72,8 +74,10 @@ const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
   const [ghUntracked, setGhUntracked] = React.useState({ status: 'unknown' } as ghUntrackedProps);
 
   type ghIndicatorOpts =
+    // query states
     | 'unknown'
     | 'checking'
+    // return codes
     | 'not-a-repo'
     | 'up-to-date'
     | 'modified'
@@ -87,6 +91,12 @@ const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
       setGhIndicator('checking');
     }
   }, []);
+
+  const RefreshGhStatus = () => {
+    setAnchorMenu(null);
+    setGhIndicator('checking');
+    GithubGetRepoStatus(repo, branch);
+  }
 
   const GithubGetRepoStatus = async (repo: string, branch: string) => {
     // Check if the repo is in sync with the remote
@@ -146,6 +156,7 @@ const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
   };
 
   const onGhPull = async () => {
+    setGhIndicator('checking');
     settingsAPI
       .GithubPull({
         query: 'settings/github-pull',
@@ -157,16 +168,19 @@ const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
       .then((response) => {
         const result = response['body'] as { status: string; message: string };
         if (result.status === 'success') {
-          // Force refresh of the repo status
+          RefreshGhStatus();
         } else {
           dispatch(
             builderLogEvent(`Error pulling changes from Github for ${repo}: ${result.message}`),
           );
+          setGhIndicator('error');
+          setGhStatus({ status: 'error', message: result.message });
         }
       });
   };
 
   const onGhPush = async () => {
+    setGhIndicator('checking');
     settingsAPI
       .GithubPush({
         query: 'settings/github-push',
@@ -178,10 +192,35 @@ const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
       .then((response) => {
         const result = response['body'] as { status: string; message: string };
         if (result.status === 'success') {
-          // Force refresh of the repo status
+          RefreshGhStatus();
         } else {
           dispatch(
             builderLogEvent(`Error pushing changes to Github for ${repo}: ${result.message}`),
+          );
+          setGhIndicator('error');
+          setGhStatus({ status: 'error', message: result.message });
+        }
+      });
+  };
+
+  const ghCommitAllChanges = async () => {
+    settingsAPI
+      .GithubCommitAllChanges({
+        query: 'settings/github-commit-all-changes',
+        data: {
+          repo: repo,
+          message: 'Commit from GRAPEVNE',
+          author: 'GRAPEVNE',
+          email: null,
+        },
+      })
+      .then((response) => {
+        const result = response['body'] as { status: string; message: string };
+        if (result.status === 'success') {
+          // Force refresh of the repo status
+        } else {
+          dispatch(
+            builderLogEvent(`Error committing changes to Github for ${repo}: ${result.message}`),
           );
         }
       });
@@ -202,7 +241,12 @@ const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
           {/* For 'unknown', 'checking' and 'not-a-repo' we don't show the github indicator */}
           {ghIndicator === 'up-to-date' && (
             <Tooltip title={ghStatus.message}>
-              <GitHubIcon style={{ color: '#424242' }} />
+              <GitHubIcon
+                style={{ color: '#424242' }}
+                onClick={() => {
+                  RefreshGhStatus();
+                }}
+              />
             </Tooltip>
           )}
           {ghIndicator === 'checking' && (
@@ -239,6 +283,11 @@ const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
             <Alert severity="warning">
               Conflicts with github detected - try pulling the latest changes
             </Alert>
+          )}
+          {(ghTracked.status === 'some' || ghUntracked.status === 'some') && (
+            <Button variant="contained" fullWidth onClick={ghCommitAllChanges}>
+              Commit all changes
+            </Button>
           )}
           {(ghStatus.status === 'behind' || ghStatus.status === 'diverged') && (
             <Button variant="contained" fullWidth onClick={onGhPull}>

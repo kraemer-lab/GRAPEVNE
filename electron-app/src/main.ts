@@ -207,6 +207,9 @@ app.whenReady().then(() => {
   ipcMain.handle('settings/github-clone', (event: Event, query: Query) =>
     handles.settings_GithubClone(event, query, stderr_callback),
   );
+  ipcMain.handle('settings/github-commit-all-changes', (event: Event, query: Query) =>
+    handles.settings_GithubCommitAllChanges(event, query, stderr_callback),
+  );
 });
 
 app.on('will-quit', () => {

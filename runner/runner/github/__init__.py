@@ -7,3 +7,4 @@ from .github import Pull  # noqa: F401
 from .github import Push  # noqa: F401
 from .github import StageFiles  # noqa: F401
 from .github import UnstageFiles  # noqa: F401
+from .github import CommitAllChanges  # noqa: F401

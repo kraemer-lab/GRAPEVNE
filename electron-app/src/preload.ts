@@ -74,6 +74,8 @@ contextBridge.exposeInMainWorld('settingsAPI', {
   GithubUnstageFiles: (query: Query) => ipcRenderer.invoke('settings/github-unstage-files', query),
   GithubCommit: (query: Query) => ipcRenderer.invoke('settings/github-commit', query),
   GithubClone: (query: Query) => ipcRenderer.invoke('settings/github-clone', query),
+  GithubCommitAllChanges: (query: Query) =>
+    ipcRenderer.invoke('settings/github-commit-all-changes', query),
 });
 
 declare global {

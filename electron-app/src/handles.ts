@@ -486,3 +486,11 @@ export async function settings_GithubClone(
 ) {
   return await SafeProcessQuery(event, query, stderr_callback);
 }
+
+export async function settings_GithubCommitAllChanges(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}

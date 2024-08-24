@@ -405,3 +405,56 @@ def Clone(github_url, clone_to_path):
         "status": "success",
         "message": "Successfully cloned the repository.",
     }
+
+
+def CommitAllChanges(repo_path, commit_message, author_name=None, author_email=None):
+    """
+    Commit all changes in the Git repository with a specified commit message.
+
+    :param repo_path: The local path to the Git repository.
+    :param commit_message: The commit message.
+    :param author_name: The name of the author (optional).
+    :param author_email: The email of the author (optional).
+    :return: None
+    """
+    try:
+        # Initialize the repository object
+        repo = git.Repo(repo_path)
+
+        # Check if there are any changes to commit
+        if not repo.is_dirty(untracked_files=True):
+            return {
+                "status": "none",
+                "message": "No changes to commit.",
+            }
+
+        # Stage all changes
+        repo.git.add("--all")
+
+        # Set up the author information if provided
+        if author_name and author_email:
+            author = git.Actor(author_name, author_email)
+            commit = repo.index.commit(commit_message, author=author)
+        else:
+            commit = repo.index.commit(commit_message)
+
+    except git.exc.InvalidGitRepositoryError:
+        return {
+            "status": "error",
+            "message": "Not a valid git repository.",
+        }
+    except git.exc.GitCommandError as e:
+        return {
+            "status": "error",
+            "message": f"Error committing files: {e}",
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"An unexpected error occurred: {e}",
+        }
+    return {
+        "status": "success",
+        "message": "Successfully committed all changes.",
+        "commit_message": commit.message,
+    }

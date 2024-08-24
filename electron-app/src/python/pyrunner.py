@@ -385,6 +385,16 @@ def post(request):
                 ),
                 "returncode": 0,
             }
+        elif query == "settings/github-commit-all-changes":
+            author = data.get("author", None)
+            email = data.get("email", None)
+            data = {
+                "query": query,
+                "body": runner.github.CommitAllChanges(
+                    data["repo"], data["message"], author, email
+                ),
+                "returncode": 0,
+            }
 
         else:
             raise NotImplementedError(f"Unknown query: {query}")

@@ -57,6 +57,7 @@ export type SettingsAPI = {
   GithubUnstageFiles: (query: Query) => Promise<Query>;
   GithubCommit: (query: Query) => Promise<Query>;
   GithubClone: (query: Query) => Promise<Query>;
+  GithubCommitAllChanges: (query: Query) => Promise<Query>;
 };
 
 declare global {
