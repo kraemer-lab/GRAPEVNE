@@ -396,7 +396,7 @@ def post(request):
                 "returncode": 0,
             }
         elif query == "settings/github-clone":
-            create_folder = data.get("createfolder", True);
+            create_folder = data.get("createfolder", True)
             data = {
                 "query": query,
                 "body": runner.github.Clone(data["url"], data["path"], create_folder),
