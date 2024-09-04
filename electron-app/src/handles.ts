@@ -76,7 +76,7 @@ export async function display_SelectFolder(
 ) {
   const result = await dialog.showOpenDialog(win, {
     defaultPath: path,
-    properties: ['openDirectory'],
+    properties: ['openDirectory', 'createDirectory'],
   });
   return result.filePaths;
 }

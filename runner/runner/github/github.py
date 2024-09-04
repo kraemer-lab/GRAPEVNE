@@ -379,16 +379,22 @@ def Commit(repo_path, commit_message, author_name=None, author_email=None):
     }
 
 
-def Clone(github_url, clone_to_path):
+def Clone(github_url, clone_to_path, create_folder):
     """
     Clone a GitHub repository to a specified local directory.
 
     :param github_url: The URL of the GitHub repository to clone.
     :param clone_to_path: The local directory where the repository should be cloned.
+    :param create_folder: Whether to create a new named sub-folder for the repository.
     :return: None
     """
+    # Get repository name from url
+    repo_name = github_url.split("/")[-1].replace(".git", "")
+    # Update target folder
+    if create_folder:
+        clone_to_path = f"{clone_to_path}/{repo_name}"
+    # Clone the repository
     try:
-        # Clone the repository
         git.Repo.clone_from(github_url, clone_to_path)
 
     except git.exc.GitCommandError as e:
