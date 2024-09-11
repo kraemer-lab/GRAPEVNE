@@ -5,11 +5,11 @@ module source_test:
         config["source_test"]["snakefile"]
     config:
         config["source_test"]["config"]
-use rule * from source_test as source_test_*
+use rule * from source_test exclude _test as source_test_*
 
 module sleep1input_test:
     snakefile:
         config["sleep1input_test"]["snakefile"]
     config:
         config["sleep1input_test"]["config"]
-use rule * from sleep1input_test as sleep1input_test_*
+use rule * from sleep1input_test exclude _test as sleep1input_test_*

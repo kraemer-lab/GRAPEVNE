@@ -37,21 +37,21 @@ module module1:
         config["module1"]["snakefile"]
     config:
         config["module1"]["config"]
-use rule * from module1 as module1_*
+use rule * from module1 exclude _test as module1_*
 
 module module2:
     snakefile:
         config["module2"]["snakefile"]
     config:
         config["module2"]["config"]
-use rule * from module2 as module2_*
+use rule * from module2 exclude _test as module2_*
 
 module module3:
     snakefile:
         config["module3"]["snakefile"]
     config:
         config["module3"]["config"]
-use rule * from module3 as module3_*
+use rule * from module3 exclude _test as module3_*
 """
     assert m.BuildSnakefile() == target_snakefile
 
