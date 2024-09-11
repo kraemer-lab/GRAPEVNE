@@ -1,8 +1,4 @@
-# GRAPEVNE
-
 ![GRAPEVNE logo](images/banner.png "GRAPEVNE")
-
-
 
 GRAPEVNE (*Gr*aphical *A*nalytical *P*ipelin*e* De*v*elopme*n*t *E*nvironment) is a desktop application that provides an interactive graphical environment for designing and building hierarchical analytic workflows.
 
