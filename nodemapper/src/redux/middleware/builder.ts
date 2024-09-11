@@ -25,10 +25,9 @@ import {
 } from 'gui/Builder/components/Flow';
 import { Edge } from 'reactflow';
 
+import { Query } from 'api';
 import { IModulesList } from 'redux/reducers/builder';
 import { IRepo } from 'redux/reducers/settings';
-
-type Query = Record<string, unknown>;
 
 const builderAPI = window.builderAPI;
 const runnerAPI = window.runnerAPI;
@@ -710,6 +709,11 @@ const GetRemoteModules = async ({
   dispatchModulesList,
   repo,
 }: IGetRemoteModules) => {
+  // Backend check
+  if (builderAPI === undefined) {
+    console.error('builderAPI is undefined');
+    return;
+  }
   // Get list of remote modules
   dispatchString(builderUpdateStatusText('Loading modules...'));
   dispatchBool(builderSetModulesLoading(true));

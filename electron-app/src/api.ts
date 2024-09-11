@@ -1,5 +1,5 @@
 type Event = unknown;
-type Query = Record<string, unknown>;
+export type Query = Record<string, unknown>;
 
 export type TerminalAPI = {
   sendData: (data: string) => void;

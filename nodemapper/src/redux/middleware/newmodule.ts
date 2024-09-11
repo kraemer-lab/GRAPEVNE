@@ -1,7 +1,7 @@
 import { newmoduleEnvCondaSearchUpdatePackageList, newmoduleUpdateResult } from 'redux/actions';
 import { IState } from 'redux/reducers';
+import { Query } from 'api';
 
-type Query = Record<string, unknown>;
 const newmoduleAPI = window.newmoduleAPI;
 
 export const newmoduleMiddleware = ({ getState, dispatch }) => {
