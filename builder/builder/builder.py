@@ -190,7 +190,7 @@ class Model:
                 s += "        )\n"
             s += "    config:\n"
             s += f'        config["{node.rulename}"]["config"]\n'
-            s += f"use rule * from {node.rulename} as {node.rulename}_*\n"
+            s += f"use rule * from {node.rulename} exclude _test as {node.rulename}_*\n"
             s += self.AddWorkflowAlerts()
         return s
 
