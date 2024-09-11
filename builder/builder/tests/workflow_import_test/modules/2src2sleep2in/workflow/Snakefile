@@ -5,32 +5,32 @@ module source_test1:
         config["source_test1"]["snakefile"]
     config:
         config["source_test1"]["config"]
-use rule * from source_test1 as source_test1_*
+use rule * from source_test1 exclude _test as source_test1_*
 
 module source_test2:
     snakefile:
         config["source_test2"]["snakefile"]
     config:
         config["source_test2"]["config"]
-use rule * from source_test2 as source_test2_*
+use rule * from source_test2 exclude _test as source_test2_*
 
 module sleep2input_test1:
     snakefile:
         config["sleep2input_test1"]["snakefile"]
     config:
         config["sleep2input_test1"]["config"]
-use rule * from sleep2input_test1 as sleep2input_test1_*
+use rule * from sleep2input_test1 exclude _test as sleep2input_test1_*
 
 module sleep2input_test2:
     snakefile:
         config["sleep2input_test2"]["snakefile"]
     config:
         config["sleep2input_test2"]["config"]
-use rule * from sleep2input_test2 as sleep2input_test2_*
+use rule * from sleep2input_test2 exclude _test as sleep2input_test2_*
 
 module sleep2input_common_out:
     snakefile:
         config["sleep2input_common_out"]["snakefile"]
     config:
         config["sleep2input_common_out"]["config"]
-use rule * from sleep2input_common_out as sleep2input_common_out_*
+use rule * from sleep2input_common_out exclude _test as sleep2input_common_out_*
