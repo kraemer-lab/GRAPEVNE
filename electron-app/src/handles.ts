@@ -76,7 +76,7 @@ export async function display_SelectFolder(
 ) {
   const result = await dialog.showOpenDialog(win, {
     defaultPath: path,
-    properties: ['openDirectory'],
+    properties: ['openDirectory', 'createDirectory'],
   });
   return result.filePaths;
 }
@@ -413,4 +413,84 @@ export async function settings_StoreWriteConfig(event: Event, data: Query) {
   const store = await loadStore();
   store.set('config', data);
   return store.get('config');
+}
+
+export async function settings_GithubGetRepoStatus(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubGetUntrackedFiles(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubGetTrackedFileChanges(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubPull(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubPush(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubStageFiles(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubUnstageFiles(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubCommit(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubClone(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
+}
+
+export async function settings_GithubCommitAllChanges(
+  event: Event,
+  query: Query,
+  stderr_callback: (cmd: string) => void,
+) {
+  return await SafeProcessQuery(event, query, stderr_callback);
 }

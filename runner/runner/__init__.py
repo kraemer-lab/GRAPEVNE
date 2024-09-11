@@ -1,3 +1,4 @@
+from . import github  # noqa: F401
 from .runner import Build  # noqa: F401
 from .runner import CheckNodeDependencies  # noqa: F401
 from .runner import DeleteAllOutput  # noqa: F401

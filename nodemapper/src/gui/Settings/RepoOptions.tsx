@@ -6,6 +6,7 @@ import { builderLogEvent, settingsSetRepositoryTarget } from 'redux/actions';
 import { getMasterRepoListURL } from 'redux/globals';
 import { IRepo } from 'redux/reducers/settings';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
+import { GithubMenu } from 'gui/Settings/RepoGhIndicator';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
@@ -15,12 +16,20 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
+import { DialogWait } from 'components/DialogWait';
+import { DialogPrompt } from 'components/DialogPrompt';
+
 const displayAPI = window.displayAPI;
+const settingsAPI = window.settingsAPI;
 
 const RepoOptions = () => {
   const dispatch = useAppDispatch();
   const repoSettings = useAppSelector((state) => state.settings.repositories as IRepo[]);
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const [openWait, setOpenWait] = React.useState<boolean>(false);
+  const [openPromptURL, setOpenPromptURL] = React.useState<boolean>(false);
+  const [valuePromptURL, setValuePromptURL] = React.useState<string>('');
+  const [clonePath, setClonePath] = React.useState<string>('');
   const containerRef = useRef(null);
 
   const initialColumns: GridColDef[] = [
@@ -92,6 +101,8 @@ const RepoOptions = () => {
   };
 
   const UrlDisplay = (params) => {
+    const local_github_repo = true;
+
     if (params.row.type !== 'local') {
       return params.formattedValue; // default rendering
     }
@@ -115,6 +126,7 @@ const RepoOptions = () => {
         >
           {params.row.url}
         </Box>
+        {local_github_repo && <GithubMenu repo={params.row.url} branch="main" />}
         <IconButton
           onClick={() => {
             displayAPI.SelectFolder(params.row.url).then((folderPaths) => {
@@ -149,11 +161,54 @@ const RepoOptions = () => {
         active: true,
         type: '', // github | local
         label: NextLabel(), // user label for the repo
-        listing_type: 'DirectoryListing', // LocalFilesystem | DirectoryListing | BranchListing
+        listing_type: 'DirectoryListing',
         repo: '', // github repo or local path
       },
     ];
     dispatch(settingsSetRepositoryTarget(newRepoSettings));
+  };
+
+  const CloneRepo = () => {
+    displayAPI.SelectFolder('').then((folderPaths) => {
+      setClonePath(folderPaths[0]);
+      if (folderPaths.length === 0) {
+        return;
+      }
+      setOpenPromptURL(true);
+    });
+  }
+
+  const confirmOpenPromptURL = () => {
+    setOpenWait(true);
+    settingsAPI.GithubClone({
+      query: 'settings/github-clone',
+      data: {
+        url: valuePromptURL,
+        path: clonePath,
+        createfolder: true,
+      },
+    }).then((response) => {
+      if (response["returncode"] === 0) {
+        const repo_name = valuePromptURL.split('/').pop().replace('.git', '');
+        const newRepoSettings = [
+          ...repoSettings,
+          {
+            active: true,
+            type: 'local',
+            label: repo_name,
+            listing_type: 'DirectoryListing',
+            repo: [clonePath, repo_name].join('/'),
+          },
+        ];
+        dispatch(settingsSetRepositoryTarget(newRepoSettings));
+      } else {
+        alert('Could not clone repository!');
+      }
+      setOpenWait(false);
+    }).catch((e) => {
+      setOpenWait(false);
+      alert('Error cloning repository: ' + e);
+    });
   };
 
   const NextLabel = () => {
@@ -241,6 +296,24 @@ const RepoOptions = () => {
 
   return (
     <Box>
+      <DialogWait open={openWait} text={"Cloning repository..."} />
+      <DialogPrompt
+        open={openPromptURL}
+        title={"Github repository"}
+        content={"Enter the github URL (HTTPS/SSH):"}
+        value={valuePromptURL}
+        onChange={(event) => {
+          setValuePromptURL(event.target.value);
+        }}
+        onCancel={() => {
+          setOpenPromptURL(false);
+        }}
+        onConfirm={() => {
+          confirmOpenPromptURL();
+          setOpenPromptURL(false);
+        }}
+      />
+
       <Typography variant="h6">Repository List</Typography>
       <Box
         ref={containerRef}
@@ -288,6 +361,15 @@ const RepoOptions = () => {
             variant="contained"
           >
             ADD
+          </Button>
+          <Button
+            id="buttonBuilderSettingsRepositoryListCloneRepo"
+            onClick={() => CloneRepo()}
+            sx={{ marginRight: '5px' }}
+            size="small"
+            variant="contained"
+          >
+            CLONE
           </Button>
           <Button
             id="buttonBuilderSettingsRepositoryListRemoveItem"

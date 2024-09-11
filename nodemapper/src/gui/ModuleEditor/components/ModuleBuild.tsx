@@ -1,38 +1,13 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
+import DialogWait from 'components/DialogWait';
 import React from 'react';
 
 import { newmoduleBuild, newmoduleClear, newmoduleOpenModuleFolder } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-
-const ModalBuildingStatus = ({ open }: { open: boolean }) => {
-  return (
-    <Modal open={open} onClose={() => {}}>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          width: '100%',
-        }}
-      >
-        <Box sx={{ alignItems: 'center', textAlign: 'center', background: 'white', p: 4 }}>
-          <CircularProgress />
-          <Box sx={{ height: 20 }} />
-          <Typography variant="subtitle1" gutterBottom>
-            Building module...
-          </Typography>
-        </Box>
-      </Box>
-    </Modal>
-  );
-};
 
 const ModuleBuild = () => {
   const moduleState = useAppSelector((state) => state.newmodule);
@@ -93,7 +68,7 @@ const ModuleBuild = () => {
             </Button>
           </Grid>
         </Grid>
-        <ModalBuildingStatus open={building} />
+        <DialogWait open={building} text={"Building module..."} />
       </Box>
     </Box>
   );

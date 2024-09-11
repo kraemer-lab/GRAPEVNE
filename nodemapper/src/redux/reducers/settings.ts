@@ -1,11 +1,12 @@
 import { createReducer } from '@reduxjs/toolkit';
 import * as actions from '../actions';
+import { IModulesListRepo } from './builder';
 
 export interface IRepo {
   active: boolean;
   type: string;
   label: string;
-  listing_type: string;
+  listing_type: IModulesListRepo["listing_type"];
   repo: string;
 }
 
@@ -58,7 +59,7 @@ const settingsStateInit: ISettingsState = {
       active: true,
       type: 'github', // local | github
       label: 'Kraemer Lab',
-      listing_type: 'DirectoryListing', // LocalFilesystem | DirectoryListing | BranchListing
+      listing_type: 'DirectoryListing',
       repo: 'kraemer-lab/vneyard',
     },
   ],
