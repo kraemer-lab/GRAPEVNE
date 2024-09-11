@@ -18,7 +18,7 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinx.ext.graphviz",
     "myst_parser",
-    "sphinx_rtd_theme",
+    "sphinx_book_theme",
 ]
 
 templates_path = [
