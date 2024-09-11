@@ -2,7 +2,8 @@ import React from 'react';
 
 import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
 import { ErrorBoundary } from 'react-error-boundary';
-import { settingsReadStoreConfig } from 'redux/actions';
+import { ReadStoreConfig } from 'redux/middleware/settings';
+import { builderGetRemoteModules } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { errorHandler } from './ErrorHandling/Error';
 
@@ -10,14 +11,17 @@ import Navigation from './Navigation';
 
 // Startup
 let started = false;
-const startup = () => {
+const startup = (dispatch) => {
   started = true;
-  const dispatch = useAppDispatch();
-  dispatch(settingsReadStoreConfig());
+  ReadStoreConfig(dispatch).finally(() => {
+    // Runs irrespective of return status of store read, but must wait for it to complete
+    dispatch(builderGetRemoteModules());
+  });
 };
 
 const App = () => {
-  if (!started) startup();
+  const dispatch = useAppDispatch();
+  if (!started) startup(dispatch);
   const dark_mode = useAppSelector((state) => state.settings.dark_mode);
 
   const themeOptions: ThemeOptions = {

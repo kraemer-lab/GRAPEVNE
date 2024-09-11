@@ -9,6 +9,7 @@ import BuilderEngine from './BuilderEngine';
 
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -155,17 +156,8 @@ const RepoBrowser = () => {
     >
       <Stack direction="column" sx={{ height: '100%' }}>
         <Paper sx={{ p: 1 }}>
-          <Button
-            id="btnBuilderGetModuleList"
-            className="btn"
-            onClick={btnGetModuleList}
-            variant="outlined"
-            fullWidth
-          >
-            LOAD MODULES
-          </Button>
           <Grid container spacing={0}>
-            <Grid item xs={10}>
+            <Grid item xs={8}>
               <TextField
                 id="repo-filter-freetext"
                 name="repo-filter-freetext"
@@ -185,6 +177,17 @@ const RepoBrowser = () => {
                 fullWidth
               >
                 <FontAwesomeIcon icon={faEllipsisVertical} />
+              </Button>
+            </Grid>
+            <Grid item xs={2}>
+              <Button
+                id="btnBuilderGetModuleList"
+                variant="outlined"
+                sx={{ height: '100%', minWidth: '5px' }}
+                onClick={btnGetModuleList}
+                fullWidth
+              >
+                <RefreshIcon />
               </Button>
             </Grid>
           </Grid>

@@ -1,5 +1,6 @@
 import { settingsUpdateSettings } from 'redux/actions';
 import { IState } from 'redux/reducers';
+import { Query } from 'api';
 
 const settingsAPI = window.settingsAPI;
 
@@ -26,8 +27,6 @@ export const settingsMiddleware = ({ getState, dispatch }) => {
   };
 };
 
-type Query = Record<string, unknown>;
-
 interface IPayloadRecord {
   payload: Query;
   type: string;
@@ -51,7 +50,7 @@ const WriteStoreConfig = async (state) => {
 };
 
 // Read persistent state from electron frontend
-const ReadStoreConfig = async (dispatch: TPayloadRecord) => {
+export const ReadStoreConfig = async (dispatch: TPayloadRecord): Promise<void> => {
   if (settingsAPI === undefined) return;
   let local_config = {};
   try {

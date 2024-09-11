@@ -1,9 +1,8 @@
 import { displayGetFolderInfo } from 'redux/actions';
 import { IState } from 'redux/reducers';
+import { Query } from 'api';
 
 import { runnerUpdateStatusText } from 'redux/actions';
-
-type Query = Record<string, unknown>;
 
 const runnerAPI = window.runnerAPI;
 

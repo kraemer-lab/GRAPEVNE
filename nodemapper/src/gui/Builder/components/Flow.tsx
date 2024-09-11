@@ -45,6 +45,7 @@ import Button from '@mui/material/Button';
 import 'reactflow/dist/style.css';
 import ContextMenu from './ContextMenu';
 import './flow.css';
+import { Query } from 'api';
 import * as styles from './flow.module.css';
 
 import dagre from 'dagre';
@@ -92,7 +93,6 @@ const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => 
 };
 
 const builderAPI = window.builderAPI;
-type Query = Record<string, unknown>;
 
 const proOptions = {
   hideAttribution: true,
