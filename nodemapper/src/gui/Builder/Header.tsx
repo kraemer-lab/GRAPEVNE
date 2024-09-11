@@ -88,53 +88,55 @@ interface MenuBuildAndRunDropdownProps {
   promptDialog: HeaderDialogPromptProps;
 }
 
-const MenuBuildAndRunDropdown = forwardRef(({ promptDialog }: MenuBuildAndRunDropdownProps) => {
-  const dispatch = useAppDispatch();
-  const { closeAllMenus } = useMenu();
+const MenuBuildAndRunDropdown = forwardRef(
+  ({ promptDialog }: MenuBuildAndRunDropdownProps, ref) => {
+    const dispatch = useAppDispatch();
+    const { closeAllMenus } = useMenu();
 
-  // Run - build and run the workflow
-  const btnTestBuild = () => {
-    closeAllMenus();
-    dispatch(builderBuildAndRun());
-  };
+    // Run - build and run the workflow
+    const btnTestBuild = () => {
+      closeAllMenus();
+      dispatch(builderBuildAndRun());
+    };
 
-  // Clean build folder
-  const btnCleanBuildFolder = () => {
-    closeAllMenus();
-    dispatch(builderCleanBuildFolder());
-  };
+    // Clean build folder
+    const btnCleanBuildFolder = () => {
+      closeAllMenus();
+      dispatch(builderCleanBuildFolder());
+    };
 
-  // Build as workflow
-  const btnBuildAsWorkflow = () => {
-    closeAllMenus();
-    dispatch(builderBuildAsWorkflow());
-  };
+    // Build as workflow
+    const btnBuildAsWorkflow = () => {
+      closeAllMenus();
+      dispatch(builderBuildAsWorkflow());
+    };
 
-  // Package workflow
-  const btnPackageWorkflow = () => {
-    closeAllMenus();
-    dispatch(builderPackageWorkflow());
-  };
+    // Package workflow
+    const btnPackageWorkflow = () => {
+      closeAllMenus();
+      dispatch(builderPackageWorkflow());
+    };
 
-  return (
-    <>
-      <MenuItem id="btnBuilderBuildAndTest" onClick={btnTestBuild}>
-        TEST BUILD
-      </MenuItem>
-      <MenuItem id="btnCleanBuildFolder" onClick={btnCleanBuildFolder}>
-        DELETE TEST BUILD
-      </MenuItem>
-      <Divider />
-      <MenuBuildModule promptDialog={promptDialog} />
-      <MenuItem id="btnBuilderBuildAsWorkflow" onClick={btnBuildAsWorkflow}>
-        BUILD WORKFLOW
-      </MenuItem>
-      <MenuItem id="btnBuilderPackageWorkflow" onClick={btnPackageWorkflow}>
-        PACKAGE WORKFLOW
-      </MenuItem>
-    </>
-  );
-});
+    return (
+      <>
+        <MenuItem id="btnBuilderBuildAndTest" onClick={btnTestBuild}>
+          TEST BUILD
+        </MenuItem>
+        <MenuItem id="btnCleanBuildFolder" onClick={btnCleanBuildFolder}>
+          DELETE TEST BUILD
+        </MenuItem>
+        <Divider />
+        <MenuBuildModule promptDialog={promptDialog} ref={ref} />
+        <MenuItem id="btnBuilderBuildAsWorkflow" onClick={btnBuildAsWorkflow}>
+          BUILD WORKFLOW
+        </MenuItem>
+        <MenuItem id="btnBuilderPackageWorkflow" onClick={btnPackageWorkflow}>
+          PACKAGE WORKFLOW
+        </MenuItem>
+      </>
+    );
+  },
+);
 
 export interface HeaderDialogPromptProps extends React.ComponentProps<typeof DialogPrompt> {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -212,7 +214,7 @@ const Header = () => {
             label="BUILD & RUN"
             disabled={build_in_progress}
           >
-            <MenuBuildAndRunDropdown promptDialog={promptDialog} />
+            <MenuBuildAndRunDropdown promptDialog={promptDialog} ref={inputRef} />
           </DropdownMenu>
           {build_in_progress && <LinearProgress />}
         </Box>

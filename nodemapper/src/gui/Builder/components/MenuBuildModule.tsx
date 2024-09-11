@@ -12,7 +12,7 @@ interface MenuBuildModuleProps {
   promptDialog: HeaderDialogPromptProps;
 }
 
-export const MenuBuildModule = forwardRef(({ promptDialog }: MenuBuildModuleProps) => {
+export const MenuBuildModule = forwardRef(({ promptDialog }: MenuBuildModuleProps, ref) => {
   const dispatch = useAppDispatch();
   const modules_list = useAppSelector((state) => state.builder.modules_list);
   const repositories = useAppSelector((state) => state.settings.repositories);
