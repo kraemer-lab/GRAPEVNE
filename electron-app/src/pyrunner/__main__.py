@@ -1,6 +1,7 @@
-from pyrunner import pyrunner
-import snakemake
 import sys
+
+import snakemake
+from pyrunner import pyrunner
 
 
 if len(sys.argv) > 2:

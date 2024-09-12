@@ -8,11 +8,11 @@ from typing import List
 from zipfile import ZipFile
 from zipfile import ZipInfo
 
-from . import filesystem
 import snakemake
 
 import builder
 import runner
+from . import filesystem
 
 
 shell_launch = "#!/usr/bin/env bash"

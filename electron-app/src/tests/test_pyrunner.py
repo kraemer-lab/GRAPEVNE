@@ -1,9 +1,11 @@
+import io
+import json
+import tempfile
+from contextlib import redirect_stderr
+from contextlib import redirect_stdout
+
 from pyrunner.pyrunner import BuildAndRun
 from pyrunner.pyrunner import post
-import tempfile
-import json
-import io
-from contextlib import redirect_stdout, redirect_stderr
 
 
 def test_BuildAndRun():
