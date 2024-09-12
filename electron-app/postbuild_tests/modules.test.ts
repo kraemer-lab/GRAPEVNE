@@ -595,13 +595,40 @@ describe('modules', () => {
 
   // Conda tests
   runif(is_installed(['mamba', 'conda'], 'any')).each([
-    ['conda', [path.join('results', 'conda', 'data.csv')]],
+    // Test: 1 (connect two modules)
+    [
+      [
+        // Modules to add to scene
+        'payload shell', // data-nodeid="n0"
+        'conda', // data-nodeid="n1"
+      ],
+      [
+        // Connections to make between modules
+        ['n0-out-source', 'n1-in-target'], // (nodeid)-(portname)-(porttype)
+      ],
+      [
+        // Expected output files
+        path.join('results', 'conda', 'data.csv'),
+      ],
+    ],
   ])(
     "Build and Test the conda workflow: module '%s'",
-    async (modulename, outfiles) => {
-      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
+    async (modulenames, connections, outfiles) => {
+      // Open settings pane
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
+
+      // Set snakemake command line arguments
+      const args = await driver.findElement(webdriver.By.id('inputBuilderSettingsSnakemakeArgs'));
+      await OverwriteInputField(args, '--cores 1 --use-conda');
+
+      // Close settings pane
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
+      console.log('<<< test Set snakemake arguments list to use conda');
+
+      // Build and run workflow
+      await BuildAndRun_MultiModuleWorkflow(driver, modulenames, connections, outfiles);
     },
-    10 * ONE_MINUTE,
+    5 * ONE_MINUTE,
   ); // long timeout
 
   test(

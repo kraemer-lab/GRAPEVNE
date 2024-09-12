@@ -1,17 +1,23 @@
 configfile: "config/config.yaml"
+from grapevne_helper import *
 
-params = config["params"]
+init(workflow)
 
 rule copy:
     input:
-        srcdir("../resources/file"),
+        resource("file"),
     output:
-        expand(
-            "results/{outdir}/{filename}",
-            outdir=config["output_namespace"],
-            filename=params["filename"],
-        )
+        output(params("filename")),
     shell:
         """
         cp {input} {output}
         """
+
+rule _test:
+    input:
+        src=resource("file"),
+        dst=output(params("filename")),
+    run:
+        # Verify that the file has been copied correctly
+        with open(input.src) as src, open(input.dst) as dst:
+            assert src.read() == dst.read()
