@@ -8,8 +8,6 @@ from typing import List
 from zipfile import ZipFile
 from zipfile import ZipInfo
 
-import snakemake
-
 import builder
 import runner
 from . import filesystem
