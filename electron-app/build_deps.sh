@@ -22,7 +22,7 @@ fi
 uv pip install --force-reinstall .
 
 # compile python code to binary for deployment
-uv run PyInstaller  \
+uv run pyinstaller  \
     --name pyrunner \
     src/pyrunner/__main__.py \
     --hidden-import builder \
