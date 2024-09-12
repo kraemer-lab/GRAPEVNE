@@ -493,6 +493,7 @@ dependencies = [
 dev = [
     { name = "pyinstaller" },
     { name = "pytest" },
+    { name = "requests" },
     { name = "setuptools" },
 ]
 
@@ -508,6 +509,7 @@ requires-dist = [
 dev = [
     { name = "pyinstaller", specifier = ">=6.10.0" },
     { name = "pytest", specifier = ">=8.3.3" },
+    { name = "requests", specifier = ">=2.32.3" },
     { name = "setuptools", specifier = ">=74.1.2" },
 ]
 
