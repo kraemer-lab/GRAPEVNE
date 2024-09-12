@@ -19,12 +19,12 @@ jobs:
       - uses: nanasess/setup-chromedriver@v2
         with:
           chromedriver-version: "126.0.6478.185"
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
+          python-version: "3.12"
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v2
       - name: install MacOS (M1) build dependencies
         shell: bash
         run: |

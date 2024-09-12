@@ -1,29 +1,22 @@
-[tool.ruff]
-lint.ignore = ["E501"]
-
-[tool.poetry]
+[project]
 name = "builder"
 version = "0.3.1"
 description = "GRAPEVNE Builder"
-authors = ["Kraemer-lab"]
-license = "MIT"
 readme = "README.md"
-exclude = [
-    "builder/tests"
+requires-python = ">=3.12"
+dependencies = [
+    "cachetools>=5.5.0",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.3",
 ]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-cachetools = "5.3.2"
-pyyaml = "6.0.1"
-requests = "2.32.2"
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.3",
+    "types-cachetools>=5.5.0.20240820",
+    "types-pyyaml>=6.0.12.20240808",
+    "types-requests>=2.32.0.20240907",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-ruff = "0.3.0"
-pytest = "8.0.2"
-coverage = "7.4.3"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv.sources]
+builder = { workspace = true }

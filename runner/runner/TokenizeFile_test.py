@@ -18,7 +18,7 @@ output:
 
 def test_FindTokenSequence():
     tf = TokenizeFile(content)
-    search_seq = [(1, "rule"), (54, ":")]
+    search_seq = [(1, "rule"), (55, ":")]
     assert tf.FindTokenSequence(search_seq) == [1]
     search_seq = [(5, "    ")]  # only finds single indents
     assert tf.FindTokenSequence(search_seq) == [4, 11, 23, 30]
@@ -104,7 +104,7 @@ def test_GetBlockFromNumber(blockno, expected):
 
 def test_GetBlock():
     tf = TokenizeFile(content)
-    search_seq = [(1, "level2"), (54, ":")]
+    search_seq = [(1, "level2"), (55, ":")]
     ignore_tokens = []
     block = tf.GetBlock(search_seq, ignore_tokens)
     expected = "    level3:\n        level3_item\n"

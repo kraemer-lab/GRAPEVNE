@@ -3,11 +3,13 @@
 set -euox pipefail
 
 cd "$(dirname "$0")"
-poetry install
-source $(poetry env info --path)/bin/activate
+uv venv
+uv sync
+source .venv/bin/activate
+uv pip install .
 
-poetry run ruff check builder
-poetry run pytest
+uv run ruff check builder
+uv run pytest
 
-# mypy --strict builder
-# mypy builder
+# uv run mypy --strict builder
+# uv run mypy builder

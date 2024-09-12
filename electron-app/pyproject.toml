@@ -1,88 +1,23 @@
-[tool.poetry]
-name = "electron-app"
+[project]
+name = "pyrunner"
 version = "0.3.1"
-description = "GRAPEVNE"
-authors = ["Kraemer-lab"]
-license = "MIT"
+description = "GRAPEVNE Electron App Python Backend"
 readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "builder",
+    "grapevne>=0.1.1",
+    "runner",
+    "smart-open>=7.0.4",
+]
 
-[tool.poetry.dependencies]
-python = "~3.11"
-altgraph = "0.17.3"
-appdirs = "1.4.4"
-attrs = "23.1.0"
-azure-common = "1.1.28"
-azure-core = "1.28.0"
-azure-storage-blob = "12.17.0"
-bcrypt = "4.0.1"
-boto3 = "1.34.122"
-botocore = "1.34.122"
-builder = {path = "../builder"}
-cachetools = "5.3.2"
-certifi = "2023.7.22"
-cffi = "1.15.1"
-charset-normalizer = "3.1.0"
-configargparse = "1.5.3"
-connection-pool = "0.0.3"
-cryptography = "43.0.1"
-datrie = "0.8.2"
-docutils = "0.21.2"
-dpath = "2.1.6"
-fastjsonschema = "2.17.1"
-gitdb = "4.0.10"
-gitpython = "3.1.41"
-google-api-core = "2.11.1"
-google-auth = "2.30.0"
-google-cloud-core = "2.3.3"
-google-cloud-storage = "2.10.0"
-google-crc32c = "1.5.0"
-google-resumable-media = "2.5.0"
-googleapis-common-protos = "1.60.0"
-humanfriendly = "10.0"
-idna = "3.7"
-isodate = "0.6.1"
-jinja2 = "3.1.4"
-jmespath = "1.0.1"
-jsonschema = "4.17.3"
-jupyter-core = "5.3.1"
-macholib = "1.16.2"
-markupsafe = "2.1.3"
-nbformat = "5.9.0"
-paramiko = "3.4.0"
-plac = "1.3.5"
-platformdirs = "3.7.0"
-protobuf = "4.23.4"
-psutil = "5.9.5"
-pulp = "2.7.0"
-pyasn1 = "0.5.0"
-pyasn1-modules = "0.3.0"
-pycparser = "2.21"
-pyinstaller = "6.8.0"
-pyinstaller-hooks-contrib = "2024.7"
-pynacl = "1.5.0"
-pyrsistent = "0.19.3"
-python-dateutil = "2.8.2"
-pyyaml = "6.0.1"
-requests = "2.32.2"
-reretry = "0.11.8"
-rsa = "4.9"
-runner = {path = "../runner"}
-s3transfer = "0.10.1"
-six = "1.16.0"
-smart-open = "6.3.0"
-smmap = "5.0.0"
-snakemake = "7.32"
-stopit = "1.1.2"
-tabulate = "0.9.0"
-throttler = "1.2.2"
-toposort = "1.10"
-traitlets = "5.9.0"
-typing-extensions = "4.7.1"
-urllib3 = "2.0.7"
-wrapt = "1.15.0"
-yte = "1.5.1"
+[tool.uv]
+dev-dependencies = [
+    "pytest>=8.3.3",
+    "pyinstaller>=6.10.0",
+    "setuptools>=74.1.2",
+]
 
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv.sources]
+builder = { path = "../builder" }
+runner = { path = "../runner" }

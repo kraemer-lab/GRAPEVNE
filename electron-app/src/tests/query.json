@@ -1,0 +1,33 @@
+{
+    "query": "builder/build-and-run",
+    "data": {
+        "format": "Snakefile",
+        "content": [
+            {
+                "name": "Hello",
+                "type": "source",
+                "org": "HelloWorld",
+                "repo": {
+                    "type": "local",
+                    "listing_type": "DirectoryListing",
+                    "url": "/Users/jsb/repos/jsbrittain/vneyard"
+                },
+                "config": {
+                    "snakefile": "/Users/jsb/repos/jsbrittain/vneyard/workflows/HelloWorld/sources/Hello/workflow/Snakefile",
+                    "config": {
+                        "input_namespace": null,
+                        "output_namespace": "out",
+                        "params": {"Triggers": {"Done": "touch"}}
+                    },
+                    "docstring": "Hello World!"
+                }
+            }
+        ],
+        "targets": ["Hello"],
+        "args": "--cores 1",
+        "backend": "builtin",
+        "conda_backend": "builtin",
+        "environment_variables": "",
+        "workflow_alerts": {}
+    }
+}
