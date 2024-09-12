@@ -1,0 +1,15 @@
+configfile: "config/config.yaml"
+from grapevne_helper import *
+from pathlib import Path
+
+init(workflow)
+
+rule touch:
+    output:
+        file = output(param("filename")),
+    run:
+        Path(output.file).touch()
+
+rule _test:
+    input:
+        rules.touch.output.file,

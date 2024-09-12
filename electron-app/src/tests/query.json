@@ -4,26 +4,28 @@
         "format": "Snakefile",
         "content": [
             {
-                "name": "Hello",
+                "name": "touch",
                 "type": "source",
-                "org": "HelloWorld",
+                "org": "testing",
                 "repo": {
                     "type": "local",
                     "listing_type": "DirectoryListing",
-                    "url": "/Users/jsb/repos/jsbrittain/vneyard"
+                    "url": "test-url"
                 },
                 "config": {
-                    "snakefile": "/Users/jsb/repos/jsbrittain/vneyard/workflows/HelloWorld/sources/Hello/workflow/Snakefile",
+                    "snakefile": "workflows/testing/sources/touch/workflow/Snakefile",
                     "config": {
                         "input_namespace": null,
                         "output_namespace": "out",
-                        "params": {"Triggers": {"Done": "touch"}}
+                        "params": {
+                            "filename": "data.csv"
+                        }
                     },
-                    "docstring": "Hello World!"
+                    "docstring": "Touch module"
                 }
             }
         ],
-        "targets": ["Hello"],
+        "targets": ["touch"],
         "args": "--cores 1",
         "backend": "builtin",
         "conda_backend": "builtin",

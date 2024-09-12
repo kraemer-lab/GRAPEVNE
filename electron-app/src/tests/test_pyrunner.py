@@ -4,6 +4,7 @@ import tempfile
 from contextlib import redirect_stderr
 from contextlib import redirect_stdout
 
+from utils import redirect_workflow_path
 from pyrunner.pyrunner import BuildAndRun
 from pyrunner.pyrunner import post
 
@@ -11,7 +12,7 @@ from pyrunner.pyrunner import post
 def test_BuildAndRun():
     with open("src/tests/query.json", "r") as f:
         response_js = json.load(f)
-    data = response_js["data"]
+    data = redirect_workflow_path(response_js["data"])
     with tempfile.TemporaryDirectory() as temp_dir:
         response = BuildAndRun(
             data,
@@ -27,13 +28,14 @@ def test_BuildAndRun():
     workdir = response["workdir"]
     assert workdir is not None
     assert command == (
-        f"snakemake --snakefile {workdir}/workflow/Snakefile " "--cores 1 hello_target"
+        f"snakemake --snakefile {workdir}/workflow/Snakefile --cores 1 touch_touch"
     )
 
 
 def test_post_build_and_run():
     with open("src/tests/query.json", "r") as f:
         response_js = json.load(f)
+    response_js["data"] = redirect_workflow_path(response_js["data"])
     # 'post' requests return via stdout
     captured_output = io.StringIO()
     captured_error = io.StringIO()
@@ -52,5 +54,5 @@ def test_post_build_and_run():
     workdir = data["workdir"]
     assert workdir is not None
     assert command == (
-        f"snakemake --snakefile {workdir}/workflow/Snakefile " "--cores 1 hello_target"
+        f"snakemake --snakefile {workdir}/workflow/Snakefile --cores 1 touch_touch"
     )
