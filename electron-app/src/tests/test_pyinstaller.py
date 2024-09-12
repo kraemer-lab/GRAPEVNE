@@ -1,7 +1,8 @@
 import json
 import subprocess
 
-from utils import redirect_workflow_path, locate_pyrunner_binary
+from utils import locate_pyrunner_binary
+from utils import redirect_workflow_path
 
 
 pyrunner = locate_pyrunner_binary()
