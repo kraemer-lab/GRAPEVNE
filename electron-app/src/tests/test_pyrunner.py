@@ -4,9 +4,9 @@ import tempfile
 from contextlib import redirect_stderr
 from contextlib import redirect_stdout
 
-from utils import redirect_workflow_path
 from pyrunner.pyrunner import BuildAndRun
 from pyrunner.pyrunner import post
+from utils import redirect_workflow_path
 
 
 def test_BuildAndRun():
