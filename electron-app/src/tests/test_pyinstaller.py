@@ -1,9 +1,10 @@
 import json
 import subprocess
 
-from utils import redirect_workflow_path
+from utils import redirect_workflow_path, locate_pyrunner_binary
 
-pyrunner = "/Users/jsb/repos/jsbrittain/GRAPEVNE/electron-app/dist/pyrunner/pyrunner"
+
+pyrunner = locate_pyrunner_binary()
 
 
 def test_pyinstaller():
