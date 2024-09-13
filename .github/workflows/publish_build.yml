@@ -18,26 +18,32 @@ jobs:
       - uses: nanasess/setup-chromedriver@v2
         with:
           chromedriver-version: "126.0.6478.185"
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: "3.12"
+          activate-environment: build
+          miniforge-version: latest
+          auto-update-conda: true
+          auto-activate-base: true
+          python-version: 3.12
+          use-mamba: true
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v2
       - name: install MacOS (M1) build dependencies
-        shell: bash
+        shell: bash -el {0}  # required to sustain the conda environment
         run: |
           if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "ARM64" ]; then
             brew install pango
           fi
       # setuptools needs to be available globally for the yarn build script
       - name: Install setuptools
+        shell: bash -el {0}  # required to sustain the conda environment
         run: |
           python -m pip install --upgrade pip
           python -m pip install setuptools
       - name: build
         working-directory: ./electron-app
-        shell: bash
+        shell: bash -el {0}  # required to sustain the conda environment
         run: |
           corepack enable
           ./build_deps.sh
@@ -48,21 +54,10 @@ jobs:
       - name: tmate debugging
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
-      # only publish builds if they pass post-build tests
-      - name: Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          activate-environment: build
-          miniforge-version: latest
-          auto-update-conda: true
-          python-version: 3.12
-          use-mamba: true
       - name: postbuild-tests
         working-directory: ./electron-app
-        shell: bash
+        shell: bash -el {0}  # required to sustain the conda environment
         run: |
-          conda init
-          source ~/.bashrc
           yarn package
           ./run_postbuild_tests.sh
       - name: publish
@@ -78,7 +73,7 @@ jobs:
           MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_PWD }}
           MACOS_CERTIFICATE_NAME: ${{ secrets.MACOS_DEV_ID_APP_CERTIFICATE_NAME }}
           MACOS_CI_KEYCHAIN_PWD: ${{ secrets.MACOS_CI_KEYCHAIN_PWD }}
-        shell: bash
+        shell: bash -el {0}  # required to sustain the conda environment
         run: |
           if [ "$RUNNER_OS" == "macOS" ]; then
             # Convert base64-encoded certificate from secrets into a regular .p12 file
