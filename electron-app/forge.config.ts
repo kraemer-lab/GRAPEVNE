@@ -20,66 +20,6 @@ const codesignConfig = () => {
   }
 };
 
-const getPlatformAndArch = () => {
-  const platform = process.platform;
-  let platformType;
-  switch (platform) {
-    case 'darwin':
-      platformType = 'osx';
-      break;
-    case 'linux':
-      platformType = 'linux';
-      break;
-    case 'win32':
-      platformType = 'win';
-      break;
-    default:
-      throw new Error(`Unsupported platform: ${platform}`);
-  }
-  const arch = process.arch;
-  let archType;
-  // Map the arch value to '32', '64', or 'arm64'
-  switch (arch) {
-    case 'x64':
-    case 'ppc64':
-    case 'riscv64':
-    case 'loong64':
-    case 's390x':
-      archType = '64'; // 64-bit architectures
-      break;
-    case 'ia32':
-    case 'mips':
-    case 'mipsel':
-    case 'ppc':
-    case 's390':
-    case 'arm':
-      archType = '32'; // 32-bit architectures
-      break;
-    case 'arm64':
-      archType = 'arm64'; // ARM 64-bit architecture
-      break;
-    default:
-      throw new Error(`Unsupported architecture: ${arch}`);
-  }
-  return {
-    platform,
-    archType
-  };
-}
-
-const pulp_reject = () => {
-  const base = 'pulp/solverdir/cbc';
-  const { platform, archType } = getPlatformAndArch();
-  // linux, osx, win; 32, 64, arm64
-  const all_combinations = [
-    'linux/32', 'linux/64', 'linux/arm64',
-    'osx/32', 'osx/64', 'osx/arm64',
-    'win/32', 'win/64', 'win/arm64'
-  ].map((x) => `${base}/${x}`);
-  const current = `${base}/${platform}/${archType}`;
-  return all_combinations.filter((x) => x !== current);
-}
-
 module.exports = {
   packagerConfig: {
     ignore: [
@@ -88,14 +28,12 @@ module.exports = {
       /^\/\.github$/,
       /^.*\.sh$/,
       /^\/venv/,
+      /^\/.venv/,
       /^\/src/,
       /^\/coverage/,
       /^\/Mambaforge.sh/,
       /^\/Mambaforge-Windows-x86_64.exe/,
       /^\/postbuild_tests/,
-      // Ignore binaries for other platforms - this was introduced when upgrading pulp
-      // which includes binaries for all platforms in their package
-      ...pulp_reject()
     ],
     icon: "images/icon",
     ...codesignConfig(),
