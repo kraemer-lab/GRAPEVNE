@@ -61,8 +61,11 @@ jobs:
           yarn
           yarn build
           yarn package
+      # disabled: docker is very slow to install on macos-12, is unsupported on
+      #           macos-14, is available on windows and already tested under ubuntu
       - name: install docker MacOS (Intel chips)
         shell: bash -el {0}  # required to sustain the conda environment
+        if: false
         run: |
           if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "X64" ]; then
             brew install docker
