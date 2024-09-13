@@ -1,4 +1,5 @@
 name: Publish build
+
 on:
   workflow_call:
     inputs:
@@ -18,7 +19,7 @@ jobs:
       - uses: nanasess/setup-chromedriver@v2
         with:
           chromedriver-version: "126.0.6478.185"
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -62,7 +63,7 @@ jobs:
       - name: postbuild-tests
         working-directory: ./electron-app
         shell: bash -el {0}  # required to sustain the conda environment
-        # 'yarn package' is only run to allow build_testsuite.sh to run before
+        # 'yarn package' is only run to allow run_postbuild_tests.sh to run before
         # the package is pushed for publishing ('yarn run publish' builds and
         # publishes in one step)
         run: |

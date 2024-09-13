@@ -19,6 +19,35 @@ jobs:
       - uses: nanasess/setup-chromedriver@v2
         with:
           chromedriver-version: "126.0.6478.185"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v2
+      - name: install MacOS (M1) build dependencies
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "ARM64" ]; then
+            brew install pango
+          fi
+      # setuptools needs to be available globally for the yarn build script
+      - name: Install setuptools
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install setuptools
+      - name: build
+        working-directory: ./electron-app
+        shell: bash
+        run: |
+          corepack enable
+          ./build_deps.sh
+          yarn install
+          yarn
+          yarn build
+          yarn package
+      # Install conda for post-build tests
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
@@ -28,30 +57,7 @@ jobs:
           auto-activate-base: true
           python-version: 3.12
           use-mamba: true
-      - name: Install the latest version of uv
-        uses: astral-sh/setup-uv@v2
-      - name: install MacOS (M1) build dependencies
-        shell: bash -el {0}  # required to sustain the conda environment
-        run: |
-          if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "ARM64" ]; then
-            brew install pango
-          fi
-      # setuptools needs to be available globally for the yarn build script
-      - name: Install setuptools
-        shell: bash -el {0}  # required to sustain the conda environment
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install setuptools
-      - name: build
-        working-directory: ./electron-app
-        shell: bash -el {0}  # required to sustain the conda environment
-        run: |
-          corepack enable
-          ./build_deps.sh
-          yarn install
-          yarn
-          yarn build
-          yarn package
+      # only publish builds if they pass post-build tests
       - name: postbuild-tests
         working-directory: ./electron-app
         shell: bash -el {0}  # required to sustain the conda environment
@@ -59,7 +65,7 @@ jobs:
           ./run_postbuild_tests.sh
       - name: Build distributables
         working-directory: ./electron-app
-        shell: bash -el {0}  # required to sustain the conda environment
+        shell: bash
         env:
           REPO_OWNER: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
