@@ -599,7 +599,7 @@ describe('modules', () => {
     [
       [
         // Modules to add to scene
-        'payload shell', // data-nodeid="n0"
+        'payload run', // data-nodeid="n0"
         'conda', // data-nodeid="n1"
       ],
       [
