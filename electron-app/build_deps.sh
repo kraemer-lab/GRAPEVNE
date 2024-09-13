@@ -38,9 +38,9 @@ uv run pyinstaller  \
     --hidden-import smart_open.webhdfs \
     $(python collect_stdlibs.py) \
     --add-data "../builder/builder/sendmail.py:./builder/" \
-    --add-data "src/pyrunner/Dockerfile:." \
-    --add-data "src/pyrunner/build_container_sh:." \
-    --add-data "src/pyrunner/launch_container_sh:." \
+    --add-data "src/pyrunner/Dockerfile:./pyrunner" \
+    --add-data "src/pyrunner/build_container_sh:./pyrunner" \
+    --add-data "src/pyrunner/launch_container_sh:./pyrunner" \
     --noconfirm
 
 # Ensure nodemapper has the most up-to-date electron api file
