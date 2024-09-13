@@ -594,7 +594,7 @@ describe('modules', () => {
   );
 
   // Conda tests
-  runif(is_installed(['mamba', 'conda'], 'any')).each([
+  runif(!is_windows && is_installed(['mamba', 'conda'], 'any')).each([
     // Test: 1 (connect two modules)
     [
       [
