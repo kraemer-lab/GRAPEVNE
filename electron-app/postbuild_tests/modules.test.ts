@@ -614,6 +614,8 @@ describe('modules', () => {
   ])(
     "Build and Test the conda workflow: module '%s'",
     async (modulenames, connections, outfiles) => {
+      console.log('::: test Build and Test the conda workflow');
+
       // Open settings pane
       await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
 
@@ -627,6 +629,7 @@ describe('modules', () => {
 
       // Build and run workflow
       await BuildAndRun_MultiModuleWorkflow(driver, modulenames, connections, outfiles);
+      console.log('<<< test Build and Test the conda workflow');
     },
     5 * ONE_MINUTE,
   ); // long timeout

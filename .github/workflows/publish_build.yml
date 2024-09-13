@@ -48,13 +48,21 @@ jobs:
       - name: tmate debugging
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+      # only publish builds if they pass post-build tests
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: build
+          miniforge-version: latest
+          auto-update-conda: true
+          python-version: 3.12
+          use-mamba: true
       - name: postbuild-tests
         working-directory: ./electron-app
         shell: bash
-        # 'yarn package' is only run to allow build_testsuite.sh to run before
-        # the package is pushed for publishing ('yarn run publish' builds and
-        # publishes in one step)
         run: |
+          conda init
+          source ~/.bashrc
           yarn package
           ./run_postbuild_tests.sh
       - name: publish

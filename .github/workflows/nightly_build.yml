@@ -47,10 +47,20 @@ jobs:
           yarn build
           yarn package
       # only publish builds if they pass post-build tests
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: build
+          miniforge-version: latest
+          auto-update-conda: true
+          python-version: 3.12
+          use-mamba: true
       - name: postbuild-tests
         working-directory: ./electron-app
         shell: bash
         run: |
+          conda init
+          source ~/.bashrc
           ./run_postbuild_tests.sh
       - name: Build distributables
         working-directory: ./electron-app
