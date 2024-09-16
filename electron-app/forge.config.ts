@@ -35,6 +35,9 @@ module.exports = {
       /^\/Mambaforge-Windows-x86_64.exe/,
       /^\/postbuild_tests/,
     ],
+    extraResource: [
+      './resources/grapevne_helper.py',
+    ],
     icon: "images/icon",
     ...codesignConfig(),
   },

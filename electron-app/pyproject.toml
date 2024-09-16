@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "builder",
-    "grapevne>=0.1.1",
+    "grapevne>=0.2",
     "runner",
     "smart-open>=7.0.4",
 ]

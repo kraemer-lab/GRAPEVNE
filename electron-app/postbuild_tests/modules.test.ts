@@ -507,6 +507,7 @@ describe('modules', () => {
       expect(msg.returncode).toEqual(1); // 1 = missing dependency
 
       // Build should fail
+      console.log("Build should fail (source filename not linked to target module's input)");
       await MultiModuleWorkflow_BuildAndCheck({
         driver: driver,
         target_files: target_files,
@@ -658,7 +659,7 @@ describe('modules', () => {
       console.log('Target folder does not exist');
 
       // Side navbar to Module Editor page
-      await driver.findElement(By.id('btnSidenavModuleEditor')).click();
+      await driver.wait(until.elementLocated(By.id('btnSidenavModuleEditor'))).click();
 
       // Set module name
       await OverwriteInputField(
@@ -667,7 +668,7 @@ describe('modules', () => {
       );
 
       // Select the module repository (choose the local test-repo)
-      const repo_type = await driver.findElement(By.id('module-repo'));
+      const repo_type = await driver.wait(until.elementLocated(By.id('module-repo')));
       await repo_type.click();
       await repo_type
         .findElement(
@@ -755,7 +756,7 @@ describe('modules', () => {
       // Specify environment (conda configuration)
       await OverwriteInputField(
         driver.findElement(By.id('module-environment')),
-        'name: test-env\n' + 'channels:\n' + '  - conda-forge\n' + 'dependencies:',
+        'name: test-env\n' + 'channels:\n' + '  - conda-forge\n',
       );
 
       // Add script files here --- none to add
@@ -800,20 +801,19 @@ describe('modules', () => {
         yaml.dump({
           name: 'test-env',
           channels: ['conda-forge'],
-          dependencies: null,
         }),
       );
 
       // Run the new module
-      await driver.findElement(By.id('btnSidenavBuilder')).click();
-      await driver.findElement(By.id('btnBuilderGetModuleList')).click();
+      await driver.wait(until.elementLocated(By.id('btnSidenavBuilder'))).click();
+      await driver.wait(until.elementLocated(By.id('btnBuilderGetModuleList'))).click();
       await ClearGraph(driver);
-      const module = await driver.findElement(By.id('modulelist-newmodule'));
-      const canvas = await driver.findElement(By.className('react-flow__pane'));
+      const module = await driver.wait(until.elementLocated(By.id('modulelist-newmodule')));
+      const canvas = await driver.wait(until.elementLocated(By.className('react-flow__pane')));
       await DragAndDrop(driver, module, canvas);
       await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n0"]`)));
-      await driver.findElement(By.id('btnBuildAndRunDropdown')).click();
-      await driver.findElement(By.id('btnBuilderBuildAndTest')).click();
+      await driver.wait(until.elementLocated(By.id('btnBuildAndRunDropdown'))).click();
+      await driver.wait(until.elementLocated(By.id('btnBuilderBuildAndTest'))).click();
       msg = await WaitForReturnCode(driver, 'builder/build-and-run');
       expect(msg.returncode).toEqual(0);
 

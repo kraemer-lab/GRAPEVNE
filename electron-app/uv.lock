@@ -203,14 +203,14 @@ wheels = [
 
 [[package]]
 name = "grapevne"
-version = "0.1.1"
+version = "0.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6a/bc/8d2a64f38dc848f668b9caf9f65ee022fa2606d7cf728975ccb0de5b2584/grapevne-0.1.1.tar.gz", hash = "sha256:8ed33acf4875d9fc01cb45a9d0ec49232a499a88459a9809455675b14effa62e", size = 4216 }
+sdist = { url = "https://files.pythonhosted.org/packages/7b/fa/6f53c0d12bbb28df203a2ec017fc424a5ca1cce0b38a37ffbc3961a769d5/grapevne-0.2.0.tar.gz", hash = "sha256:1b3f41326f6b3cb36d0b1e090987ccf3f97b2a85730f7d40809ed9c480d0b0f4", size = 21289 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/56/6f/494889dfef950ca9536c6f212e46d80f6874723dcbf84a96cb242cbc3802/grapevne-0.1.1-py3-none-any.whl", hash = "sha256:c2fa22add0722212c6e4d029739efef18bf0a4e6fe777cb8bae20090039b12fa", size = 4189 },
+    { url = "https://files.pythonhosted.org/packages/21/c3/40eeac9c93931649ef9eddf4cd2e3d598d0c3f2d680937f18f2846b72f89/grapevne-0.2.0-py3-none-any.whl", hash = "sha256:a6ec798b72130bfdc4f96338f4e52a9e8904e2c6cbe12f47d20905207198832d", size = 5624 },
 ]
 
 [[package]]
@@ -500,7 +500,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "builder", virtual = "../builder" },
-    { name = "grapevne", specifier = ">=0.1.1" },
+    { name = "grapevne", specifier = ">=0.2" },
     { name = "runner", virtual = "../runner" },
     { name = "smart-open", specifier = ">=7.0.4" },
 ]
