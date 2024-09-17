@@ -1,44 +1,26 @@
 """test_docstring
 """
 configfile: "config/config.yaml"
+from grapevne_helper import import_grapevne
 
-indir = config["input_namespace"]
-outdir = config["output_namespace"]
-params = config["params"]
-
-def script(name=""):
-    from snakemake.remote import AUTO
-
-    filename = srcdir(f"scripts/{name})"
-    try:
-        return AUTO.remote(filename)
-    except: TypeError:
-        return filename
-
-def resource(name=""):
-    from snakemake.remote import AUTO
-
-    filename = srcdir(f"../resources/{name})"
-    try:
-        return AUTO.remote(filename)
-    except: TypeError:
-        return filename
+grapevne = import_grapevne(workflow)
+globals().update(vars(grapevne))
 
 rule all:
     input:
-        in1_label = f"results/{indir['test_port1']}/in1_filename",
-        in2_label = f"results/{indir['test_port2']}/in2_filename",
+        in1_label = input("in1_filename", "test_port1"),
+        in2_label = input("in2_filename", "test_port2"),
         script_label = script("test_script_file"),
         resource_label = resource("test_resource_file"),
     output:
-        out_label = f"results/{outdir}/out_filename",
+        out_label = output("out_filename"),
     log:
-        "logs/test_module.log"
+        log("test_module.log")
     conda:
-        "envs/env.yaml"
+        env("env.yaml")
     params:
-        outdir = f"results/{outdir}",
-        test_param = params["test_param"],
+        outdir = output(),
+        test_param = param("test_param"),
     test_directive:
         """
         test_command

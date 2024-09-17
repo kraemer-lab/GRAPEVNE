@@ -1,0 +1,35 @@
+{
+    "query": "builder/build-and-run",
+    "data": {
+        "format": "Snakefile",
+        "content": [
+            {
+                "name": "touch",
+                "type": "source",
+                "org": "testing",
+                "repo": {
+                    "type": "local",
+                    "listing_type": "DirectoryListing",
+                    "url": "test-url"
+                },
+                "config": {
+                    "snakefile": "workflows/testing/sources/touch/workflow/Snakefile",
+                    "config": {
+                        "input_namespace": null,
+                        "output_namespace": "out",
+                        "params": {
+                            "filename": "data.csv"
+                        }
+                    },
+                    "docstring": "Touch module"
+                }
+            }
+        ],
+        "targets": ["touch"],
+        "args": "--cores 1",
+        "backend": "builtin",
+        "conda_backend": "builtin",
+        "environment_variables": "",
+        "workflow_alerts": {}
+    }
+}

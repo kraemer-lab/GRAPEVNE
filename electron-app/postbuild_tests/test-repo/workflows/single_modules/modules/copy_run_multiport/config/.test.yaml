@@ -1,0 +1,7 @@
+input_namespace:
+  in1: in1
+  in2: in2
+  in3: in3
+output_namespace: out
+params:
+  filename: data.csv

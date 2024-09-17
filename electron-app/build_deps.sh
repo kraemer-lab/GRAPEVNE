@@ -4,26 +4,31 @@ set -eoux pipefail
 
 # Rebuild components
 pushd ../builder/
-poetry build
+uv build
 popd
 pushd ../runner/
-poetry build
+uv build
 popd
 
 # setup and activate a virtual environment
-poetry env remove --all  # remove any existing virtual environment
-poetry install --no-root  # use poetry to install dependencies
+uv venv
+uv sync
 RUNNER_OS=${RUNNER_OS:-$(uname)}
 if [[ "$RUNNER_OS" == "Windows" ]]; then
-    source "$(poetry env info --path)\\Scripts\\activate"
+    source ".venv\\Scripts\\activate"
 else
-    source $(poetry env info --path)/bin/activate
+    source .venv/bin/activate
 fi
+uv pip install --force-reinstall .
 
 # compile python code to binary for deployment
-python -m PyInstaller src/python/pyrunner.py \
+uv run pyinstaller  \
+    --name pyrunner \
+    src/pyrunner/__main__.py \
     --hidden-import builder \
     --hidden-import runner \
+    --hidden-import grapevne \
+    --hidden-import grapevne.helpers \
     --hidden-import smart_open.ftp \
     --hidden-import smart_open.gcs \
     --hidden-import smart_open.hdfs \
@@ -33,9 +38,10 @@ python -m PyInstaller src/python/pyrunner.py \
     --hidden-import smart_open.webhdfs \
     $(python collect_stdlibs.py) \
     --add-data "../builder/builder/sendmail.py:./builder/" \
-    --add-data "src/python/Dockerfile:." \
-    --add-data "src/python/build_container_sh:." \
-    --add-data "src/python/launch_container_sh:."
+    --add-data "src/pyrunner/Dockerfile:./pyrunner" \
+    --add-data "src/pyrunner/build_container_sh:./pyrunner" \
+    --add-data "src/pyrunner/launch_container_sh:./pyrunner" \
+    --noconfirm
 
 # Ensure nodemapper has the most up-to-date electron api file
 cp src/api.ts ../nodemapper/src

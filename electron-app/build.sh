@@ -19,6 +19,7 @@ export COREPACK_ENABLE_NETWORK=true
 
 # compile build dependencies
 ./build_deps.sh
+uv pip install --system setuptools
 
 # compile GRAPEVNE
 export DEBUG=*

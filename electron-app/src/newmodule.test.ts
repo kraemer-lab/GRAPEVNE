@@ -8,6 +8,9 @@ import {
   INewModuleStateConfigOutputFilesRow,
 } from './types';
 
+// Resource folder (electron || test) environment
+const resource_path = process.resourcesPath || 'resources';
+
 test('Build', async () => {
   // Create a new module
   const test_folder = path.join('src', 'tests');
@@ -92,6 +95,7 @@ test('Build', async () => {
     const contents = fs.readFileSync(filename, 'utf8');
     expect(contents.trim()).toBe(expected_contents.trim());
   };
+  // Check config file contents
   checkFile(
     path.join(module_folder, 'config', 'config.yaml'),
     `input_namespace:
@@ -102,15 +106,24 @@ params:
   test_param: test_value
 `,
   );
+  // Check resource file contents
   checkFile(
     path.join(module_folder, 'resources', 'test_resource_file'),
     `test_resource_file_contents`,
   );
+  // Check grapevne_helper file contents
+  checkFile(
+    path.join(module_folder, 'workflow', 'grapevne_helper.py'),
+    fs.readFileSync(path.join(resource_path, 'grapevne_helper.py'), 'utf8'),
+  );
+  // Check Snakefile file contents
   checkFile(
     path.join(module_folder, 'workflow', 'Snakefile'),
     fs.readFileSync(path.join(test_files_folder, 'target_snakefile'), 'utf8'),
   );
+  // Check environment file contents
   checkFile(path.join(module_folder, 'workflow', 'envs', 'env.yaml'), `test_env`);
+  // Check launch script contents
   checkFile(
     path.join(module_folder, 'workflow', 'scripts', 'test_script_file'),
     `test_script_file_contents`,

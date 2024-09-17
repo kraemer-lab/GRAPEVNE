@@ -837,7 +837,7 @@ const GetWorkflowAlerts = (alerts: IState['settings']['workflow_alerts']) => {
   if (
     alerts['email_settings'] === undefined ||
     alerts['email_settings']['smtp_server'] === '' ||
-    alerts['email_settings']['smtp_port'] !== 0
+    alerts['email_settings']['smtp_port'] === undefined
   ) {
     // Email settings are not set
     console.log('Email settings are not set.');
@@ -852,10 +852,15 @@ const GetWorkflowAlerts = (alerts: IState['settings']['workflow_alerts']) => {
     console.log('Neither alerts are enabled.');
     return {};
   }
-  console.log('Structure should have properties.');
   const out_alerts = {};
   out_alerts['email_settings'] = alerts.email_settings;
-  if (onsuccess_enabled) out_alerts['onsuccess'] = alerts.onsuccess;
-  if (onerror_enabled) out_alerts['onerror'] = alerts.onerror;
+  if (onsuccess_enabled) {
+    console.log("email onsuccess_enabled: ", alerts.onsuccess);
+    out_alerts['onsuccess'] = alerts.onsuccess;
+  }
+  if (onerror_enabled) {
+    console.log("email onerror_enabled: ", alerts.onerror);
+    out_alerts['onerror'] = alerts.onerror;
+  }
   return out_alerts;
 };

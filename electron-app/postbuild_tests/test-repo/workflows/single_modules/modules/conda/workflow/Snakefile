@@ -1,0 +1,26 @@
+configfile: "config/config.yaml"
+from grapevne_helper import import_grapevne
+
+grapevne = import_grapevne(workflow)
+globals().update(vars(grapevne))
+
+rule copy:
+    input:
+        input(params("filename")),
+    output:
+        output(params("filename")),
+    conda:
+        "envs/conda.yaml"
+    shell:
+        """
+        cp {input} {output}
+        """
+
+rule _test:
+    input:
+        src=rules.copy.input[0],
+        dst=rules.copy.output[0],
+    run:
+        # Verify that the file has been copied correctly
+        with open(input.src) as src, open(input.dst) as dst:
+            assert src.read() == dst.read()

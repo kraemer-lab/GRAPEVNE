@@ -407,19 +407,24 @@ class Model:
         src = os.path.normpath(pathlib.Path(m_path, os.pardir))
         pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
         # Copy module to the build directory
-        ignore_in_root = ["results", "logs", "benchmarks"]
+        ignore_in_root = ["results", "logs", "benchmarks", ".test.sh"]
         ignore_anywhere = [".snakemake", "__pycache__"]
         folders_in_root = os.listdir(src)
         keep_folders = set(folders_in_root) - set(ignore_in_root)
         for folder in keep_folders:
-            shutil.copytree(
-                pathlib.Path(src, folder),
-                pathlib.Path(dest, folder),
-                dirs_exist_ok=True,
-                ignore=lambda directory, contents: contents
-                if any(map(directory.endswith, ignore_anywhere))
-                else set(),
-            )
+            src_folder = pathlib.Path(src, folder)
+            dest_folder = pathlib.Path(dest, folder)
+            if src_folder.is_file():
+                shutil.copy2(src_folder, dest_folder)
+            else:
+                shutil.copytree(
+                    src_folder,
+                    dest_folder,
+                    dirs_exist_ok=True,
+                    ignore=lambda directory, contents: contents
+                    if any(map(directory.endswith, ignore_anywhere))
+                    else set(),
+                )
         # Redirect snakefile location in config
         node.snakefile = str(
             pathlib.Path(

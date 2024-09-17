@@ -1,6 +1,6 @@
 import sys
 
-reject_list = ["antigravity"]
+reject_list = ["antigravity", "this"]
 
 modules = set(sys.stdlib_module_names) - set(reject_list)
 

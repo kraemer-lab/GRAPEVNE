@@ -6,7 +6,6 @@ module utility_touch:
             *config["utility_touch"]["snakefile"]["args"],
             **config["utility_touch"]["snakefile"]["kwargs"],
         )
-        )
     config:
         config["utility_touch"]["config"]
 use rule * from utility_touch as utility_touch_*

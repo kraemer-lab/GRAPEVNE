@@ -3,22 +3,25 @@ Input namespaces: [in1, in2, in3]
 Copy file from first input namespace (in1) only
 """
 configfile: "config/config.yaml"
+from grapevne_helper import import_grapevne
 import shutil
 
-params = config["params"]
+grapevne = import_grapevne(workflow)
+globals().update(vars(grapevne))
 
 rule copy:
     input:
-        expand(
-            "results/{indir}/{filename}",
-            indir=config["input_namespace"]["in1"],
-            filename=params["filename"],
-        )
+        input(params("filename"), "in1"),
     output:
-        expand(
-            "results/{outdir}/{filename}",
-            outdir=config["output_namespace"],
-            filename=params["filename"],
-        )
+        output(params("filename")),
     run:
         shutil.copy(input[0], output[0])
+
+rule _test:
+    input:
+        src=rules.copy.input[0],
+        dst=rules.copy.output[0],
+    run:
+        # Verify that the file has been copied correctly
+        with open(input.src) as src, open(input.dst) as dst:
+            assert src.read() == dst.read()
