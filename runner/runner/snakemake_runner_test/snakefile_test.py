@@ -29,6 +29,7 @@ def test_Snakefile_Build():
     assert contents == expected
 
 
+@pytest.mark.skip(reason="Linting is no longer available in Snakemake 8")
 def test_Snakefile_Lint():
     # Load test case
     with open("runner/snakemake_runner_test/Snakefile", "r") as file:

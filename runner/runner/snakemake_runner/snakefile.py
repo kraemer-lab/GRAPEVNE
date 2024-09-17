@@ -16,11 +16,7 @@ from typing import Optional
 from typing import Tuple
 from typing import Union
 
-import snakemake.remote.HTTP
-import snakemake.remote.S3
-from snakemake import main as snakemake_main
-from snakemake.remote import AUTO  # noqa: F401  # pylint: disable=unused-import
-from snakemake.remote import AutoRemoteProvider
+from snakemake.cli import main as snakemake_main
 
 from builder.builder import BuildFromJSON
 from builder.builder import YAMLToConfig
@@ -39,37 +35,6 @@ logging.basicConfig(
     level=logging.DEBUG,
 )
 logging.info("Working directory: %s", os.getcwd())
-
-# ##############################################################################
-# Snakemake customizations
-# ##############################################################################
-
-# Override snakemake's 'AUTO' protocol mapper (this replaces the normal dynamic
-# import behaviour which is not supported when building PyInstaller binaries)
-
-
-@property  # type: ignore
-def protocol_mapping(self):
-    provider_list = [
-        snakemake.remote.HTTP.RemoteProvider,
-        snakemake.remote.S3.RemoteProvider,
-    ]
-    # assemble scheme mapping
-    protocol_dict = {}
-    for Provider in provider_list:
-        try:
-            for protocol in Provider().available_protocols:
-                protocol_short = protocol[:-3]  # remove "://" suffix
-                protocol_dict[protocol_short] = Provider
-        except Exception as e:
-            # If for any reason Provider() fails (e.g. missing python
-            # packages or config env vars), skip this provider.
-            print(f"Instantiating {Provider.__class__.__name__} failed: {e}")
-    return protocol_dict
-
-
-# Method replacement in snakemake.remote package
-AutoRemoteProvider.protocol_mapping = protocol_mapping
 
 
 # ##############################################################################

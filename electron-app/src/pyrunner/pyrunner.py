@@ -8,11 +8,9 @@ from typing import List
 from zipfile import ZipFile
 from zipfile import ZipInfo
 
-import filesystem
-import snakemake
-
 import builder
 import runner
+from . import filesystem
 
 
 shell_launch = "#!/usr/bin/env bash"
@@ -414,12 +412,9 @@ def post(request):
     logging.info("Query response: %s", rtn)
 
 
-logging.debug("sys.argv: %s", sys.argv)
-if len(sys.argv) > 2:
-    # TODO: Somewhere, somehow, snakemake is calling this executable with a
-    #       parameter set. This is a temporary hack to get around that until
-    #       the calling function can be redirected.
-    logging.debug("snakemake: %s", sys.argv[3:])
-    snakemake.main(" ".join(sys.argv[3:]))
-else:
-    post(sys.argv[1])
+def main(request):
+    post(request)
+
+
+if __name__ == "__main__":
+    main(*sys.argv)

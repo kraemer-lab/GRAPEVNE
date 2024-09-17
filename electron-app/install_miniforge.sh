@@ -6,7 +6,7 @@ set -eoux pipefail
 if [[ "$RUNNER_OS" == "Windows" ]]; then
     echo "Downloading Miniforge for Windows..."
     # curl does not work on git-bash, so use the activated python environment
-    source "$(poetry env info --path)\\Scripts\\activate"
+    source ".venv\\Scripts\\activate"
     python -c "import requests; open('Miniforge3-Windows-x86_64.exe', 'wb').write(requests.get('https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe', allow_redirects=True).content)"
     powershell.exe -Command 'Start-Process .\Miniforge3-Windows-x86_64.exe -ArgumentList "/S /NoRegistry=1 /D=$env:UserProfile\miniforge3" -Wait'
     export CONDA_PATH="${USERPROFILE}"/miniforge3/condabin

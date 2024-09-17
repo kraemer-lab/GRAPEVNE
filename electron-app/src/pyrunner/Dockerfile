@@ -1,7 +1,8 @@
 FROM condaforge/miniforge3:24.3.0-0 as conda
 
 # Install snakemake
-RUN mamba install -y snakemake-minimal==7.32 -c bioconda
+RUN mamba install -y "snakemake-minimal<9" pip -c bioconda
+RUN pip install grapevne
 
 # Pass UID to container (ensures appropriate permissions for created files/directories)
 ARG HOST_UID

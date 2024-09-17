@@ -507,6 +507,7 @@ describe('modules', () => {
       expect(msg.returncode).toEqual(1); // 1 = missing dependency
 
       // Build should fail
+      console.log("Build should fail (source filename not linked to target module's input)");
       await MultiModuleWorkflow_BuildAndCheck({
         driver: driver,
         target_files: target_files,
@@ -594,14 +595,44 @@ describe('modules', () => {
   );
 
   // Conda tests
-  runif(is_installed(['mamba', 'conda'], 'any')).each([
-    ['conda', [path.join('results', 'conda', 'data.csv')]],
+  runif(!is_windows && is_installed(['mamba', 'conda'], 'any')).each([
+    // Test: 1 (connect two modules)
+    [
+      [
+        // Modules to add to scene
+        'payload run', // data-nodeid="n0"
+        'conda', // data-nodeid="n1"
+      ],
+      [
+        // Connections to make between modules
+        ['n0-out-source', 'n1-in-target'], // (nodeid)-(portname)-(porttype)
+      ],
+      [
+        // Expected output files
+        path.join('results', 'conda', 'data.csv'),
+      ],
+    ],
   ])(
     "Build and Test the conda workflow: module '%s'",
-    async (modulename, outfiles) => {
-      await BuildAndRun_SingleModuleWorkflow(driver, modulename, outfiles);
+    async (modulenames, connections, outfiles) => {
+      console.log('::: test Build and Test the conda workflow');
+
+      // Open settings pane
+      await driver.findElement(By.xpath('//div[@id="btnSidenavSettings"]')).click();
+
+      // Set snakemake command line arguments
+      const args = await driver.findElement(webdriver.By.id('inputBuilderSettingsSnakemakeArgs'));
+      await OverwriteInputField(args, '--cores 1 --use-conda');
+
+      // Close settings pane
+      await driver.findElement(By.xpath('//div[@id="btnSidenavBuilder"]')).click();
+      console.log('<<< test Set snakemake arguments list to use conda');
+
+      // Build and run workflow
+      await BuildAndRun_MultiModuleWorkflow(driver, modulenames, connections, outfiles);
+      console.log('<<< test Build and Test the conda workflow');
     },
-    10 * ONE_MINUTE,
+    5 * ONE_MINUTE,
   ); // long timeout
 
   test(
@@ -628,7 +659,7 @@ describe('modules', () => {
       console.log('Target folder does not exist');
 
       // Side navbar to Module Editor page
-      await driver.findElement(By.id('btnSidenavModuleEditor')).click();
+      await driver.wait(until.elementLocated(By.id('btnSidenavModuleEditor'))).click();
 
       // Set module name
       await OverwriteInputField(
@@ -637,7 +668,7 @@ describe('modules', () => {
       );
 
       // Select the module repository (choose the local test-repo)
-      const repo_type = await driver.findElement(By.id('module-repo'));
+      const repo_type = await driver.wait(until.elementLocated(By.id('module-repo')));
       await repo_type.click();
       await repo_type
         .findElement(
@@ -725,7 +756,7 @@ describe('modules', () => {
       // Specify environment (conda configuration)
       await OverwriteInputField(
         driver.findElement(By.id('module-environment')),
-        'name: test-env\n' + 'channels:\n' + '  - conda-forge\n' + 'dependencies:',
+        'name: test-env\n' + 'channels:\n' + '  - conda-forge\n',
       );
 
       // Add script files here --- none to add
@@ -770,20 +801,19 @@ describe('modules', () => {
         yaml.dump({
           name: 'test-env',
           channels: ['conda-forge'],
-          dependencies: null,
         }),
       );
 
       // Run the new module
-      await driver.findElement(By.id('btnSidenavBuilder')).click();
-      await driver.findElement(By.id('btnBuilderGetModuleList')).click();
+      await driver.wait(until.elementLocated(By.id('btnSidenavBuilder'))).click();
+      await driver.wait(until.elementLocated(By.id('btnBuilderGetModuleList'))).click();
       await ClearGraph(driver);
-      const module = await driver.findElement(By.id('modulelist-newmodule'));
-      const canvas = await driver.findElement(By.className('react-flow__pane'));
+      const module = await driver.wait(until.elementLocated(By.id('modulelist-newmodule')));
+      const canvas = await driver.wait(until.elementLocated(By.className('react-flow__pane')));
       await DragAndDrop(driver, module, canvas);
       await driver.wait(until.elementLocated(By.xpath(`//div[@data-id="n0"]`)));
-      await driver.findElement(By.id('btnBuildAndRunDropdown')).click();
-      await driver.findElement(By.id('btnBuilderBuildAndTest')).click();
+      await driver.wait(until.elementLocated(By.id('btnBuildAndRunDropdown'))).click();
+      await driver.wait(until.elementLocated(By.id('btnBuilderBuildAndTest'))).click();
       msg = await WaitForReturnCode(driver, 'builder/build-and-run');
       expect(msg.returncode).toEqual(0);
 

@@ -38,8 +38,6 @@ exclude_patterns = [
 
 html_theme = "sphinx_book_theme"
 html_logo = "images/logo-wide.png"
-html_static_path = [
-    "_static",
-]
+html_static_path = []
 
 graphviz_output_format = "svg"

@@ -9,20 +9,14 @@ jobs:
     defaults:
       run:
         working-directory: runner
-    strategy:
-      matrix:
-        python-version: ["3.11"]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-      - name: Install dependencies
+          python-version: "3.12"
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v2
+      - name: Run tests
         run: |
-          poetry install
-      - name: Testing code with pytest
-        run: |
-          poetry run pytest
+          ./run_tests.sh

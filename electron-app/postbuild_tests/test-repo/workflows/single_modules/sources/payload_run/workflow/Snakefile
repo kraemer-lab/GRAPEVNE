@@ -1,20 +1,27 @@
 configfile: "config/config.yaml"
 
+from grapevne_helper import import_grapevne
 import os
 import pathlib
 import shutil
 
-params = config["params"]
+grapevne = import_grapevne(workflow)
+globals().update(vars(grapevne))
 
 rule copy:
     input:
-        srcdir("../resources/file"),
+        resource("file"),
     output:
-        expand(
-            "results/{outdir}/{filename}",
-            outdir=config["output_namespace"],
-            filename=params["filename"],
-        )
+        output(params("filename")),
     run:
         pathlib.Path(os.path.dirname(output[0])).mkdir(parents=True, exist_ok=True)
         shutil.copy(input[0], output[0])
+
+rule _test:
+    input:
+        src=resource("file"),
+        dst=output(params("filename")),
+    run:
+        # Verify that the file has been copied correctly
+        with open(input.src) as src, open(input.dst) as dst:
+            assert src.read() == dst.read()

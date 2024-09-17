@@ -5,6 +5,7 @@ import os from 'os';
 
 import * as child from 'child_process';
 import * as path from 'path';
+import * as process from 'process';
 import {
   INewModuleBuildSettings,
   INewModuleStateConfig,
@@ -17,6 +18,9 @@ import { IpcMainInvokeEvent } from 'electron';
 
 export type Event = IpcMainInvokeEvent;
 export type Query = Record<string, unknown>;
+
+// Resource folder (electron || test) environment
+const resource_path = process.resourcesPath || 'resources';
 
 interface IBuild {
   config: INewModuleStateConfig;
@@ -133,6 +137,12 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
     );
   }
 
+  // Write grapevne_helper file
+  fs.writeFileSync(
+    path.join(module_folder, 'workflow', 'grapevne_helper.py'),
+    fs.readFileSync(path.join(resource_path, 'grapevne_helper.py')),
+  );
+
   // Update the command to replace the parameter names with the aliases
   let command = config.command as string;
   for (const key in configfile.params as Query) {
@@ -144,36 +154,18 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   // Write Snakefile
   let snakefile = '';
   if (config.docstring) snakefile += `"""${config.docstring}\n"""\n`;
-  snakefile += `configfile: "config/config.yaml"\n\n`;
-  snakefile += `indir = config["input_namespace"]\n`;
-  snakefile += `outdir = config["output_namespace"]\n`;
-  if (config.params) {
-    snakefile += `params = config["params"]\n\n`;
-  }
-  if (config.scripts.length > 0) {
-    snakefile += `def script(name=""):\n`;
-    snakefile += `    from snakemake.remote import AUTO\n\n`;
-    snakefile += `    filename = srcdir(f"scripts/{name})"\n`;
-    snakefile += `    try:\n`;
-    snakefile += `        return AUTO.remote(filename)\n`;
-    snakefile += `    except: TypeError:\n`;
-    snakefile += `        return filename\n\n`;
-  }
-  if (config.resources.length > 0) {
-    snakefile += `def resource(name=""):\n`;
-    snakefile += `    from snakemake.remote import AUTO\n\n`;
-    snakefile += `    filename = srcdir(f"../resources/{name})"\n`;
-    snakefile += `    try:\n`;
-    snakefile += `        return AUTO.remote(filename)\n`;
-    snakefile += `    except: TypeError:\n`;
-    snakefile += `        return filename\n\n`;
-  }
+  snakefile += `configfile: "config/config.yaml"\n`;
+  snakefile += `from grapevne_helper import import_grapevne\n`;
+  snakefile += `\n`;
+  snakefile += `grapevne = import_grapevne(workflow)\n`;
+  snakefile += `globals().update(vars(grapevne))\n`;
+  snakefile += `\n`;
   snakefile += `rule all:\n`;
   snakefile += `    input:\n`;
   for (const input of config.input_files as INewModuleStateConfigInputFilesRow[]) {
     snakefile += `        `;
     if (input.label) snakefile += `${input.label} = `;
-    snakefile += `f"results/{indir['${input.port}']}/${input.filename}",\n`;
+    snakefile += `input("${input.filename}", "${input.port}"),\n`;
   }
   for (const script of config.scripts) {
     snakefile += `        `;
@@ -189,19 +181,19 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   for (const output of config.output_files as INewModuleStateConfigOutputFilesRow[]) {
     snakefile += `        `;
     if (output.label) snakefile += `${output.label} = `;
-    snakefile += `f"results/{outdir}/${output.filename}",\n`;
+    snakefile += `output("${output.filename}"),\n`;
   }
   snakefile += `    log:\n`;
-  snakefile += `        "logs/${config.foldername}.log"\n`;
+  snakefile += `        log("${config.foldername}.log")\n`;
   snakefile += `    conda:\n`;
-  snakefile += `        "envs/env.yaml"\n`;
+  snakefile += `        env("env.yaml")\n`;
   if (config.params) {
     snakefile += `    params:\n`;
     if (!Object.keys(configfile.params).includes('outdir')) {
-      snakefile += `        outdir = f"results/{outdir}",\n`;
+      snakefile += `        outdir = output(),\n`;
     }
     for (const key in configfile.params as Query) {
-      snakefile += `        ${param_alias[key]} = params["${key}"],\n`;
+      snakefile += `        ${param_alias[key]} = param("${key}"),\n`;
     }
   }
   snakefile += `    ${config.command_directive}:\n`;

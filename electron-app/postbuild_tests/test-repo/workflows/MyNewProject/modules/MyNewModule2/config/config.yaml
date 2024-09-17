@@ -1,0 +1,12 @@
+"input_namespace":
+  "payload_run$": "in"
+"output_namespace": "payload_run"
+"payload_run":
+  "name": "payload_run"
+  "type": "module"
+  "snakefile": "/Users/jsb/repos/jsbrittain/GRAPEVNE/electron-app/postbuild_tests/test-repo/workflows/single_modules/sources/payload_run/workflow/Snakefile"
+  "config":
+    "input_namespace": "in"
+    "output_namespace": "payload_run"
+    "params":
+      "filename": "data.csv"
