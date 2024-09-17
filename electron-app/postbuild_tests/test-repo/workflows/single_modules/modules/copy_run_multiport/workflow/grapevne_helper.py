@@ -2,7 +2,7 @@ import logging
 import sys
 
 try:
-    from grapevne.helpers import *  # noqa: F403
+    import grapevne
 except ImportError:
     import ensurepip
     import subprocess
@@ -12,13 +12,14 @@ except ImportError:
         [sys.executable, "-m", "pip", "install", "--upgrade", "grapevne"]
     )
     try:
-        from grapevne.helpers import *  # noqa: F403 F401
+        import grapevne
     except ImportError:
         logging.error("Failed to install grapevne. Exiting.")
         sys.exit(1)
 
-# Tidy-up namespace
-del sys, logging
 
-# Dynamically export all names imported from grapevne
-__all__ = [name for name in dir() if not name.startswith("_")]
+def import_grapevne(workflow=None, version=None):
+    _grapevne = grapevne.install(version)
+    if workflow:
+        _grapevne.helpers.init(workflow)
+    return _grapevne.helpers

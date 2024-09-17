@@ -3,10 +3,11 @@ Input namespaces: [in1, in2, in3]
 Copy file from first input namespace (in1) only
 """
 configfile: "config/config.yaml"
-from grapevne_helper import *
+from grapevne_helper import import_grapevne
 import shutil
 
-init(workflow)
+grapevne = import_grapevne(workflow)
+globals().update(vars(grapevne))
 
 rule copy:
     input:
