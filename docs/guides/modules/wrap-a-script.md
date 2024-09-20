@@ -1,4 +1,4 @@
-# Wrapping a Python script (manual approach)
+# Wrapping a Script in a Module
 
 We are going to convert a script designed for geospatial analysis into a GRAPEVNE module.
 The specifics of the script are not important, although if you would like to run the

@@ -2,6 +2,8 @@
 
 GRAPEVNE is a desktop application that provides an interactive graphical environment for designing and building hierarchical analytic workflows.
 
+![GRAPEVNE Screenshot](images/screenshot.png)
+
 Within the GRAPEVNE environment users can either create new modules from scratch or import existing ones from local or remote repositories using a straightforward drag-and-drop system. The resulting workflow is then visualised as a graph model, representing the dependencies and relationships between the constituent modules and the sequential order in which they are to be executed. The hierarchical modular design means that individual modules can serve as the building blocks of larger and more complex modules, which can in turn be broken down into smaller sub-modules in a flexible manner.
 
 Once the construction of the target workflow is completed, it can be run either locally within GRAPEVNE, or exported with container technology for execution on any platform. The users also have the option to upload the workflow as a stand-alone module either to their own private workspaces (such as a lab group or departmental repository) or a public repository, making it accessible to the broader public and scientific community to utilise in their own workflows.

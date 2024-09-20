@@ -1,3 +1,5 @@
+# GRAPEVNE
+
 ![GRAPEVNE logo](images/banner.png "GRAPEVNE")
 
 GRAPEVNE (*Gr*aphical *A*nalytical *P*ipelin*e* De*v*elopme*n*t *E*nvironment) is a desktop application that provides an interactive graphical environment for designing and building hierarchical analytic workflows.
@@ -19,8 +21,15 @@ maxdepth: 1
 ---
 getting_started/installation
 getting_started/quickstart
-getting_started/dengue
-getting_started/creating_modules
+getting_started/build_a_workflow
+getting_started/module_repos
+```
+
+```{include} guides.md
+---
+start-after: <!-- guides-toctree-start -->
+end-before: <!-- guides-toctree-end -->
+---
 ```
 
 ```{toctree}

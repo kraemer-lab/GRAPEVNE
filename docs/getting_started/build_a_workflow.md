@@ -1,8 +1,8 @@
-# GRAPEVNE Builder
+# Build your first workflow
 
 GRAPEVNE Builder is the graphical interface that assists you in graphing, manipulating and building GRAPEVNE workflows.
 
-This tutorial will provide a quick introduction to the GRAPEVNE Builder app (see Installation instructions) that will include how to construct, build and run a simple workflow using several modules that are already available online.
+This tutorial will provide a quick introduction to the GRAPEVNE graphical interface (see Installation instructions) that will include how to construct, build and run a simple workflow using several modules that are already available online.
 
 For this tutorial we will download, process and visualise some publically available Covid-19 data.
 
@@ -122,7 +122,7 @@ This will launch the same series of steps as the `Build and Test` button, but wi
 
 ## Building workflows for use as modules
 
-The second basic scenario of workflow usage is using GRAPEVNE to create workflows composed of hierarchies of modules. This requires us to be able to make module from existing modules. Thankfully this is incredibly straightforward since there are no special requirements to build a workflow for use as a module. In other words, any workflow build that you create can be imported and used as a module (so long as the graph is _valid_, more on this in a future tutorial). Clicking `Build as Module` creates a module, which is identical to the `Build as Workflow` button, except that we do not include the launch scripts, as modules are not intended to be launched independently. Once you build the module and unzip it, GRAPEVNE is able to read the configuration file and load the module ready for use. If all of the workflows input ports were connected then the resulting module will have no input ports itself, but if some input ports were left unconnected, then these will be exposed in the editor for use.
+The second basic scenario of workflow usage is using GRAPEVNE to create workflows composed of hierarchies of modules. This requires us to be able to make module from existing modules. Thankfully this is incredibly straightforward since the only special requirements to build a module instead of a workflow is that it contains only a single output. Clicking `Build as Module` creates a module, which is identical to the `Build as Workflow` button, except that we do not include the launch scripts, as modules are not intended to be launched independently. Once you build the module and unzip it, GRAPEVNE is able to read the configuration file and load the module ready for use. If all of the input ports were connected then the resulting module will have no input ports itself, but if some input ports were left unconnected, then these will be exposed in the editor for use.
 
 ## Summary
 
@@ -132,6 +132,7 @@ You are now able to build a workflow to either
 2. use as a module in another workflow
 
 Indeed, it is this form of hierarchical modularization that makes GRAPEVNE so powerful. However, to demonstrate this we will want to set-up our own repository for testing (which we discuss in the next set of tutorials).
+
 ## Wait, but why is the workflow so slow on a first run?
 
 You may be wondering why the workflow was so slow to execute on its first run. After all, it was simply reading a file, filtering it, and plotting the result. The answer is that each module was set up to operate within a _conda_ environment. These configurations come with the modules so that you don't have to worry about them when building your workflows. Essentially, the conda environments set-up an isolated environment and download all of the necessary software to execute the contents of each module in a highly reproducible manner. Further details of conda environments and how snakemake / GRAPEVNE makes use of them are available in the next set of tutorials.
