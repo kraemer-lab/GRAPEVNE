@@ -18,7 +18,7 @@ Let us begin where we left off in the previous tutorial [Build your first workfl
 
 ## Build a workflow
 
-Drag the `Filter` and `Aggregate` modules onto the Canvas and connect the output of the `Filter` module to the input of the `Aggregate` module. This will create a simple workflow that filters the data for a specific country and then aggregates the data by month. However, notice that we have not provided any data as input, or done anything with the output... at least not yet. Your basic workflow at this point should look as follows:
+Drag the `Filter` and `AggregateByMonth` modules onto the Canvas and connect the output of the `Filter` module to the input of the `AggregateByMonth` module. This will create a simple workflow that filters the data for a specific country and then aggregates the data by month. However, notice that we have not provided any data as input, or done anything with the output... at least not yet. Your basic workflow at this point should look as follows:
 
 ![Sub-workflow](images/basic_workflow.png)
 
@@ -48,7 +48,7 @@ While viewing the module information you may have noticed the presense of a new 
 
 ![Submodule listing](images/module_contents.png)
 
-As you can see the module has expanded to reveal the `Filter` and `Aggregate`, connected in the correct order. By comparing these modules to the original workflow you can see that the workflow has been faithfully reconstructed, although some of the module names may have changed to prevent conflicts.
+As you can see the module has expanded to reveal the `Filter` and `AggregateByMonth`, connected in the correct order. By comparing these modules to the original workflow you can see that the workflow has been faithfully reconstructed, although some of the module names may have changed to prevent conflicts.
 
 ![Module expanded](images/expanded_module.png)
 
