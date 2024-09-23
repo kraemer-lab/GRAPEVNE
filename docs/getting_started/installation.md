@@ -2,49 +2,26 @@
 
 ## Download
 
-You can download the latest version of GRAPVEVNE for your system from
-[github releases](https://github.com/kraemer-lab/GRAPEVNE/releases) and get started straight away!
+You can download the latest version of GRAPVEVNE for your platform from
+[github releases](https://github.com/kraemer-lab/GRAPEVNE/releases) and get started straight away:
+
+<div style="text-align: center; margin-bottom: 20px;">
+    <a href="https://github.com/kraemer-lab/GRAPEVNE/releases" download style="display: inline-block; margin: 0 auto 20px auto; padding: 15px 30px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-size: 18px;">
+    Download GRAPEVNE
+    </a>
+</div>
 
 For Windows users, ensure you have [PowerShell](https://learn.microsoft.com/en-us/powershell/), which comes pre-installed as standard on most modern versions of Windows.
 
-GRAPEVNE comes with all of the necessary software to build and launch workflows, including `Python` (v3.11), `Snakemake` (v7) and `mamba` (the recommended distribution to use is [miniforge](https://github.com/conda-forge/miniforge)). To launch workflows outside of GRAPEVNE you will require these dependencies to be installed on your system.
-
-
-### Module repositories
-
-```{note}
-You don't need your own module repository to use GRAPEVNE, instead you can make use of repositories setup by others (including for the tutorials).
-```
-
-If you decide you do want to set-up your own repository, then please be aware that GRAPEVNE will expect the repository to be structured in the following way:
-
-```
-vneyard                     <--- root repository folder
-└── workflows               <--- 'workflows' folder (name must match)
-    └── MyModules           <--- project name
-        └── modules         <--- 'modules' folder (name must match)
-            └── MyModule1   <--- module folders
-            └── MyModule2
-            └── MyModule3
-```
-
-The folders `workflows` and `modules` are required names, whereas the names of
-the base repository folder (`vneyard`, the project name `My Modules` and the
-list of modules themselves (e.g. `MyModule1`) can be changed.
-
-Within a module you should follow the standard conventions outlined in the snakemake
-[Distribution and Reproducibility guidelines](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html).
-
-You can also clone an existing repository (such as the [vneyard](https://github.com/kraemer-lab/vneyard)) as a base environment to kick-start your own repository.
+GRAPEVNE comes with all of the necessary software to build and launch workflows, including [Python](https://www.python.org/), [Snakemake](https://snakemake.github.io/) and mamba (we use [miniforge](https://github.com/conda-forge/miniforge)). To launch workflows outside of GRAPEVNE you will need these dependencies to be installed on your system.
 
 ## Developer build
 
 GRAPEVNE comes with a dev container (located in `.devcontainer`).
 
-For manual build, you will need to have the following dependencies installed:
-- Python 3.11
-- Nodejs 18
-- [yarn 4](https://yarnpkg.com/) package manager (see [installation instructions](https://yarnpkg.com/getting-started/install)
+For manual builds you will need to have the following dependencies installed:
+- [Python 3.12](https://www.python.org/) and the [uv](https://github.com/astral-sh/uv) package manager
+- [Nodejs 20](https://nodejs.org/en) and the [yarn 4](https://yarnpkg.com/) package manager
 
 To build locally, clone the GRAPEVNE repository and run the build script:
 
@@ -55,7 +32,7 @@ cd GRAPEVNE
 ```
 
 ```{note}
-On modern MacOS machines with M1/M2 processors you will likely need to install the
+On modern MacOS machines with M-Series processors you will likely need to install the
 following additional dependencies in order to allow `node-canvas` to compile. These can
 be installed via homebrew:
 `brew install pkg-config pixman cairo glib pango`

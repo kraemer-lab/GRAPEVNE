@@ -42,7 +42,7 @@ is not being fullfilled, and so this is indicated by the module turning red.
 To resolve the problem, in this case, we want to change the output filename
 from the `Download` module so that it remains compatible with the `Filter`
 module. To do this, click on the `Download` module and change the `filename`
-parameter (`config-params-filename`) to `data.csv`. Note that the module remains
+parameter (`config`-`params`-`filename`) to `data.csv`. Note that the module remains
 red for the time being.
 
 Module dependencies are assessed when new links are made between modules - but
