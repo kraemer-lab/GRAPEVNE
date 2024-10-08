@@ -38,24 +38,12 @@ jobs:
       os: windows-latest
     secrets: inherit
 
-  build_macos14:
-    name: Build macOS-14
+  build_macos:
+    name: Build macOS
     needs: [check]
     if: needs.check.outputs.last_sha != github.sha
     permissions: write-all
     uses: ./.github/workflows/nightly_build.yml
     with:
-      os: macos-14
-    secrets: inherit
-
-  # Separate macOS-12 and macOS-14 builds to avoid signing conflicts
-  # (https://github.com/kraemer-lab/GRAPEVNE/issues/243)
-  build_macos12:
-    name: Build macOS-12
-    needs: [check, build_macos14]
-    if: needs.check.outputs.last_sha != github.sha
-    permissions: write-all
-    uses: ./.github/workflows/nightly_build.yml
-    with:
-      os: macos-12
+      os: macos-latest
     secrets: inherit

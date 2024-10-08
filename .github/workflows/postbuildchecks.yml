@@ -17,8 +17,7 @@ jobs:
 
     strategy:
       matrix:
-        # macos-12 provides Intel builds, macos-14 provides M1 builds
-        os: [ubuntu-latest, windows-latest, macos-12, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -61,16 +60,6 @@ jobs:
           yarn
           yarn build
           yarn package
-      # disabled: docker is very slow to install on macos-12, is unsupported on
-      #           macos-14, is available on windows and already tested under ubuntu
-      - name: install docker MacOS (Intel chips)
-        shell: bash -el {0}  # required to sustain the conda environment
-        if: false
-        run: |
-          if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "X64" ]; then
-            brew install docker
-            colima start
-          fi
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       - name: tmate debugging
         uses: mxschmitt/action-tmate@v3
