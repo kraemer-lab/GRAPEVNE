@@ -514,8 +514,8 @@ class Model:
             blob_path = pathlib.Path(dest, blob["path"])
             pathlib.Path(os.path.dirname(blob_path)).mkdir(parents=True, exist_ok=True)
             # Write file
-            with open(blob_path, "w") as file:
-                file.write(response.text)
+            with open(blob_path, "wb") as file:
+                file.write(response.content)
         # Redirect snakefile location in config
         node.snakefile = str(
             pathlib.Path(
