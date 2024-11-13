@@ -106,8 +106,8 @@ def BuildAndRun(
                     if rulename.startswith(target)
                 )
             )
-        except StopIteration:
-            raise ValueError(f"Cannot determine target rule for module: {target}")
+        except StopIteration as e:
+            raise ValueError(f"Cannot determine target rule for module '{target}': {e}")
 
     # Second, return the launch command
     logging.info("Generating launch command")
