@@ -36,8 +36,11 @@ uv run pyinstaller  \
     --hidden-import smart_open.s3 \
     --hidden-import smart_open.ssh \
     --hidden-import smart_open.webhdfs \
+    --hidden-import snakemake_storage_plugin_http \
+    --hidden-import snakemake_storage_plugin_s3 \
     $(python collect_stdlibs.py) \
     --add-data "../builder/builder/sendmail.py:./builder/" \
+    --add-data "../builder/builder/grapevne_helper.py:./builder/" \
     --add-data "src/pyrunner/Dockerfile:./pyrunner" \
     --add-data "src/pyrunner/build_container_sh:./pyrunner" \
     --add-data "src/pyrunner/launch_container_sh:./pyrunner" \

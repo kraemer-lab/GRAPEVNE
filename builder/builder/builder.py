@@ -52,9 +52,9 @@ class Node:
         name: str,
         rulename: str,
         nodetype: str,
-        snakefile: Snakefile = "",
+        snakefile: Snakefile = None,
         config=None,
-        input_namespace: Namespace = "",
+        input_namespace: Namespace = None,
         output_namespace: str = "",
         docstring: str = "",  # passthrough (unused in builds)
     ):
@@ -73,9 +73,9 @@ class Node:
         self.name = name
         self.rulename = rulename
         self.nodetype = nodetype
-        self.snakefile = snakefile
+        self.snakefile = snakefile if snakefile else ""
         self.config = {} if not config else config
-        self.input_namespace = input_namespace
+        self.input_namespace = input_namespace if input_namespace else ""
         self.output_namespace = output_namespace
 
     def GetOutputNamespace(self) -> str:
@@ -324,7 +324,7 @@ class Model:
             # This will most likely need marking in the config somewhere.
             # TODO
             ...
-        if len(module_output_namespaces) == 1:
+        elif len(module_output_namespaces) == 1:
             c["output_namespace"] = module_output_namespaces[0]
         else:
             logging.warn(
@@ -407,8 +407,8 @@ class Model:
         src = os.path.normpath(pathlib.Path(m_path, os.pardir))
         pathlib.Path(dest).mkdir(parents=True, exist_ok=True)
         # Copy module to the build directory
-        ignore_in_root = ["results", "logs", "benchmarks", ".test.sh"]
-        ignore_anywhere = [".snakemake", "__pycache__"]
+        ignore_in_root = ["results", "logs", "benchmarks"]
+        ignore_anywhere = [".snakemake", "__pycache__", ".test.sh", ".test.yaml"]
         folders_in_root = os.listdir(src)
         keep_folders = set(folders_in_root) - set(ignore_in_root)
         for folder in keep_folders:
@@ -600,6 +600,11 @@ class Model:
             file.write(self.BuildSnakefile())
         with open(f"{build_path}/config/config.yaml", "w") as file:
             file.write(self.BuildSnakefileConfig())
+        # Include grapevne helper script
+        shutil.copyfile(
+            pathlib.Path(__file__).parent / "grapevne_helper.py",
+            f"{build_path}/workflow/grapevne_helper.py",
+        )
         # Include sendmail script (if workflow alerts are present)
         if self.alerts:
             shutil.copyfile(
@@ -895,12 +900,12 @@ class Model:
             # Now orphan inputs - source module
             node.input_namespace = None
         elif isinstance(node.input_namespace, str):
-            orphan_node = self.GetNodeByRuleName(list(new_orphan_inputs)[0])
+            orphan_node = self.GetNodeByRuleName(next(iter(new_orphan_inputs)))
             if orphan_node:
                 orphan_node.input_namespace = node.input_namespace
             else:
                 raise ValueError(
-                    "No matching node found for name: " + list(new_orphan_inputs)[0]
+                    "No matching node found for name: " + next(iter(new_orphan_inputs))
                 )
         elif isinstance(node.input_namespace, dict):
             raise ValueError("Input dictionary namespaces not supported yet")
