@@ -19,8 +19,8 @@ class RequestMock:
 
     def __init__(self, status_code, text):
         self.status_code = status_code
-        self.text = text  # for requests.get().text
-        self.content = text  # for requests.get().content
+        self.text = text  # str
+        self.content = text.encode(encoding='utf-8')  # bytes
 
 
 def test_BuildSnakefile():
