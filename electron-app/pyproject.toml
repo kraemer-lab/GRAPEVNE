@@ -9,6 +9,8 @@ dependencies = [
     "grapevne>=0.2",
     "runner",
     "smart-open>=7.0.4",
+    "snakemake-storage-plugin-http>=0.2.3",
+    "snakemake-storage-plugin-s3>=0.2.12",
 ]
 
 [tool.uv]
