@@ -52,9 +52,9 @@ class Node:
         name: str,
         rulename: str,
         nodetype: str,
-        snakefile: Snakefile = None,
+        snakefile: Snakefile = "",
         config=None,
-        input_namespace: Namespace = None,
+        input_namespace: Namespace = "",
         output_namespace: str = "",
         docstring: str = "",  # passthrough (unused in builds)
     ):
@@ -73,9 +73,9 @@ class Node:
         self.name = name
         self.rulename = rulename
         self.nodetype = nodetype
-        self.snakefile = snakefile if snakefile else ""
+        self.snakefile = snakefile
         self.config = {} if not config else config
-        self.input_namespace = input_namespace if input_namespace else ""
+        self.input_namespace = input_namespace
         self.output_namespace = output_namespace
 
     def GetOutputNamespace(self) -> str:
