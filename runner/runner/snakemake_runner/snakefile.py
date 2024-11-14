@@ -4,9 +4,11 @@ import json
 import logging
 import os
 import platform
+import re
 import shutil
 import subprocess
 import tempfile
+import threading
 from contextlib import redirect_stderr
 from contextlib import redirect_stdout
 from pathlib import Path
@@ -15,12 +17,47 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 from typing import Union
+from warnings import warn
 
+import snakemake.deployment.conda
 from snakemake.cli import main as snakemake_main
 
 from builder.builder import BuildFromJSON
 from builder.builder import YAMLToConfig
 from runner.TokenizeFile import TokenizeFile
+# ##############################################################################
+# Skip Snakemake's conda version check (code adapted from Snakemake 8.25.3)
+# See https://github.com/kraemer-lab/GRAPEVNE/issues/368
+# ##############################################################################
+
+
+def _check_version(self):
+    from snakemake.shell import shell
+    from packaging.version import Version
+
+    version = shell.check_output(
+        self._get_cmd("conda --version"), stderr=subprocess.PIPE, text=True
+    )
+    version_matches = re.findall(r"\d+\.\d+\.\d+", version)
+    if len(version_matches) != 1:
+        raise snakemake.exceptions.WorkflowError(
+            f"Unable to determine conda version. 'conda --version' returned {version}"
+        )
+    else:
+        version = version_matches[0]
+    if Version(version) < Version(snakemake.deployment.conda.MIN_CONDA_VER):
+        warn(
+            f"Conda must be version {snakemake.deployment.conda.MIN_CONDA_VER} or "
+            "later, found version {version}. "
+            "Please update conda to the latest version. "
+            "Note that you can also install conda into the snakemake environment "
+            "without modifying your main conda installation.",
+            stacklevel=2,
+        )
+
+
+_orig_check_version = snakemake.deployment.conda.Conda._check_version
+snakemake.deployment.conda.Conda._check_version = _check_version
 
 # ##############################################################################
 # Log file
@@ -551,17 +588,48 @@ def snakemake_run(
     """Run the snakemake command by the selected launch method"""
     logging.info("Launching snakemake [%s]: %s", snakemake_launcher, " ".join(cmd))
     snakemake_launcher = "builtin" if not snakemake_launcher else snakemake_launcher
+    logging.info("Using launcher: %s", snakemake_launcher)
     if snakemake_launcher == "system":
-        cmd_str = " ".join(cmd[1:])  # strip snakemake executable
+        cmd_str = " ".join(cmd)
         shell = os.getenv("SHELL", "/bin/bash")
         cmd_str = shell + ' -i -c "' + cmd_str + '"'
-        p = subprocess.run(
+        logging.info(
+            f"Launching with cmd_str={cmd_str}, cwd={workdir}, capture_output={capture_output}, shell=True"
+        )
+
+        def stream_output(pipe, output_lines):
+            for line in pipe:
+                print(line, end="")
+                output_lines.append(line)
+
+        p = subprocess.Popen(
             cmd_str,
             cwd=workdir,
-            capture_output=capture_output,
+            # capture_output=capture_output,
             shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
         )
-        return p.stdout.decode("utf-8"), p.stderr.decode("utf-8")
+
+        stdout_lines = []
+        stderr_lines = []
+
+        stdout_thread = threading.Thread(
+            target=stream_output, args=(p.stdout, stdout_lines)
+        )
+        stderr_thread = threading.Thread(
+            target=stream_output, args=(p.stderr, stderr_lines)
+        )
+
+        stdout_thread.start()
+        stderr_thread.start()
+
+        p.wait()
+        stdout_thread.join()
+        stderr_thread.join()
+
+        return "".join(stdout_lines), "".join(stderr_lines)
     elif snakemake_launcher == "builtin":
         cmd_str = " ".join(cmd[1:])  # strip snakemake executable
         if capture_output:

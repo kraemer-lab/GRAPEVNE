@@ -216,7 +216,9 @@ export async function builder_BuildAndRun(
         break;
 
       case 'system':
+        stdout_callback('Running system command - switch to Terminal to monitor progress.');
         cmd_callback((data['body'] as Query)['command'] as string);
+        stdout_callback('Workflow complete.');
         break;
 
       default:

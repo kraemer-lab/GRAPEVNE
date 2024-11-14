@@ -42,8 +42,8 @@ const SnakemakeOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
           style={{ width: '100%' }}
           size="small"
         >
-          <MenuItem value="builtin">Built-in</MenuItem>
-          <MenuItem value="system">System</MenuItem>
+          <MenuItem value="builtin">Built-in (slower; no install required)</MenuItem>
+          <MenuItem value="system">System (requires snakemake and conda)</MenuItem>
         </Select>
       </Box>
       <Box
