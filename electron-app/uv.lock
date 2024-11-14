@@ -67,7 +67,7 @@ wheels = [
 
 [[package]]
 name = "builder"
-version = "0.4.0"
+version = "0.4.1"
 source = { virtual = "../builder" }
 dependencies = [
     { name = "cachetools" },
@@ -569,7 +569,7 @@ wheels = [
 
 [[package]]
 name = "pyrunner"
-version = "0.3.1"
+version = "0.4.1"
 source = { virtual = "." }
 dependencies = [
     { name = "builder" },
@@ -767,7 +767,7 @@ wheels = [
 
 [[package]]
 name = "runner"
-version = "0.4.0"
+version = "0.4.1"
 source = { virtual = "../runner" }
 dependencies = [
     { name = "builder" },
