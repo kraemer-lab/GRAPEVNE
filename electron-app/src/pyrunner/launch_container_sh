@@ -17,5 +17,5 @@ docker run \
     --platform linux/amd64 \
     -v "${SCRIPT_DIR}"/results:/home/user/results \
     -v "${SCRIPT_DIR}"/benchmark:/home/user/benchmark \
-    -v "${SCRIPT_DIR}"/benchmark:/home/user/logs \
+    -v "${SCRIPT_DIR}"/logs:/home/user/logs \
     "${NAME}"
