@@ -35,7 +35,7 @@ Let's now add your first module: drag the `Download` module from the list on the
 Click on the module and take a moment to look through the parameters list that is displayed on the right-hand side of the screen. We want to alter both the `url` and `Filename` parameters for this test. In the `url` field, change the URL to the following:
 
 ```
-https://covid19.who.int/WHO-COVID-19-global-data.csv
+https://srhdpeuwpubsa.blob.core.windows.net/whdh/COVID/WHO-COVID-19-global-data.csv
 ```
 
 In addition to changing the URL location, we also want to rename the file after download for convenience. We can do this by editing the `filename` field (`config-params-filename`) and changing it to `data.csv`.
