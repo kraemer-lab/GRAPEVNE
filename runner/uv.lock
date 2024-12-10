@@ -30,19 +30,23 @@ wheels = [
 
 [[package]]
 name = "builder"
-version = "0.4.0"
+version = "0.4.1"
 source = { virtual = "../builder" }
 dependencies = [
     { name = "cachetools" },
+    { name = "grapevne" },
     { name = "pyyaml" },
     { name = "requests" },
+    { name = "snakemake" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "cachetools", specifier = ">=5.5.0" },
+    { name = "grapevne", specifier = ">=0.2.4" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.32.3" },
+    { name = "snakemake", specifier = ">=8.25.5" },
 ]
 
 [package.metadata.requires-dev]
@@ -205,6 +209,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b6/a1/106fd9fa2dd989b6fb36e5893961f82992cf676381707253e0bf93eb1662/GitPython-3.1.43.tar.gz", hash = "sha256:35f314a9f878467f5453cc1fee295c3e18e52f1b99f10f6cf5b1682e968a9e7c", size = 214149 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e9/bd/cc3a402a6439c15c3d4294333e13042b915bbeab54edc457c723931fed3f/GitPython-3.1.43-py3-none-any.whl", hash = "sha256:eec7ec56b92aad751f9912a73404bc02ba212a23adb2c7098ee668417051a1ff", size = 207337 },
+]
+
+[[package]]
+name = "grapevne"
+version = "0.2.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/29/e9/70a7f171b190df4dde97dcc96730df7b04db9e4ef42144172c0fcf61de58/grapevne-0.2.4.tar.gz", hash = "sha256:bca9288d661ba510ce7f3bfe82b7f037837c75d1d162015a0eb876214882ee3c", size = 27366 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4f/54/7359b772120e21b751e7e7afe1263f12d6e7038647023aab5c92f69d16c5/grapevne-0.2.4-py3-none-any.whl", hash = "sha256:5ad58ceed8430267027641705bc2131f65f5ad8e28651fc1ca4a02b64145cf3b", size = 9413 },
 ]
 
 [[package]]
@@ -590,7 +606,7 @@ wheels = [
 
 [[package]]
 name = "runner"
-version = "0.4.0"
+version = "0.4.1"
 source = { virtual = "." }
 dependencies = [
     { name = "builder" },
@@ -640,7 +656,7 @@ wheels = [
 
 [[package]]
 name = "snakemake"
-version = "8.25.3"
+version = "8.25.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "appdirs" },
@@ -672,9 +688,9 @@ dependencies = [
     { name = "wrapt" },
     { name = "yte" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ff/b0/f6e3068cba5e98cfe635913a8a74343872515de793b187f56d8eff7bb3ae/snakemake-8.25.3.tar.gz", hash = "sha256:b05262fbb25b8b463ea45f92789c39935a775c02b072be8a42e6cd262ed86c21", size = 4730833 }
+sdist = { url = "https://files.pythonhosted.org/packages/f8/c0/3d480f1bb41212076dc329e4a602f28389738b161eed6361baefbfcd05f8/snakemake-8.25.5.tar.gz", hash = "sha256:62a2009a28b6738aa189e3c04b9366713f2efe8085b6facb2b4655643549fd51", size = 4731301 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/e8/222381a64261acf1cbffdf7fad48ee908f699e5bf2f399c21584e56c9879/snakemake-8.25.3-py3-none-any.whl", hash = "sha256:f9473c901134060c7d86bdce5debee655d674fc5387ef496232736d2bbd9cb77", size = 1002367 },
+    { url = "https://files.pythonhosted.org/packages/0c/4e/9d364ad564e668517cae9ecfad2ba2b95fe49cd792d525b7c652a2e80d08/snakemake-8.25.5-py3-none-any.whl", hash = "sha256:83387857cc8a33aa844fe90ac0ec10ef38a4d123348679c198d31f4ddc4b16bb", size = 1002687 },
 ]
 
 [[package]]

@@ -35,7 +35,9 @@ def test_Workflow_Imports(name: Tuple[List[str], str]):
     configfileYAML = yaml.safe_load(configfile)
     with open(f"{workflow_folder}/modules/{module_out}/config/config.yaml") as file:
         configfileYAML_expected = yaml.safe_load(file.read())
-    for key in ["input_namespace", "output_namespace"]:
-        assert configfileYAML[key] == configfileYAML_expected[key]
+    assert (
+        configfileYAML["input_namespace"] == configfileYAML_expected["input_namespace"]
+    )
+    assert configfileYAML["namespace"] == configfileYAML_expected["output_namespace"]
     with open(f"{workflow_folder}/modules/{module_out}/workflow/Snakefile") as file:
         assert str(snakefile) == file.read()

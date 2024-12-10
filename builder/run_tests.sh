@@ -3,7 +3,6 @@
 set -euox pipefail
 
 cd "$(dirname "$0")"
-uv venv
 uv sync
 source .venv/bin/activate
 uv pip install .

@@ -7,7 +7,7 @@ interface ParameterType {
 // User accessible configuration, including parameters
 type ModuleUserConfigType = {
   input_namespace: string | Record<string, string> | null;
-  output_namespace: string | null;
+  namespace: string | null;
   params?: ParameterType | null;
 };
 
