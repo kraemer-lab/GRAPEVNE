@@ -118,7 +118,7 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   }
   const configfile = {
     input_namespace: input_dict,
-    output_namespace: 'out',
+    namespace: 'out',
     params: yaml.load(config.params as string) as Query,
   };
   fs.writeFileSync(path.join(module_folder, 'config', 'config.yaml'), yaml.dump(configfile));

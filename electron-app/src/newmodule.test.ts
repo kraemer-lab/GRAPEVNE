@@ -101,7 +101,7 @@ test('Build', async () => {
     `input_namespace:
   test_port1: test_port1
   test_port2: test_port2
-output_namespace: out
+namespace: out
 params:
   test_param: test_value
 `,

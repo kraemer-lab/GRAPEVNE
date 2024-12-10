@@ -4,7 +4,6 @@ set -euox pipefail
 cd "$(dirname "$0")"
 
 # Python backend tests
-uv venv
 uv sync
 RUNNER_OS=${RUNNER_OS:-$(uname)}
 if [[ "$RUNNER_OS" == "Windows" ]]; then

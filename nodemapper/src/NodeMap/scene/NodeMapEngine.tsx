@@ -333,7 +333,7 @@ export default class NodeMapEngine {
     newnodes.forEach((node_from) => {
       const config = this.getNodePropertiesAsJSON(node_from)['config'] as Record<string, unknown>;
       const params = config['config'];
-      const output_namespace = params['output_namespace'];
+      const output_namespace = params['output_namespace'] ?? params['namespace'];
       newnodes.forEach((node_to) => {
         const config = this.getNodePropertiesAsJSON(node_to)['config'] as Record<string, unknown>;
         const params = config['config'];
@@ -402,7 +402,7 @@ export default class NodeMapEngine {
 
     // Map output connections from sub-graph
     const config = this.getNodePropertiesAsJSON(node)['config'] as Record<string, unknown>;
-    const output_namespace = config['config']['output_namespace'];
+    const output_namespace = config['config']['output_namespace'] ?? config['config']['namespace'];
     const target_node_and_port = this.getNodeOutputNodes(node, all_nodes, all_edges);
     for (let i = 0; i < target_node_and_port.length; i++) {
       const target_node = target_node_and_port[i][0];
@@ -410,7 +410,7 @@ export default class NodeMapEngine {
       // Lookup output port in sub-graph
       newnodes.forEach((node_from) => {
         const config = this.getNodePropertiesAsJSON(node_from)['config'] as Record<string, unknown>;
-        const namespace = config['config']['output_namespace'];
+        const namespace = config['config']['output_namespace'] ?? config['config']['namespace'];
         if (namespace == output_namespace) {
           console.log('Found output namespace: ' + namespace);
           const newedge = {
@@ -439,7 +439,7 @@ export default class NodeMapEngine {
       const outerconfig = json.config as Record<string, unknown>;
       const config = outerconfig['config'] as Record<string, unknown>;
       for (const key in config) {
-        if (key == 'output_namespace') {
+        if (key == 'output_namespace' || key == 'namespace') {
           if (Object.keys(namemap).includes(config[key] as string)) {
             config[key] = namemap[config[key] as string];
           }

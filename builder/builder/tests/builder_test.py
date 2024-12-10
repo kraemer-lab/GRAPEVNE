@@ -71,12 +71,10 @@ def test_ConstructSnakefileConfig():
     # Verify config
     assert c["module1"]["config"].get("param1", None) == "value1"
     assert (
-        c["module2"]["config"]["input_namespace"]
-        == c["module1"]["config"]["output_namespace"]
+        c["module2"]["config"]["input_namespace"] == c["module1"]["config"]["namespace"]
     )
     assert (
-        c["module3"]["config"]["input_namespace"]
-        == c["module2"]["config"]["output_namespace"]
+        c["module3"]["config"]["input_namespace"] == c["module2"]["config"]["namespace"]
     )
 
 
@@ -123,7 +121,7 @@ def test_AddModule_SingleInputNamespace():
         "snakefile": "snakefile1",
         "config": {
             "input_namespace": "input_namespace1",
-            "output_namespace": "output_namespace1",
+            "namespace": "namespace1",
             "param1": "value1",
         },
     }
@@ -133,8 +131,8 @@ def test_AddModule_SingleInputNamespace():
     assert m.nodes[0].nodetype == "moduletype1"
     # Verify module attributes assigned correctly
     for key in module:
-        # output_namespace is wrangled
-        if key not in ["output_namespace"]:
+        # namespace is wrangled
+        if key not in ["namespace"]:
             assert getattr(m.nodes[0], key) == module[key]
 
 
@@ -151,7 +149,7 @@ def test_AddModule_MultipleInputNamespaces():
                 "in2a": "input_namespace2a",
                 "in2b": "input_namespace2b",
             },
-            "output_namespace": "output_namespace2",
+            "namespace": "namespace2",
         },
     }
     m.AddModule(name, module)
@@ -160,8 +158,8 @@ def test_AddModule_MultipleInputNamespaces():
     assert m.nodes[0].nodetype == "moduletype2"
     # Verify module attributes assigned correctly
     for key in module:
-        # output_namespace is wrangled
-        if key not in ["output_namespace"]:
+        # namespace is wrangled
+        if key not in ["namespace"]:
             assert getattr(m.nodes[0], key) == module[key]
 
 
@@ -181,7 +179,7 @@ def test_AddConnector_SingleInput():
     module2 = m.AddModule("module2", {})
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
     # Verify module namespaces connect appropriately
-    assert module1.output_namespace == module2.input_namespace
+    assert module1.namespace == module2.input_namespace
 
 
 def test_AddConnector_MultiInput():
@@ -193,7 +191,7 @@ def test_AddConnector_MultiInput():
             "snakefile": "snakefile1",
             "config": {
                 "input_namespace": "in1",
-                "output_namespace": "out1",
+                "namespace": "out1",
             },
         },
     )
@@ -206,14 +204,14 @@ def test_AddConnector_MultiInput():
                     "in2a": "input2_A",
                     "in2b": "input2_B",
                 },
-                "output_namespace": "out2",
+                "namespace": "out2",
             },
         },
     )
     # Connect the single output from module1 to the first input of module2
     m.AddConnector("conn12", {"map": [{"in2a": "module1"}, "module2"]})
     # Verify module namespaces connect appropriately
-    assert module1.output_namespace == module2.input_namespace["in2a"]
+    assert module1.namespace == module2.input_namespace["in2a"]
 
 
 def test_GetNodeByName():

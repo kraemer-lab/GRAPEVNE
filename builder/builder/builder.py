@@ -21,12 +21,18 @@ import yaml
 from .quoted_yaml import quoted_yaml_dump
 from .workflow_alerts import ProcessWorkflowAlerts
 from .workflow_alerts import WorkflowAlerts
+# from grapevne.utils import (
+#     get_ports,
+#     get_namespace,
+#     get_port_spec,
+#     get_port_namespace,
+# )
 
 
 Namespace = Union[str, None, dict]
 
 # Set up logging
-logfile = os.path.expanduser("~") + "/GRAPEVNE.log"
+logfile = os.path.expanduser("~") + "/.GRAPEVNE.log"
 logging.basicConfig(
     filename=logfile,
     encoding="utf-8",
@@ -55,7 +61,7 @@ class Node:
         snakefile: Snakefile = "",
         config=None,
         input_namespace: Namespace = "",
-        output_namespace: str = "",
+        namespace: str = "",
         docstring: str = "",  # passthrough (unused in builds)
     ):
         """Initialise a Node object, the parent class for Modules
@@ -67,7 +73,7 @@ class Node:
             snakefile (str|dict): str location or dict representing function call
             config (dict): Configuration (parameters) for the Snakefile
             input_namespace (str): Input namespace
-            output_namespace (str): Output namespace
+            namespace (str): Module namespace
         """
 
         self.name = name
@@ -76,11 +82,11 @@ class Node:
         self.snakefile = snakefile
         self.config = {} if not config else config
         self.input_namespace = input_namespace
-        self.output_namespace = output_namespace
+        self.namespace = namespace
 
     def GetOutputNamespace(self) -> str:
         """Returns the output namespace"""
-        return self.output_namespace
+        return self.namespace
 
     def GetInputNamespace(self) -> Namespace:
         """Returns the input namespace, which can be a string or dictionary"""
@@ -317,21 +323,21 @@ class Model:
         """Builds the workflow configuration as a dictionary"""
         c: dict = {}
         c["input_namespace"] = self.ExposeOrphanInputs()
-        module_output_namespaces = self.ExposeOrphanOutputs()
-        # only a single output_namespace is currently supported
-        if len(module_output_namespaces) == 0:
+        module_namespaces = self.ExposeOrphanOutputs()
+        # only a single namespace is currently supported
+        if len(module_namespaces) == 0:
             # Model has no orphan outputs, so will form a Terminal module
             # This will most likely need marking in the config somewhere.
             # TODO
             ...
-        elif len(module_output_namespaces) == 1:
-            c["output_namespace"] = module_output_namespaces[0]
+        elif len(module_namespaces) == 1:
+            c["namespace"] = module_namespaces[0]
         else:
             logging.warn(
                 "Multiple output namespaces not currently supported. Requested: "
-                f"{module_output_namespaces}",
+                f"{module_namespaces}",
             )
-            c["output_namespace"] = module_output_namespaces[0]
+            c["namespace"] = module_namespaces[0]
         # Add configurations for each module
         for node in self.nodes:
             cnode = node.config.copy()
@@ -357,7 +363,7 @@ class Model:
                 cnode["input_namespace"] = None
 
             # Output namespace
-            cnode["output_namespace"] = node.output_namespace
+            cnode["namespace"] = node.namespace
 
             # Save
             c[node.rulename] = {
@@ -661,7 +667,7 @@ class Model:
             kwargs["rulename"] = self.WrangleName(name)
         node = Module(name, kwargs)
         self.nodes.append(node)
-        node.output_namespace = node.rulename
+        node.namespace = node.rulename
         return node
 
     def AddConnector(self, name, connector) -> None:
@@ -709,7 +715,7 @@ class Model:
                     raise ValueError(
                         "No matching node found for connector source: " + v
                     )
-                node_to.input_namespace[k] = incoming_node.output_namespace
+                node_to.input_namespace[k] = incoming_node.namespace
         else:
             node_from = self.GetNodeByName(mapping[0])
             if not node_from:
@@ -718,7 +724,7 @@ class Model:
                 raise ValueError(
                     "No matching node found for connector destination: " + mapping[0]
                 )
-            node_to.input_namespace = node_from.output_namespace
+            node_to.input_namespace = node_from.namespace
         return None
 
     def GetNodeByName(self, name: str) -> Optional[Node]:
@@ -752,16 +758,16 @@ class Model:
     def ExposeOrphanInputs(self) -> Namespace:
         """Find orphan inputs and return as a valid input_namespace"""
         module_input_namespace: dict = {}
-        all_output_namespaces = self.GetRuleNames()
+        all_namespaces = self.GetRuleNames()
         for node in self.nodes:
             ref_rulename = node.rulename + "$"
             if isinstance(node.input_namespace, str):
-                if node.input_namespace not in all_output_namespaces:
+                if node.input_namespace not in all_namespaces:
                     module_input_namespace[ref_rulename] = node.input_namespace
             elif isinstance(node.input_namespace, dict):
                 module_input_namespace[ref_rulename] = {}
                 for k, v in node.input_namespace.items():
-                    if v not in all_output_namespaces:
+                    if v not in all_namespaces:
                         # namespace should be unique to avoid clashes
                         module_input_namespace[ref_rulename + k] = self.WrangleName(v)
                 if not module_input_namespace[ref_rulename]:
@@ -777,14 +783,14 @@ class Model:
     def ExposeOrphanInputsList(self) -> List[str]:
         """Find orphan inputs and return as a valid input_namespace"""
         orphans: List[str] = []
-        all_output_namespaces = self.GetRuleNames()
+        all_namespaces = self.GetRuleNames()
         for node in self.nodes:
             if isinstance(node.input_namespace, str):
-                if node.input_namespace not in all_output_namespaces:
+                if node.input_namespace not in all_namespaces:
                     orphans.append(node.rulename)
             elif isinstance(node.input_namespace, dict):
                 for _, v in node.input_namespace.items():
-                    if v not in all_output_namespaces:
+                    if v not in all_namespaces:
                         # namespace should be unique to avoid clashes
                         orphans.append(v)
             elif node.input_namespace is None:
@@ -795,13 +801,13 @@ class Model:
         return orphans
 
     def ExposeOrphanOutputs(self) -> List[str]:
-        """Find orphan output and return as a valid output_namespace"""
-        module_output_namespaces: List[str] = []
+        """Find orphan output and return as a valid namespace"""
+        module_namespaces: List[str] = []
         all_input_namespaces = self.GetInputNamespaces()
         for node in self.nodes:
-            if node.output_namespace not in all_input_namespaces:
-                module_output_namespaces.append(node.rulename)
-        return module_output_namespaces
+            if node.namespace not in all_input_namespaces:
+                module_namespaces.append(node.rulename)
+        return module_namespaces
 
     def ExpandAllModules(self) -> None:
         """Expand all modules recursively"""
@@ -846,8 +852,8 @@ class Model:
             new_node.input_namespace = config[n]["config"].get(
                 "input_namespace", new_node.input_namespace
             )
-            new_node.output_namespace = config[n]["config"].get(
-                "output_namespace", new_node.output_namespace
+            new_node.namespace = config[n]["config"].get(
+                "namespace", new_node.namespace
             )
             new_node.snakefile = config[n].get("snakefile", new_node.snakefile)
             # Record new node and rulename mapping, if different
@@ -866,9 +872,9 @@ class Model:
 
         # Ensure namespace consistency between new nodes after rename
         for n in new_nodes:
-            # output_namespace
-            if n.output_namespace in rulemapping.keys():
-                n.output_namespace = rulemapping[n.output_namespace]
+            # namespace
+            if n.namespace in rulemapping.keys():
+                n.namespace = rulemapping[n.namespace]
             # input_namespace
             if isinstance(n.input_namespace, str):
                 if n.input_namespace in rulemapping.keys():
@@ -932,7 +938,7 @@ class Model:
         # Preserve outgoing connections from parent node
         for n in self.nodes:
             if isinstance(n.input_namespace, str):
-                if n.input_namespace == node.output_namespace:
+                if n.input_namespace == node.namespace:
                     assert len(new_orphan_outputs) == 1, (
                         "Expanding node has one input, but "
                         + str(len(new_orphan_outputs))
@@ -941,7 +947,7 @@ class Model:
                     n.input_namespace = list(new_orphan_outputs)[0]
             elif isinstance(n.input_namespace, dict):
                 for k, v in n.input_namespace.items():
-                    if v == node.output_namespace:
+                    if v == node.namespace:
                         n.input_namespace[k] = list(new_orphan_outputs)[0]
             elif n.input_namespace is None:
                 pass

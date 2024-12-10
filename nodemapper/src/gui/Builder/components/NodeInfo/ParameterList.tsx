@@ -24,7 +24,7 @@ import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 
-const protectedNames = ['input_namespace', 'output_namespace'];
+const protectedNames = ['input_namespace', 'output_namespace', 'namespace'];
 
 interface ParameterListProps {
   id: string;
