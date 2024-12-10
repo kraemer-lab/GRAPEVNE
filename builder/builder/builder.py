@@ -908,7 +908,6 @@ class Model:
                     "No matching node found for name: " + next(iter(new_orphan_inputs))
                 )
         elif isinstance(node.input_namespace, dict):
-            
             for k, v in node.input_namespace.items():
                 # key = module$port
                 module, port = k.split("$")
