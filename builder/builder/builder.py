@@ -908,7 +908,21 @@ class Model:
                     "No matching node found for name: " + next(iter(new_orphan_inputs))
                 )
         elif isinstance(node.input_namespace, dict):
-            raise ValueError("Input dictionary namespaces not supported yet")
+            for k, v in node.input_namespace.items():
+                # key = module$port
+                module, port = k.split("$")
+                if module in new_orphan_inputs:
+                    # Update input namespace
+                    orphan_node = self.GetNodeByRuleName(module)
+                    if orphan_node:
+                        if isinstance(orphan_node.input_namespace, dict):
+                            orphan_node.input_namespace[port] = v
+                        elif isinstance(orphan_node.input_namespace, str):
+                            orphan_node.input_namespace = v
+                        else:
+                            raise ValueError("Input namespace type not recognised")
+                    else:
+                        raise ValueError("No matching node found for name: " + module)
         elif node.input_namespace is None:
             # Module is a Source (no incoming connections)
             pass

@@ -4,8 +4,6 @@ import shutil
 from dataclasses import dataclass
 from unittest.mock import patch
 
-import pytest
-
 from builder.builder import Model
 from builder.builder import YAMLToConfig
 
@@ -80,20 +78,6 @@ def test_ConstructSnakefileConfig():
         c["module3"]["config"]["input_namespace"]
         == c["module2"]["config"]["output_namespace"]
     )
-
-
-@pytest.mark.skip(reason="Not implemented")
-def test_BuildSnakefileConfig():
-    # m = Model()
-    # m.BuildSnakefileConfig()
-    ...
-
-
-@pytest.mark.skip(reason="Not implemented")
-def test_SaveWorkflow():
-    # m = Model()
-    # m.SaveWorkflow()
-    ...
 
 
 def test_WrangleName():
