@@ -107,17 +107,17 @@ export const Build = async ({ config, build_settings }: IBuild): Promise<Query> 
   }
 
   // Write config file
-  let input_dict: Query | null;
-  if (config.ports.length == 0) {
-    input_dict = null;
-  } else {
-    input_dict = {};
-    for (const port of config.ports) {
-      input_dict[port] = port;
-    }
+  let input_ports: Query[] = [];
+  for (const port of config.ports) {
+    const port_element = {
+      ref: port,
+      label: port,
+      namespace: port,
+    };
+    input_ports.push(port_element);
   }
   const configfile = {
-    input_namespace: input_dict,
+    ports: input_ports,
     namespace: 'out',
     params: yaml.load(config.params as string) as Query,
   };

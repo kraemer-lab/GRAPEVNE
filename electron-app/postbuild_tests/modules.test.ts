@@ -780,12 +780,24 @@ describe('modules', () => {
       const config = yaml.load(fs.readFileSync(configfile, 'utf8'));
       expect(yaml.dump(config)).toEqual(
         yaml.dump({
-          input_namespace: {
-            in1: 'in1',
-            in2: 'in2',
-            in3: 'in3',
-          },
-          output_namespace: 'out',
+          ports: [
+            {
+              ref: 'in1',
+              label: 'in1',
+              namespace: 'in1',
+            },
+            {
+              ref: 'in2',
+              label: 'in2',
+              namespace: 'in2',
+            },
+            {
+              ref: 'in3',
+              label: 'in3',
+              namespace: 'in3',
+            },
+          ],
+          namespace: 'out',
           params: {
             testparam: 'testvalue',
             nested: {

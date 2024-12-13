@@ -415,13 +415,18 @@ const GetModuleClassification = (config: Record<string, unknown>): string => {
   if (config === null || config === undefined) {
     return 'module';
   }
-  // If the input namespace exists and is anything other than null, then it is
-  // a module
-  if (!Object.hasOwn(config, 'input_namespace'))
-    // Missing input_namespace is treated as an empty string
-    return 'module';
-  if (config['input_namespace'] === null) return 'source';
-  return 'module';
+  let ports: Record<string, unknown>[] = [];
+  if (Object.hasOwn(config, 'ports')) {
+    ports = config['ports'] as Record<string, unknown>[];
+  }
+  if (ports === null || ports === undefined) {
+    // Backwards compatibility check for old-form input_namespace
+    if (!Object.hasOwn(config, 'input_namespace'))
+      return 'module';
+    if (config['input_namespace'] === null) return 'source';
+  }
+  if (ports.length === 0) return 'source';
+  else return 'module';
 };
 
 const getBranchOrCommit = (snakefile: Record<string, unknown>) => {
