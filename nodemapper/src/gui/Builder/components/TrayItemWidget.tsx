@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
-import { Query } from 'api';
 import { IModulesListEntry } from 'redux/reducers/builder';
 import { wranglename } from './Flow';
 

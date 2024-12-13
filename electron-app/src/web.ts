@@ -421,8 +421,7 @@ const GetModuleClassification = (config: Record<string, unknown>): string => {
   }
   if (ports === null || ports === undefined) {
     // Backwards compatibility check for old-form input_namespace
-    if (!Object.hasOwn(config, 'input_namespace'))
-      return 'module';
+    if (!Object.hasOwn(config, 'input_namespace')) return 'module';
     if (config['input_namespace'] === null) return 'source';
   }
   if (ports.length === 0) return 'source';

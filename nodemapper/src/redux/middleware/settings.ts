@@ -1,6 +1,6 @@
+import { Query } from 'api';
 import { settingsUpdateSettings } from 'redux/actions';
 import { IState } from 'redux/reducers';
-import { Query } from 'api';
 
 const settingsAPI = window.settingsAPI;
 

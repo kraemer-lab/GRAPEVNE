@@ -30,7 +30,7 @@ export const Default: Story = {
       </>
     );
   },
-}
+};
 
 export const CustomMessage: Story = {
   render: () => {
@@ -40,7 +40,7 @@ export const CustomMessage: Story = {
         <Button onClick={() => setOpen(true)} variant="contained">
           Open Wait Dialog
         </Button>
-        <DialogWait open={open} text={"Custom message..."} />
+        <DialogWait open={open} text={'Custom message...'} />
       </>
     );
   },

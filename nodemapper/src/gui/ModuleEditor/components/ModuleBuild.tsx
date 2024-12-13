@@ -68,7 +68,7 @@ const ModuleBuild = () => {
             </Button>
           </Grid>
         </Grid>
-        <DialogWait open={building} text={"Building module..."} />
+        <DialogWait open={building} text={'Building module...'} />
       </Box>
     </Box>
   );

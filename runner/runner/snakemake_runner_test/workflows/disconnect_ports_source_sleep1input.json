@@ -1,0 +1,25 @@
+[
+  {
+    "id": "idcode",
+    "name": "sleep1input_test",
+    "type": "module",
+    "config": {
+      "snakefile": "runner/snakemake_runner_test/workflows/sleep1input_ports/workflow/Snakefile",
+      "config": {
+        "ports": [
+            {
+                "ref": "in",
+                "label": "in",
+                "namespace": "in"
+            }
+        ],
+        "namespace": "examples_sleep1",
+        "params": {
+            "input_filename": "mark",
+            "output_filename": "mark",
+            "sleeptime": 1
+        }
+      }
+    }
+  }
+]

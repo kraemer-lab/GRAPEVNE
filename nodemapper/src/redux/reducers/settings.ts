@@ -6,7 +6,7 @@ export interface IRepo {
   active: boolean;
   type: string;
   label: string;
-  listing_type: IModulesListRepo["listing_type"];
+  listing_type: IModulesListRepo['listing_type'];
   repo: string;
 }
 

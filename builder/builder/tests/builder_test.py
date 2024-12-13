@@ -243,12 +243,22 @@ def test_YAMLToConfig():
 modules:
     name1: first
     name2: second
+ports:
+    - ref: "in1ref"
+      label: "in1label"
+      namespace: "in1ns"
+    - ref: "in2ref"
+      label: "in2label"
+      namespace: "in2ns"
 """
     target = """config={}
 config["singleton"]="alone"
 config["modules"]={}
 config["modules"]["name1"]="first"
 config["modules"]["name2"]="second"
+config["ports"]=[]
+config["ports"].append({'ref': 'in1ref', 'label': 'in1label', 'namespace': 'in1ns'})
+config["ports"].append({'ref': 'in2ref', 'label': 'in2label', 'namespace': 'in2ns'})
 """
     assert YAMLToConfig(content) == target
 

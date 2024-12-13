@@ -595,6 +595,7 @@ const CheckNodeDependencies = async ({
         data['returncode'] = -1;
         console.error('Unexpected response: ', data['body']);
     }
+    // Report query response for testing script
     console.log(data);
   };
   callback(await runnerAPI.CheckNodeDependencies(query));
@@ -855,11 +856,11 @@ const GetWorkflowAlerts = (alerts: IState['settings']['workflow_alerts']) => {
   const out_alerts = {};
   out_alerts['email_settings'] = alerts.email_settings;
   if (onsuccess_enabled) {
-    console.log("email onsuccess_enabled: ", alerts.onsuccess);
+    console.log('email onsuccess_enabled: ', alerts.onsuccess);
     out_alerts['onsuccess'] = alerts.onsuccess;
   }
   if (onerror_enabled) {
-    console.log("email onerror_enabled: ", alerts.onerror);
+    console.log('email onerror_enabled: ', alerts.onerror);
     out_alerts['onerror'] = alerts.onerror;
   }
   return out_alerts;

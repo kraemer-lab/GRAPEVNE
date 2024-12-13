@@ -1,0 +1,22 @@
+configfile: "config/config.yaml"
+from grapevne_helper import import_grapevne
+
+grapevne = import_grapevne(workflow)
+globals().update(vars(grapevne))
+
+
+rule sleep:
+    input:
+        input(param("input_filename")),
+    output:
+        output(param("output_filename")),
+    params:
+        sleeptime=param("sleeptime"),
+    log:
+        log()
+    benchmark:
+        benchmark()
+    conda:
+        env("conda.yaml")
+    shell:
+        "sleep {params.sleeptime} && echo {params.sleeptime} > {output}"

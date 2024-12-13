@@ -356,7 +356,9 @@ export async function runner_CheckNodeDependencies(
   query: Query,
   stderr_callback: (cmd: string) => void,
 ) {
-  return await SafeProcessQuery(event, query, stderr_callback);
+  const rtn = await SafeProcessQuery(event, query, stderr_callback);
+  console.log('CheckNodeDependencies (handles.ts): ' + JSON.stringify(rtn));
+  return rtn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

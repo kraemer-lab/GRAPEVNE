@@ -1,0 +1,46 @@
+[
+  {
+    "id": "idcode",
+    "name": "source_test",
+    "type": "source",
+    "config": {
+      "snakefile": "runner/snakemake_runner_test/workflows/source_ports/workflow/Snakefile",
+      "config": {
+        "namespace": "examples_source",
+        "params": {
+            "output_filename": "mark"
+        }
+      }
+    }
+  },
+  {
+    "id": "idcode",
+    "name": "sleep1input_test",
+    "type": "module",
+    "config": {
+      "snakefile": "runner/snakemake_runner_test/workflows/sleep1input_ports/workflow/Snakefile",
+      "config": {
+        "ports": [
+            {
+                "ref": "in",
+                "label": "in",
+                "namespace": "in"
+            }
+        ],
+        "namespace": "examples_sleep1",
+        "params": {
+            "input_filename": "mark",
+            "output_filename": "mark",
+            "sleeptime": 1
+        }
+      }
+    }
+  },
+  {
+    "name": "Join [Source-to-Sleep1input]",
+    "type": "connector",
+    "config": {
+      "map": [{"in": "source_test"}, "sleep1input_test"]
+    }
+  }
+]
