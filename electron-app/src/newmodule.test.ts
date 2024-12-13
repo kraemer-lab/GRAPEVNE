@@ -98,9 +98,13 @@ test('Build', async () => {
   // Check config file contents
   checkFile(
     path.join(module_folder, 'config', 'config.yaml'),
-    `input_namespace:
-  test_port1: test_port1
-  test_port2: test_port2
+    `ports:
+  - ref: test_port1
+    label: test_port1
+    namespace: test_port1
+  - ref: test_port2
+    label: test_port2
+    namespace: test_port2
 namespace: out
 params:
   test_param: test_value

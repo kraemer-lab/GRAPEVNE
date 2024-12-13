@@ -250,7 +250,7 @@ wheels = [
 
 [[package]]
 name = "grapevne"
-version = "0.2.4.dev8+ge1527bd.d20241211"
+version = "0.2.4.dev8+ge1527bd.d20241213"
 source = { directory = "../../grapevne-py" }
 dependencies = [
     { name = "packaging" },
@@ -602,7 +602,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "builder", virtual = "../builder" },
-    { name = "grapevne", specifier = ">=0.2" },
+    { name = "grapevne", directory = "../../grapevne-py" },
     { name = "runner", virtual = "../runner" },
     { name = "smart-open", specifier = ">=7.0.4" },
     { name = "snakemake-storage-plugin-http", specifier = ">=0.2.3" },
