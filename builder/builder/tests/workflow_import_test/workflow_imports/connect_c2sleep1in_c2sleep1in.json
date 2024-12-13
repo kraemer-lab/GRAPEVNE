@@ -7,7 +7,9 @@
       "snakefile": "builder/tests/workflow_import_test/modules/c2sleep1in/workflow/Snakefile",
       "config": {
         "input_filename": "mark",
-        "input_namespace": "in",
+        "input_namespace": {
+          "sleep1input_test1$": "in"
+        },
         "output_filename": "mark",
         "output_namespace": "out"
       }
@@ -21,7 +23,9 @@
       "snakefile": "builder/tests/workflow_import_test/modules/c2sleep1in/workflow/Snakefile",
       "config": {
         "input_filename": "mark",
-        "input_namespace": "in",
+        "input_namespace": {
+          "sleep1input_test1$": "in"
+        },
         "output_filename": "mark",
         "output_namespace": "out"
       }
@@ -31,7 +35,7 @@
     "name": "Join [c2sleep1in-to-c2sleep1in]",
     "type": "connector",
     "config": {
-      "map": ["c2sleep1in_test1", "c2sleep1in_test2"]
+      "map": [{"sleep1input_test1$": "c2sleep1in_test1"}, "c2sleep1in_test2"]
     }
   }
 ]

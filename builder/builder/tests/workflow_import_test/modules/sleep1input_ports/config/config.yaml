@@ -1,0 +1,8 @@
+ports:
+  - ref: "in"
+    label: "in"
+    namespace: "in"
+input_filename: "mark"
+namespace: "out"
+output_filename: "mark"
+sleeptime: 0

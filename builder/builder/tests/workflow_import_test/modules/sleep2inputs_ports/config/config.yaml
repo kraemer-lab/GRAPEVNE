@@ -1,0 +1,13 @@
+ports:
+  - ref: "in1"
+    label: "in1"
+    namespace: "input1"
+  - ref: "in2"
+    label: "in2"
+    namespace: "input2"
+input_filename:
+  "in1": "mark"
+  "in2": "mark"
+namespace: "out"
+output_filename: "mark"
+sleeptime: 0

@@ -1,0 +1,28 @@
+configfile: "config/config.yaml"
+
+rule sleep:
+    input:
+        expand(
+            "results/{indir}/{infile}",
+            indir=config["input_namespace"],
+            infile=config["input_filename"],
+        ),
+    output:
+        expand(
+            "results/{outdir}/{outfile}",
+            outdir=config["output_namespace"],
+            outfile=config["output_filename"],
+        ),
+    params:
+        sleeptime=config["sleeptime"],
+    log:
+        expand(
+            "logs/{outdir}.log",
+            outdir=config["output_namespace"],
+        )
+    benchmark:
+        "benchmarks/sleep.txt"
+    conda:
+        "envs/conda.yaml"
+    shell:
+        "sleep {params.sleeptime} && echo {params.sleeptime} > {output}"

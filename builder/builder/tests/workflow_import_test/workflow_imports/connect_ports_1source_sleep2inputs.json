@@ -4,10 +4,10 @@
     "name": "source_test1",
     "type": "source",
     "config": {
-      "snakefile": "builder/tests/workflow_import_test/modules/source_ports/workflow/Snakefile",
+      "snakefile": "builder/tests/workflow_import_test/modules/source/workflow/Snakefile",
       "config": {
         "output_filename": "mark",
-        "namespace": "out_source_test1"
+        "output_namespace": "out_source_test1"
       }
     }
   },
@@ -16,26 +16,18 @@
     "name": "sleep2input_test",
     "type": "module",
     "config": {
-      "snakefile": "builder/tests/workflow_import_test/modules/sleep2inputs_ports/workflow/Snakefile",
+      "snakefile": "builder/tests/workflow_import_test/modules/sleep2inputs/workflow/Snakefile",
       "config": {
         "input_filename": {
           "in1": "mark",
           "in2": "mark"
         },
-        "ports": [
-            {
-                "ref": "in1",
-                "label": "in1",
-                "namespace": "in1"
-            },
-            {
-                "ref": "in2",
-                "label": "in2",
-                "namespace": "in2"
-            }
-        ],
+        "input_namespace": {
+          "in1": "in1",
+          "in2": "in2"
+        },
         "output_filename": "mark",
-        "namespace": "out_sleep2input_test",
+        "output_namespace": "out_sleep2input_test",
         "sleeptime": 1
       }
     }

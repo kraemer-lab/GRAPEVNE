@@ -13,6 +13,18 @@
   },
   {
     "id": "idcode",
+    "name": "source_test2",
+    "type": "source",
+    "config": {
+      "snakefile": "builder/tests/workflow_import_test/modules/source_ports/workflow/Snakefile",
+      "config": {
+        "output_filename": "mark",
+        "namespace": "out_source_test2"
+      }
+    }
+  },
+  {
+    "id": "idcode",
     "name": "sleep2input_test",
     "type": "module",
     "config": {
@@ -46,7 +58,8 @@
     "config": {
       "map": [
         {
-          "in1": "source_test1"
+          "in1": "source_test1",
+          "in2": "source_test2"
         },
         "sleep2input_test"
       ]

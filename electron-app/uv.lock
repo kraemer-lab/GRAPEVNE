@@ -80,7 +80,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "cachetools", specifier = ">=5.5.0" },
-    { name = "grapevne", specifier = ">=0.2.4" },
+    { name = "grapevne", directory = "../../grapevne-py" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "snakemake", specifier = ">=8.25.5" },
@@ -250,14 +250,21 @@ wheels = [
 
 [[package]]
 name = "grapevne"
-version = "0.2.4"
-source = { registry = "https://pypi.org/simple" }
+version = "0.2.4.dev8+ge1527bd.d20241211"
+source = { directory = "../../grapevne-py" }
 dependencies = [
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/29/e9/70a7f171b190df4dde97dcc96730df7b04db9e4ef42144172c0fcf61de58/grapevne-0.2.4.tar.gz", hash = "sha256:bca9288d661ba510ce7f3bfe82b7f037837c75d1d162015a0eb876214882ee3c", size = 27366 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4f/54/7359b772120e21b751e7e7afe1263f12d6e7038647023aab5c92f69d16c5/grapevne-0.2.4-py3-none-any.whl", hash = "sha256:5ad58ceed8430267027641705bc2131f65f5ad8e28651fc1ca4a02b64145cf3b", size = 9413 },
+
+[package.metadata]
+requires-dist = [{ name = "packaging", specifier = ">=24.1" }]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "nox", specifier = ">=2024.4.15" },
+    { name = "pytest", specifier = ">=8.3.2" },
+    { name = "ruff", specifier = ">=0.6.3" },
+    { name = "setuptools-scm", specifier = ">=8.1.0" },
 ]
 
 [[package]]
