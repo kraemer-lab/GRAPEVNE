@@ -2,11 +2,11 @@ import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import { GithubMenu } from 'gui/Settings/RepoGhIndicator';
 import { builderLogEvent, settingsSetRepositoryTarget } from 'redux/actions';
 import { getMasterRepoListURL } from 'redux/globals';
 import { IRepo } from 'redux/reducers/settings';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-import { GithubMenu } from 'gui/Settings/RepoGhIndicator';
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
@@ -16,8 +16,8 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 
-import { DialogWait } from 'components/DialogWait';
 import { DialogPrompt } from 'components/DialogPrompt';
+import { DialogWait } from 'components/DialogWait';
 
 const displayAPI = window.displayAPI;
 const settingsAPI = window.settingsAPI;
@@ -176,39 +176,42 @@ const RepoOptions = () => {
       }
       setOpenPromptURL(true);
     });
-  }
+  };
 
   const confirmOpenPromptURL = () => {
     setOpenWait(true);
-    settingsAPI.GithubClone({
-      query: 'settings/github-clone',
-      data: {
-        url: valuePromptURL,
-        path: clonePath,
-        createfolder: true,
-      },
-    }).then((response) => {
-      if (response["returncode"] === 0) {
-        const repo_name = valuePromptURL.split('/').pop().replace('.git', '');
-        const newRepoSettings = [
-          ...repoSettings,
-          {
-            active: true,
-            type: 'local',
-            label: repo_name,
-            listing_type: 'DirectoryListing',
-            repo: [clonePath, repo_name].join('/'),
-          },
-        ];
-        dispatch(settingsSetRepositoryTarget(newRepoSettings));
-      } else {
-        alert('Could not clone repository!');
-      }
-      setOpenWait(false);
-    }).catch((e) => {
-      setOpenWait(false);
-      alert('Error cloning repository: ' + e);
-    });
+    settingsAPI
+      .GithubClone({
+        query: 'settings/github-clone',
+        data: {
+          url: valuePromptURL,
+          path: clonePath,
+          createfolder: true,
+        },
+      })
+      .then((response) => {
+        if (response['returncode'] === 0) {
+          const repo_name = valuePromptURL.split('/').pop().replace('.git', '');
+          const newRepoSettings = [
+            ...repoSettings,
+            {
+              active: true,
+              type: 'local',
+              label: repo_name,
+              listing_type: 'DirectoryListing',
+              repo: [clonePath, repo_name].join('/'),
+            },
+          ];
+          dispatch(settingsSetRepositoryTarget(newRepoSettings));
+        } else {
+          alert('Could not clone repository!');
+        }
+        setOpenWait(false);
+      })
+      .catch((e) => {
+        setOpenWait(false);
+        alert('Error cloning repository: ' + e);
+      });
   };
 
   const NextLabel = () => {
@@ -296,11 +299,11 @@ const RepoOptions = () => {
 
   return (
     <Box>
-      <DialogWait open={openWait} text={"Cloning repository..."} />
+      <DialogWait open={openWait} text={'Cloning repository...'} />
       <DialogPrompt
         open={openPromptURL}
-        title={"Github repository"}
-        content={"Enter the github URL (HTTPS/SSH):"}
+        title={'Github repository'}
+        content={'Enter the github URL (HTTPS/SSH):'}
         value={valuePromptURL}
         onChange={(event) => {
           setValuePromptURL(event.target.value);

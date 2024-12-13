@@ -99,17 +99,19 @@ const WaitForReturnCode = async (
   while (true) {
     msg_set = (await driver.executeScript('return _msg_queue.shift()')) as unknown[];
     if (msg_set === undefined || msg_set === null) continue;
-    msg = msg_set.shift();
-    if (typeof msg === 'object' && msg != null) {
-      if (
-        Object.prototype.hasOwnProperty.call(msg, 'query') &&
-        Object.prototype.hasOwnProperty.call(msg, 'returncode')
-      ) {
-        msg = msg as Query;
-        if (msg.query === query && msg.returncode != undefined) {
-          console.log('return msg received: ', msg);
-          console.log('<<< WaitForReturnCode');
-          return msg;
+    while (msg_set.length > 0) {
+      msg = msg_set.shift();
+      if (typeof msg === 'object' && msg != null) {
+        if (
+          Object.prototype.hasOwnProperty.call(msg, 'query') &&
+          Object.prototype.hasOwnProperty.call(msg, 'returncode')
+        ) {
+          msg = msg as Query;
+          if (msg.query === query && msg.returncode != undefined) {
+            console.log('return msg received: ', msg);
+            console.log('<<< WaitForReturnCode');
+            return msg;
+          }
         }
       }
     }

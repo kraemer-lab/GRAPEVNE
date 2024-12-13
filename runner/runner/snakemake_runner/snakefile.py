@@ -25,6 +25,8 @@ from snakemake.cli import main as snakemake_main
 from builder.builder import BuildFromJSON
 from builder.builder import YAMLToConfig
 from runner.TokenizeFile import TokenizeFile
+from grapevne.defs import get_port_spec, get_port_namespace
+
 # ##############################################################################
 # Skip Snakemake's conda version check (code adapted from Snakemake 8.25.3)
 # See https://github.com/kraemer-lab/GRAPEVNE/issues/368
@@ -178,7 +180,6 @@ def SplitByRulesFromFile(filename: str, workdir: str = "") -> dict:
 
 def SplitByDagFromFile(filename: str, workdir: str = "") -> dict:
     """Tokenize input using rules derived from dag graph"""
-    print("here")
 
     # Query snakemake for DAG of graph (used for connections)
     dag = DagLocal(os.path.abspath(filename), workdir)
@@ -313,29 +314,28 @@ def SplitByIndent(filename: str, workdir: str = "", get_dag: bool = False):
     return rules
 
 
-def CheckNodeDependencies(jsDeps: dict, snakemake_launcher: str = "") -> dict:
+def CheckNodeDependencies(jsDeps: dict, snakemake_launcher: str | None = None) -> dict:
     """Check if all dependencies are resolved for a given node"""
 
     # Build model from JSON (for dependency analysis)
     build, model, _ = BuildFromJSON(jsDeps, singlefile=True, partial_build=True)
 
     # Determine input namespaces for target node
-    input_namespaces = model.ConstructSnakefileConfig()[
-        model.GetNodeByName(model.nodes[0].name).rulename  # first (target) node
-    ]["config"].get("input_namespace", {})
-    if isinstance(input_namespaces, str):
-        input_namespaces = {"In": input_namespaces}
-    if not input_namespaces:
-        input_namespaces = {"In": "In"}
-    input_namespaces = set(input_namespaces.values())
+    config = model.ConstructSnakefileConfig()
+    node = model.GetNodeByName(model.nodes[0].name)
+    ruleconfig = config[node.rulename]["config"]
+    ports = ruleconfig.get("ports", [])
+    if not ports:
+        ports = get_port_spec(ruleconfig.get("input_namespace", []))
+    port_namespaces = set([get_port_namespace(p) for p in ports])  # set of namespaces
 
     # Determine unresolved dependencies (and their source namespaces)
-    target_namespaces = set([f"results/{n}" for n in input_namespaces])
+    target_namespaces = set([f"results/{n}" for n in port_namespaces])
     missing_deps = set(
         GetMissingFileDependencies_FromContents(
             build,
             list(target_namespaces),
-            snakemake_launcher=snakemake_launcher,
+            snakemake_launcher=snakemake_launcher if snakemake_launcher else "",
         )
     )
     unresolved_dep_sources = set(
@@ -344,7 +344,7 @@ def CheckNodeDependencies(jsDeps: dict, snakemake_launcher: str = "") -> dict:
 
     # Target dependencies are resolved if there is no overlap between missing
     # dependencies and the target node's input namespaces
-    unresolved_deps = unresolved_dep_sources.intersection(input_namespaces)
+    unresolved_deps = unresolved_dep_sources.intersection(port_namespaces)
     if unresolved_deps:
         return {
             "status": "missing",

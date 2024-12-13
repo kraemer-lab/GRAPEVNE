@@ -21,7 +21,13 @@ import Box from '@mui/material/Box';
 
 const TypoKey = (props) => <Typography variant="key" {...props} />;
 
-const protectedNames = ['input_namespace', 'output_namespace', 'namespace', 'snakefile', 'docstring'];
+const protectedNames = [
+  'input_namespace',
+  'output_namespace',
+  'namespace',
+  'snakefile',
+  'docstring',
+];
 const simple_types = ['string', 'number', 'boolean'];
 
 export const lookupKey = (json, keylist: string[], key: string) => {

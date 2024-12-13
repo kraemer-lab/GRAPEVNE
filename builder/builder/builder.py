@@ -799,7 +799,6 @@ class Model:
             return node
 
         # Keep record of orphan namespaces before expansion
-        orphan_inputs_prior = self.ExposeOrphanInputsList()
         orphan_outputs_prior = self.ExposeOrphanOutputs()
 
         # Add new nodes
@@ -907,7 +906,10 @@ def YAMLToConfig(content: str) -> str:
             elif isinstance(value, list):
                 c += f'["{key}"]=[]\n'  # Create empty list
                 for item in value:
-                    c += f'["{key}"].append("{item}")\n'
+                    if isinstance(item, dict):
+                        c += f'["{key}"].append({item})\n'
+                    else:
+                        c += f'["{key}"].append("{item}")\n'
                 # raise Exception("Lists not supported in config")
             elif not value:
                 # Null

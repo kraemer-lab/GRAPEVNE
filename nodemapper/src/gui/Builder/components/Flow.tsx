@@ -42,10 +42,10 @@ import ReactFlow, {
 import { faLeftRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@mui/material/Button';
+import { Query } from 'api';
 import 'reactflow/dist/style.css';
 import ContextMenu from './ContextMenu';
 import './flow.css';
-import { Query } from 'api';
 import * as styles from './flow.module.css';
 
 import dagre from 'dagre';

@@ -87,7 +87,7 @@ export const GithubMenu = ({ repo, branch }: GithubMenuProps) => {
     setAnchorMenu(null);
     setGhIndicator('checking');
     GithubGetRepoStatus(repo, branch);
-  }
+  };
 
   const GithubGetRepoStatus = async (repo: string, branch: string) => {
     // Check if the repo is in sync with the remote

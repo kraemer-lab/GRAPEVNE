@@ -1,0 +1,15 @@
+configfile: "config/config.yaml"
+from grapevne_helper import import_grapevne
+
+grapevne = import_grapevne(workflow)
+globals().update(vars(grapevne))
+
+rule source:
+    output:
+        outfile = output(param("output_filename")),
+    log:
+        log()
+    benchmark:
+        benchmark()
+    shell:
+        "touch {output.outfile}"

@@ -12,6 +12,7 @@ from runner.snakemake_runner.snakefile import IsolatedTempFile
 from runner.snakemake_runner.snakefile import LintContents
 from runner.snakemake_runner.snakefile import SplitByRulesFileContent
 from runner.snakemake_runner.snakefile import SplitByRulesFromFile
+from runner.snakemake_runner.snakefile import CheckNodeDependencies
 
 snakemakerunner = shutil.which("snakemake")
 
@@ -211,3 +212,37 @@ def test_GetMissingFileDependencies_TruncatedReturn() -> None:
             test_snakefile, target_namespaces=["a.txt"]
         )
         assert depsTruncated == ["a.txt"]
+
+
+def test_CheckNodeDependencies_connected() -> None:
+    with open(
+        "runner/snakemake_runner_test/workflows/connect_ports_source_sleep1input.json",
+        "r",
+    ) as file:
+        jsDeps = json.load(file)
+    cwd = os.getcwd() + "/"
+    for node in jsDeps:
+        if node.get("config", {}).get("snakefile"):
+            node["config"]["snakefile"] = cwd + node["config"]["snakefile"]
+    rtn = CheckNodeDependencies(
+        jsDeps=jsDeps,
+        snakemake_launcher=None,
+    )
+    assert rtn.get("status") == "ok"
+
+
+def test_CheckNodeDependencies_disconnected() -> None:
+    with open(
+        "runner/snakemake_runner_test/workflows/disconnect_ports_source_sleep1input.json",
+        "r",
+    ) as file:
+        jsDeps = json.load(file)
+    cwd = os.getcwd() + "/"
+    for node in jsDeps:
+        if node.get("config", {}).get("snakefile"):
+            node["config"]["snakefile"] = cwd + node["config"]["snakefile"]
+    rtn = CheckNodeDependencies(
+        jsDeps=jsDeps,
+        snakemake_launcher=None,
+    )
+    assert rtn.get("status") == "missing"

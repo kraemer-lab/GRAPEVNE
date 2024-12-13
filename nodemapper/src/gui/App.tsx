@@ -2,8 +2,8 @@ import React from 'react';
 
 import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material/styles';
 import { ErrorBoundary } from 'react-error-boundary';
-import { ReadStoreConfig } from 'redux/middleware/settings';
 import { builderGetRemoteModules } from 'redux/actions';
+import { ReadStoreConfig } from 'redux/middleware/settings';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import { errorHandler } from './ErrorHandling/Error';
 

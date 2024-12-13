@@ -11,7 +11,7 @@ export interface IModulesListConfig {
 
 export interface IModulesListRepo {
   type: string;
-  listing_type: 'DirectoryListing';  // can be extended to support other types
+  listing_type: 'DirectoryListing'; // can be extended to support other types
   url: string;
 }
 

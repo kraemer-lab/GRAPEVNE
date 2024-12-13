@@ -1,9 +1,9 @@
-input_namespace: null
-output_namespace: utility_touch
+ports: []
+namespace: utility_touch
 utility_touch:
   config:
-    input_namespace: null
-    output_namespace: utility_touch
+    ports: []
+    namespace: utility_touch
     params:
       filename: data.csv
   name: (Utility) touch
