@@ -20,12 +20,13 @@ from typing import Union
 from warnings import warn
 
 import snakemake.deployment.conda
+from grapevne.defs import get_port_namespace
+from grapevne.defs import get_port_spec
 from snakemake.cli import main as snakemake_main
 
 from builder.builder import BuildFromJSON
 from builder.builder import YAMLToConfig
 from runner.TokenizeFile import TokenizeFile
-from grapevne.defs import get_port_spec, get_port_namespace
 
 # ##############################################################################
 # Skip Snakemake's conda version check (code adapted from Snakemake 8.25.3)

@@ -3,9 +3,10 @@ from typing import Tuple
 
 import pytest
 import yaml
+from grapevne.defs import get_port_namespace
+from grapevne.defs import get_port_spec
 
 from builder import builder
-from grapevne.defs import get_port_spec, get_port_namespace
 
 workflow_folder = "builder/tests/workflow_import_test"
 

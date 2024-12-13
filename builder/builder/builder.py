@@ -16,12 +16,14 @@ from typing import Union
 import cachetools
 import requests
 import yaml
+from grapevne.defs import get_port_spec
+from grapevne.defs import Module as Node
+from grapevne.defs import Port
+from grapevne.defs import Snakefile
 
 from .quoted_yaml import quoted_yaml_dump
 from .workflow_alerts import ProcessWorkflowAlerts
 from .workflow_alerts import WorkflowAlerts
-from grapevne.defs import get_port_spec, Port
-from grapevne.defs import Snakefile, Module as Node
 
 Ports = [Port]
 

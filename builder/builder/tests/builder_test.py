@@ -4,9 +4,10 @@ import shutil
 from dataclasses import dataclass
 from unittest.mock import patch
 
+from grapevne.defs import get_port_namespace
+
 from builder.builder import Model
 from builder.builder import YAMLToConfig
-from grapevne.defs import get_port_namespace
 
 workflows_folder = "builder/tests/workflows"
 
