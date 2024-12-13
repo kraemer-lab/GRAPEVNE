@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from builder.builder import Model
 from builder.builder import YAMLToConfig
+from grapevne.defs import get_port_namespace
 
 workflows_folder = "builder/tests/workflows"
 
@@ -71,10 +72,12 @@ def test_ConstructSnakefileConfig():
     # Verify config
     assert c["module1"]["config"].get("param1", None) == "value1"
     assert (
-        c["module2"]["config"]["input_namespace"] == c["module1"]["config"]["namespace"]
+        get_port_namespace(c["module2"]["config"]["ports"])
+        == c["module1"]["config"]["namespace"]
     )
     assert (
-        c["module3"]["config"]["input_namespace"] == c["module2"]["config"]["namespace"]
+        get_port_namespace(c["module3"]["config"]["ports"])
+        == c["module2"]["config"]["namespace"]
     )
 
 
@@ -179,7 +182,7 @@ def test_AddConnector_SingleInput():
     module2 = m.AddModule("module2", {})
     m.AddConnector("conn12", {"map": ["module1", "module2"]})
     # Verify module namespaces connect appropriately
-    assert module1.namespace == module2.input_namespace
+    assert module1.namespace == get_port_namespace(module2.ports)
 
 
 def test_AddConnector_MultiInput():
@@ -211,7 +214,7 @@ def test_AddConnector_MultiInput():
     # Connect the single output from module1 to the first input of module2
     m.AddConnector("conn12", {"map": [{"in2a": "module1"}, "module2"]})
     # Verify module namespaces connect appropriately
-    assert module1.namespace == module2.input_namespace["in2a"]
+    assert get_port_namespace(module2.ports, "in2a") == module1.namespace
 
 
 def test_GetNodeByName():

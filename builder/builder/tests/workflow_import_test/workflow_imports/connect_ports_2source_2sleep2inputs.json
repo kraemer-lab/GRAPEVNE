@@ -1,0 +1,150 @@
+[
+  {
+    "id": "idcode",
+    "name": "source_test1",
+    "type": "source",
+    "config": {
+      "snakefile": "builder/tests/workflow_import_test/modules/source_ports/workflow/Snakefile",
+      "config": {
+        "output_filename": "mark",
+        "namespace": "out_source_test1"
+      }
+    }
+  },
+  {
+    "id": "idcode",
+    "name": "source_test2",
+    "type": "source",
+    "config": {
+      "snakefile": "builder/tests/workflow_import_test/modules/source_ports/workflow/Snakefile",
+      "config": {
+        "output_filename": "mark",
+        "namespace": "out_source_test2"
+      }
+    }
+  },
+  {
+    "id": "idcode",
+    "name": "sleep2input_test1",
+    "type": "module",
+    "config": {
+      "snakefile": "builder/tests/workflow_import_test/modules/sleep2inputs_ports/workflow/Snakefile",
+      "config": {
+        "input_filename": {
+          "in1": "mark",
+          "in2": "mark"
+        },
+        "ports": [
+            {
+                "ref": "in1",
+                "label": "in1",
+                "namespace": "in1"
+            },
+            {
+                "ref": "in2",
+                "label": "in2",
+                "namespace": "in2"
+            }
+        ],
+        "output_filename": "mark",
+        "namespace": "out_sleep2input_test1",
+        "sleeptime": 1
+      }
+    }
+  },
+  {
+    "id": "idcode",
+    "name": "sleep2input_test2",
+    "type": "module",
+    "config": {
+      "snakefile": "builder/tests/workflow_import_test/modules/sleep2inputs_ports/workflow/Snakefile",
+      "config": {
+        "input_filename": {
+          "in1": "mark",
+          "in2": "mark"
+        },
+        "ports": [
+            {
+                "ref": "in1",
+                "label": "in1",
+                "namespace": "in1"
+            },
+            {
+                "ref": "in2",
+                "label": "in2",
+                "namespace": "in2"
+            }
+        ],
+        "output_filename": "mark",
+        "namespace": "out_sleep2input_test2",
+        "sleeptime": 1
+      }
+    }
+  },
+  {
+    "id": "idcode",
+    "name": "sleep2input_common_out",
+    "type": "module",
+    "config": {
+      "snakefile": "builder/tests/workflow_import_test/modules/sleep2inputs_ports/workflow/Snakefile",
+      "config": {
+        "input_filename": {
+          "in1": "mark",
+          "in2": "mark"
+        },
+        "ports": [
+            {
+                "ref": "in1",
+                "label": "in1",
+                "namespace": "in1"
+            },
+            {
+                "ref": "in2",
+                "label": "in2",
+                "namespace": "in2"
+            }
+        ],
+        "output_filename": "mark",
+        "namespace": "out_sleep2input_common_out",
+        "sleeptime": 1
+      }
+    }
+  },
+  {
+    "name": "Join [source-to-sleep2input1]",
+    "type": "connector",
+    "config": {
+      "map": [
+        {
+          "in1": "source_test1"
+        },
+        "sleep2input_test1"
+      ]
+    }
+  },
+  {
+    "name": "Join [source-to-sleep2input2]",
+    "type": "connector",
+    "config": {
+      "map": [
+        {
+          "in1": "source_test2"
+        },
+        "sleep2input_test2"
+      ]
+    }
+  },
+  {
+    "name": "Join [sleep2input_common_out]",
+    "type": "connector",
+    "config": {
+      "map": [
+        {
+          "in1": "sleep2input_test1",
+          "in2": "sleep2input_test2"
+        },
+        "sleep2input_common_out"
+      ]
+    }
+  }
+]

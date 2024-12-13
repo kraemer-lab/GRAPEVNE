@@ -1,0 +1,34 @@
+ports:
+  - ref: in2
+    label: in2
+    namespace: in2
+    mapping:
+      - module: sleep2input_test
+        port: in2
+namespace: sleep2input_test
+sleep2input_test:
+  config:
+    input_filename:
+      in1: mark
+      in2: mark
+    ports:
+      - ref: in1
+        label: in1
+        namespace: source_test1
+      - ref: in2
+        label: in2
+        namespace: in2
+    output_filename: mark
+    namespace: sleep2input_test
+    sleeptime: 1
+  name: sleep2input_test
+  snakefile: builder/tests/workflow_import_test/modules/sleep2inputs_ports/workflow/Snakefile
+  type: module
+source_test1:
+  config:
+    ports: []
+    output_filename: mark
+    namespace: source_test1
+  name: source_test1
+  snakefile: builder/tests/workflow_import_test/modules/source_ports/workflow/Snakefile
+  type: module

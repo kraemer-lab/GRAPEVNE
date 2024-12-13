@@ -1,0 +1,20 @@
+configfile: "config/config.yaml"
+
+rule source:
+    output:
+        expand(
+            "results/{outdir}/{outfile}",
+            outdir=config["output_namespace"],
+            outfile=config["output_filename"],
+        ),
+    log:
+        expand(
+            "logs/{outdir}.log",
+            outdir=config["output_namespace"],
+        )
+    benchmark:
+        "benchmarks/source.txt"
+    conda:
+        "envs/conda.yaml"
+    shell:
+        "touch {output}"

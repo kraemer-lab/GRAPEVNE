@@ -1,0 +1,15 @@
+configfile: "config/config.yaml"
+
+module source_test1:
+    snakefile:
+        config["source_test1"]["snakefile"]
+    config:
+        config["source_test1"]["config"]
+use rule * from source_test1 exclude _test as source_test1_*
+
+module sleep2input_test:
+    snakefile:
+        config["sleep2input_test"]["snakefile"]
+    config:
+        config["sleep2input_test"]["config"]
+use rule * from sleep2input_test exclude _test as sleep2input_test_*

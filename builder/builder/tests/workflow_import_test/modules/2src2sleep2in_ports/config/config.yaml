@@ -1,0 +1,84 @@
+ports:
+  - ref: in1
+    label: in1
+    namespace: in2
+    mapping:
+      - module: sleep2input_test1
+        port: in2
+  - ref: in2
+    label: in2
+    namespace: in2
+    mapping:
+      - module: sleep2input_test2
+        port: in2
+namespace: sleep2input_common_out
+sleep2input_common_out:
+  config:
+    input_filename:
+      in1: mark
+      in2: mark
+    ports:
+      - ref: in1
+        label: in1
+        namespace: sleep2input_test1
+      - ref: in2
+        label: in2
+        namespace: sleep2input_test2
+    output_filename: mark
+    namespace: sleep2input_common_out
+    sleeptime: 1
+  name: sleep2input_common_out
+  snakefile: builder/tests/workflow_import_test/modules/sleep2inputs/workflow/Snakefile
+  type: module
+sleep2input_test1:
+  config:
+    input_filename:
+      in1: mark
+      in2: mark
+    ports:
+      - ref: in1
+        label: in1
+        namespace: source_test1
+      - ref: in2
+        label: in2
+        namespace: in2
+    output_filename: mark
+    namespace: sleep2input_test1
+    sleeptime: 1
+  name: sleep2input_test1
+  snakefile: builder/tests/workflow_import_test/modules/sleep2inputs/workflow/Snakefile
+  type: module
+sleep2input_test2:
+  config:
+    input_filename:
+      in1: mark
+      in2: mark
+    ports:
+      - ref: in1
+        label: in1
+        namespace: source_test2
+      - ref: in2
+        label: in2
+        namespace: in2
+    output_filename: mark
+    namespace: sleep2input_test2
+    sleeptime: 1
+  name: sleep2input_test2
+  snakefile: builder/tests/workflow_import_test/modules/sleep2inputs/workflow/Snakefile
+  type: module
+source_test1:
+  config:
+    ports: []
+    output_filename: mark
+    namespace: source_test1
+  name: source_test1
+  snakefile: builder/tests/workflow_import_test/modules/source/workflow/Snakefile
+  type: module
+source_test2:
+  config:
+    ports: []
+    output_filename: mark
+    namespace: source_test2
+  name: source_test2
+  snakefile: builder/tests/workflow_import_test/modules/source/workflow/Snakefile
+  type: module
