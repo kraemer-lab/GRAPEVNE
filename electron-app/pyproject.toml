@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "builder",
-    "grapevne",
+    "grapevne>=0.2.5",
     "runner",
     "smart-open>=7.0.4",
     "snakemake-storage-plugin-http>=0.2.3",
@@ -24,4 +24,3 @@ dev-dependencies = [
 [tool.uv.sources]
 builder = { path = "../builder" }
 runner = { path = "../runner" }
-grapevne = { path = "../../grapevne-py" }
