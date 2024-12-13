@@ -6,13 +6,13 @@ from unittest import mock
 import pytest
 
 from runner.snakemake_runner.snakefile import Build
+from runner.snakemake_runner.snakefile import CheckNodeDependencies
 from runner.snakemake_runner.snakefile import FullTokenizeFromFile
 from runner.snakemake_runner.snakefile import GetMissingFileDependencies_FromContents
 from runner.snakemake_runner.snakefile import IsolatedTempFile
 from runner.snakemake_runner.snakefile import LintContents
 from runner.snakemake_runner.snakefile import SplitByRulesFileContent
 from runner.snakemake_runner.snakefile import SplitByRulesFromFile
-from runner.snakemake_runner.snakefile import CheckNodeDependencies
 
 snakemakerunner = shutil.which("snakemake")
 
