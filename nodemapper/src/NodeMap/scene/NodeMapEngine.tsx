@@ -110,10 +110,6 @@ export default class NodeMapEngine {
       const map = [null, null];
       map[0] = this.getNodeInputNodes(node, nodes, edges);
       if (this.getInPorts(node, edges).length > 0) {
-        if (this.getInPorts(node, edges).length == 1) {
-          // If singleton, return string instead of list
-          map[0] = map[0][Object.keys(map[0])[0]];
-        }
         // Add connector
         if (map[0] !== null && map[0] !== undefined) {
           map[1] = this.getNodePropertiesAsJSON(node).name;
@@ -220,10 +216,7 @@ export default class NodeMapEngine {
 
   getNodeInputPortCount(node): number {
     // Return the number of input ports for a given node //
-    const input_namespace = node.data.config.config.config.input_namespace;
-    if (input_namespace === null || input_namespace === undefined) return 0;
-    if (typeof input_namespace === 'string') return 1;
-    return Object.keys(input_namespace).length;
+    return node.data.config.config.config.ports.length;
   }
 
   public GetModuleListJSON(nodes: Node[], edges: Edge[]): Record<string, unknown>[] {
@@ -242,10 +235,6 @@ export default class NodeMapEngine {
       map[0] = this.getNodeInputNodes(node, nodes, edges);
       const in_ports_count = this.getNodeInputPortCount(node);
       if (in_ports_count > 0) {
-        if (typeof node.data.config.config.config.input_namespace === 'string') {
-          // If the input namespace is a string, then return a string instead of a list
-          map[0] = map[0][Object.keys(map[0])[0]];
-        }
         // Add connector
         if (map[0] !== null && map[0] !== undefined) {
           map[1] = this.getNodePropertiesAsJSON(node).name;
@@ -333,14 +322,14 @@ export default class NodeMapEngine {
     newnodes.forEach((node_from) => {
       const config = this.getNodePropertiesAsJSON(node_from)['config'] as Record<string, unknown>;
       const params = config['config'];
-      const output_namespace = params['output_namespace'] ?? params['namespace'];
+      const output_namespace = params['namespace'];
       newnodes.forEach((node_to) => {
         const config = this.getNodePropertiesAsJSON(node_to)['config'] as Record<string, unknown>;
         const params = config['config'];
-        const input_namespace = params['input_namespace'];
-        if (typeof input_namespace === 'string') {
-          // string = single input port
-          if (output_namespace === input_namespace) {
+        const ports = params['ports'];
+        // record = multiple input ports
+        ports.forEach((port) => {
+          if (output_namespace === port['namespace']) {
             const newedge = {
               id: this.getUniqueEdgeID(all_edges),
               source: node_from.id,
@@ -350,21 +339,7 @@ export default class NodeMapEngine {
             };
             all_edges.push(newedge);
           }
-        } else {
-          // record = multiple input ports
-          for (const key in input_namespace) {
-            if (output_namespace === input_namespace[key]) {
-              const newedge = {
-                id: this.getUniqueEdgeID(all_edges),
-                source: node_from.id,
-                sourceHandle: 'Out',
-                target: node_to.id,
-                targetHandle: key,
-              };
-              all_edges.push(newedge);
-            }
-          }
-        }
+        });
       });
     });
 
@@ -402,7 +377,7 @@ export default class NodeMapEngine {
 
     // Map output connections from sub-graph
     const config = this.getNodePropertiesAsJSON(node)['config'] as Record<string, unknown>;
-    const output_namespace = config['config']['output_namespace'] ?? config['config']['namespace'];
+    const output_namespace = config['config']['namespace'];
     const target_node_and_port = this.getNodeOutputNodes(node, all_nodes, all_edges);
     for (let i = 0; i < target_node_and_port.length; i++) {
       const target_node = target_node_and_port[i][0];
@@ -410,7 +385,7 @@ export default class NodeMapEngine {
       // Lookup output port in sub-graph
       newnodes.forEach((node_from) => {
         const config = this.getNodePropertiesAsJSON(node_from)['config'] as Record<string, unknown>;
-        const namespace = config['config']['output_namespace'] ?? config['config']['namespace'];
+        const namespace = config['config']['namespace'];
         if (namespace == output_namespace) {
           console.log('Found output namespace: ' + namespace);
           const newedge = {
@@ -439,27 +414,19 @@ export default class NodeMapEngine {
       const outerconfig = json.config as Record<string, unknown>;
       const config = outerconfig['config'] as Record<string, unknown>;
       for (const key in config) {
-        if (key == 'output_namespace' || key == 'namespace') {
+        if (key == 'namespace') {
           if (Object.keys(namemap).includes(config[key] as string)) {
             config[key] = namemap[config[key] as string];
           }
         }
-        if (key === 'input_namespace') {
-          const input_namespace = config[key];
-          if (typeof input_namespace === 'string') {
-            // string = single input port
-            if (Object.keys(namemap).includes(input_namespace)) {
-              config[key] = namemap[input_namespace];
+        if (key === 'ports') {
+          const ports = config[key] as Record<string, unknown>[];
+          // record = multiple input ports
+          ports.forEach((port) => {
+            if (Object.keys(namemap).includes(port['ref'] as string)) {
+              port['namespace'] = namemap[port['ref'] as string];
             }
-          } else {
-            // record = multiple input ports
-            for (const inkey in input_namespace as Record<string, unknown>) {
-              const inval = input_namespace[inkey];
-              if (Object.keys(namemap).includes(inval as string)) {
-                input_namespace[inkey] = namemap[inval as string];
-              }
-            }
-          }
+          });
         }
       }
       // Save changes back to node
@@ -481,14 +448,13 @@ export default class NodeMapEngine {
 
   public static GetModuleType(config: Record<string, unknown>): string {
     for (const key in config) {
-      if (key === 'input_namespace') {
-        const value = config[key];
-        if (value === null) {
-          return 'source';
+      if (key === 'ports') {
+        if ((config['ports'] as Record<string, unknown>[]).length > 0) {
+          return 'module';
         }
       }
     }
-    return 'module';
+    return 'source';
   }
 
   public static GetModuleTypeColor(type: string): string {

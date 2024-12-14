@@ -1,8 +1,0 @@
-configfile: "config/config.yaml"
-
-module payload_run:
-    snakefile:
-        config["payload_run"]["snakefile"]
-    config:
-        config["payload_run"]["config"]
-use rule * from payload_run exclude _test as payload_run_*

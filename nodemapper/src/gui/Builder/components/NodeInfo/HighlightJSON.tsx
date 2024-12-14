@@ -23,6 +23,7 @@ const TypoKey = (props) => <Typography variant="key" {...props} />;
 
 const protectedNames = [
   'input_namespace',
+  'ports',
   'output_namespace',
   'namespace',
   'snakefile',

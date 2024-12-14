@@ -1,4 +1,4 @@
-import { ParseDocstring } from './web';
+import { ParseDocstring, BackwardsCompatibility } from './web';
 
 // ParseDocstring
 
@@ -36,4 +36,107 @@ Line 3`;
   const expected_docstring = '';
   const docstring = ParseDocstring(workflow_str);
   expect(docstring).toStrictEqual(expected_docstring);
+});
+
+test('BackwardsCompatibility_single_input', () => {
+  const config = {
+    input_namespace: 'in',
+    output_namespace: 'out',
+    params:
+    {
+      param1: 'value1',
+      param2: 'value2',
+    },
+  };
+  const new_config = BackwardsCompatibility(config);
+  const expected_config = {
+    ports: [
+      {
+        ref: 'in',
+        label: 'In',
+        namespace: 'in',
+      },
+    ],
+    namespace: 'out',
+    params:
+    {
+      param1: 'value1',
+      param2: 'value2',
+    },
+  };
+  expect(new_config).toStrictEqual(expected_config);
+});
+
+test('BackwardsCompatibility_multiple_input', () => {
+  const config = {
+    input_namespace: {
+      'port1': 'in1',
+      'port2': 'in2',
+    },
+    output_namespace: 'out',
+    params:
+    {
+      param1: 'value1',
+      param2: 'value2',
+    },
+  };
+  const new_config = BackwardsCompatibility(config);
+  const expected_config = {
+    ports: [
+      {
+        ref: 'port1',
+        label: 'port1',
+        namespace: 'in1',
+      },
+      {
+        ref: 'port2',
+        label: 'port2',
+        namespace: 'in2',
+      },
+    ],
+    namespace: 'out',
+    params:
+    {
+      param1: 'value1',
+      param2: 'value2',
+    },
+  };
+  expect(new_config).toStrictEqual(expected_config);
+});
+
+test('BackwardsCompatibility_passthrough', () => {
+  const config = {
+    input_namespace: {
+      'target_module$target_port': 'target_ns',
+    },
+    output_namespace: 'out',
+    params:
+    {
+      param1: 'value1',
+      param2: 'value2',
+    },
+  };
+  const new_config = BackwardsCompatibility(config);
+  const expected_config = {
+    ports: [
+      {
+        ref: 'target_module$target_port',
+        label: 'target_module$target_port',
+        namespace: 'target_ns',
+        mapping: [
+          {
+            module: 'target_module',
+            port: 'target_port',
+          },
+        ],
+      },
+    ],
+    namespace: 'out',
+    params:
+    {
+      param1: 'value1',
+      param2: 'value2',
+    },
+  };
+  expect(new_config).toStrictEqual(expected_config);
 });
