@@ -17,6 +17,69 @@ const GetModuleConfig = async (
   return config;
 };
 
+const BackwardsCompatibility = (config: Record<string, unknown>) => {
+  // Backwards compatibility conversions
+
+  // output_namespaces
+  if (Object.hasOwn(config, 'output_namespace')) {
+    if (Object.hasOwn(config, 'namespace')) {
+      console.error('Both output_namespace and namespace are defined.');
+      console.error(config);
+      throw new Error('Both output_namespace and namespace are defined.');
+    }
+    config['namespace'] = config['output_namespace'];
+    delete config['output_namespace'];
+  }
+
+  // Input namespace
+  if (Object.hasOwn(config, 'input_namespace')) {
+    if (Object.hasOwn(config, 'ports')) {
+      console.error('Both input_namespace and ports are defined.');
+      console.error(config);
+      throw new Error('Both input_namespace and ports are defined.');
+    }
+    if (typeof config['input_namespace'] === "string") {
+      // Convert to dictionary for port mapping
+      config['input_namespace'] = { 'in': config['input_namespace'] };
+    }
+    const ports = [];
+    for (const [key, value] of Object.entries(config['input_namespace'] as Record<string, unknown>)) {
+      let label = key;
+      if (label == "in") {
+        label = "In";
+      }
+      const port: { [key: string]: unknown } = {
+        ref: key,
+        label: label,
+        namespace: value,
+      };
+      const lastIndex = key.lastIndexOf('$');
+      if (lastIndex !== -1) {
+        const module = key.substring(0, lastIndex);
+        const portname = key.substring(lastIndex + 1);
+        port['mapping'] = [
+          {
+            module: module,
+            port: portname,
+          }
+        ];
+      }
+      ports.push(port);
+    }
+    config['ports'] = ports;
+    delete config['input_namespace'];
+  }
+
+  // Recurse structure
+  for (const key in config) {
+    if (config[key] instanceof Object) {
+      config[key] = BackwardsCompatibility(config[key] as Record<string, unknown>);
+    }
+  }
+
+  return config;
+}
+
 const GetModuleConfigFile = async (
   repo: Record<string, unknown>,
   snakefile: Record<string, unknown> | string,
@@ -39,7 +102,7 @@ const GetModuleConfigFile = async (
       return await axios
         .get(config_url)
         .then((response) => {
-          return yaml.load(response.data) as Record<string, unknown>;
+          return BackwardsCompatibility(yaml.load(response.data) as Record<string, unknown>);
         })
         .catch(() => {
           console.log('No (or invalid YAML) config file found.');
@@ -53,7 +116,7 @@ const GetModuleConfigFile = async (
       config_url = config_url.substring(0, config_url.lastIndexOf(path.sep));
       config_url = path.join(config_url, 'config', 'config.yaml');
       try {
-        return yaml.load(fs.readFileSync(config_url, 'utf8')) as Record<string, unknown>;
+        return BackwardsCompatibility(yaml.load(fs.readFileSync(config_url, 'utf8')) as Record<string, unknown>);
       } catch (err) {
         console.log('No (or invalid YAML) config file found.');
       }
@@ -555,6 +618,7 @@ export {
   GetRemoteModulesGithubDirectoryListing,
   ParseDocstring,
   getConfigFilenameFromSnakefile,
+  BackwardsCompatibility,
 };
 module.exports = {
   GetModuleConfig,
@@ -566,5 +630,6 @@ module.exports = {
   GetModuleConfigFilesList,
   getConfigFilenameFromSnakefile,
   GetRemoteModulesGithubDirectoryListing,
+  BackwardsCompatibility,
 };
 export default module.exports;

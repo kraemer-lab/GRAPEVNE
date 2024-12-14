@@ -112,26 +112,8 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
 
   // Extract input_namespace and wrap as list as necessary
   const node_config = props.data?.config?.config?.config ?? null;
-  const input_namespace = node_config.input_namespace ?? null;
-  let input_namespaces: string[];
-  let named_inputs = false;
-  if (typeof input_namespace === 'string') {
-    // Only display if input_namespace does not start with '_'
-    if (input_namespace.startsWith('_')) {
-      input_namespaces = [];
-    } else {
-      input_namespaces = [input_namespace];
-    }
-  } else if (input_namespace === null) {
-    input_namespaces = [];
-  } else {
-    named_inputs = true;
-    input_namespaces = Object.keys(input_namespace);
-    // Remove input_namespaces where input_namespace value starts with '_'
-    input_namespaces = input_namespaces.filter((name) => {
-      return !input_namespace[name].startsWith('_');
-    });
-  }
+  const ports = node_config.ports ?? [];
+  let named_inputs = true;
 
   return (
     <>
@@ -165,11 +147,11 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
         </Box>
         {!named_inputs ? (
           <Box>
-            {input_namespaces.length == 1 && (
+            {ports.length == 1 && (
               <Handle
                 className={styles.HandleInput}
-                id={input_namespaces[0]}
-                key={input_namespaces[0]}
+                id={ports[0]['label']}
+                key={ports[0]['label']}
                 type="target"
                 position={Position.Left}
                 style={{ top: '50%' }}
@@ -187,11 +169,13 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
           <Box
             className={styles.BodyPanel}
             style={{
-              height: `${input_namespaces.length * 18}px`,
+              height: `${ports.length * 18}px`,
             }}
           >
-            {input_namespaces.map((name) => {
+            {ports.map((port_element) => {
               // Format port name
+              const ref = port_element['ref'];
+              const name = port_element['label'];
               const port_name_split = name.split('$');
               let port_name = node_config[port_name_split[0]]?.name ?? null;
               if (!port_name) {
@@ -204,12 +188,12 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
                 <Box key={'div-' + name}>
                   <Handle
                     className={styles.HandleInput}
-                    id={name}
-                    key={name}
+                    id={ref}
+                    key={ref}
                     type="target"
                     position={Position.Left}
                     style={{
-                      top: `${input_namespaces.indexOf(name) * 18 + 38}px`,
+                      top: `${ports.indexOf(port_element) * 18 + 38}px`,
                     }}
                     onClick={(event) => {
                       event.stopPropagation();
@@ -220,7 +204,7 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
                     className={styles.InputPortLabel}
                     style={{
                       pointerEvents: 'none', // pass-through click events
-                      top: `${input_namespaces.indexOf(name) * 18 + 29}px`,
+                      top: `${ports.indexOf(port_element) * 18 + 29}px`,
                     }}
                   >
                     {port_name}
@@ -235,7 +219,7 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
                 type="source"
                 position={Position.Right}
                 style={{
-                  top: `${((input_namespaces.length - 1) / 2) * 18 + 38}px`,
+                  top: `${((ports.length - 1) / 2) * 18 + 38}px`,
                 }}
               />
             </Box>

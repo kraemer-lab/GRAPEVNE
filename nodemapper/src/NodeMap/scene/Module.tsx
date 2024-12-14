@@ -4,9 +4,20 @@ interface ParameterType {
   [key: string]: ParameterPrimitives | ParameterType;
 }
 
+// Port definition
+type PortType = {
+  ref: string;
+  label: string;
+  namespace: string;
+  mapping?: {
+    module: string;
+    port: string;
+  };
+};
+
 // User accessible configuration, including parameters
 type ModuleUserConfigType = {
-  input_namespace: string | Record<string, string> | null;
+  ports: PortType[];
   namespace: string | null;
   params?: ParameterType | null;
 };
