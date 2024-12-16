@@ -38,6 +38,10 @@ const BackwardsCompatibility = (config: Record<string, unknown>) => {
       console.error(config);
       throw new Error('Both input_namespace and ports are defined.');
     }
+    if (config['input_namespace'] === null) {
+      // Convert to dictionary for port mapping
+      config['input_namespace'] = {};
+    }
     if (typeof config['input_namespace'] === "string") {
       // Convert to dictionary for port mapping
       config['input_namespace'] = { 'in': config['input_namespace'] };

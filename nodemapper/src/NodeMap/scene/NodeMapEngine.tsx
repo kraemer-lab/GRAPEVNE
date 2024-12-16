@@ -322,20 +322,20 @@ export default class NodeMapEngine {
     newnodes.forEach((node_from) => {
       const config = this.getNodePropertiesAsJSON(node_from)['config'] as Record<string, unknown>;
       const params = config['config'];
-      const output_namespace = params['namespace'];
+      const namespace = params['namespace'];
       newnodes.forEach((node_to) => {
         const config = this.getNodePropertiesAsJSON(node_to)['config'] as Record<string, unknown>;
         const params = config['config'];
         const ports = params['ports'];
         // record = multiple input ports
         ports.forEach((port) => {
-          if (output_namespace === port['namespace']) {
+          if (namespace === port['namespace']) {
             const newedge = {
               id: this.getUniqueEdgeID(all_edges),
               source: node_from.id,
               sourceHandle: 'Out',
               target: node_to.id,
-              targetHandle: 'In',
+              targetHandle: port['label'],
             };
             all_edges.push(newedge);
           }
