@@ -1,5 +1,5 @@
 import { Query } from 'api';
-import { settingsUpdateSettings } from 'redux/actions';
+import { builderSetEdges, settingsUpdateSettings } from 'redux/actions';
 import { IState } from 'redux/reducers';
 
 const settingsAPI = window.settingsAPI;
@@ -13,6 +13,9 @@ export const settingsMiddleware = ({ getState, dispatch }) => {
       }
       const state = getState() as IState;
       switch (action.type) {
+        case 'settings/set-edge-type':
+          SetEdgeType(action.payload, state.settings.edge_type, state.builder.edges, dispatch);
+          break;
         case 'settings/read-store-config':
           ReadStoreConfig(dispatch);
           break;
@@ -25,6 +28,20 @@ export const settingsMiddleware = ({ getState, dispatch }) => {
       return next(action);
     };
   };
+};
+
+const SetEdgeType = (new_edge_type: string, current_edge_type: string, edges, dispatch) => {
+  console.log('SetEdgeType: ', new_edge_type, current_edge_type);
+  if (new_edge_type === current_edge_type) return;
+
+  const new_edges = JSON.parse(JSON.stringify(edges));
+  for (const edge of new_edges) {
+    if (edge.type !== new_edge_type) {
+      edge.type = new_edge_type;
+    }
+  }
+  console.log('(SetEdgeType) Updating edges to match edge type: ', new_edge_type);
+  dispatch(builderSetEdges(new_edges));
 };
 
 interface IPayloadRecord {
@@ -45,6 +62,8 @@ const WriteStoreConfig = async (state) => {
     auto_validate_connections: state.auto_validate_connections,
     package_modules_in_workflow: state.package_modules_in_workflow,
     dark_mode: state.dark_mode,
+    layout_direction: state.layout_direction,
+    edge_type: state.edge_type,
   });
 };
 

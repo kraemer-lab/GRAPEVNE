@@ -252,7 +252,12 @@ export default class NodeMapEngine {
     return js;
   }
 
-  public ExpandNodeByName(name: string, nodes: Node[], edges: Edge[]): [Node[], Edge[]] {
+  public ExpandNodeByName(
+    name: string,
+    nodes: Node[],
+    edges: Edge[],
+    edge_type: string,
+  ): [Node[], Edge[]] {
     console.log('ExpandNodeByName');
 
     const node = this.getNodeByName(name, nodes);
@@ -335,7 +340,8 @@ export default class NodeMapEngine {
               source: node_from.id,
               sourceHandle: 'Out',
               target: node_to.id,
-              targetHandle: port['label'],
+              targetHandle: port['ref'],
+              type: edge_type,
             };
             all_edges.push(newedge);
           }

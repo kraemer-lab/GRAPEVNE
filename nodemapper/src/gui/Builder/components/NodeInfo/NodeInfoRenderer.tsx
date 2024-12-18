@@ -54,13 +54,19 @@ const ExpandButton = (props: ExpandProps) => {
   const dispatch = useAppDispatch();
   const nodes = useAppSelector((state) => state.builder.nodes);
   const edges = useAppSelector((state) => state.builder.edges);
+  const edge_type = useAppSelector((state) => state.settings.edge_type);
 
   const showExpand = useAppSelector((state) => state.builder.can_selected_expand);
 
   const btnExpand = () => {
     // Expand the selected node into it's constituent modules
     const app = BuilderEngine.Instance;
-    const [nodes0, edges0] = app.ExpandNodeByName(props.nodeinfo.name as string, nodes, edges);
+    const [nodes0, edges0] = app.ExpandNodeByName(
+      props.nodeinfo.name as string,
+      nodes,
+      edges,
+      edge_type,
+    );
     console.log('newnodes', newnodes);
     if (nodes0 !== null && nodes0 !== undefined) setNewNodes({ nodes: nodes0, edges: edges0 });
   };

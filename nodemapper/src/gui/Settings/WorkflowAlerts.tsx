@@ -3,8 +3,6 @@ import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
-import { useTheme } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 import {
@@ -23,48 +21,7 @@ import {
   settingsToggleWorkflowAlertOnSuccessEnabled,
 } from 'redux/actions';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
-
-interface IInputItem {
-  id: string;
-  type?: string;
-  label: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  labelWidth: string;
-}
-
-const InputItem = ({ id, type, label, value, onChange, labelWidth }: IInputItem) => {
-  if (type === undefined) {
-    type = 'text';
-  }
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        gap: '10px',
-        flexDirection: 'row',
-      }}
-    >
-      <Box
-        sx={{
-          width: labelWidth,
-          textAlign: 'right',
-          alignSelf: 'center',
-        }}
-      >
-        <Typography variant="body1">{label}</Typography>
-      </Box>
-      <TextField
-        id={id}
-        type={type}
-        value={value}
-        onChange={onChange}
-        style={{ width: '100%' }}
-        size="small"
-      />
-    </Box>
-  );
-};
+import InputItem from './components/InputItem';
 
 interface IEmailSettings {
   labelWidth: string;
@@ -188,7 +145,6 @@ const WorkflowAlerts = ({ labelWidth }: IWorkflowAlerts) => {
   const dispatch = useAppDispatch();
   const settings_onsuccess = useAppSelector((state) => state.settings.workflow_alerts.onsuccess);
   const settings_onerror = useAppSelector((state) => state.settings.workflow_alerts.onerror);
-  const theme = useTheme();
 
   return (
     <>

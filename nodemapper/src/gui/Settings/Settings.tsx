@@ -77,7 +77,7 @@ const Settings = () => {
         </Grid>
         <Grid item xs={8}>
           <OptionsPanel>
-            <InterfaceOptions />
+            <InterfaceOptions labelWidth="25%" />
           </OptionsPanel>
         </Grid>
         <Grid item xs={8}>

@@ -226,6 +226,14 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           });
           break;
 
+        case 'builder/set-edges':
+          SetEdges({
+            edges: action.payload,
+            edge_type: state.settings.edge_type,
+            dispatch: dispatch,
+          });
+          break;
+
         case 'builder/load-scene':
           LoadScene({
             dispatchString: dispatch,
@@ -780,6 +788,28 @@ const UpdateStatusText = ({ dispatch, text }: IUpdateStatusText) => {
 
 const CreateFolder = ({ folder }: { folder: string }) => {
   builderAPI.CreateFolder(folder);
+};
+
+interface ISetEdges {
+  edges: Edge[];
+  edge_type: string;
+  dispatch: TPayloadEdgeList;
+}
+
+const SetEdges = ({ edges, edge_type, dispatch }: ISetEdges) => {
+  // check that edges all use the currently selected edge type, otherwise update
+  let updated = false;
+  const new_edges = JSON.parse(JSON.stringify(edges));
+  for (const edge of new_edges) {
+    if (edge.type !== edge_type) {
+      edge.type = edge_type;
+      updated = true;
+    }
+  }
+  if (updated) {
+    console.log('(SetEdges) Updating edges to match edge type: ', edge_type);
+    dispatch(builderSetEdges(new_edges));
+  }
 };
 
 interface ILoadScene {

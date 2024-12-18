@@ -37,11 +37,14 @@ import ReactFlow, {
   applyNodeChanges,
   getBezierPath,
   getNodesBounds,
+  getSmoothStepPath,
+  getStraightPath,
 } from 'reactflow';
 
 import { faLeftRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Button from '@mui/material/Button';
+import Popper from '@mui/material/Popper';
 import { Query } from 'api';
 import 'reactflow/dist/style.css';
 import ContextMenu from './ContextMenu';
@@ -59,8 +62,8 @@ const nodeResizeControlStyle = {
 
 const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => {
   // Typical node size for spacing
-  const nodeWidth = 172;
-  const nodeHeight = 36;
+  const nodeWidth = 200;
+  const nodeHeight = 50;
 
   // Allow dagre to determine layout
   const dagreGraph = new dagre.graphlib.Graph();
@@ -103,6 +106,14 @@ export const wranglename = (name: string) => {
 };
 
 const ModuleNode = (props: NodeProps<NodeData>) => {
+  // Select the appropriate layout based on the current layout setting
+  const layout = useAppSelector((state) => state.settings.layout_direction);
+  if (layout === 'LR') return ModuleNodeLR(props);
+  else return ModuleNodeTB(props);
+};
+
+const ModuleNodeLR = (props: NodeProps<NodeData>) => {
+  // ModuleNode component (Left-to-Right layout)
   const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
   let selected = false;
   if (nodeinfo) {
@@ -113,7 +124,6 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
   // Extract input_namespace and wrap as list as necessary
   const node_config = props.data?.config?.config?.config ?? null;
   const ports = node_config.ports ?? [];
-  let named_inputs = true;
 
   return (
     <>
@@ -145,86 +155,197 @@ const ModuleNode = (props: NodeProps<NodeData>) => {
         <Box className={styles.HeaderPanel}>
           <Box className={styles.HeaderText}>{props.data.config.name}</Box>
         </Box>
-        {!named_inputs ? (
+        <Box
+          className={styles.BodyPanel}
+          style={{
+            height: `${ports.length * 18}px`,
+          }}
+        >
+          {ports.map((port_element) => {
+            // Format port name
+            const ref = port_element['ref'];
+            const label = port_element['label'];
+
+            return (
+              <Box key={'div-' + ref}>
+                <Handle
+                  className={styles.HandleInput}
+                  id={ref}
+                  key={ref}
+                  type="target"
+                  position={Position.Left}
+                  style={{
+                    top: `${ports.indexOf(port_element) * 18 + 38}px`,
+                  }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    console.debug('Input handle clicked: ', event.target);
+                  }}
+                />
+                <Box
+                  className={styles.InputPortLabel}
+                  style={{
+                    pointerEvents: 'none', // pass-through click events
+                    top: `${ports.indexOf(port_element) * 18 + 29}px`,
+                  }}
+                >
+                  {label}
+                </Box>
+              </Box>
+            );
+          })}
           <Box>
-            {ports.length == 1 && (
-              <Handle
-                className={styles.HandleInput}
-                id={ports[0]['label']}
-                key={ports[0]['label']}
-                type="target"
-                position={Position.Left}
-                style={{ top: '50%' }}
-              />
-            )}
             <Handle
               className={styles.HandleOutput}
               id="out"
               type="source"
               position={Position.Right}
-              style={{ top: '50%' }}
+              style={{
+                top: '50%',
+                height: '100%',
+                width: '12px',
+              }}
             />
           </Box>
-        ) : (
-          <Box
-            className={styles.BodyPanel}
-            style={{
-              height: `${ports.length * 18}px`,
-            }}
-          >
-            {ports.map((port_element) => {
-              // Format port name
-              const ref = port_element['ref'];
-              const name = port_element['label'];
-              const port_name_split = name.split('$');
-              let port_name = node_config[port_name_split[0]]?.name ?? null;
-              if (!port_name) {
-                port_name = name;
-              } else if (port_name_split.length > 1 && port_name_split[1] !== '') {
-                port_name = port_name + ' [' + name.split('$')[1] + ']';
-              }
+        </Box>
+      </Box>
+    </>
+  );
+};
 
-              return (
-                <Box key={'div-' + name}>
+const ModuleNodeTB = (props: NodeProps<NodeData>) => {
+  // ModuleNode component (Top-to-Bottom layout)
+  const nodeinfo = useAppSelector((state) => state.builder.nodeinfo);
+  let selected = false;
+  if (nodeinfo) {
+    const nodeinfo_id = JSON.parse(nodeinfo)['id'];
+    selected = nodeinfo_id === props.id;
+  }
+
+  // Extract input_namespace and wrap as list as necessary
+  const node_config = props.data?.config?.config?.config ?? null;
+  const ports = node_config.ports ?? [];
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [portLabel, setPortLabel] = React.useState('');
+
+  return (
+    <>
+      <Box
+        className={styles.Node}
+        style={{
+          backgroundColor: props.data.color,
+          height: '46px',
+        }}
+      >
+        {selected && (
+          <NodeResizeControl
+            style={nodeResizeControlStyle}
+            minWidth={120}
+            minHeight={50}
+            variant={ResizeControlVariant.Line}
+            position="top-right"
+            shouldResize={(e, params) => params.direction[1] === 0}
+          >
+            <span
+              style={{
+                float: 'right',
+                color: '#dedede',
+              }}
+            >
+              <FontAwesomeIcon icon={faLeftRight} />
+            </span>
+          </NodeResizeControl>
+        )}
+        <Box className={styles.HeaderPanel}>
+          <Box className={styles.HeaderText} sx={{ marginTop: '6px' }}>
+            {props.data.config.name}
+          </Box>
+        </Box>
+        <Box
+          className={styles.BodyPanel}
+          style={{
+            height: '18px',
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+          }}
+        >
+          {ports.map((port_element) => {
+            // Format port name
+            const ref = port_element['ref'];
+            const label = port_element['label'];
+
+            return (
+              <>
+                <Box
+                  key={'div-' + ref}
+                  style={{
+                    width: '100%',
+                  }}
+                >
                   <Handle
                     className={styles.HandleInput}
                     id={ref}
                     key={ref}
                     type="target"
-                    position={Position.Left}
+                    position={Position.Top}
                     style={{
-                      top: `${ports.indexOf(port_element) * 18 + 38}px`,
+                      position: 'relative',
+                      top: '-39px',
+                      left: '50%',
+                      width: '100%',
+                      height: '8px',
+                      maxWidth: '40px',
                     }}
                     onClick={(event) => {
                       event.stopPropagation();
                       console.debug('Input handle clicked: ', event.target);
                     }}
-                  />
-                  <Box
-                    className={styles.InputPortLabel}
-                    style={{
-                      pointerEvents: 'none', // pass-through click events
-                      top: `${ports.indexOf(port_element) * 18 + 29}px`,
+                    onMouseEnter={(event) => {
+                      setAnchorEl(event.currentTarget);
+                      setPortLabel(label);
                     }}
-                  >
-                    {port_name}
-                  </Box>
+                    onMouseLeave={() => {
+                      setAnchorEl(null);
+                    }}
+                  />
                 </Box>
-              );
-            })}
-            <Box>
-              <Handle
-                className={styles.HandleOutput}
-                id="out"
-                type="source"
-                position={Position.Right}
-                style={{
-                  top: `${((ports.length - 1) / 2) * 18 + 38}px`,
-                }}
-              />
-            </Box>
-          </Box>
-        )}
+                <Popper id={'popup-' + ref} open={Boolean(anchorEl)} anchorEl={anchorEl}>
+                  <Box sx={{ border: 1, p: 1, bgcolor: 'background.paper' }}>
+                    {ports.map((p) => {
+                      if (p['label'] === portLabel) {
+                        return (
+                          <Box key={p.ref} sx={{ fontWeight: 'bold' }}>
+                            {p.label}
+                          </Box>
+                        );
+                      }
+                      return (
+                        <Box key={p.ref} sx={{ color: 'grey' }}>
+                          {p.label}
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Popper>
+              </>
+            );
+          })}
+        </Box>
+        <Box>
+          <Handle
+            className={styles.HandleOutput}
+            id="out"
+            type="source"
+            position={Position.Bottom}
+            style={{
+              top: `40px`,
+              left: '50%',
+              width: '100%',
+              height: '8px',
+            }}
+          />
+        </Box>
       </Box>
     </>
   );
@@ -256,8 +377,7 @@ export const ExportAsSVG = (nodes: Node[]) => {
   ExportCanvas(nodes, toSvg, 'svg');
 };
 
-export const ButtonEdge = ({
-  id,
+export const ButtonEdgeBezier = ({
   sourceX,
   sourceY,
   targetX,
@@ -289,12 +409,81 @@ export const ButtonEdge = ({
           }}
           className="nodrag nopan"
         >
-          {/*<Button
-            className={styles.ButtonEdge}
-            onClick={(event) => onEdgeClick(event, id)}
-          >
-            -
-          </Button>*/}
+          {/* Mid-path edge label*/}
+        </Box>
+      </EdgeLabelRenderer>
+    </>
+  );
+};
+
+export const ButtonEdgeSmoothStep = ({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  sourcePosition,
+  targetPosition,
+  style = {},
+  markerEnd,
+}: EdgeProps) => {
+  const [edgePath, labelX, labelY] = getSmoothStepPath({
+    sourceX,
+    sourceY,
+    sourcePosition,
+    targetX,
+    targetY,
+    targetPosition,
+  });
+
+  return (
+    <>
+      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <EdgeLabelRenderer>
+        <Box
+          style={{
+            position: 'absolute',
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            fontSize: 12,
+            pointerEvents: 'all',
+          }}
+          className="nodrag nopan"
+        >
+          {/* Mid-path edge label*/}
+        </Box>
+      </EdgeLabelRenderer>
+    </>
+  );
+};
+
+export const ButtonEdgeStraight = ({
+  sourceX,
+  sourceY,
+  targetX,
+  targetY,
+  style = {},
+  markerEnd,
+}: EdgeProps) => {
+  const [edgePath, labelX, labelY] = getStraightPath({
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+  });
+
+  return (
+    <>
+      <BaseEdge path={edgePath} markerEnd={markerEnd} style={style} />
+      <EdgeLabelRenderer>
+        <Box
+          style={{
+            position: 'absolute',
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+            fontSize: 12,
+            pointerEvents: 'all',
+          }}
+          className="nodrag nopan"
+        >
+          {/* Mid-path edge label*/}
         </Box>
       </EdgeLabelRenderer>
     </>
@@ -307,7 +496,9 @@ const nodeTypes = {
 };
 
 const edgeTypes = {
-  buttonedge: ButtonEdge,
+  bezier: ButtonEdgeBezier,
+  smoothstep: ButtonEdgeSmoothStep,
+  straight: ButtonEdgeStraight,
 };
 
 export const getNodeById = (id: string, nodes: Node[]): Node | null => {
@@ -368,6 +559,8 @@ const Flow = () => {
   const dispatch = useAppDispatch();
   const nodes = useAppSelector((state) => state.builder.nodes);
   const edges = useAppSelector((state) => state.builder.edges);
+  const layout = useAppSelector((state) => state.settings.layout_direction);
+  const edge_type = useAppSelector((state) => state.settings.edge_type);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [menu, setMenu] = useState(null);
   const ref = useRef(null);
@@ -386,7 +579,7 @@ const Flow = () => {
   };
 
   const onConnect = (connection: Connection) => {
-    dispatch(builderSetEdges(addEdge({ ...connection, type: 'buttonedge' }, edges)));
+    dispatch(builderSetEdges(addEdge({ ...connection, type: edge_type }, edges)));
   };
 
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
@@ -472,7 +665,7 @@ const Flow = () => {
     setMenu(null);
     // Close module parameters pane (if open)
     dispatch(builderNodeDeselected());
-  }, [setMenu]);
+  }, [setMenu, dispatch]);
 
   const onDrop = (event) => {
     event.preventDefault();
@@ -585,7 +778,7 @@ const Flow = () => {
       const newnodes = getLayoutedElements(nodes, edges, direction);
       dispatch(builderSetNodes(newnodes));
     },
-    [nodes, edges],
+    [nodes, edges, dispatch],
   );
 
   return (
@@ -614,7 +807,7 @@ const Flow = () => {
       <Panel position="top-right">
         <Button
           id="buttonReactflowArrange"
-          onClick={() => onLayout('LR')}
+          onClick={() => onLayout(layout)}
           variant="contained"
           size="small"
         >

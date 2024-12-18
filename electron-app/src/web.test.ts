@@ -1,4 +1,4 @@
-import { ParseDocstring, BackwardsCompatibility } from './web';
+import { BackwardsCompatibility, ParseDocstring } from './web';
 
 // ParseDocstring
 
@@ -42,8 +42,7 @@ test('BackwardsCompatibility_single_input', () => {
   const config = {
     input_namespace: 'in',
     output_namespace: 'out',
-    params:
-    {
+    params: {
       param1: 'value1',
       param2: 'value2',
     },
@@ -58,8 +57,7 @@ test('BackwardsCompatibility_single_input', () => {
       },
     ],
     namespace: 'out',
-    params:
-    {
+    params: {
       param1: 'value1',
       param2: 'value2',
     },
@@ -70,12 +68,11 @@ test('BackwardsCompatibility_single_input', () => {
 test('BackwardsCompatibility_multiple_input', () => {
   const config = {
     input_namespace: {
-      'port1': 'in1',
-      'port2': 'in2',
+      port1: 'in1',
+      port2: 'in2',
     },
     output_namespace: 'out',
-    params:
-    {
+    params: {
       param1: 'value1',
       param2: 'value2',
     },
@@ -95,8 +92,7 @@ test('BackwardsCompatibility_multiple_input', () => {
       },
     ],
     namespace: 'out',
-    params:
-    {
+    params: {
       param1: 'value1',
       param2: 'value2',
     },
@@ -107,11 +103,10 @@ test('BackwardsCompatibility_multiple_input', () => {
 test('BackwardsCompatibility_passthrough', () => {
   const config = {
     input_namespace: {
-      'target_module$target_port': 'target_ns',
+      target_module$target_port: 'target_ns',
     },
     output_namespace: 'out',
-    params:
-    {
+    params: {
       param1: 'value1',
       param2: 'value2',
     },
@@ -132,8 +127,7 @@ test('BackwardsCompatibility_passthrough', () => {
       },
     ],
     namespace: 'out',
-    params:
-    {
+    params: {
       param1: 'value1',
       param2: 'value2',
     },
