@@ -62,3 +62,5 @@ export const settingsSetWorkflowAlertsOnErrorBody = createAction<string>(
 export const settingsSetWorkflowAlertsOnErrorRecipients = createAction<string>(
   'settings/set-workflow-alerts-onerror-recipients',
 );
+export const settingsSetLayoutDirection = createAction<string>('settings/set-layout-direction');
+export const settingsSetEdgeType = createAction<string>('settings/set-edge-type');

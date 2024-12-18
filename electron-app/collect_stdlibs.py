@@ -1,7 +1,10 @@
-import sys
+import pkgutil
 
-reject_list = ["antigravity", "this"]
 
-modules = set(sys.stdlib_module_names) - set(reject_list)
+def list_packages():
+    # Iterate through all available modules and packages
+    packages = [mod_info.name for mod_info in pkgutil.iter_modules() if mod_info.ispkg]
+    return sorted(packages)
 
-print(" ".join([f"--collect-all {m}" for m in modules]))
+
+print(" ".join([f"--collect-all {m}" for m in list_packages()]))

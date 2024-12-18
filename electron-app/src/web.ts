@@ -42,15 +42,17 @@ const BackwardsCompatibility = (config: Record<string, unknown>) => {
       // Convert to dictionary for port mapping
       config['input_namespace'] = {};
     }
-    if (typeof config['input_namespace'] === "string") {
+    if (typeof config['input_namespace'] === 'string') {
       // Convert to dictionary for port mapping
-      config['input_namespace'] = { 'in': config['input_namespace'] };
+      config['input_namespace'] = { in: config['input_namespace'] };
     }
     const ports = [];
-    for (const [key, value] of Object.entries(config['input_namespace'] as Record<string, unknown>)) {
+    for (const [key, value] of Object.entries(
+      config['input_namespace'] as Record<string, unknown>,
+    )) {
       let label = key;
-      if (label == "in") {
-        label = "In";
+      if (label == 'in') {
+        label = 'In';
       }
       const port: { [key: string]: unknown } = {
         ref: key,
@@ -65,7 +67,7 @@ const BackwardsCompatibility = (config: Record<string, unknown>) => {
           {
             module: module,
             port: portname,
-          }
+          },
         ];
       }
       ports.push(port);
@@ -82,7 +84,7 @@ const BackwardsCompatibility = (config: Record<string, unknown>) => {
   }
 
   return config;
-}
+};
 
 const GetModuleConfigFile = async (
   repo: Record<string, unknown>,
@@ -120,7 +122,9 @@ const GetModuleConfigFile = async (
       config_url = config_url.substring(0, config_url.lastIndexOf(path.sep));
       config_url = path.join(config_url, 'config', 'config.yaml');
       try {
-        return BackwardsCompatibility(yaml.load(fs.readFileSync(config_url, 'utf8')) as Record<string, unknown>);
+        return BackwardsCompatibility(
+          yaml.load(fs.readFileSync(config_url, 'utf8')) as Record<string, unknown>,
+        );
       } catch (err) {
         console.log('No (or invalid YAML) config file found.');
       }
@@ -613,6 +617,7 @@ const GetModuleConfigFilesList = async (snakefile: Record<string, unknown> | str
 };
 
 export {
+  BackwardsCompatibility,
   GetLocalModules,
   GetModuleConfig,
   GetModuleConfigFile,
@@ -622,7 +627,6 @@ export {
   GetRemoteModulesGithubDirectoryListing,
   ParseDocstring,
   getConfigFilenameFromSnakefile,
-  BackwardsCompatibility,
 };
 module.exports = {
   GetModuleConfig,

@@ -4,15 +4,18 @@ import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import {
   settingsSetAutoValidateConnections,
   settingsSetDisplayModuleSettings,
+  settingsSetEdgeType,
   settingsSetHideParamsInModuleInfo,
+  settingsSetLayoutDirection,
 } from 'redux/actions';
 
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Typography from '@mui/material/Typography';
+import SelectItem from './components/SelectItem';
 
-const InterfaceOptions = () => {
+const InterfaceOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
 
   const display_module_settings = useAppSelector((state) => state.settings.display_module_settings);
@@ -33,9 +36,42 @@ const InterfaceOptions = () => {
   const SetAutoValidateConnections = (value: boolean) =>
     dispatch(settingsSetAutoValidateConnections(value));
 
+  const layout_direction = useAppSelector((state) => state.settings.layout_direction);
+  const setLayoutDirection = (value: string) => {
+    dispatch(settingsSetLayoutDirection(value));
+  };
+
+  const edge_type = useAppSelector((state) => state.settings.edge_type);
+  const setEdgeType = (value: string) => {
+    dispatch(settingsSetEdgeType(value));
+  };
+
   return (
     <>
       <Typography variant="h6">Interface</Typography>
+      <SelectItem
+        id="settings_interface_layout_direction"
+        label="Layout:"
+        value={layout_direction}
+        list={[
+          { label: 'Left-to-right', value: 'LR' },
+          { label: 'Top-down', value: 'TD' },
+        ]}
+        onChange={(e) => setLayoutDirection(e.target.value)}
+        labelWidth={labelWidth}
+      />
+      <SelectItem
+        id="settings_interface_edge_type"
+        label="Connectors:"
+        value={edge_type}
+        list={[
+          { label: 'Bezier', value: 'bezier' },
+          { label: 'Smooth-step', value: 'smoothstep' },
+          { label: 'Straight', value: 'straight' },
+        ]}
+        onChange={(e) => setEdgeType(e.target.value)}
+        labelWidth={labelWidth}
+      />
       <FormGroup>
         <FormControlLabel
           control={
