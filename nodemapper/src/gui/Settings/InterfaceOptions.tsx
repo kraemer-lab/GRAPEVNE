@@ -7,6 +7,7 @@ import {
   settingsSetEdgeType,
   settingsSetHideParamsInModuleInfo,
   settingsSetLayoutDirection,
+  settingsSetSnapToGrid,
 } from 'redux/actions';
 
 import Checkbox from '@mui/material/Checkbox';
@@ -17,6 +18,11 @@ import SelectItem from './components/SelectItem';
 
 const InterfaceOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
+
+  const display_snap_to_grid = useAppSelector((state) => state.settings.snap_to_grid);
+  const SetDisplaySnapToGrid = (value: boolean) => {
+    dispatch(settingsSetSnapToGrid(value));
+  };
 
   const display_module_settings = useAppSelector((state) => state.settings.display_module_settings);
   const SetDisplayModuleSettings = (value: boolean) => {
@@ -73,6 +79,16 @@ const InterfaceOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
         labelWidth={labelWidth}
       />
       <FormGroup>
+        <FormControlLabel
+          control={
+            <Checkbox
+              id="display_snap_to_grid"
+              checked={display_snap_to_grid}
+              onChange={(e) => SetDisplaySnapToGrid(e.target.checked)}
+            />
+          }
+          label="Snap to grid"
+        />
         <FormControlLabel
           control={
             <Checkbox

@@ -16,13 +16,8 @@ import {
 import { IState } from 'redux/reducers';
 
 import { Node } from 'NodeMap/scene/Flow';
-import {
-  ExportAsPNG,
-  ExportAsSVG,
-  getNodeById,
-  setNodeName,
-  setNodeWorkflow,
-} from 'gui/Builder/components/Flow';
+import { getNodeById, setNodeName, setNodeWorkflow } from 'gui/Builder/components/Flow';
+import { ExportAsPNG, ExportAsSVG } from 'gui/Builder/components/Flow/Export';
 import { Edge } from 'reactflow';
 
 import { Query } from 'api';
@@ -55,6 +50,28 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             package_modules: false,
             nodes: state.builder.nodes,
             edges: state.builder.edges,
+            workflow_alerts: {}, // Don't pass alerts for module builds
+          });
+          break;
+
+        case 'builder/build-selection-as-module':
+          BuildAs({
+            query_name: 'builder/build-as-module',
+            builder_api_fcn: builderAPI.BuildAsModule,
+            build_path: action.payload || '',
+            dispatchBool: dispatch,
+            dispatchString: dispatch,
+            snakemake_args: state.settings.snakemake_args,
+            snakemake_backend: state.settings.snakemake_backend,
+            conda_backend: state.settings.conda_backend,
+            environment_variables: state.settings.environment_variables,
+            package_modules: false,
+            nodes: state.builder.selected_nodes,
+            edges: IsolateSelectedNodeEdges(
+              state.builder.nodes,
+              state.builder.edges,
+              state.builder.selected_nodes,
+            ),
             workflow_alerts: {}, // Don't pass alerts for module builds
           });
           break;
@@ -894,4 +911,11 @@ const GetWorkflowAlerts = (alerts: IState['settings']['workflow_alerts']) => {
     out_alerts['onerror'] = alerts.onerror;
   }
   return out_alerts;
+};
+
+const IsolateSelectedNodeEdges = (nodes: Node[], edges: Edge[], selected_nodes: Node[]): Edge[] => {
+  const selected_node_ids = selected_nodes.map((node) => node.id);
+  return edges.filter((edge) => {
+    return selected_node_ids.includes(edge.source) && selected_node_ids.includes(edge.target);
+  });
 };

@@ -50,6 +50,7 @@ export interface ISettingsState {
   vneyard_url: string;
   layout_direction: string;
   edge_type: string;
+  snap_to_grid: boolean;
 }
 
 // State
@@ -101,6 +102,7 @@ const settingsStateInit: ISettingsState = {
   vneyard_url: 'https://kraemer-lab.github.io/vneyard/',
   layout_direction: 'LR',
   edge_type: 'bezier',
+  snap_to_grid: true,
 };
 
 // Nodemap
@@ -211,6 +213,10 @@ const settingsReducer = createReducer(settingsStateInit, (settings) => {
     })
     .addCase(actions.settingsSetEdgeType, (state, action) => {
       state.edge_type = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.settingsSetSnapToGrid, (state, action) => {
+      state.snap_to_grid = action.payload;
       console.info('[Reducer] ' + action.type);
     });
 });

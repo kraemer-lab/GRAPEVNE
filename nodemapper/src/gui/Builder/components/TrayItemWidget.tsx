@@ -1,13 +1,10 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
 import { IModulesListEntry } from 'redux/reducers/builder';
-import { wranglename } from './Flow';
 
-export interface TrayItemWidgetProps {
-  model: IModulesListEntry;
-  color?: string;
-  name: string;
-}
+export const wranglename = (name: string) => {
+  return name.replace(/ /g, '_').replace(/\(/g, '_').replace(/\)/g, '_').toLowerCase();
+};
 
 export const faint = (color: string, amount: number) => {
   const parseColor = (c: string) => parseInt(c, 16);
@@ -29,6 +26,12 @@ export const Tray = styled.div<{ color: string }>`
   cursor: pointer;
   overflow: hidden;
 `;
+
+export interface TrayItemWidgetProps {
+  model: IModulesListEntry;
+  color?: string;
+  name: string;
+}
 
 export const TrayItemWidget = (props: TrayItemWidgetProps) => {
   return (

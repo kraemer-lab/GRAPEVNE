@@ -7,7 +7,9 @@ import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 
 import {
   builderBuildAndRun,
+  builderBuildAsModule,
   builderBuildAsWorkflow,
+  builderBuildSelectionAsModule,
   builderCleanBuildFolder,
   builderExportAsPNG,
   builderExportAsSVG,
@@ -91,6 +93,8 @@ interface MenuBuildAndRunDropdownProps {
 const MenuBuildAndRunDropdown = forwardRef(
   ({ promptDialog }: MenuBuildAndRunDropdownProps, ref) => {
     const dispatch = useAppDispatch();
+    const selected_nodes = useAppSelector((state) => state.builder.selected_nodes);
+    const zero_selected_nodes = selected_nodes.length === 0;
     const { closeAllMenus } = useMenu();
 
     // Run - build and run the workflow
@@ -126,7 +130,20 @@ const MenuBuildAndRunDropdown = forwardRef(
           DELETE TEST BUILD
         </MenuItem>
         <Divider />
-        <MenuBuildModule promptDialog={promptDialog} ref={ref} />
+        <MenuBuildModule
+          label="MODULE FROM SELECTION"
+          disabled={zero_selected_nodes}
+          build_fcn={builderBuildSelectionAsModule}
+          promptDialog={promptDialog}
+          ref={ref}
+        />
+        <MenuBuildModule
+          label="MODULE FROM WORKFLOW"
+          build_fcn={builderBuildAsModule}
+          promptDialog={promptDialog}
+          ref={ref}
+        />
+        <Divider />
         <MenuItem id="btnBuilderBuildAsWorkflow" onClick={btnBuildAsWorkflow}>
           BUILD WORKFLOW
         </MenuItem>

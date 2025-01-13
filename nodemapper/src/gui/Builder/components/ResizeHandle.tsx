@@ -2,7 +2,7 @@ import Divider from '@mui/material/Divider';
 import React from 'react';
 import { PanelResizeHandle } from 'react-resizable-panels';
 
-import * as styles from './styles.module.css';
+import * as styles from './Flow/styles.module.css';
 
 export default function ResizeHandle({
   orientation = 'horizontal',

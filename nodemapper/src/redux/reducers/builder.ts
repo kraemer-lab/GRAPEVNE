@@ -38,6 +38,7 @@ export interface IBuilderState {
   build_in_progress: boolean;
   configfiles_list: string[];
   terminal_mounted: boolean;
+  selected_nodes: Node[];
 
   // react-flow parameters
   nodes: Node[];
@@ -62,6 +63,7 @@ const builderStateInit: IBuilderState = {
   build_in_progress: false,
   configfiles_list: [],
   terminal_mounted: false,
+  selected_nodes: [],
 
   // react-flow parameters
   nodes: default_nodes,
@@ -102,6 +104,9 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderBuildAsModule, (state, action) => {
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderBuildSelectionAsModule, (state, action) => {
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.builderBuildAsWorkflow, (state, action) => {
@@ -175,6 +180,10 @@ const builderReducer = createReducer(builderStateInit, (builder) => {
     })
     .addCase(actions.builderSetTerminalMounted, (state, action) => {
       state.terminal_mounted = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.builderSetSelectedNodes, (state, action) => {
+      state.selected_nodes = action.payload;
       console.info('[Reducer] ' + action.type);
     });
 });
