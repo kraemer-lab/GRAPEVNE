@@ -5,8 +5,8 @@ import NodeInfoRenderer from './components/NodeInfo/NodeInfoRenderer';
 import RepoBrowser from './components/RepoBrowser';
 
 import { Panel, PanelGroup } from 'react-resizable-panels';
+import * as styles from './components/Flow/styles.module.css';
 import ResizeHandle from './components/ResizeHandle';
-import * as styles from './components/styles.module.css';
 
 import { Box } from '@mui/material';
 import { useAppSelector } from 'redux/store/hooks';

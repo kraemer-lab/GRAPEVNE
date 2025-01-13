@@ -12,7 +12,7 @@ import { useReactFlow } from 'reactflow';
 import { useAppSelector } from 'redux/store/hooks';
 import { getNodeById } from './Flow';
 
-interface ContextMenuProps {
+interface NodeContextMenuProps {
   id: string;
   top: number;
   left: number;
@@ -20,7 +20,7 @@ interface ContextMenuProps {
   bottom: number;
 }
 
-const ContextMenu = ({ id, top, left, right, bottom, ...props }: ContextMenuProps) => {
+const NodeContextMenu = ({ id, top, left, right, bottom, ...props }: NodeContextMenuProps) => {
   const { getNode, setNodes, addNodes, setEdges } = useReactFlow();
   const dispatch = useDispatch();
   const nodes = useAppSelector((state) => state.builder.nodes);
@@ -65,4 +65,4 @@ const ContextMenu = ({ id, top, left, right, bottom, ...props }: ContextMenuProp
   );
 };
 
-export default ContextMenu;
+export default NodeContextMenu;

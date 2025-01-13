@@ -14,6 +14,9 @@ export const builderLoadNodemap = createAction('builder/load-nodemap');
 export const builderSaveNodemap = createAction('builder/save-nodemap');
 export const builderBuildInProgress = createAction<boolean>('builder/build-in-progress');
 export const builderBuildAsModule = createAction<string | undefined>('builder/build-as-module');
+export const builderBuildSelectionAsModule = createAction<string | undefined>(
+  'builder/build-selection-as-module',
+);
 export const builderBuildAsWorkflow = createAction('builder/build-as-workflow');
 export const builderCreateFolder = createAction<string>('builder/create-folder');
 export const builderPackageWorkflow = createAction('builder/package-workflow');
@@ -44,3 +47,4 @@ export const builderLoadScene = createAction('builder/load-scene');
 export const builderSaveScene = createAction('builder/save-scene');
 export const builderSetModulesLoading = createAction<boolean>('builder/set-modules-loading');
 export const builderSetTerminalMounted = createAction<boolean>('builder/set-terminal-mounted');
+export const builderSetSelectedNodes = createAction<Node[]>('builder/set-selected-nodes');
