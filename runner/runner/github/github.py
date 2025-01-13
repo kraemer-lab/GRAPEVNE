@@ -246,7 +246,7 @@ def Push(repo_path, branch_name="main"):
             return {
                 "status": "error",
                 "message": (
-                    f"The branch '{branch_name}' does " "not exist in the repository."
+                    f"The branch '{branch_name}' does not exist in the repository."
                 ),
             }
 

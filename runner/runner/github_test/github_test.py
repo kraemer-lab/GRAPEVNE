@@ -51,8 +51,7 @@ def test_repo_is_ahead(mock_git_repo, mock_repo):
     result = GetRepoStatus("/fake/path/to/repo", "main")
     assert result["status"] == "ahead"
     assert result["message"] == (
-        "The branch 'main' is ahead of the remote. "
-        "You might want to push your changes."
+        "The branch 'main' is ahead of the remote. You might want to push your changes."
     )
 
 
