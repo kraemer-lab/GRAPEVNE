@@ -37,7 +37,7 @@ const NodeContextMenu = ({ id, top, left, right, bottom, ...props }: NodeContext
     const newid = app.getUniqueNodeID(nodes);
     node.data.config.name = name;
     addNodes({ ...node, id: newid, position });
-  }, [id, getNode, addNodes]);
+  }, [id, getNode, addNodes, nodes, node_name]);
 
   const deleteNode = useCallback(() => {
     setNodes((nodes) => nodes.filter((node) => node.id !== id));
