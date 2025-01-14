@@ -857,7 +857,7 @@ describe('modules', () => {
       // 'Build & Run' - 'Build Module' - 'Zip file'
       const btnBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
       await btnBuild.click();
-      const btnBuildModule = btnBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      const btnBuildModule = btnBuild.findElement(By.xpath('//li[text()="MODULE FROM WORKFLOW"]'));
       await btnBuildModule.click();
       const btnZipFile = await driver.findElement(By.xpath('//li[text()="Zip file"]'));
       await btnZipFile.click();
@@ -906,7 +906,7 @@ describe('modules', () => {
       // 'Build & Run' - 'Build Module' - 'test-repo' - 'New Project'
       const menuBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
       await menuBuild.click();
-      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="MODULE FROM WORKFLOW"]'));
       await menuBuildModule.click();
       let menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
       await menuTestRepo.click();
@@ -964,7 +964,7 @@ describe('modules', () => {
       // 'Build & Run' - 'Build Module' - 'test-repo' - 'New Project'
       const menuBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
       await menuBuild.click();
-      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="MODULE FROM WORKFLOW"]'));
       await menuBuildModule.click();
       let menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
       await menuTestRepo.click();
@@ -1014,7 +1014,7 @@ describe('modules', () => {
       // 'Build & Run' - 'Build Module' - 'test-repo' - 'New Project'
       const menuBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
       await menuBuild.click();
-      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="MODULE FROM WORKFLOW"]'));
       await menuBuildModule.click();
       let menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
       await menuTestRepo.click();
@@ -1076,7 +1076,7 @@ describe('modules', () => {
       // 'Build & Run' - 'Build Module' - 'test-repo' - 'New Project'
       const menuBuild = await driver.findElement(By.id('btnBuildAndRunDropdown'));
       await menuBuild.click();
-      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="BUILD MODULE"]'));
+      const menuBuildModule = menuBuild.findElement(By.xpath('//li[text()="MODULE FROM WORKFLOW"]'));
       await menuBuildModule.click();
       const menuTestRepo = await menuBuildModule.findElement(By.xpath('//li[text()="test-repo"]'));
       await menuTestRepo.click();
