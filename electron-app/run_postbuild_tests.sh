@@ -30,15 +30,15 @@ if [[ "$RUNNER_OS" == "Windows" ]]; then
     echo "Launching GRAPEVNE in the background and in debug mode"
     DOWNLOADPATH="${PWD}/postbuild_tests/downloads"
     echo "$DOWNLOADPATH"
-    ./out/"${PKG}"/GRAPEVNE.exe --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen &
+    ./out/"${PKG}"/GRAPEVNE.exe --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen --no-sandbox &
 elif [[ "$RUNNER_OS" == "Linux" ]]; then
     export DISPLAY=:99
     Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
     DOWNLOADPATH="${PWD}/postbuild_tests/downloads"
-    ./out/"${PKG}"/GRAPEVNE --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen &
+    ./out/"${PKG}"/GRAPEVNE --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen --no-sandbox &
 elif [[ "$RUNNER_OS" == "macOS" || "$RUNNER_OS" == "Darwin" ]]; then
     DOWNLOADPATH="${PWD}/postbuild_tests/downloads"
-    ./out/"${PKG}"/GRAPEVNE.app/Contents/MacOS/GRAPEVNE --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen &
+    ./out/"${PKG}"/GRAPEVNE.app/Contents/MacOS/GRAPEVNE --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen --no-sandbox &
 else
     echo "Unknown OS: $RUNNER_OS"
     exit 1
