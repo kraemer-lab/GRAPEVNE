@@ -55,6 +55,15 @@ export const builderMiddleware = ({ getState, dispatch }) => {
           break;
 
         case 'builder/build-selection-as-module':
+          const selected_nodes = IsolateSelectedNodes(
+            state.builder.nodes,
+            state.builder.selected_nodes,
+          );
+          const selected_edges = IsolateSelectedNodeEdges(
+            state.builder.nodes,
+            state.builder.edges,
+            selected_nodes,
+          );
           BuildAs({
             query_name: 'builder/build-as-module',
             builder_api_fcn: builderAPI.BuildAsModule,
@@ -66,12 +75,8 @@ export const builderMiddleware = ({ getState, dispatch }) => {
             conda_backend: state.settings.conda_backend,
             environment_variables: state.settings.environment_variables,
             package_modules: false,
-            nodes: state.builder.selected_nodes,
-            edges: IsolateSelectedNodeEdges(
-              state.builder.nodes,
-              state.builder.edges,
-              state.builder.selected_nodes,
-            ),
+            nodes: selected_nodes,
+            edges: selected_edges,
             workflow_alerts: {}, // Don't pass alerts for module builds
           });
           break;
@@ -911,6 +916,29 @@ const GetWorkflowAlerts = (alerts: IState['settings']['workflow_alerts']) => {
     out_alerts['onerror'] = alerts.onerror;
   }
   return out_alerts;
+};
+
+const IsolateSelectedNodes = (nodes: Node[], selected_nodes: Node[]): Node[] => {
+  // Selection is empty
+  if (selected_nodes.length === 0) {
+    return [];
+  }
+  // Selection is a single group / sub-flow
+  if (selected_nodes.length === 1 && selected_nodes[0].type === 'group') {
+    // Return list of modules in the group
+    const group = selected_nodes[0];
+    const group_id = group.id;
+    return nodes.filter((node) => {
+      return node.parentId === group_id;
+    });
+  }
+  // Selection contain modules only (no groups / sub-flows)
+  if (selected_nodes.every((node) => node.type !== 'group')) {
+    return selected_nodes;
+  }
+  // All other combinations --- reject
+  alert('Selected nodes contain a mixture of modules and groups. Please select only modules.');
+  return [];
 };
 
 const IsolateSelectedNodeEdges = (nodes: Node[], edges: Edge[], selected_nodes: Node[]): Edge[] => {

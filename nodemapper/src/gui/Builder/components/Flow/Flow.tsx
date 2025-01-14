@@ -31,7 +31,9 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import dagre from 'dagre';
 import BuilderEngine from './../BuilderEngine';
+import GroupContextMenu from './../GroupContextMenu';
 import NodeContextMenu from './../NodeContextMenu';
+import SelectionContextMenu from './../SelectionContextMenu';
 
 import { Query } from 'api';
 import { Edge, Node } from 'NodeMap/scene/Flow'; // Custom Node definition
@@ -100,6 +102,7 @@ const Flow = () => {
   const [interactive] = useState(true);
   const [showNodeContextMenu, setShowNodeContextMenu] = useState(null);
   const [showSelectionContextMenu, setShowSelectionContextMenu] = useState(null);
+  const [showGroupContextMenu, setShowGroupContextMenu] = useState(null);
   const ref = useRef(null);
 
   const onNodesChange = (changes: NodeChange[]) => {
@@ -119,9 +122,28 @@ const Flow = () => {
     dispatch(builderSetEdges(addEdge({ ...connection, type: edge_type }, edges)));
   };
 
+  const closeContextMenus = () => {
+    setShowNodeContextMenu(null);
+    setShowGroupContextMenu(null);
+    setShowSelectionContextMenu(null);
+  };
+
   const onNodeClick = (event: React.MouseEvent, node: Node) => {
-    setShowNodeContextMenu(null); // Close context menu (if open)
+    closeContextMenus();
     dispatch(builderNodeSelected(node));
+  };
+
+  const positionContextMenu = (event: React.MouseEvent) => {
+    // Position context menu; right-align if it is too close to the edge of the pane
+    const pane = ref.current.getBoundingClientRect();
+    return {
+      top: event.clientY - pane.top < pane.height - 200 && event.clientY - pane.top,
+      bottom:
+        event.clientY - pane.top >= pane.height - 200 && pane.height - (event.clientY - pane.top),
+      left: event.clientX - pane.left < pane.width - 200 && event.clientX - pane.left,
+      right:
+        event.clientX - pane.left >= pane.width - 200 && pane.width - (event.clientX - pane.left),
+    };
   };
 
   const onNodeContextMenu = (event: React.MouseEvent, node: Node) => {
@@ -129,18 +151,12 @@ const Flow = () => {
     event.preventDefault();
     // Close module parameters pane (if open)
     dispatch(builderNodeDeselected());
-    // Open context menu
-    const pane = ref.current.getBoundingClientRect();
-    // Position context menu; right-align if it is too close to the edge of the pane
-    setShowNodeContextMenu({
-      id: node.id,
-      top: event.clientY - pane.top < pane.height - 200 && event.clientY - pane.top,
-      bottom:
-        event.clientY - pane.top >= pane.height - 200 && pane.height - (event.clientY - pane.top),
-      left: event.clientX - pane.left < pane.width - 200 && event.clientX - pane.left,
-      right:
-        event.clientX - pane.left >= pane.width - 200 && pane.width - (event.clientX - pane.left),
-    });
+    // Open relevant context menu
+    if (node.type === 'group') {
+      setShowGroupContextMenu({ id: node.id, ...positionContextMenu(event) });
+    } else {
+      setShowNodeContextMenu({ id: node.id, ...positionContextMenu(event) });
+    }
   };
 
   const RemoveLinkParameters = (removed_nodes: Node[]) => {
@@ -197,12 +213,12 @@ const Flow = () => {
   };
 
   const onPaneClick = useCallback(() => {
-    console.debug('Pane clicked');
-    // Close context menu (if open)
-    setShowNodeContextMenu(null);
+    console.debug('Node pane click');
+    // Close context menus (if open)
+    closeContextMenus();
     // Close module parameters pane (if open)
     dispatch(builderNodeDeselected());
-  }, [setShowNodeContextMenu, dispatch]);
+  }, [dispatch]);
 
   const onDrop = (event) => {
     event.preventDefault();
@@ -326,7 +342,7 @@ const Flow = () => {
 
     // Check if the right-click happened on the selection box
     if (event.target.closest('.react-flow__nodesselection')) {
-      setShowSelectionContextMenu({ x: event.clientX, y: event.clientY });
+      setShowSelectionContextMenu({ ...positionContextMenu(event) });
     }
   };
 
@@ -388,6 +404,18 @@ const Flow = () => {
         {
           /* Node context menu */
           showNodeContextMenu && <NodeContextMenu onClick={onPaneClick} {...showNodeContextMenu} />
+        }
+        {
+          /* Selection context menu */
+          showSelectionContextMenu && (
+            <SelectionContextMenu onClick={onPaneClick} {...showSelectionContextMenu} />
+          )
+        }
+        {
+          /* Group context menu */
+          showGroupContextMenu && (
+            <GroupContextMenu onClick={onPaneClick} {...showGroupContextMenu} />
+          )
         }
       </ReactFlow>
     </Box>
