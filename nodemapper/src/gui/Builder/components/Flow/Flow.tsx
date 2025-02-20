@@ -51,10 +51,16 @@ const proOptions = {
   hideAttribution: true,
 };
 
-const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => {
+const getLayoutedElements = (
+  nodes: Node[],
+  edges: Edge[],
+  direction = 'LR',
+  node_spacing_x = 150,
+  node_spacing_y = 50,
+) => {
   // Typical node size for spacing
-  const nodeWidth = 200;
-  const nodeHeight = 50;
+  const nodeWidth = node_spacing_x;
+  const nodeHeight = node_spacing_y;
 
   // Allow dagre to determine layout
   const dagreGraph = new dagre.graphlib.Graph();
@@ -97,6 +103,8 @@ const Flow = () => {
   const edges = useAppSelector((state) => state.builder.edges);
   const layout = useAppSelector((state) => state.settings.layout_direction);
   const edge_type = useAppSelector((state) => state.settings.edge_type);
+  const node_spacing_x = useAppSelector((state) => state.settings.node_spacing_x);
+  const node_spacing_y = useAppSelector((state) => state.settings.node_spacing_y);
   const snapToGrid = useAppSelector((state) => state.settings.snap_to_grid);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [interactive] = useState(true);
@@ -328,7 +336,7 @@ const Flow = () => {
 
   const onLayout = useCallback(
     (direction) => {
-      const newnodes = getLayoutedElements(nodes, edges, direction);
+      const newnodes = getLayoutedElements(nodes, edges, direction, node_spacing_x, node_spacing_y);
       dispatch(builderSetNodes(newnodes));
     },
     [nodes, edges, dispatch],
