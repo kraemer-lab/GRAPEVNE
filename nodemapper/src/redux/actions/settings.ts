@@ -64,4 +64,6 @@ export const settingsSetWorkflowAlertsOnErrorRecipients = createAction<string>(
 );
 export const settingsSetLayoutDirection = createAction<string>('settings/set-layout-direction');
 export const settingsSetEdgeType = createAction<string>('settings/set-edge-type');
+export const settingsSetNodeSpacingX = createAction<number>('settings/set-node-spacing-x');
+export const settingsSetNodeSpacingY = createAction<number>('settings/set-node-spacing-y');
 export const settingsSetSnapToGrid = createAction<boolean>('settings/set-snap-to-grid');

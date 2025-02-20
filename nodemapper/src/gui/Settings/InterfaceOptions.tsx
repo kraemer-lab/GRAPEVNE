@@ -7,6 +7,8 @@ import {
   settingsSetEdgeType,
   settingsSetHideParamsInModuleInfo,
   settingsSetLayoutDirection,
+  settingsSetNodeSpacingX,
+  settingsSetNodeSpacingY,
   settingsSetSnapToGrid,
 } from 'redux/actions';
 
@@ -15,6 +17,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Typography from '@mui/material/Typography';
 import SelectItem from './components/SelectItem';
+import SliderItem from './components/SliderItem';
 
 const InterfaceOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
   const dispatch = useAppDispatch();
@@ -52,6 +55,16 @@ const InterfaceOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
     dispatch(settingsSetEdgeType(value));
   };
 
+  const node_spacing_x = useAppSelector((state) => state.settings.node_spacing_x);
+  const setNodeSpacingX = (value: number) => {
+    dispatch(settingsSetNodeSpacingX(value));
+  };
+
+  const node_spacing_y = useAppSelector((state) => state.settings.node_spacing_y);
+  const setNodeSpacingY = (value: number) => {
+    dispatch(settingsSetNodeSpacingY(value));
+  };
+
   return (
     <>
       <Typography variant="h6">Interface</Typography>
@@ -76,6 +89,28 @@ const InterfaceOptions: React.FC<{ labelWidth: string }> = ({ labelWidth }) => {
           { label: 'Straight', value: 'straight' },
         ]}
         onChange={(e) => setEdgeType(e.target.value)}
+        labelWidth={labelWidth}
+      />
+      <SliderItem
+        id="settings_interface_node_spacing_x"
+        label="Spacing (X):"
+        value={node_spacing_x}
+        min={1}
+        max={300}
+        step={1}
+        valueLabelDisplay="auto"
+        onChange={(e, value) => setNodeSpacingX(value as number)}
+        labelWidth={labelWidth}
+      />
+      <SliderItem
+        id="settings_interface_node_spacing_y"
+        label="Spacing (Y):"
+        value={node_spacing_y}
+        min={1}
+        max={100}
+        step={1}
+        valueLabelDisplay="auto"
+        onChange={(e, value) => setNodeSpacingY(value as number)}
         labelWidth={labelWidth}
       />
       <FormGroup>

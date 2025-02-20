@@ -50,6 +50,8 @@ export interface ISettingsState {
   vneyard_url: string;
   layout_direction: string;
   edge_type: string;
+  node_spacing_x: number;
+  node_spacing_y: number;
   snap_to_grid: boolean;
 }
 
@@ -102,6 +104,8 @@ const settingsStateInit: ISettingsState = {
   vneyard_url: 'https://kraemer-lab.github.io/vneyard/',
   layout_direction: 'LR',
   edge_type: 'bezier',
+  node_spacing_x: 150,
+  node_spacing_y: 50,
   snap_to_grid: true,
 };
 
@@ -213,6 +217,14 @@ const settingsReducer = createReducer(settingsStateInit, (settings) => {
     })
     .addCase(actions.settingsSetEdgeType, (state, action) => {
       state.edge_type = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.settingsSetNodeSpacingX, (state, action) => {
+      state.node_spacing_x = action.payload;
+      console.info('[Reducer] ' + action.type);
+    })
+    .addCase(actions.settingsSetNodeSpacingY, (state, action) => {
+      state.node_spacing_y = action.payload;
       console.info('[Reducer] ' + action.type);
     })
     .addCase(actions.settingsSetSnapToGrid, (state, action) => {

@@ -64,6 +64,8 @@ const WriteStoreConfig = async (state) => {
     dark_mode: state.dark_mode,
     layout_direction: state.layout_direction,
     edge_type: state.edge_type,
+    node_spacing_x: state.node_spacing_x,
+    node_spacing_y: state.node_spacing_y,
   });
 };
 
