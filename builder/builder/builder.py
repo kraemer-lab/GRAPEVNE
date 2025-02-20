@@ -646,7 +646,7 @@ class Model:
                     )
                 for p in node_to.ports:
                     if p["ref"] == k:
-                        p["namespace"] = v
+                        p["namespace"] = incoming_node.namespace
                         break
         else:
             node_from = self.GetNodeByName(mapping[0])
