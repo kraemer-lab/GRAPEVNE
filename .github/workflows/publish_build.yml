@@ -22,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v2
       - name: install MacOS (M1) build dependencies
@@ -58,7 +58,7 @@ jobs:
           miniforge-version: latest
           auto-update-conda: true
           auto-activate-base: true
-          python-version: "3.12"
+          python-version: "3.13"
           use-mamba: true
       - name: postbuild-tests
         working-directory: ./electron-app
