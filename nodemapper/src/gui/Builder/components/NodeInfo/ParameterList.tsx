@@ -22,7 +22,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/GridLegacy';
 
 const protectedNames = ['input_namespace', 'ports', 'output_namespace', 'namespace'];
 

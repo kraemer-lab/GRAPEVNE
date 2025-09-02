@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
 import { GithubMenu } from 'gui/Settings/RepoGhIndicator';
 import { builderLogEvent, settingsSetRepositoryTarget } from 'redux/actions';
 import { getMasterRepoListURL } from 'redux/globals';
@@ -22,14 +22,19 @@ import { DialogWait } from 'components/DialogWait';
 const displayAPI = window.displayAPI;
 const settingsAPI = window.settingsAPI;
 
+export const EMPTY_SELECTION: GridRowSelectionModel = {
+  type: 'include',
+  ids: new Set<GridRowId>(),
+};
+
 const RepoOptions = () => {
   const dispatch = useAppDispatch();
   const repoSettings = useAppSelector((state) => state.settings.repositories as IRepo[]);
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
-  const [openWait, setOpenWait] = React.useState<boolean>(false);
-  const [openPromptURL, setOpenPromptURL] = React.useState<boolean>(false);
-  const [valuePromptURL, setValuePromptURL] = React.useState<string>('');
-  const [clonePath, setClonePath] = React.useState<string>('');
+  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>(EMPTY_SELECTION);
+  const [openWait, setOpenWait] = useState<boolean>(false);
+  const [openPromptURL, setOpenPromptURL] = useState<boolean>(false);
+  const [valuePromptURL, setValuePromptURL] = useState<string>('');
+  const [clonePath, setClonePath] = useState<string>('');
   const containerRef = useRef(null);
 
   const initialColumns: GridColDef[] = [
@@ -227,7 +232,7 @@ const RepoOptions = () => {
     if (rows.length === 0) {
       return;
     }
-    setRows(rows.filter((r) => !rowSelectionModel.includes(r.id)));
+    setRows(rows.filter((r) => !rowSelectionModel.ids.has(r.id)));
   };
 
   const setRows = (newrows) => {
@@ -332,9 +337,7 @@ const RepoOptions = () => {
             id: false,
           }}
           processRowUpdate={processRowUpdate}
-          onRowSelectionModelChange={(newRowSelectionModel) => {
-            setRowSelectionModel(newRowSelectionModel);
-          }}
+          onRowSelectionModelChange={(m) => setRowSelectionModel(m)}
           rowSelectionModel={rowSelectionModel}
           hideFooter={true}
         />
@@ -377,7 +380,7 @@ const RepoOptions = () => {
           <Button
             id="buttonBuilderSettingsRepositoryListRemoveItem"
             onClick={() => RemoveItem()}
-            disabled={rowSelectionModel.length === 0}
+            disabled={rowSelectionModel.ids.size === 0}
             size="small"
             variant="contained"
           >

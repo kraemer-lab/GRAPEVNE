@@ -55,7 +55,7 @@ jobs:
           miniforge-version: latest
           auto-update-conda: true
           auto-activate-base: true
-          python-version: 3.12
+          python-version: "3.12"
           use-mamba: true
       # only publish builds if they pass post-build tests
       - name: postbuild-tests

@@ -3,7 +3,7 @@ import TuneIcon from '@mui/icons-material/Tune';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/GridLegacy';
 import IconButton from '@mui/material/IconButton';
 import LinearProgress from '@mui/material/LinearProgress';
 import Paper from '@mui/material/Paper';

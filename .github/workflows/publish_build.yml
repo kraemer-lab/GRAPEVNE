@@ -58,7 +58,7 @@ jobs:
           miniforge-version: latest
           auto-update-conda: true
           auto-activate-base: true
-          python-version: 3.12
+          python-version: "3.12"
           use-mamba: true
       - name: postbuild-tests
         working-directory: ./electron-app

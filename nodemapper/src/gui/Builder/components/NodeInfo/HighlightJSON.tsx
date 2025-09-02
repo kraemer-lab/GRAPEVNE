@@ -13,7 +13,7 @@ import {
 } from './EditBox';
 
 import { Typography } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/GridLegacy';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import type {} from '@mui/x-tree-view/themeAugmentation';
 

@@ -1,7 +1,6 @@
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import React, { useEffect } from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
@@ -20,22 +19,8 @@ import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 
 const displayAPI = window.displayAPI;
 
-const useStyles = makeStyles(() => ({
-  string: {
-    color: '#0E7569',
-  },
-  number: {
-    color: '#8800cc',
-  },
-  boolean: {
-    color: '#d3869b',
-  },
-}));
-
-const useStyle = (valueType: string) => {
-  const classes = useStyles();
-  return classes[valueType];
-};
+const colorFor = (t: 'string' | 'number' | 'boolean') =>
+  t === 'string' ? '#0E7569' : t === 'number' ? '#8800cc' : '#d3869b';
 
 interface IEditBoxText {
   id?: string;
@@ -99,8 +84,8 @@ export const EditBoxText = (userprops: IEditBoxText) => {
       }}
       onKeyDown={(e) => e.stopPropagation()} // prevent letter search-select in TreeView
       onBlur={onBlur}
-      inputProps={{
-        className: useStyle(valueType),
+      slotProps={{
+        input: { sx: { color: colorFor(valueType as 'string' | 'number' | 'boolean') } },
       }}
       endAdornment={
         <InputAdornment position="end">
@@ -134,10 +119,10 @@ export const EditBoxSelect = ({ value, options, onSave }: IEditBoxSelect) => {
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
       }}
-      inputProps={{
-        className: useStyle('string'),
-        onBlur: () => {
-          onSave(name);
+      slotProps={{
+        input: {
+          sx: { color: colorFor('boolean') },
+          onBlur: () => onSave(name),
         },
       }}
       fullWidth
@@ -167,10 +152,10 @@ export const EditBoxBoolean = ({ value, onSave }: IEditBoxBoolean) => {
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
       }}
-      inputProps={{
-        className: useStyle('boolean'),
-        onBlur: () => {
-          onSave(name);
+      slotProps={{
+        input: {
+          sx: { color: colorFor('boolean') },
+          onBlur: () => onSave(name),
         },
       }}
       fullWidth
@@ -331,8 +316,8 @@ export const EditBoxFile = (userprops: IEditBoxFile) => {
       }}
       onKeyDown={(e) => e.stopPropagation()} // prevent letter search-select in TreeView
       onBlur={onBlur}
-      inputProps={{
-        className: useStyle(valueType),
+      slotProps={{
+        input: { sx: { color: colorFor(valueType as 'string' | 'number' | 'boolean') } },
       }}
       endAdornment={
         <InputAdornment position="end">
@@ -423,8 +408,8 @@ export const EditBoxFolder = (userprops: IEditBoxFolder) => {
       }}
       onKeyDown={(e) => e.stopPropagation()} // prevent letter search-select in TreeView
       onBlur={onBlur}
-      inputProps={{
-        className: useStyle(valueType),
+      slotProps={{
+        input: { sx: { color: colorFor(valueType as 'string' | 'number' | 'boolean') } },
       }}
       endAdornment={
         <InputAdornment position="end">
