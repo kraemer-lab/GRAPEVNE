@@ -84,7 +84,7 @@ requires-dist = [
     { name = "grapevne", specifier = ">=0.2.5" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "requests", specifier = ">=2.32.3" },
-    { name = "snakemake", specifier = ">=8.25.5" },
+    { name = "snakemake", specifier = "<9" },
 ]
 
 [package.metadata.requires-dev]
@@ -781,7 +781,7 @@ requires-dist = [
     { name = "builder", virtual = "../builder" },
     { name = "gitpython", specifier = ">=3.1.43" },
     { name = "grapevne", specifier = ">=0.2.5" },
-    { name = "snakemake", specifier = ">=8.20.3" },
+    { name = "snakemake", specifier = "<9" },
 ]
 
 [package.metadata.requires-dev]
