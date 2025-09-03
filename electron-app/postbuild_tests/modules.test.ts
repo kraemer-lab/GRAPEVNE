@@ -733,10 +733,12 @@ describe('modules', () => {
         filename: 'infile.txt',
       });
       // Select the new row
+      await driver.sleep(50);
       await driver
         .findElement(By.xpath('//div[contains(@class, "MuiDataGrid-cell") and @title="infile"]'))
         .click();
       // Remove input file (not required for this module)
+      await driver.sleep(50);
       await driver.findElement(By.id('btnInputFilesRemove')).click();
 
       // Add output files
