@@ -254,6 +254,7 @@ export const InputFilelistAddItem = async ({
     try {
       await driver.actions(opts).doubleClick(filename_clickable).perform();
       await driver.wait(until.elementLocated(By.xpath(filename_input)), 1000);
+      break;
     } catch (NoSuchElementError) {
       // Retry on fail
       continue;
