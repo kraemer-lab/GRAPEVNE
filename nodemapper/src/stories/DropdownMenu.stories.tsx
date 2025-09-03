@@ -1,5 +1,5 @@
 import { MenuItem } from '@mui/material';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-webpack5';
 import React, { useState } from 'react';
 import { DialogPrompt } from '../components/DialogPrompt';
 import { DropdownMenu, NestedMenuItem, useMenu } from '../components/DropdownMenu';
