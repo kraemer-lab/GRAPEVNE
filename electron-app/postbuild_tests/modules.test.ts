@@ -449,7 +449,7 @@ describe('modules', () => {
     5 * ONE_MINUTE,
   ); // long timeout
 
-  runif(false).each([
+  test.each([
     [
       [
         // Modules to add to scene
@@ -522,7 +522,7 @@ describe('modules', () => {
       await driver.wait(until.elementLocated(link_button), TEN_SECS);
       await driver.findElement(link_button).click();
       const link_target = By.xpath(
-        `//div[@class='MuiTreeItem-label' and contains(text(), "filename")]`,
+        `//div[contains(@class, 'MuiTreeItem-label') and contains(text(), "filename")]`,
       );
       await driver.wait(until.elementLocated(link_target), TEN_SECS);
       await driver.findElement(link_target).click();
