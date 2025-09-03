@@ -39,7 +39,8 @@ const PayloadFilelist = () => {
       },
     },
   ];
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>(EMPTY_SELECTION);
+  const [rowSelectionModel, setRowSelectionModel] =
+    React.useState<GridRowSelectionModel>(EMPTY_SELECTION);
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
   const dispatch = useAppDispatch();
   const rows = moduleConfig.resources;

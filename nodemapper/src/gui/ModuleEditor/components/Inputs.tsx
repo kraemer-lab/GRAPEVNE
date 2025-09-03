@@ -43,7 +43,8 @@ const ModuleInputs = () => {
     },
   ];
 
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>(EMPTY_SELECTION);
+  const [rowSelectionModel, setRowSelectionModel] =
+    React.useState<GridRowSelectionModel>(EMPTY_SELECTION);
 
   const setRows = (newRows: INewModuleStateConfigInputFilesRow[]) => {
     const newmoduleConfig = { ...moduleConfig };

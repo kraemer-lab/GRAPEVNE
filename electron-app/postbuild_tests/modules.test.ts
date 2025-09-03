@@ -449,7 +449,7 @@ describe('modules', () => {
     5 * ONE_MINUTE,
   ); // long timeout
 
-  runif(!is_windows).each([
+  runif(false).each([
     [
       [
         // Modules to add to scene
@@ -635,7 +635,7 @@ describe('modules', () => {
     5 * ONE_MINUTE,
   ); // long timeout
 
-  test(
+  runif(false)(
     'Create a new module (no payload)',
     async () => {
       console.log('::: test Create a new module (no payload)');

@@ -34,7 +34,8 @@ const ModuleOutputs = () => {
   const rows = moduleConfig.output_files;
   const dispatch = useAppDispatch();
 
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>(EMPTY_SELECTION);
+  const [rowSelectionModel, setRowSelectionModel] =
+    React.useState<GridRowSelectionModel>(EMPTY_SELECTION);
 
   const setRows = (newRows: INewModuleStateConfigOutputFilesRow[]) => {
     const newmoduleConfig = { ...moduleConfig };
