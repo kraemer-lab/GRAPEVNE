@@ -65,7 +65,7 @@
     "electron-store": "^10.1.0",
     "js-yaml": "^4.1.0",
     "jszip": "^3.10.1",
-    "node-pty": "^1.0.0",
+    "node-pty": "^1.1.0-beta34",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.2"
   },

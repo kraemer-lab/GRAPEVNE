@@ -2605,7 +2605,7 @@ __metadata:
     jest-environment-jsdom: "npm:^30.1.2"
     js-yaml: "npm:^4.1.0"
     jszip: "npm:^3.10.1"
-    node-pty: "npm:^1.0.0"
+    node-pty: "npm:^1.1.0-beta34"
     prettier: "npm:^3.6.2"
     prettier-plugin-organize-imports: "npm:^4.2.0"
     selenium-webdriver: "npm:^4.35.0"
@@ -7577,7 +7577,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.17.0, nan@npm:^2.4.0":
+"nan@npm:^2.4.0":
   version: 2.23.0
   resolution: "nan@npm:2.23.0"
   dependencies:
@@ -7646,6 +7646,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-addon-api@npm:^7.1.0":
+  version: 7.1.1
+  resolution: "node-addon-api@npm:7.1.1"
+  dependencies:
+    node-gyp: "npm:latest"
+  checksum: 10c0/fb32a206276d608037fa1bcd7e9921e177fe992fc610d098aa3128baca3c0050fc1e014fa007e9b3874cf865ddb4f5bd9f43ccb7cbbbe4efaff6a83e920b17e9
+  languageName: node
+  linkType: hard
+
 "node-api-version@npm:^0.2.0":
   version: 0.2.1
   resolution: "node-api-version@npm:0.2.1"
@@ -7696,13 +7705,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-pty@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "node-pty@npm:1.0.0"
+"node-pty@npm:^1.1.0-beta34":
+  version: 1.1.0-beta9
+  resolution: "node-pty@npm:1.1.0-beta9"
   dependencies:
-    nan: "npm:^2.17.0"
+    node-addon-api: "npm:^7.1.0"
     node-gyp: "npm:latest"
-  checksum: 10c0/c308686826eb2f7616735f4c71e6e41ff630346b14319972dbdf9711640bc6975ce21eab66a47b7ce9a88c70308fe81bfd9840127388d5fa26c52afbad255871
+  checksum: 10c0/42981ad24fb048371ff69ec8a421132c6d3a530992a6db85c76333c5ab6f633a19f796e5c91f0373b3131a3f187f0b44f4913eeac31a151ddb59aed976d220a8
   languageName: node
   linkType: hard
 
