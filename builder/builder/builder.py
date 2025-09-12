@@ -412,7 +412,7 @@ class Model:
         # Identify remote folder structure
         m_path = node.snakefile["kwargs"]["path"]
         try:
-            m_pathlist = m_path.split('/')[:-1]
+            m_pathlist = m_path.split("/")[:-1]
             (
                 *m_base_path,
                 m_workflows_foldername,
