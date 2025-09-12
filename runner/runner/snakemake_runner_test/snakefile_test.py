@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -223,7 +224,7 @@ def test_CheckNodeDependencies_connected() -> None:
     cwd = os.getcwd() + "/"
     for node in jsDeps:
         if node.get("config", {}).get("snakefile"):
-            node["config"]["snakefile"] = cwd + node["config"]["snakefile"]
+            node["config"]["snakefile"] = str(Path(cwd + node["config"]["snakefile"]).resolve())
     rtn = CheckNodeDependencies(
         jsDeps=jsDeps,
         snakemake_launcher=None,
@@ -240,7 +241,7 @@ def test_CheckNodeDependencies_disconnected() -> None:
     cwd = os.getcwd() + "/"
     for node in jsDeps:
         if node.get("config", {}).get("snakefile"):
-            node["config"]["snakefile"] = cwd + node["config"]["snakefile"]
+            node["config"]["snakefile"] = str(Path(cwd + node["config"]["snakefile"]).resolve())
     rtn = CheckNodeDependencies(
         jsDeps=jsDeps,
         snakemake_launcher=None,
