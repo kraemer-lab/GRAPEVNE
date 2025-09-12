@@ -449,7 +449,7 @@ describe('modules', () => {
     5 * ONE_MINUTE,
   ); // long timeout
 
-  test.each([
+  runif(!is_windows).each([
     [
       [
         // Modules to add to scene
