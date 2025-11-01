@@ -7,6 +7,15 @@ import * as handles from './handles';
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
 
+  const shell = os.platform() === 'win32' ? 'powershell.exe' : process.env.SHELL || 'bash';
+  let ptyProcess = pty.spawn(shell, [], {
+    name: 'xterm-color',
+    cols: 80,
+    rows: 5,
+    cwd: process.env.HOME,
+    env: process.env,
+  });
+
 // Create electon window
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -56,14 +65,6 @@ app.whenReady().then(() => {
   // Setup pseudo terminal
   ////////////////////////
 
-  const shell = os.platform() === 'win32' ? 'powershell.exe' : process.env.SHELL || 'bash';
-  const ptyProcess = pty.spawn(shell, [], {
-    name: 'xterm-color',
-    cols: 80,
-    rows: 5,
-    cwd: process.env.HOME,
-    env: process.env,
-  });
   const terminal_sendData = (data: string) => {
     ptyProcess.write(data);
   };
@@ -210,6 +211,12 @@ app.whenReady().then(() => {
   ipcMain.handle('settings/github-commit-all-changes', (event: Event, query: Query) =>
     handles.settings_GithubCommitAllChanges(event, query, stderr_callback),
   );
+});
+
+app.on('before-quit', () => {
+  if (ptyProcess) {
+    ptyProcess.kill();
+  }
 });
 
 app.on('will-quit', () => {

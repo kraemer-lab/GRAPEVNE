@@ -23,13 +23,29 @@ fi
 # launch GRAPEVNE in the background and in debug mode
 PKG=$(ls ./out | grep GRAPEVNE)
 if [[ "$RUNNER_OS" == "Windows" ]]; then
-    echo "Migrating folder to C drive (due to issues running conda cross-drive)"
+    #echo "Migrating folder to C drive (due to issues running conda cross-drive)"
     cd ..
     cp -r electron-app /c/Users/runneradmin
     cd /c/Users/runneradmin/electron-app
     echo "Launching GRAPEVNE in the background and in debug mode"
     DOWNLOADPATH="${PWD}/postbuild_tests/downloads"
     echo "$DOWNLOADPATH"
+
+    # Minimise gitbash to pass focus to GRAPEVNE (required for tests to pass
+    # on Windows)
+    powershell -Command "
+      Add-Type @'
+      using System;
+      using System.Runtime.InteropServices;
+      public class Win32 {
+        [DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow();
+        [DllImport(\"user32.dll\")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+      }
+    '@
+      \$hwnd = [Win32]::GetForegroundWindow();
+      [Win32]::ShowWindow(\$hwnd, 6)  # 6 = Minimize
+    "
+
     ./out/"${PKG}"/GRAPEVNE.exe --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen --no-sandbox &
 elif [[ "$RUNNER_OS" == "Linux" ]]; then
     export DISPLAY=:99

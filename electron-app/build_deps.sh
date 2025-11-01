@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eoux pipefail
+set -eoux
 
 # Rebuild components
 pushd ../builder/
@@ -11,14 +11,10 @@ uv build
 popd
 
 # setup and activate a virtual environment
-uv venv
+uv venv --clear
 uv sync
 RUNNER_OS=${RUNNER_OS:-$(uname)}
-if [[ "$RUNNER_OS" == "Windows" ]]; then
-    source ".venv\\Scripts\\activate"
-else
-    source .venv/bin/activate
-fi
+source .venv/bin/activate & source ".venv\\Scripts\\activate"
 uv pip install --force-reinstall .
 
 # compile python code to binary for deployment
@@ -51,7 +47,7 @@ cp src/api.ts ../nodemapper/src
 cp src/types.ts ../nodemapper/src
 
 # Prepare corepack / yarn
-corepack enable
+# corepack enable
 corepack prepare yarn@latest --activate
 export COREPACK_ENABLE_NETWORK=true
 
