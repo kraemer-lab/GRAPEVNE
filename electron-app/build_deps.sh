@@ -14,7 +14,7 @@ popd
 uv venv --clear
 uv sync
 RUNNER_OS=${RUNNER_OS:-$(uname)}
-source .venv/bin/activate & source ".venv\\Scripts\\activate"
+source .venv/bin/activate || source ".venv\\Scripts\\activate" || true
 uv pip install --force-reinstall .
 
 # compile python code to binary for deployment
