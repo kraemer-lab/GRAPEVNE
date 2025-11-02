@@ -51,7 +51,7 @@ elif [[ "$RUNNER_OS" == "Linux" ]]; then
     export DISPLAY=:99
     Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
     DOWNLOADPATH="${PWD}/postbuild_tests/downloads"
-    ./out/"${PKG}"/GRAPEVNE --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen --no-sandbox &
+    ./out/"${PKG}"/GRAPEVNE --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen --no-sandbox --disable-dev-shm-usage &
 elif [[ "$RUNNER_OS" == "macOS" || "$RUNNER_OS" == "Darwin" ]]; then
     DOWNLOADPATH="${PWD}/postbuild_tests/downloads"
     ./out/"${PKG}"/GRAPEVNE.app/Contents/MacOS/GRAPEVNE --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen --no-sandbox &

@@ -65,8 +65,17 @@ describe('modules', () => {
 
   afterAll(async () => {
     console.log('::: afterAll');
-    await driver.close();
-    await driver.quit();
+    try {
+      await Promise.race([
+        (async () => {
+          await driver.close();
+          await driver.quit();
+        })(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('quit timeout')), 5000))
+      ]);
+    } catch (err) {
+      console.error('Error closing driver:', err);
+    }
     console.log('<<< afterAll');
   });
 
