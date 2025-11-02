@@ -31,20 +31,20 @@ if [[ "$RUNNER_OS" == "Windows" ]]; then
     DOWNLOADPATH="${PWD}/postbuild_tests/downloads"
     echo "$DOWNLOADPATH"
 
-    # Minimise gitbash to pass focus to GRAPEVNE (required for tests to pass
-    # on Windows)
-    powershell -Command "
-      Add-Type @'
-      using System;
-      using System.Runtime.InteropServices;
-      public class Win32 {
-        [DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow();
-        [DllImport(\"user32.dll\")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-      }
-    '@
-      \$hwnd = [Win32]::GetForegroundWindow();
-      [Win32]::ShowWindow(\$hwnd, 6)  # 6 = Minimize
-    "
+# Minimise gitbash to pass focus to GRAPEVNE (required for tests to pass
+# on Windows). powershell command must *not* be indented with whitespace.
+powershell -Command "
+  Add-Type @'
+  using System;
+  using System.Runtime.InteropServices;
+  public class Win32 {
+    [DllImport(\"user32.dll\")] public static extern IntPtr GetForegroundWindow();
+    [DllImport(\"user32.dll\")] public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+  }
+'@
+  \$hwnd = [Win32]::GetForegroundWindow();
+  [Win32]::ShowWindow(\$hwnd, 6)  # 6 = Minimize
+"
 
     ./out/"${PKG}"/GRAPEVNE.exe --args --remote-debugging-port=9515 --downloadpath="${DOWNLOADPATH}" --fullscreen --no-sandbox &
 elif [[ "$RUNNER_OS" == "Linux" ]]; then
