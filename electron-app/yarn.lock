@@ -2965,7 +2965,7 @@ __metadata:
     jest-environment-jsdom: "npm:^30.2.0"
     js-yaml: "npm:^4.1.0"
     jszip: "npm:^3.10.1"
-    node-pty: "npm:^1.1.0-beta38"
+    node-pty: "npm:1.1.0-beta38"
     prettier: "npm:^3.6.2"
     prettier-plugin-organize-imports: "npm:^4.3.0"
     selenium-webdriver: "npm:^4.38.0"
@@ -8221,13 +8221,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-pty@npm:^1.1.0-beta38":
-  version: 1.1.0-beta9
-  resolution: "node-pty@npm:1.1.0-beta9"
+"node-pty@npm:1.1.0-beta38":
+  version: 1.1.0-beta38
+  resolution: "node-pty@npm:1.1.0-beta38"
   dependencies:
     node-addon-api: "npm:^7.1.0"
     node-gyp: "npm:latest"
-  checksum: 10c0/42981ad24fb048371ff69ec8a421132c6d3a530992a6db85c76333c5ab6f633a19f796e5c91f0373b3131a3f187f0b44f4913eeac31a151ddb59aed976d220a8
+  checksum: 10c0/f29fbfd04f3e87a9f61a8d7ddf57406a2bcd09977ca691528b68e85683290b48aa2367b6e0429943870b281ed1dfa15fc571b22b4b76be64ee781eba19dbeae7
   languageName: node
   linkType: hard
 
