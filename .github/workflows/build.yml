@@ -29,11 +29,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.13"
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v2
       - name: install MacOS (aarch64) build dependencies

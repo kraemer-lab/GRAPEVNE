@@ -7,19 +7,22 @@
 #  - Business logic should be ported from Python to nodejs to remove these
 #    dependencies from the app
 
-set -eoux pipefail
+set -eoux
 
 # clean distributables
-rm -rf dist out
+# rm -rf dist out
 
 # Prepare corepack / yarn
-corepack enable
+# corepack enable
 corepack prepare yarn@latest --activate
 export COREPACK_ENABLE_NETWORK=true
 
 # compile build dependencies
 ./build_deps.sh
-uv pip install --system setuptools
+# uv pip install --system setuptools
+
+uv venv --clear --python 3.13
+source .venv/bin/activate & source .venv/Scripts/activate
 
 # compile GRAPEVNE
 export DEBUG=*

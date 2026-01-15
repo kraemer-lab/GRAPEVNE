@@ -1,12 +1,17 @@
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
 import React from 'react';
 import { newmoduleUpdateConfig } from 'redux/actions';
 import { INewModuleStateConfigInputFilesRow } from 'redux/reducers/newmodule';
 import { useAppDispatch, useAppSelector } from 'redux/store/hooks';
 import InputPorts from './InputPorts';
+
+export const EMPTY_SELECTION: GridRowSelectionModel = {
+  type: 'include',
+  ids: new Set<GridRowId>(),
+};
 
 const ModuleInputs = () => {
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
@@ -38,7 +43,8 @@ const ModuleInputs = () => {
     },
   ];
 
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const [rowSelectionModel, setRowSelectionModel] =
+    React.useState<GridRowSelectionModel>(EMPTY_SELECTION);
 
   const setRows = (newRows: INewModuleStateConfigInputFilesRow[]) => {
     const newmoduleConfig = { ...moduleConfig };
@@ -78,7 +84,7 @@ const ModuleInputs = () => {
     if (rows.length === 0) {
       return;
     }
-    setRows(rows.filter((r) => !rowSelectionModel.includes(r.id)));
+    setRows(rows.filter((r) => !rowSelectionModel.ids.has(r.id)));
   };
 
   return (
@@ -115,7 +121,7 @@ const ModuleInputs = () => {
           <Button
             id="btnInputFilesRemove"
             onClick={handleRemove}
-            disabled={rowSelectionModel.length === 0}
+            disabled={rowSelectionModel.ids.size === 0}
           >
             Remove
           </Button>

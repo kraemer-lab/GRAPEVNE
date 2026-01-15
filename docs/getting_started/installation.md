@@ -20,8 +20,8 @@ GRAPEVNE comes with all of the necessary software to build and launch workflows,
 GRAPEVNE comes with a dev container (located in `.devcontainer`).
 
 For manual builds you will need to have the following dependencies installed:
-- [Python 3.12](https://www.python.org/) and the [uv](https://github.com/astral-sh/uv) package manager
-- [Nodejs 20](https://nodejs.org/en) and the [yarn 4](https://yarnpkg.com/) package manager
+- [Python 3.13](https://www.python.org/) and the [uv](https://github.com/astral-sh/uv) package manager
+- [Nodejs 22](https://nodejs.org/en) and the [yarn 4](https://yarnpkg.com/) package manager
 
 To build locally, clone the GRAPEVNE repository and run the build script:
 

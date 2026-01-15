@@ -6,7 +6,7 @@ import { settingsWriteStoreConfig } from 'redux/actions';
 import { useAppDispatch } from 'redux/store/hooks';
 
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/GridLegacy';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 

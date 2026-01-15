@@ -8,6 +8,7 @@ import pathlib
 import re
 import shutil
 import tempfile
+from pathlib import Path
 from typing import List
 from typing import Optional
 from typing import Tuple
@@ -60,7 +61,7 @@ class Module(Node):
             # Local file
             workflow_filename = os.path.join("workflow", "Snakefile")
             config_filename = os.path.join("config", "config.yaml")
-            filename = self.snakefile
+            filename = str(pathlib.Path(self.snakefile).resolve())
             filename = filename.replace(workflow_filename, config_filename)
             return filename
         if isinstance(self.snakefile, dict):
@@ -298,11 +299,15 @@ class Model:
             # Output namespace
             cnode["namespace"] = node.namespace
 
+            snakefile = node.snakefile
+            if isinstance(snakefile, str):
+                snakefile = str(Path(snakefile).as_posix())
+
             # Save
             c[node.rulename] = {
                 "name": node.name,
                 "type": node.nodetype,
-                "snakefile": node.snakefile,
+                "snakefile": snakefile,
                 "config": cnode,
             }
         return c
@@ -407,7 +412,7 @@ class Model:
         # Identify remote folder structure
         m_path = node.snakefile["kwargs"]["path"]
         try:
-            m_pathlist = m_path.split(os.path.sep)[:-1]
+            m_pathlist = m_path.split("/")[:-1]
             (
                 *m_base_path,
                 m_workflows_foldername,

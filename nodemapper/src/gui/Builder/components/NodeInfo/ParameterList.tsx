@@ -20,9 +20,9 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import Grid from '@mui/material/GridLegacy';
 import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Unstable_Grid2';
 
 const protectedNames = ['input_namespace', 'ports', 'output_namespace', 'namespace'];
 

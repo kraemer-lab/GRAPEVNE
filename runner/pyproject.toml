@@ -5,10 +5,9 @@ description = "GRAPEVNE Runner"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "builder",
     "gitpython>=3.1.43",
     "grapevne>=0.2.5",
-    "snakemake>=8.20.3",
+    "snakemake<9",
 ]
 
 [tool.uv]
@@ -16,6 +15,3 @@ dev-dependencies = [
     "pytest>=8.3.3",
     "ruff>=0.6.4",
 ]
-
-[tool.uv.sources]
-builder = { path = "../builder" }

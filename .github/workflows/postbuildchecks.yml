@@ -17,16 +17,29 @@ jobs:
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+
+      - name: Cache Node modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/yarn
+            ./electron-app/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('electron-app/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - uses: nanasess/setup-chromedriver@v2
         with:
-          chromedriver-version: "126.0.6478.185"
+          chromedriver-version: "138.0.7204.243"
+
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
@@ -34,25 +47,28 @@ jobs:
           miniforge-version: latest
           auto-update-conda: true
           auto-activate-base: true
-          python-version: 3.12
+          python-version: "3.13"
           use-mamba: true
+
       - name: Install the latest version of uv
         uses: astral-sh/setup-uv@v2
+
       - name: install MacOS (M1) build dependencies
-        shell: bash -el {0}  # required to sustain the conda environment
+        shell: bash -el {0}
         run: |
           if [ "$RUNNER_OS" == "macOS" ] && [ "$RUNNER_ARCH" == "ARM64" ]; then
             brew install pango
           fi
-      # setuptools needs to be available globally for the yarn build script
+
       - name: Install setuptools
-        shell: bash -el {0}  # required to sustain the conda environment
+        shell: bash -el {0}
         run: |
           python -m pip install --upgrade pip
           python -m pip install setuptools
+
       - name: build
         working-directory: ./electron-app
-        shell: bash -el {0}  # required to sustain the conda environment
+        shell: bash -el {0}
         run: |
           corepack enable
           ./build_deps.sh
@@ -60,10 +76,12 @@ jobs:
           yarn
           yarn build
           yarn package
+
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       - name: tmate debugging
         uses: mxschmitt/action-tmate@v3
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+
       - name: postbuild-tests
         working-directory: ./electron-app
         shell: bash -el {0}  # required to sustain the conda environment

@@ -1,7 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridCellEditStopReasons,
+  GridColDef,
+  GridRowId,
+  GridRowSelectionModel,
+  useGridApiRef,
+} from '@mui/x-data-grid';
 import { GithubMenu } from 'gui/Settings/RepoGhIndicator';
 import { builderLogEvent, settingsSetRepositoryTarget } from 'redux/actions';
 import { getMasterRepoListURL } from 'redux/globals';
@@ -22,15 +29,25 @@ import { DialogWait } from 'components/DialogWait';
 const displayAPI = window.displayAPI;
 const settingsAPI = window.settingsAPI;
 
+export const EMPTY_SELECTION: GridRowSelectionModel = {
+  type: 'include',
+  ids: new Set<GridRowId>(),
+};
+
 const RepoOptions = () => {
   const dispatch = useAppDispatch();
   const repoSettings = useAppSelector((state) => state.settings.repositories as IRepo[]);
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
-  const [openWait, setOpenWait] = React.useState<boolean>(false);
-  const [openPromptURL, setOpenPromptURL] = React.useState<boolean>(false);
-  const [valuePromptURL, setValuePromptURL] = React.useState<string>('');
-  const [clonePath, setClonePath] = React.useState<string>('');
+  const [rowSelectionModel, setRowSelectionModel] =
+    useState<GridRowSelectionModel>(EMPTY_SELECTION);
+  const repoSettingsRef = useRef(repoSettings);
+  const [openWait, setOpenWait] = useState<boolean>(false);
+  const [openPromptURL, setOpenPromptURL] = useState<boolean>(false);
+  const [valuePromptURL, setValuePromptURL] = useState<string>('');
+  const [clonePath, setClonePath] = useState<string>('');
   const containerRef = useRef(null);
+
+  const apiRef = useGridApiRef();
+  const pendingLabelChangeRef = useRef<{ oldId: string; newId: string } | null>(null);
 
   const initialColumns: GridColDef[] = [
     {
@@ -87,8 +104,8 @@ const RepoOptions = () => {
           height: '100%',
         }}
         onClick={() => {
-          params.row.active = !params.row.active;
-          setRows(rows.map((r) => (r.id === params.row.id ? params.row : r)));
+          const updated = { ...params.row, active: !params.row.active };
+          setRows(rows.map((r) => (r.id === updated.id ? updated : r)));
         }}
       >
         {params.value ? (
@@ -100,44 +117,30 @@ const RepoOptions = () => {
     );
   };
 
-  const UrlDisplay = (params) => {
-    const local_github_repo = true;
+  const UrlDisplay = (params: any) => {
+    if (params.row.type !== 'local') return params.formattedValue;
 
-    if (params.row.type !== 'local') {
-      return params.formattedValue; // default rendering
-    }
+    const handlePickFolder = async () => {
+      const folderPaths = await displayAPI.SelectFolder(params.row.url ?? '');
+      if (!folderPaths || folderPaths.length === 0) return;
+      const chosen = folderPaths[0];
+
+      // Build next Redux state from the *latest* repositories
+      const current = repoSettingsRef.current;
+      const updated = current.map((r) =>
+        r.label === (params.row.id ?? params.row.label) ? { ...r, repo: chosen } : r,
+      );
+
+      dispatch(settingsSetRepositoryTarget(updated));
+    };
 
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          width: '100%',
-          alignItems: 'center',
-        }}
-      >
-        <Box
-          sx={{
-            width: '100%',
-            height: '100%',
-            textAlign: 'left',
-            overflowX: 'hidden',
-          }}
-        >
+      <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center' }}>
+        <Box sx={{ width: '100%', height: '100%', textAlign: 'left', overflowX: 'hidden' }}>
           {params.row.url}
         </Box>
-        {local_github_repo && <GithubMenu repo={params.row.url} branch="main" />}
-        <IconButton
-          onClick={() => {
-            displayAPI.SelectFolder(params.row.url).then((folderPaths) => {
-              params.row.url = folderPaths[0];
-              setRows(rows.map((r) => (r.id === params.row.id ? params.row : r)));
-            });
-          }}
-          disableRipple // prevent field edit activating button on Enter
-          disableFocusRipple //
-          tabIndex={-1} //
-        >
+        {params.row.url.length > 0 && <GithubMenu repo={params.row.url} branch="main" />}
+        <IconButton onClick={handlePickFolder} disableRipple disableFocusRipple tabIndex={-1}>
           <FolderOutlinedIcon />
         </IconButton>
       </Box>
@@ -227,7 +230,7 @@ const RepoOptions = () => {
     if (rows.length === 0) {
       return;
     }
-    setRows(rows.filter((r) => !rowSelectionModel.includes(r.id)));
+    setRows(rows.filter((r) => !rowSelectionModel.ids.has(r.id)));
   };
 
   const setRows = (newrows) => {
@@ -264,9 +267,23 @@ const RepoOptions = () => {
     });
   };
 
-  const processRowUpdate = (newrow, oldrow) => {
-    setRows(rows.map((r) => (r.id === oldrow.id ? newrow : r)));
-    return newrow;
+  const processRowUpdate = (newRow, oldRow) => {
+    const oldId = String(oldRow.id);
+    const newId = String(newRow.label);
+    const newRepoSettings = repoSettings.map((repo) =>
+      repo.label === oldRow.id
+        ? {
+            ...repo,
+            active: newRow.active,
+            type: newRow.type,
+            label: newRow.label,
+            repo: newRow.url,
+          }
+        : repo,
+    );
+    dispatch(settingsSetRepositoryTarget(newRepoSettings));
+    pendingLabelChangeRef.current = { oldId, newId };
+    return { ...newRow, id: newId };
   };
 
   // Handle column widths upon resizing of the datagrid
@@ -296,6 +313,16 @@ const RepoOptions = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    repoSettingsRef.current = repoSettings;
+  }, [repoSettings]);
+
+  const handleCellEditStop = (params: any, event: any) => {
+    if (params.field === 'label' && params.reason === GridCellEditStopReasons.enterKeyDown) {
+      event.defaultMuiPrevented = true; // keep focus here; don't open a new editing row
+    }
+  };
 
   return (
     <Box>
@@ -332,9 +359,8 @@ const RepoOptions = () => {
             id: false,
           }}
           processRowUpdate={processRowUpdate}
-          onRowSelectionModelChange={(newRowSelectionModel) => {
-            setRowSelectionModel(newRowSelectionModel);
-          }}
+          onCellEditStop={handleCellEditStop}
+          onRowSelectionModelChange={(m) => setRowSelectionModel(m)}
           rowSelectionModel={rowSelectionModel}
           hideFooter={true}
         />
@@ -377,7 +403,7 @@ const RepoOptions = () => {
           <Button
             id="buttonBuilderSettingsRepositoryListRemoveItem"
             onClick={() => RemoveItem()}
-            disabled={rowSelectionModel.length === 0}
+            disabled={rowSelectionModel.ids.size === 0}
             size="small"
             variant="contained"
           >

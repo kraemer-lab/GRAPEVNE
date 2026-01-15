@@ -2,7 +2,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import Typography from '@mui/material/Typography';
-import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowId, GridRowSelectionModel } from '@mui/x-data-grid';
 import React from 'react';
 import { newmoduleUpdateConfig } from 'redux/actions';
 import { INewModuleStateConfigFile } from 'redux/reducers/newmodule';
@@ -21,6 +21,11 @@ interface ElectronFile extends File {
   path: string;
 }
 
+export const EMPTY_SELECTION: GridRowSelectionModel = {
+  type: 'include',
+  ids: new Set<GridRowId>(),
+};
+
 const PayloadFilelist = () => {
   const columns: GridColDef[] = [
     { field: 'label', headerName: 'Label', editable: true, width: 100 },
@@ -34,7 +39,8 @@ const PayloadFilelist = () => {
       },
     },
   ];
-  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const [rowSelectionModel, setRowSelectionModel] =
+    React.useState<GridRowSelectionModel>(EMPTY_SELECTION);
   const moduleConfig = useAppSelector((state) => state.newmodule.config);
   const dispatch = useAppDispatch();
   const rows = moduleConfig.resources;
@@ -86,7 +92,7 @@ const PayloadFilelist = () => {
     if (rows.length === 0) {
       return;
     }
-    setRows(rows.filter((r) => !rowSelectionModel.includes(r.id)));
+    setRows(rows.filter((r) => !rowSelectionModel.ids.has(r.id)));
   };
 
   return (
@@ -111,7 +117,7 @@ const PayloadFilelist = () => {
       />
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', rowGap: 1 }}>
         <Button onClick={handleAddFiles}>Add files</Button>
-        <Button onClick={handleRemove} disabled={rowSelectionModel.length === 0}>
+        <Button onClick={handleRemove} disabled={rowSelectionModel.ids.size === 0}>
           Remove
         </Button>
       </Box>

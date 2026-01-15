@@ -1,11 +1,20 @@
 import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
-import * as pty from 'node-pty';
 import * as os from 'node:os';
+import * as pty from 'node-pty';
 import path from 'path';
 import * as handles from './handles';
 
 type Event = IpcMainInvokeEvent;
 type Query = Record<string, unknown>;
+
+  const shell = os.platform() === 'win32' ? 'powershell.exe' : process.env.SHELL || 'bash';
+  let ptyProcess = pty.spawn(shell, [], {
+    name: 'xterm-color',
+    cols: 80,
+    rows: 5,
+    cwd: process.env.HOME,
+    env: process.env,
+  });
 
 // Create electon window
 const createWindow = () => {
@@ -21,7 +30,6 @@ const createWindow = () => {
   });
   if (app.isPackaged) {
     win.loadFile('index.html'); //prod
-    //win.loadURL("http://localhost:5001"); //dev
   } else {
     win.loadURL('http://localhost:5001'); //dev
   }
@@ -56,14 +64,6 @@ app.whenReady().then(() => {
   // Setup pseudo terminal
   ////////////////////////
 
-  const shell = os.platform() === 'win32' ? 'powershell.exe' : process.env.SHELL || 'bash';
-  const ptyProcess = pty.spawn(shell, [], {
-    name: 'xterm-color',
-    cols: 80,
-    rows: 5,
-    cwd: process.env.HOME,
-    env: process.env,
-  });
   const terminal_sendData = (data: string) => {
     ptyProcess.write(data);
   };
@@ -212,6 +212,16 @@ app.whenReady().then(() => {
   );
 });
 
+app.on('before-quit', () => {
+  if (ptyProcess) {
+    try {
+      ptyProcess.kill();
+    } catch (err) {
+      console.warn('Ignoring error when killing pty:', err);
+    }
+  }
+});
+
 app.on('will-quit', () => {
   // Clean up
 });
@@ -221,3 +231,11 @@ app.on('window-all-closed', () => {
   //if (process.platform !== "darwin") app.quit();
   app.quit();
 });
+
+/*process.on('uncaughtException', (err) => {
+  console.error('uncaughtException (main):', err);
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('unhandledRejection (main):', reason);
+});*/

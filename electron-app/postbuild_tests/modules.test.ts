@@ -56,7 +56,7 @@ describe('modules', () => {
     // Start webdriver
     const options = new chrome.Options();
     options.debuggerAddress('localhost:9515');
-    driver = new webdriver.Builder().forBrowser('chrome', '126').setChromeOptions(options).build();
+    driver = new webdriver.Builder().forBrowser('chrome', '138').setChromeOptions(options).build();
     console.log('Webdriver started.');
 
     await RedirectConsoleLog(driver);
@@ -65,8 +65,17 @@ describe('modules', () => {
 
   afterAll(async () => {
     console.log('::: afterAll');
-    await driver.close();
-    await driver.quit();
+    try {
+      await Promise.race([
+        (async () => {
+          await driver.close();
+          await driver.quit();
+        })(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('quit timeout')), 5000))
+      ]);
+    } catch (err) {
+      console.error('Error closing driver:', err);
+    }
     console.log('<<< afterAll');
   });
 
@@ -522,7 +531,7 @@ describe('modules', () => {
       await driver.wait(until.elementLocated(link_button), TEN_SECS);
       await driver.findElement(link_button).click();
       const link_target = By.xpath(
-        `//div[@class='MuiTreeItem-label' and contains(text(), "filename")]`,
+        `//div[contains(@class, 'MuiTreeItem-label') and contains(text(), "filename")]`,
       );
       await driver.wait(until.elementLocated(link_target), TEN_SECS);
       await driver.findElement(link_target).click();
@@ -732,8 +741,21 @@ describe('modules', () => {
         port: 'in1',
         filename: 'infile.txt',
       });
+      // Select the new row
+      const target_cell = '//div[contains(@class, "MuiDataGrid-cell") and @title="infile"]';
+      await driver.wait(until.elementLocated(By.xpath(target_cell)), 5 * ONE_SEC);
+      await driver.findElement(By.xpath(target_cell)).click();
+
       // Remove input file (not required for this module)
-      await driver.findElement(By.id('btnInputFilesRemove')).click();
+      for (let k = 0; k < 5; k++) {
+        try {
+          await driver.findElement(By.id('btnInputFilesRemove')).click();
+          break;
+        } catch (e) {
+          await driver.sleep(100);
+          continue;
+        }
+      }
 
       // Add output files
       await OutputFilelistAddItem({
