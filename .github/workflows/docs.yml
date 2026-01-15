@@ -21,7 +21,7 @@ jobs:
           cd docs
           make html
       - name: Lychee (link checker)
-        uses: lycheeverse/lychee-action@v1
+        uses: lycheeverse/lychee-action@v2.0.2
         with:
           # Check all markdown, html and reStructuredText files in repo (default)
           args: --base . --verbose --no-progress './**/*.md' './**/*.html' './**/*.rst'
