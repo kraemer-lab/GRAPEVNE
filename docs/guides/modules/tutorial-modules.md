@@ -196,7 +196,7 @@ if __name__ == "__main__":
     Filter(
         source=parser.parse_args().source,
         dest=parser.parse_args().dest,
-        filters=json.loads(parser.parse_args().filters.replace("\'", "\"")),
+        filters=json.loads(parser.parse_args().filters.replace("'", '"')),
     )
 ```
 
